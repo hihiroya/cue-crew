@@ -1,6 +1,7 @@
-import { EVENT_LABELS, PREP_DESCRIPTIONS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, PREP_RESPONSE_READY_LABELS, RESPONSE_DESCRIPTIONS, RESPONSE_LABELS } from '../../game/constants';
+import { useMemo, useState } from 'react';
+import { EVENT_LABELS, PREP_DESCRIPTIONS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, PREP_RESPONSE_READY_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../game/constants';
 import { responseInsight } from '../../game/scoring';
-import type { ActorEventType, GameState, MainResponse, PrepAction } from '../../game/types';
+import type { ActorEventType, GameState, MainResponse, PrepAction, ResponseInsight, ResultTier } from '../../game/types';
 import { Icon } from '../ui/Icon';
 
 type PrepProps = {
@@ -53,6 +54,13 @@ type ResponseProps = {
 };
 
 export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseProps) {
+  const insights = useMemo(
+    () => responses.map((response) => responseInsight(state, response)),
+    [state],
+  );
+  const recommended = useMemo(() => pickRecommendedInsight(insights), [insights]);
+  const [inspectedResponse, setInspectedResponse] = useState<MainResponse | null>(recommended.response);
+  const inspected = insights.find((insight) => insight.response === inspectedResponse) ?? recommended;
   return (
     <section className="choice-panel">
       <div className="section-heading">
@@ -60,34 +68,186 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
         <h2>本対応を選ぶ</h2>
       </div>
       <div className="choice-grid response-grid">
-        {responses.map((response) => {
-          const insight = responseInsight(state, response);
+        {insights.map((insight) => {
+          const response = insight.response;
+          const relation = prepRelationMark(insight.prepRelationTone);
+          const range = resultRange(insight);
+          const affinity = affinityItems(insight);
+          const effects = effectItems(insight);
           return (
-            <button key={response} className={`choice-button response-choice fit-${insight.rangeTone} ${selected === response ? 'is-selected' : ''}`} disabled={disabled} onClick={() => onSelect(response)}>
-              <Icon name={response} />
-              <span>{RESPONSE_LABELS[response]}</span>
-              <em className="fit-label">{insight.handTypeLabel}</em>
-              <small>{RESPONSE_DESCRIPTIONS[response]}</small>
-              {insight.dangerWarning ? <strong className="danger-warning">{insight.dangerWarning}</strong> : null}
-              <div className={`prep-relation relation-${insight.prepRelationTone}`}>
-                <span>先読み: {insight.prepRelationLabel}</span>
-                <small>狙い: {insight.responseAimLabel}</small>
+            <button
+              key={response}
+              className={`choice-button response-choice fit-${insight.rangeTone} ${recommended.response === response ? 'is-recommended' : ''} ${selected === response ? 'is-selected' : ''}`}
+              disabled={disabled}
+              onBlur={() => setInspectedResponse(recommended.response)}
+              onClick={() => onSelect(response)}
+              onFocus={() => setInspectedResponse(response)}
+              onMouseEnter={() => setInspectedResponse(response)}
+            >
+              <div className="response-card-top">
+                <Icon name={response} />
+                <span>{RESPONSE_LABELS[response]}</span>
+                {recommended.response === response ? <em className="spot-label">現場目線</em> : null}
               </div>
-              <div className="range-copy">
-                <span>成功幅: {insight.successRangeLabel}</span>
-                <small>上振れ: {insight.upsideLabel}</small>
-                <small>下振れ: {insight.downsideLabel}</small>
+              <div className="response-badges">
+                <em className="fit-label">{insight.handTypeLabel}</em>
+                <em className={`prep-mark mark-${insight.prepRelationTone}`} aria-label={`先読みとの関係: ${insight.prepRelationLabel}`}>
+                  先読み{relation}
+                </em>
               </div>
-              <dl className="reason-grid">
-                <div><dt>出来事</dt><dd>{insight.eventAffinityLabel}</dd></div>
-                <div><dt>役者</dt><dd>{insight.actorAffinityLabel}</dd></div>
-                <div><dt>公演回</dt><dd>{insight.actInfluenceLabel}</dd></div>
-                <div><dt>副作用</dt><dd>{insight.sideEffectLabel}</dd></div>
-              </dl>
+              <strong className="response-aim">{compactAim(insight)}</strong>
+              <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
+              <div className="affinity-row" aria-label="相性">
+                {affinity.map((item) => (
+                  <span key={item.id} className={`affinity-chip affinity-${item.tone}`} title={item.title} aria-label={item.title}>
+                    <Icon name={item.icon} />
+                    <strong>{item.symbol}</strong>
+                  </span>
+                ))}
+              </div>
+              <div className="effect-row" aria-label="副作用">
+                {effects.map((item) => (
+                  <span key={item.key} className={`effect-chip effect-${item.tone}`}>
+                    {item.repeat ? <Icon name="repeat" /> : <Icon name={item.icon} />}
+                    <strong>{item.label}</strong>
+                  </span>
+                ))}
+              </div>
+              {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
             </button>
           );
         })}
       </div>
+      <aside className={`decision-note relation-${inspected.prepRelationTone}`}>
+        <div>
+          <span>判断メモ</span>
+          <strong>{RESPONSE_LABELS[inspected.response]} / {inspected.successRangeLabel}</strong>
+        </div>
+        <p>{decisionMemo(inspected)}</p>
+      </aside>
     </section>
   );
+}
+
+const tierOrder: ResultTier[] = ['accident', 'fray', 'smallSuccess', 'scene', 'masterpiece'];
+
+function pickRecommendedInsight(insights: ResponseInsight[]) {
+  return [...insights].sort((a, b) => {
+    const tierDiff = tierOrder.indexOf(b.resultTier) - tierOrder.indexOf(a.resultTier);
+    if (tierDiff) return tierDiff;
+    const dangerDiff = Number(Boolean(a.dangerWarning)) - Number(Boolean(b.dangerWarning));
+    if (dangerDiff) return dangerDiff;
+    const relationRank = { primary: 2, alternate: 1, poor: 0 };
+    const relationDiff = relationRank[b.prepRelationTone] - relationRank[a.prepRelationTone];
+    if (relationDiff) return relationDiff;
+    return a.deltaLoad - b.deltaLoad;
+  })[0];
+}
+
+function prepRelationMark(tone: ResponseInsight['prepRelationTone']) {
+  if (tone === 'primary') return '◎';
+  if (tone === 'alternate') return '△';
+  return '×';
+}
+
+function compactAim(insight: ResponseInsight) {
+  if (insight.resultTier === 'masterpiece') return '名場面まで狙う';
+  if (insight.resultTier === 'scene') return '場面化を狙う';
+  if (insight.resultTier === 'smallSuccess') return '小さく成立させる';
+  if (insight.resultTier === 'fray') return '崩れを小さく留める';
+  return '事故圏内を避けたい';
+}
+
+function resultRange(insight: ResponseInsight) {
+  const [lowLabel, highLabel] = insight.successRangeLabel.split('〜');
+  const lowIndex = Math.max(0, tierOrder.findIndex((tier) => RESULT_TIER_LABELS[tier] === lowLabel));
+  const highIndex = Math.max(lowIndex, tierOrder.findIndex((tier) => RESULT_TIER_LABELS[tier] === highLabel));
+  return { lowIndex, highIndex };
+}
+
+function ResultRail({ range, resultTier, danger }: { range: { lowIndex: number; highIndex: number }; resultTier: ResultTier; danger: boolean }) {
+  const currentIndex = tierOrder.indexOf(resultTier);
+  return (
+    <div className={`result-rail ${danger ? 'has-danger' : ''}`} aria-label="結果レンジ">
+      {tierOrder.map((tier, index) => (
+        <span
+          key={tier}
+          className={`${index >= range.lowIndex && index <= range.highIndex ? 'is-in-range' : ''} ${index === currentIndex ? 'is-current' : ''}`}
+          title={RESULT_TIER_LABELS[tier]}
+          aria-label={RESULT_TIER_LABELS[tier]}
+        />
+      ))}
+    </div>
+  );
+}
+
+function affinityItems(insight: ResponseInsight) {
+  const item = (id: string, icon: 'event' | 'actor' | 'state' | 'act', label: string, value: number) => ({
+    id,
+    icon,
+    symbol: symbolForValue(value),
+    tone: toneForValue(value),
+    title: `${label}: ${symbolForValue(value)}`,
+  });
+  const value = (id: string) => insight.scoreBreakdown.find((entry) => entry.id === id)?.value ?? 0;
+  return [
+    item('event', 'event', '出来事', value('event')),
+    item('actor', 'actor', '役者', value('actor')),
+    item('state', 'state', '状態', value('state')),
+    item('act', 'act', '公演回', value('act')),
+  ];
+}
+
+function symbolForValue(value: number) {
+  if (value >= 3) return '◎';
+  if (value > 0) return '○';
+  if (value < 0) return '×';
+  return '△';
+}
+
+function toneForValue(value: number) {
+  if (value >= 3) return 'strong';
+  if (value > 0) return 'good';
+  if (value < 0) return 'bad';
+  return 'neutral';
+}
+
+function effectItems(insight: ResponseInsight) {
+  const parts = insight.sideEffectLabel.split(' / ').filter(Boolean);
+  const parsed = parts.flatMap((part) => parseEffect(part));
+  return parsed.length ? parsed : [{ key: 'load-0', icon: 'load' as const, label: '負荷±0', tone: 'neutral', repeat: false }];
+}
+
+function parseEffect(part: string): Array<{ key: string; icon: 'load' | 'trust' | 'flow' | 'repeat'; label: string; tone: 'good' | 'watch' | 'bad' | 'neutral'; repeat: boolean }> {
+  const repeat = part.startsWith('連続使用:');
+  const clean = part.replace('連続使用:', '').trim();
+  return clean.split(' / ').flatMap((inner) => {
+    const trimmed = inner.trim();
+    if (!trimmed) return [];
+    const icon = trimmed.startsWith('負荷') ? 'load' : trimmed.startsWith('信頼') ? 'trust' : trimmed.startsWith('流れ') ? 'flow' : 'repeat';
+    const numeric = Number(trimmed.match(/[+-]\d+/)?.[0] ?? 0);
+    const isLoad = icon === 'load';
+    const tone = numeric === 0
+      ? 'neutral'
+      : isLoad
+        ? numeric < 0 ? 'good' : numeric >= 2 ? 'bad' : 'watch'
+        : numeric > 0 ? 'good' : 'bad';
+    return [{
+      key: `${repeat ? 'repeat-' : ''}${trimmed}`,
+      icon: repeat ? 'repeat' : icon,
+      label: trimmed,
+      tone,
+      repeat,
+    }];
+  });
+}
+
+function decisionMemo(insight: ResponseInsight) {
+  const prep = insight.prepRelationTone === 'primary'
+    ? '先読みと正面から噛み合う'
+    : insight.prepRelationTone === 'alternate'
+      ? '先読みとは別筋で成立する'
+      : '先読みとは噛み合いにくい';
+  const danger = insight.dangerWarning ? ` ${insight.downsideLabel}。` : '';
+  return `${prep}手。${insight.responseAimLabel}。見込みは${insight.successRangeLabel}、副作用は${insight.sideEffectLabel}。${danger}`;
 }

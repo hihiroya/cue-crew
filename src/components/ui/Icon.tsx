@@ -2,7 +2,7 @@ import type { MainResponse, PrepAction } from '../../game/types';
 import type { ReactNode } from 'react';
 
 type IconProps = {
-  name: PrepAction | MainResponse | 'scene' | 'flow' | 'trust' | 'load' | 'spark' | 'history';
+  name: PrepAction | MainResponse | 'scene' | 'flow' | 'trust' | 'load' | 'spark' | 'history' | 'event' | 'actor' | 'state' | 'act' | 'repeat';
   className?: string;
 };
 
@@ -89,6 +89,35 @@ export function Icon({ name, className }: IconProps) {
       <svg {...common}>
         <path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6" fill="none" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
         <path d="M4 4v4.6h4.6M12 8v4l3 2" fill="none" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+      </svg>
+    ),
+    event: (
+      <svg {...common}>
+        <path d="m13 2-7 12h5l-1 8 8-13h-5l0-7Z" fill="none" stroke={stroke} strokeLinejoin="round" strokeWidth="1.8" />
+      </svg>
+    ),
+    actor: (
+      <svg {...common}>
+        <circle cx="12" cy="7" r="3" fill="none" stroke={stroke} strokeWidth="1.8" />
+        <path d="M5 21c1.2-4 3.5-6 7-6s5.8 2 7 6" fill="none" stroke={stroke} strokeLinecap="round" strokeWidth="1.8" />
+      </svg>
+    ),
+    state: (
+      <svg {...common}>
+        <path d="M4 13h3l2-5 4 10 2-5h5" fill="none" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+      </svg>
+    ),
+    act: (
+      <svg {...common}>
+        <path d="M5 4h14v16H5z" fill="none" stroke={stroke} strokeLinejoin="round" strokeWidth="1.8" />
+        <path d="M8 8h8M8 12h5M8 16h7" fill="none" stroke={stroke} strokeLinecap="round" strokeWidth="1.8" />
+      </svg>
+    ),
+    repeat: (
+      <svg {...common}>
+        <path d="M17 3l3 3-3 3" fill="none" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+        <path d="M4 11V9a3 3 0 0 1 3-3h13M7 21l-3-3 3-3" fill="none" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+        <path d="M20 13v2a3 3 0 0 1-3 3H4" fill="none" stroke={stroke} strokeLinecap="round" strokeWidth="1.8" />
       </svg>
     ),
   };
