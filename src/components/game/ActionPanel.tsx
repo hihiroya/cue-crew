@@ -58,15 +58,15 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
     () => responses.map((response) => responseInsight(state, response)),
     [state],
   );
-  const recommended = useMemo(() => pickRecommendedInsight(insights), [insights]);
-  const [inspectedResponse, setInspectedResponse] = useState<MainResponse | null>(recommended.response);
-  const inspected = insights.find((insight) => insight.response === inspectedResponse) ?? recommended;
+  const [inspectedResponse, setInspectedResponse] = useState<MainResponse>(selected ?? 'catch');
+  const inspected = insights.find((insight) => insight.response === inspectedResponse) ?? insights[0];
   return (
     <section className="choice-panel">
       <div className="section-heading">
         <p>二手目{state.selectedPrep ? ` / 先読み: ${PREP_LABELS[state.selectedPrep]}` : ''}</p>
         <h2>本対応を選ぶ</h2>
       </div>
+      <ResponseLegend />
       <div className="choice-grid response-grid">
         {insights.map((insight) => {
           const response = insight.response;
@@ -74,23 +74,24 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
           const range = resultRange(insight);
           const affinity = affinityItems(insight);
           const effects = effectItems(insight);
+          const isInspected = inspected.response === response;
           return (
             <button
               key={response}
-              className={`choice-button response-choice fit-${insight.rangeTone} ${recommended.response === response ? 'is-recommended' : ''} ${selected === response ? 'is-selected' : ''}`}
+              aria-pressed={isInspected}
+              className={`choice-button response-choice fit-${insight.rangeTone} ${isInspected ? 'is-selected' : ''}`}
               disabled={disabled}
-              onBlur={() => setInspectedResponse(recommended.response)}
-              onClick={() => onSelect(response)}
+              onClick={() => setInspectedResponse(response)}
               onFocus={() => setInspectedResponse(response)}
-              onMouseEnter={() => setInspectedResponse(response)}
             >
               <div className="response-card-top">
                 <Icon name={response} />
-                <span>{RESPONSE_LABELS[response]}</span>
-                {recommended.response === response ? <em className="spot-label">現場目線</em> : null}
+                <span className="response-title">
+                  <strong>{RESPONSE_LABELS[response]}</strong>
+                  <em>{insight.handTypeLabel}</em>
+                </span>
               </div>
               <div className="response-badges">
-                <em className="fit-label">{insight.handTypeLabel}</em>
                 <em className={`prep-mark mark-${insight.prepRelationTone}`} aria-label={`先読みとの関係: ${insight.prepRelationLabel}`}>
                   先読み{relation}
                 </em>
@@ -124,25 +125,15 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
           <strong>{RESPONSE_LABELS[inspected.response]} / {inspected.successRangeLabel}</strong>
         </div>
         <p>{decisionMemo(inspected)}</p>
+        <button className="primary-action decision-action" disabled={disabled} onClick={() => onSelect(inspected.response)}>
+          この対応で進む
+        </button>
       </aside>
     </section>
   );
 }
 
 const tierOrder: ResultTier[] = ['accident', 'fray', 'smallSuccess', 'scene', 'masterpiece'];
-
-function pickRecommendedInsight(insights: ResponseInsight[]) {
-  return [...insights].sort((a, b) => {
-    const tierDiff = tierOrder.indexOf(b.resultTier) - tierOrder.indexOf(a.resultTier);
-    if (tierDiff) return tierDiff;
-    const dangerDiff = Number(Boolean(a.dangerWarning)) - Number(Boolean(b.dangerWarning));
-    if (dangerDiff) return dangerDiff;
-    const relationRank = { primary: 2, alternate: 1, poor: 0 };
-    const relationDiff = relationRank[b.prepRelationTone] - relationRank[a.prepRelationTone];
-    if (relationDiff) return relationDiff;
-    return a.deltaLoad - b.deltaLoad;
-  })[0];
-}
 
 function prepRelationMark(tone: ResponseInsight['prepRelationTone']) {
   if (tone === 'primary') return '◎';
@@ -181,6 +172,21 @@ function ResultRail({ range, resultTier, danger }: { range: { lowIndex: number; 
   );
 }
 
+function ResponseLegend() {
+  return (
+    <details className="response-legend" open>
+      <summary>凡例</summary>
+      <div>
+        <span><Icon name="event" />出来事</span>
+        <span><Icon name="actor" />役者</span>
+        <span><Icon name="state" />状態</span>
+        <span><Icon name="act" />公演回</span>
+      </div>
+      <p>◎ 強い / ○ 合う / △ 普通 / × 注意。下の細い線は左から事故、ほころび、小成功、場面化、名場面。</p>
+    </details>
+  );
+}
+
 function affinityItems(insight: ResponseInsight) {
   const item = (id: string, icon: 'event' | 'actor' | 'state' | 'act', label: string, value: number) => ({
     id,
@@ -215,7 +221,7 @@ function toneForValue(value: number) {
 function effectItems(insight: ResponseInsight) {
   const parts = insight.sideEffectLabel.split(' / ').filter(Boolean);
   const parsed = parts.flatMap((part) => parseEffect(part));
-  return parsed.length ? parsed : [{ key: 'load-0', icon: 'load' as const, label: '負荷±0', tone: 'neutral', repeat: false }];
+  return parsed.length ? parsed : [{ key: 'load-0', icon: 'load' as const, label: '負荷維持', tone: 'neutral', repeat: false }];
 }
 
 function parseEffect(part: string): Array<{ key: string; icon: 'load' | 'trust' | 'flow' | 'repeat'; label: string; tone: 'good' | 'watch' | 'bad' | 'neutral'; repeat: boolean }> {
@@ -235,11 +241,36 @@ function parseEffect(part: string): Array<{ key: string; icon: 'load' | 'trust' 
     return [{
       key: `${repeat ? 'repeat-' : ''}${trimmed}`,
       icon: repeat ? 'repeat' : icon,
-      label: trimmed,
+      label: effectLabel(icon, numeric),
       tone,
       repeat,
     }];
   });
+}
+
+function effectLabel(icon: 'load' | 'trust' | 'flow' | 'repeat', value: number) {
+  if (icon === 'load') {
+    if (value < 0) return '負荷軽減';
+    if (value > 1) return '負荷重い';
+    if (value > 0) return '負荷増';
+    return '負荷維持';
+  }
+  if (icon === 'trust') {
+    if (value > 0) return '信頼深まる';
+    if (value < 0) return '信頼削る';
+    return '信頼維持';
+  }
+  if (icon === 'flow') {
+    if (value > 0) return '流れ整う';
+    if (value < 0) return '流れ乱れ';
+    return '流れ維持';
+  }
+  return value < 0 ? '連続注意' : '連続負荷';
+}
+
+function effectSummary(insight: ResponseInsight) {
+  const labels = effectItems(insight).map((item) => item.label);
+  return labels.join('、');
 }
 
 function decisionMemo(insight: ResponseInsight) {
@@ -249,5 +280,5 @@ function decisionMemo(insight: ResponseInsight) {
       ? '先読みとは別筋で成立する'
       : '先読みとは噛み合いにくい';
   const danger = insight.dangerWarning ? ` ${insight.downsideLabel}。` : '';
-  return `${prep}手。${insight.responseAimLabel}。見込みは${insight.successRangeLabel}、副作用は${insight.sideEffectLabel}。${danger}`;
+  return `${prep}手。${insight.responseAimLabel}。見込みは${insight.successRangeLabel}。残る影響は${effectSummary(insight)}。${danger}`;
 }
