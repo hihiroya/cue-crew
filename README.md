@@ -10,6 +10,7 @@ npm run dev
 ```
 
 Node.js は 24.x LTS、npm は 11.10.0 以上を使用します。
+Cloudflare Pages ではルートの `.node-version` により Node.js 24.16.0 を指定しています。
 
 ## ビルド
 
