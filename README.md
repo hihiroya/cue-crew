@@ -1,0 +1,88 @@
+# 本番中につき！ 〜舞台裏の一手〜
+
+ブラウザで遊べる、1人用の舞台裏マネジメントゲームMVPです。役者を直接命令するのではなく、兆候を読み、構えを決め、本番中の予想外を裏方の一手で名場面に変える縦スライスです。
+
+## ローカル起動
+
+```bash
+npm install
+npm run dev
+```
+
+Node.js は 24.x LTS、npm は 11.10.0 以上を使用します。
+
+## ビルド
+
+```bash
+npm run build
+```
+
+ビルド成果物は `dist/` に出力されます。
+
+## リポジトリ運用
+
+- 生成物の `dist/`、一時ファイルの `tmp/`、依存ディレクトリの `node_modules/` は Git 管理対象外です。
+- Pull request では GitHub Actions が `npm ci --ignore-scripts`、`npm audit signatures`、`npm run build` を実行します。
+- 依存関係を変更する場合は [CONTRIBUTING.md](CONTRIBUTING.md) の確認項目に従ってください。
+
+## スクリーンショット確認
+
+Chrome DevTools Protocol を使い、指定viewportでPNGを保存できます。外部依存はありません。
+
+```bash
+npm run build
+npm run screenshot -- --out=tmp/title.png
+```
+
+起動中の開発サーバーを撮る場合は `--url=http://127.0.0.1:5173` を指定します。
+既定の撮影サイズは iPhone 17 Pro Max 相当の `440x956` です。
+
+本編状態も撮れます。
+
+```bash
+npm run screenshot -- --scenario=game --out=tmp/game.png
+npm run screenshot -- --scenario=response --out=tmp/response.png
+npm run screenshot -- --scenario=preview --out=tmp/preview.png
+npm run screenshot -- --scenario=result --out=tmp/result.png
+```
+
+## Cloudflare Pages デプロイ
+
+Cloudflare Pages では次の設定を使います。
+
+- Framework preset: `Vite`
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Node.js version: `24`
+
+バックエンド、外部API、ランタイム画像生成は使用していません。
+
+## ゲームルール概要
+
+全5幕、各幕2ターンの合計10ターンで1公演が終わります。毎ターン、焦点役者の兆候を読み、構えを1つ決めます。その後に役者が半自律的に行動し、プレイヤーは本対応を1つ選んで場面成立を狙います。
+
+管理するスコアは `場面`、`流れ`、`信頼`、`裏方負荷` です。裏方負荷が高まるとほころびが起き、次のターン以降にうまく拾うと場面名へ影響します。
+
+詳細な現行仕様は [ゲームシステム仕様](docs/game-system-spec.md) を参照してください。
+
+## MVPで検証したい面白さ
+
+このMVPが検証する一点は、役者の予想外を、裏方の一手で名場面に変える感覚です。強いカードを出すのではなく、若手を拾う、主役を待つ、技巧派のズレを整える、といった判断の手触りを重視しています。
+
+## 主要ディレクトリ
+
+```txt
+src/
+  app/                 アプリ構成
+  components/          UI、ゲーム画面、役者シルエット
+  game/                型、定数、乱数、役者ロジック、採点、Reducer
+  styles/              デザイントークンとグローバルCSS
+```
+
+## 今後の拡張候補
+
+- 演目ごとの幕テーマと場面テンプレート追加
+- 役者ごとの癖や信頼イベント追加
+- ほころび回収の専用演出
+- 公演ログの詳細リプレイ
+- 音声なしでも成立する、軽量な舞台照明アニメーション強化

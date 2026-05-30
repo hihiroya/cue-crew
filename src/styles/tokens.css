@@ -1,0 +1,26 @@
+:root {
+  color-scheme: dark;
+  --bg: #12080c;
+  --bg-deep: #07090f;
+  --bg-velvet: #2b0710;
+  --surface: rgba(22, 22, 30, 0.82);
+  --surface-strong: rgba(33, 27, 34, 0.94);
+  --surface-soft: rgba(255, 255, 255, 0.06);
+  --border: rgba(230, 190, 108, 0.28);
+  --border-strong: rgba(236, 199, 119, 0.58);
+  --text: #fff5dc;
+  --muted: #c9bda4;
+  --subtle: #8e8592;
+  --gold: #e5bd68;
+  --gold-strong: #ffd98a;
+  --red: #8f1730;
+  --red-soft: #4b0f1c;
+  --blue: #1b3147;
+  --cyan: #8bc9d5;
+  --danger: #ff776f;
+  --success: #a8d48f;
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+  --radius: 8px;
+  --font-body: "Hiragino Sans", "Yu Gothic", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
+  --font-display: "Yu Mincho", "Hiragino Mincho ProN", serif;
+}

@@ -1,0 +1,314 @@
+import type { Actor, ActorEventType, ActorState, ActorType, LoadBias, MainResponse, PerformanceSlot, PerformanceStyle, PrepAction, ResultTier } from './types';
+
+export const TOTAL_TURNS = 6;
+export const TURNS_PER_ACT = 2;
+export const MAX_LOAD = 5;
+
+export const ACTS = [
+  { act: 1, name: '1日目', role: '呼吸作り。先読みと座組信頼が公演の型を作る' },
+  { act: 2, name: '2日目', role: '揺らぎ。型を活かして攻めるか、負荷を整える' },
+  { act: 3, name: '3日目', role: '千秋楽。残った信頼と負荷を回収して閉じる' },
+] as const;
+
+export const PERFORMANCE_SLOT_LABELS: Record<PerformanceSlot, { label: string; role: string }> = {
+  matinee: { label: 'マチネ', role: '昼公演。見極めと調整が効きやすい' },
+  soiree: { label: 'ソワレ', role: '夜公演。評判は伸びるが、負荷も残りやすい' },
+};
+
+export const PERFORMANCE_STYLE_DETAILS: Record<PerformanceStyle, { label: string; short: string; strength: MainResponse; cost: string }> = {
+  heat: {
+    label: '熱量で押す公演',
+    short: '拾う判断は評判へつながりやすいが、裏方負荷も残りやすい。',
+    strength: 'catch',
+    cost: '攻めたぶん負荷が残りやすい',
+  },
+  breath: {
+    label: '間で残す公演',
+    short: '待つ判断で座組信頼が伸び、空振りでも大きく崩れにくい。',
+    strength: 'wait',
+    cost: '場面の伸びは控えめになりやすい',
+  },
+  control: {
+    label: '段取りで支える公演',
+    short: '整える判断で負荷が抜けやすく、ほころびを抑えやすい。',
+    strength: 'arrange',
+    cost: '名場面狙いは少し控えめになる',
+  },
+  closure: {
+    label: '崩れを閉じる公演',
+    short: '切る判断で事故を小さくしやすいが、信頼は伸びにくい。',
+    strength: 'cut',
+    cost: '評判の伸びは控えめになりやすい',
+  },
+};
+
+export const INITIAL_ACTORS: Actor[] = [
+  { id: 'lead', type: 'lead', name: '主役', state: 'contemplative', trust: 0, fatigue: 0, currentRole: 'focus' },
+  { id: 'junior', type: 'junior', name: '若手', state: 'elated', trust: 0, fatigue: 0, currentRole: 'sign' },
+  { id: 'skilled', type: 'skilled', name: '技巧派', state: 'immersed', trust: 0, fatigue: 0, currentRole: 'waiting' },
+];
+
+export const ACTOR_LABELS: Record<ActorType, string> = {
+  lead: '主役',
+  junior: '若手',
+  skilled: '技巧派',
+};
+
+export const STATE_LABELS: Record<ActorState, string> = {
+  elated: '高揚',
+  contemplative: '沈思',
+  anxious: '不安',
+  immersed: '没入',
+  fatigued: '疲労',
+};
+
+export const EVENT_LABELS: Record<ActorEventType, string> = {
+  stepForward: '前へ出る',
+  adlib: 'アドリブ',
+  heatUp: '熱が乗る',
+  silence: '沈黙する',
+  positionShift: '立ち位置がズレる',
+  tempoRush: 'テンポが走る',
+  delayedExit: '退場が遅れる',
+  ensembleWaver: '群像が揺れる',
+};
+
+export const EVENT_DESCRIPTIONS: Record<ActorEventType, string> = {
+  stepForward: '予定より半歩前に出て、客席の視線をさらいかけている。',
+  adlib: '台詞の隙間に、台本にはない一言が落ちた。',
+  heatUp: '言葉と身体に熱が宿り、場面が大きく膨らみ始めた。',
+  silence: '台詞が止まり、舞台に息を呑むような間が生まれた。',
+  positionShift: '立ち位置が少しズレ、照明と視線の軸が変わった。',
+  tempoRush: '呼吸より先に台詞が走り、舞台全体の拍が揺れている。',
+  delayedExit: '退場の一歩が遅れ、余韻と進行の境目で揺れている。',
+  ensembleWaver: '周囲の動きがわずかに乱れ、群像の輪郭が揺らいだ。',
+};
+
+export const PREP_LABELS: Record<PrepAction, string> = {
+  watch: '注視',
+  makeSpace: '余白',
+  tightenFlow: '締め',
+  prepareTransition: '転換',
+};
+
+export const PREP_DESCRIPTIONS: Record<PrepAction, string> = {
+  watch: '前へ出る・アドリブ・熱を先読みする',
+  makeSpace: '沈黙・退場の余韻・熱を先読みする',
+  tightenFlow: '立ち位置・テンポ・群像の乱れを先読みする',
+  prepareTransition: '走り・退場・群像・立ち位置を先読みする',
+};
+
+export const PREP_PRIMARY_RESPONSE: Record<PrepAction, MainResponse> = {
+  watch: 'catch',
+  makeSpace: 'wait',
+  tightenFlow: 'arrange',
+  prepareTransition: 'cut',
+};
+
+export const PREP_RESPONSE_READY_LABELS: Record<PrepAction, string> = {
+  watch: '拾う備え',
+  makeSpace: '待つ備え',
+  tightenFlow: '整える備え',
+  prepareTransition: '切る備え',
+};
+
+export const PREP_RESPONSE_HINTS: Record<PrepAction, { aim: string; alternate: string }> = {
+  watch: {
+    aim: '予定外を見せ場に変える',
+    alternate: '整えるで安全寄りに処理できる',
+  },
+  makeSpace: {
+    aim: '間や余韻を急かさず残す',
+    alternate: '熱が来たら拾うと伸びる',
+  },
+  tightenFlow: {
+    aim: '乱れを舞台の呼吸に戻す',
+    alternate: '高負荷なら切って守る手もある',
+  },
+  prepareTransition: {
+    aim: '場面を伸ばすより、崩れを小さく閉じる',
+    alternate: '低負荷なら整える・待つで場面化を狙える',
+  },
+};
+
+export const RESPONSE_LABELS: Record<MainResponse, string> = {
+  catch: '拾う',
+  arrange: '整える',
+  wait: '待つ',
+  cut: '切る',
+};
+
+export const RESPONSE_DESCRIPTIONS: Record<MainResponse, string> = {
+  catch: '予定外の行動を見せ場に変える',
+  arrange: '乱れを舞台全体の呼吸に戻す',
+  wait: '間や余韻を信じて急かさない',
+  cut: '場面を閉じ、崩れを次へ送る',
+};
+
+export const RESULT_TIER_LABELS: Record<ResultTier, string> = {
+  masterpiece: '名場面',
+  scene: '場面化',
+  smallSuccess: '小さな成功',
+  fray: 'ほころび',
+  accident: '事故',
+};
+
+export const RESULT_TIER_STARS: Record<ResultTier, string> = {
+  masterpiece: '★★★★★',
+  scene: '★★★★☆',
+  smallSuccess: '★★★☆☆',
+  fray: '★★☆☆☆',
+  accident: '★☆☆☆☆',
+};
+
+export const ACTOR_TRAITS: Record<ActorType, string> = {
+  junior: '勢い型。前へ出る・アドリブ・熱が乗るが多い。拾うと伸びやすい。',
+  lead: '間の型。沈黙・退場の余韻が多い。待つと伸びやすい。',
+  skilled: '制御型。立ち位置・群像の乱れが多い。整えると伸びやすい。',
+};
+
+export const RESPONSE_HAND_TYPES: Record<MainResponse, string> = {
+  catch: '攻め手',
+  arrange: '安定手',
+  wait: '余韻手',
+  cut: '収束手',
+};
+
+export const ACT_RESPONSE_GUIDES: Record<number, Partial<Record<MainResponse, string>>> = {
+  1: {
+    catch: '1日目。初日の熱を評判に変えるが、型は攻め寄りになる。',
+    arrange: '1日目。まず段取りを作り、以降の負荷を扱いやすくする。',
+    wait: '1日目。座組の呼吸を見て、信頼を残しやすい。',
+    cut: '1日目。崩れを小さく閉じるが、評判の伸びは控えめ。',
+  },
+  2: {
+    catch: '2日目。型を活かして攻めると評判が伸びるが、負荷も残る。',
+    arrange: '2日目。揺らぎを段取りへ戻し、ソワレ後のほころびを抑える。',
+    wait: '2日目。余韻を残せるが、攻めどころを逃すこともある。',
+    cut: '2日目。高負荷なら崩れを早めに閉じられる。',
+  },
+  3: {
+    catch: '3日目。低負荷なら千秋楽の評判を狙える。',
+    arrange: '3日目。千秋楽前後の負荷を戻し、終演を安定させる。',
+    wait: '3日目。信頼が残っているほど、余韻として強く残る。',
+    cut: '3日目。高負荷の崩れを閉じ、事故化を抑える。',
+  },
+};
+
+export const LOAD_LABELS: Record<Exclude<LoadBias, null>, string> = {
+  light: '光',
+  sound: '音',
+  stageManagement: '進行',
+  props: '道具',
+};
+
+export const EVENT_COMPATIBILITY: Record<ActorEventType, Record<MainResponse, number>> = {
+  stepForward: { catch: 3, arrange: 2, wait: 0, cut: 0 },
+  adlib: { catch: 3, arrange: 0, wait: 2, cut: -2 },
+  heatUp: { catch: 3, arrange: 2, wait: 0, cut: 0 },
+  silence: { catch: 0, arrange: 2, wait: 3, cut: 0 },
+  positionShift: { catch: 2, arrange: 3, wait: -2, cut: 2 },
+  tempoRush: { catch: 2, arrange: 3, wait: -2, cut: 2 },
+  delayedExit: { catch: 2, arrange: 0, wait: 3, cut: 2 },
+  ensembleWaver: { catch: 0, arrange: 3, wait: -2, cut: 2 },
+};
+
+export const PREP_MATCHES: Record<PrepAction, ActorEventType[]> = {
+  watch: ['stepForward', 'adlib', 'heatUp'],
+  makeSpace: ['silence', 'delayedExit', 'heatUp'],
+  tightenFlow: ['positionShift', 'tempoRush', 'ensembleWaver'],
+  prepareTransition: ['tempoRush', 'delayedExit', 'ensembleWaver', 'positionShift'],
+};
+
+export const ACTOR_WEIGHTS: Record<ActorType, Record<ActorEventType, number>> = {
+  lead: {
+    stepForward: 8,
+    adlib: 4,
+    heatUp: 9,
+    silence: 12,
+    positionShift: 4,
+    tempoRush: 4,
+    delayedExit: 11,
+    ensembleWaver: 3,
+  },
+  junior: {
+    stepForward: 13,
+    adlib: 12,
+    heatUp: 11,
+    silence: 3,
+    positionShift: 6,
+    tempoRush: 10,
+    delayedExit: 3,
+    ensembleWaver: 4,
+  },
+  skilled: {
+    stepForward: 4,
+    adlib: 4,
+    heatUp: 6,
+    silence: 12,
+    positionShift: 10,
+    tempoRush: 4,
+    delayedExit: 11,
+    ensembleWaver: 8,
+  },
+};
+
+export const STATE_WEIGHTS: Record<ActorState, Record<ActorEventType, number>> = {
+  elated: {
+    stepForward: 9,
+    adlib: 8,
+    heatUp: 9,
+    silence: 1,
+    positionShift: 4,
+    tempoRush: 7,
+    delayedExit: 2,
+    ensembleWaver: 3,
+  },
+  contemplative: {
+    stepForward: 2,
+    adlib: 2,
+    heatUp: 4,
+    silence: 10,
+    positionShift: 3,
+    tempoRush: 1,
+    delayedExit: 8,
+    ensembleWaver: 3,
+  },
+  anxious: {
+    stepForward: 3,
+    adlib: 3,
+    heatUp: 2,
+    silence: 4,
+    positionShift: 9,
+    tempoRush: 8,
+    delayedExit: 3,
+    ensembleWaver: 6,
+  },
+  immersed: {
+    stepForward: 4,
+    adlib: 5,
+    heatUp: 8,
+    silence: 8,
+    positionShift: 5,
+    tempoRush: 2,
+    delayedExit: 6,
+    ensembleWaver: 5,
+  },
+  fatigued: {
+    stepForward: 3,
+    adlib: 2,
+    heatUp: 3,
+    silence: 5,
+    positionShift: 8,
+    tempoRush: 7,
+    delayedExit: 4,
+    ensembleWaver: 6,
+  },
+};
+
+export const RESPONSE_BIAS: Record<MainResponse, Exclude<LoadBias, null>> = {
+  catch: 'light',
+  arrange: 'stageManagement',
+  wait: 'sound',
+  cut: 'stageManagement',
+};

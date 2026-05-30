@@ -1,0 +1,155 @@
+import { ACTS, INITIAL_ACTORS, TURNS_PER_ACT, TOTAL_TURNS } from './constants';
+import { advanceActorStates, assignActorRoles, pickFocusActor, resolveActorEvent } from './actorLogic';
+import { makeSeed } from './rng';
+import { actForTurn, clampLoad, createPerformanceReview, determinePerformanceStyle, maybeCreateFray, previewResult, toTurnLog } from './scoring';
+import type { GameState, MainResponse, PerformanceResult, PrepAction } from './types';
+
+export type GameAction =
+  | { type: 'START'; seed?: string }
+  | { type: 'SELECT_PREP'; prep: PrepAction }
+  | { type: 'SELECT_RESPONSE'; response: MainResponse }
+  | { type: 'COMMIT_RESULT' }
+  | { type: 'RESET_TO_TITLE' };
+
+const HISTORY_KEY = 'honban.performance.history.v1';
+
+export function createInitialGame(seed = makeSeed()): GameState {
+  const totalTurn = 1;
+  const focus = pickFocusActor(seed, totalTurn);
+  return {
+    seed,
+    ...actForTurn(totalTurn),
+    totalTurn,
+    sceneScore: 0,
+    flowScore: 0,
+    trustScore: 0,
+    performanceStyle: null,
+    backstageLoad: 0,
+    loadBias: null,
+    actors: assignActorRoles(INITIAL_ACTORS, focus),
+    currentFocusActorId: focus,
+    currentActorEvent: null,
+    selectedPrep: null,
+    selectedResponse: null,
+    lastResponses: [],
+    pendingFrayEvent: undefined,
+    logs: [],
+    status: 'prep',
+  };
+}
+
+export const titleState: GameState = {
+  ...createInitialGame('title-preview'),
+  currentFocusActorId: null,
+  status: 'title',
+};
+
+export function finishPerformance(state: GameState): PerformanceResult {
+  const { title, review, reviewNotes } = createPerformanceReview(state.logs, state.sceneScore, state.flowScore, state.trustScore, state.backstageLoad);
+  const highlights = [...state.logs]
+    .sort((a, b) => {
+      const tierRank = { masterpiece: 4, scene: 3, smallSuccess: 2, fray: 1, accident: 0 };
+      return tierRank[b.resultTier] - tierRank[a.resultTier] || b.deltaScene - a.deltaScene;
+    })
+    .slice(0, 5)
+    .sort((a, b) => a.totalTurn - b.totalTurn);
+  return {
+    seed: state.seed,
+    finishedAt: new Date().toISOString(),
+    sceneScore: state.sceneScore,
+    flowScore: state.flowScore,
+    trustScore: state.trustScore,
+    backstageLoad: state.backstageLoad,
+    performanceStyle: state.performanceStyle,
+    title,
+    review,
+    reviewNotes,
+    highlights,
+  };
+}
+
+export function savePerformanceResult(result: PerformanceResult) {
+  const current = readPerformanceHistory();
+  const next = [result, ...current].slice(0, 8);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+}
+
+export function readPerformanceHistory(): PerformanceResult[] {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw) as PerformanceResult[];
+  } catch {
+    return [];
+  }
+}
+
+export function gameReducer(state: GameState, action: GameAction): GameState {
+  switch (action.type) {
+    case 'START':
+      return createInitialGame(action.seed);
+    case 'RESET_TO_TITLE':
+      return titleState;
+    case 'SELECT_PREP': {
+      if (state.status !== 'prep') return state;
+      const selected = { ...state, selectedPrep: action.prep };
+      return {
+        ...selected,
+        currentActorEvent: resolveActorEvent(selected),
+        status: 'response',
+      };
+    }
+    case 'SELECT_RESPONSE': {
+      if (state.status !== 'response' && state.status !== 'result') return state;
+      return {
+        ...state,
+        selectedResponse: action.response,
+        status: 'result',
+      };
+    }
+    case 'COMMIT_RESULT': {
+      if (state.status !== 'result') return state;
+      const preview = previewResult(state);
+      const log = toTurnLog(state, preview);
+      const logs = [...state.logs, log];
+      const performanceStyle = state.performanceStyle ?? (state.totalTurn === TURNS_PER_ACT ? determinePerformanceStyle(logs) : null);
+      const loadAfterResult = clampLoad(state.backstageLoad + preview.deltaLoad);
+      const actBreakRelief = state.turnInAct === TURNS_PER_ACT ? -1 : 0;
+      const backstageLoad = clampLoad(loadAfterResult + actBreakRelief);
+      const nextBase = {
+        ...state,
+        logs,
+        sceneScore: state.sceneScore + preview.deltaScene,
+        flowScore: state.flowScore + preview.deltaFlow,
+        trustScore: state.trustScore + preview.deltaTrust,
+        performanceStyle,
+        backstageLoad,
+        loadBias: preview.loadBias,
+        lastResponses: [...state.lastResponses, preview.mainResponse].slice(-4),
+        pendingFrayEvent: maybeCreateFray(state, preview),
+      };
+      const withActors = { ...nextBase, actors: advanceActorStates(nextBase) };
+      if (state.totalTurn >= TOTAL_TURNS) {
+        const finished = { ...withActors, status: 'finished' as const };
+        savePerformanceResult(finishPerformance(finished));
+        return finished;
+      }
+      const totalTurn = state.totalTurn + 1;
+      const focus = pickFocusActor(state.seed, totalTurn);
+      return {
+        ...withActors,
+        ...actForTurn(totalTurn),
+        totalTurn,
+        theme: ACTS[Math.ceil(totalTurn / TURNS_PER_ACT) - 1]?.name ?? '千秋楽',
+        actors: assignActorRoles(withActors.actors, focus),
+        currentFocusActorId: focus,
+        currentActorEvent: null,
+        selectedPrep: null,
+        selectedResponse: null,
+        status: 'prep',
+      };
+    }
+    default:
+      return state;
+  }
+}
