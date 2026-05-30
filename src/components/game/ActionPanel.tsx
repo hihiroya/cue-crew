@@ -108,9 +108,10 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
               </div>
               <div className="effect-row" aria-label="副作用">
                 {effects.map((item) => (
-                  <span key={item.key} className={`effect-chip effect-${item.tone}`}>
-                    {item.repeat ? <Icon name="repeat" /> : <Icon name={item.icon} />}
-                    <strong>{item.label}</strong>
+                  <span key={item.key} className={`effect-chip effect-${item.tone}`} title={item.title} aria-label={item.title}>
+                    {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
+                    <Icon name={item.icon} />
+                    <strong>{item.marker}</strong>
                   </span>
                 ))}
               </div>
@@ -181,8 +182,13 @@ function ResponseLegend() {
         <span><Icon name="actor" />役者</span>
         <span><Icon name="state" />状態</span>
         <span><Icon name="act" />公演回</span>
+        <span><Icon name="load" />負荷</span>
+        <span><Icon name="trust" />信頼</span>
+        <span><Icon name="flow" />流れ</span>
+        <span><Icon name="repeat" />連続</span>
       </div>
-      <p>◎ 強い / ○ 合う / △ 普通 / × 注意。下の細い線は左から事故、ほころび、小成功、場面化、名場面。</p>
+      <p>◎ 強い / ○ 合う / △ 普通 / × 注意。↑↑ 大きく増える / ↑ 増える / → 維持 / ↓ 減る / ↓↓ 大きく減る。負荷は↑が悪化、↓が改善。</p>
+      <p>下の細い線は左から事故、ほころび、小成功、場面化、名場面。</p>
     </details>
   );
 }
@@ -219,58 +225,95 @@ function toneForValue(value: number) {
 }
 
 function effectItems(insight: ResponseInsight) {
-  const parts = insight.sideEffectLabel.split(' / ').filter(Boolean);
-  const parsed = parts.flatMap((part) => parseEffect(part));
-  return parsed.length ? parsed : [{ key: 'load-0', icon: 'load' as const, label: '負荷維持', tone: 'neutral', repeat: false }];
+  const repeatIndex = insight.sideEffectLabel.indexOf('連続使用:');
+  const normalText = repeatIndex >= 0 ? insight.sideEffectLabel.slice(0, repeatIndex).replace(/\/\s*$/, '').trim() : insight.sideEffectLabel;
+  const repeatText = repeatIndex >= 0 ? insight.sideEffectLabel.slice(repeatIndex).replace('連続使用:', '').trim() : '';
+  const normal = normalText.split(' / ').filter(Boolean).flatMap((part) => parseEffect(part, false));
+  const repeated = repeatText.split(' / ').filter(Boolean).flatMap((part) => parseEffect(part, true));
+  const parsed = [...normal, ...repeated];
+  return parsed.length ? parsed : [makeEffect('負荷維持', 'load', 0, false)];
 }
 
-function parseEffect(part: string): Array<{ key: string; icon: 'load' | 'trust' | 'flow' | 'repeat'; label: string; tone: 'good' | 'watch' | 'bad' | 'neutral'; repeat: boolean }> {
-  const repeat = part.startsWith('連続使用:');
-  const clean = part.replace('連続使用:', '').trim();
-  return clean.split(' / ').flatMap((inner) => {
-    const trimmed = inner.trim();
-    if (!trimmed) return [];
-    const icon = trimmed.startsWith('負荷') ? 'load' : trimmed.startsWith('信頼') ? 'trust' : trimmed.startsWith('流れ') ? 'flow' : 'repeat';
-    const numeric = Number(trimmed.match(/[+-]\d+/)?.[0] ?? 0);
-    const isLoad = icon === 'load';
-    const tone = numeric === 0
-      ? 'neutral'
-      : isLoad
-        ? numeric < 0 ? 'good' : numeric >= 2 ? 'bad' : 'watch'
-        : numeric > 0 ? 'good' : 'bad';
-    return [{
-      key: `${repeat ? 'repeat-' : ''}${trimmed}`,
-      icon: repeat ? 'repeat' : icon,
-      label: effectLabel(icon, numeric),
-      tone,
-      repeat,
-    }];
-  });
+type EffectIcon = 'load' | 'trust' | 'flow';
+type EffectTone = 'good' | 'watch' | 'bad' | 'neutral';
+type EffectItem = {
+  key: string;
+  icon: EffectIcon;
+  marker: string;
+  raw: string;
+  title: string;
+  tone: EffectTone;
+  value: number;
+  repeat: boolean;
+};
+
+function parseEffect(part: string, repeat: boolean): EffectItem[] {
+  const trimmed = part.trim();
+  if (!trimmed) return [];
+  const icon: EffectIcon = trimmed.startsWith('信頼') ? 'trust' : trimmed.startsWith('流れ') ? 'flow' : 'load';
+  const numeric = Number(trimmed.match(/[+-]\d+/)?.[0] ?? 0);
+  return [makeEffect(trimmed, icon, numeric, repeat)];
 }
 
-function effectLabel(icon: 'load' | 'trust' | 'flow' | 'repeat', value: number) {
+function makeEffect(raw: string, icon: EffectIcon, value: number, repeat: boolean): EffectItem {
+  const tone = effectTone(icon, value);
+  const marker = effectMarker(value);
+  const title = `${repeat ? '連続使用: ' : ''}${effectTargetLabel(icon)} ${marker}`;
+  return {
+    key: `${repeat ? 'repeat-' : ''}${raw}`,
+    icon,
+    marker,
+    raw,
+    title,
+    tone,
+    value,
+    repeat,
+  };
+}
+
+function effectMarker(value: number) {
+  if (value >= 2) return '↑↑';
+  if (value === 1) return '↑';
+  if (value === 0) return '→';
+  if (value === -1) return '↓';
+  return '↓↓';
+}
+
+function effectTone(icon: EffectIcon, value: number): EffectTone {
+  if (value === 0) return 'neutral';
   if (icon === 'load') {
-    if (value < 0) return '負荷軽減';
-    if (value > 1) return '負荷重い';
-    if (value > 0) return '負荷増';
-    return '負荷維持';
+    if (value < 0) return 'good';
+    return value >= 2 ? 'bad' : 'watch';
   }
-  if (icon === 'trust') {
-    if (value > 0) return '信頼深まる';
-    if (value < 0) return '信頼削る';
-    return '信頼維持';
+  return value > 0 ? 'good' : 'bad';
+}
+
+function effectTargetLabel(icon: EffectIcon) {
+  if (icon === 'load') return '負荷';
+  if (icon === 'trust') return '信頼';
+  return '流れ';
+}
+
+function effectPhrase(item: EffectItem) {
+  if (item.raw === '負荷回復なし') return `${item.repeat ? '連続使用で' : ''}負荷は軽くならない`;
+  if (item.icon === 'load') {
+    if (item.value >= 2) return `${item.repeat ? '連続使用で' : ''}負荷が大きく増える`;
+    if (item.value > 0) return `${item.repeat ? '連続使用で' : ''}負荷が増える`;
+    if (item.value < 0) return `${item.repeat ? '連続使用で' : ''}負荷が減る`;
+    return '負荷は変わらない';
   }
-  if (icon === 'flow') {
-    if (value > 0) return '流れ整う';
-    if (value < 0) return '流れ乱れ';
-    return '流れ維持';
+  if (item.icon === 'trust') {
+    if (item.value > 0) return `${item.repeat ? '連続使用で' : ''}信頼が増える`;
+    if (item.value < 0) return `${item.repeat ? '連続使用で' : ''}信頼が減る`;
+    return '信頼は変わらない';
   }
-  return value < 0 ? '連続注意' : '連続負荷';
+  if (item.value > 0) return `${item.repeat ? '連続使用で' : ''}流れが整う`;
+  if (item.value < 0) return `${item.repeat ? '連続使用で' : ''}流れが乱れる`;
+  return '流れは変わらない';
 }
 
 function effectSummary(insight: ResponseInsight) {
-  const labels = effectItems(insight).map((item) => item.label);
-  return labels.join('、');
+  return effectItems(insight).map(effectPhrase).join('、');
 }
 
 function decisionMemo(insight: ResponseInsight) {

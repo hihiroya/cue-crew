@@ -890,10 +890,27 @@ button:disabled {
   color: var(--muted);
 }
 
+.effect-chip {
+  min-width: 48px;
+  justify-content: center;
+}
+
 .affinity-chip .icon,
 .effect-chip .icon {
   width: 0.95rem;
   height: 0.95rem;
+}
+
+.choice-button .affinity-chip .icon,
+.choice-button .effect-chip .icon {
+  color: currentColor;
+}
+
+.effect-chip .repeat-icon {
+  width: 0.82rem;
+  height: 0.82rem;
+  margin-right: -2px;
+  opacity: 0.72;
 }
 
 .affinity-chip strong,
@@ -901,6 +918,12 @@ button:disabled {
   color: #f3e6c9;
   font-size: 0.7rem;
   line-height: 1;
+}
+
+.effect-chip strong {
+  min-width: 1.05rem;
+  font-size: 0.82rem;
+  text-align: center;
 }
 
 .affinity-strong,
