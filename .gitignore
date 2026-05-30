@@ -26,4 +26,9 @@ Thumbs.db
 # Tool caches
 .eslintcache
 .vite/
+.wrangler/
 coverage/
+
+# Cloudflare local secrets
+.dev.vars
+.dev.vars.*

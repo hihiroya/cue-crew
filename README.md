@@ -48,7 +48,7 @@ npm run screenshot -- --scenario=result --out=tmp/result.png
 
 ## Cloudflare Pages デプロイ
 
-Cloudflare Pages では次の設定を使います。
+Cloudflare Pages では `wrangler.jsonc` を設定ファイルとして使います。
 
 - Framework preset: `Vite`
 - Build command: `npm run build`
@@ -56,6 +56,36 @@ Cloudflare Pages では次の設定を使います。
 - Node.js version: `24`
 
 バックエンド、外部API、ランタイム画像生成は使用していません。
+
+### Wrangler でローカル確認
+
+```bash
+npm run cf:preview
+```
+
+`dist/` を Cloudflare Pages 相当のローカル環境で配信します。
+
+### Wrangler で直接デプロイ
+
+初回のみ Cloudflare にログインします。
+
+```bash
+npx wrangler login
+```
+
+Pages プロジェクトを作成します。
+
+```bash
+npx wrangler pages project create cue-crew --production-branch main
+```
+
+ビルドして Cloudflare Pages にデプロイします。
+
+```bash
+npm run cf:deploy -- --branch main
+```
+
+以後は同じコマンドで更新できます。GitHub 連携で自動デプロイする場合も、Cloudflare 側の設定は `npm run build` と `dist` を指定してください。
 
 ## ゲームルール概要
 

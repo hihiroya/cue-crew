@@ -25,7 +25,9 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "screenshot": "node scripts/capture-screenshot.mjs",
-    "verify": "npm audit signatures && npm run build"
+    "verify": "npm audit signatures && npm run build",
+    "cf:preview": "npm run build && wrangler pages dev dist --compatibility-date=2026-05-30",
+    "cf:deploy": "npm run build && wrangler pages deploy dist --project-name=cue-crew"
   },
   "dependencies": {
     "react": "19.2.6",
@@ -36,6 +38,7 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.2",
     "typescript": "6.0.3",
-    "vite": "8.0.14"
+    "vite": "8.0.14",
+    "wrangler": "4.94.0"
   }
 }
