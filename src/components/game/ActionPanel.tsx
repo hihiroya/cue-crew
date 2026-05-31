@@ -100,6 +100,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
               <span className="result-rail-label"><Icon name="scene" />成立見込み</span>
               <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
               <div className="affinity-row" aria-label="相性">
+                <span className="affinity-row-label">相性:</span>
                 {affinity.map((item) => (
                   <span key={item.id} className={`affinity-chip affinity-${item.tone}`} title={item.title} aria-label={item.title}>
                     <Icon name={item.icon} />
@@ -180,8 +181,8 @@ function ResponseLegend() {
       <summary>凡例</summary>
       <div>
         <span><Icon name="event" />出来事</span>
-        <span><Icon name="actor" />役者</span>
-        <span><Icon name="state" />状態</span>
+        <span><Icon name="actor" />役者型</span>
+        <span><Icon name="state" />役者状態</span>
         <span><Icon name="act" />公演回</span>
         <span><Icon name="load" />負荷</span>
         <span><Icon name="trust" />信頼</span>
@@ -189,7 +190,7 @@ function ResponseLegend() {
         <span><Icon name="repeat" />連続</span>
       </div>
       <p>◎ 強い / ○ 合う / △ 普通 / × 注意。</p>
-      <p>成立見込み: 事故 → ほころび → 小成功 → 場面化 → 名場面。</p>
+      <p>成立見込み: 事故 → ほころび → 小成功 → 場面化 → 名場面</p>
     </details>
   );
 }
@@ -205,8 +206,8 @@ function affinityItems(insight: ResponseInsight) {
   const value = (id: string) => insight.scoreBreakdown.find((entry) => entry.id === id)?.value ?? 0;
   return [
     item('event', 'event', '出来事', value('event')),
-    item('actor', 'actor', '役者', value('actor')),
-    item('state', 'state', '状態', value('state')),
+    item('actor', 'actor', '役者型', value('actor')),
+    item('state', 'state', '役者状態', value('state')),
     item('act', 'act', '公演回', value('act')),
   ];
 }

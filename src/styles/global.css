@@ -894,6 +894,12 @@ button:disabled {
   align-items: center;
 }
 
+.affinity-row-label {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
 .affinity-chip,
 .effect-chip {
   display: inline-flex;
