@@ -66,13 +66,11 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
         <p>二手目{state.selectedPrep ? ` / 先読み: ${PREP_LABELS[state.selectedPrep]}` : ''}</p>
         <h2>本対応を選ぶ</h2>
       </div>
-      <ResponseLegend />
       <div className="choice-grid response-grid">
         {insights.map((insight) => {
           const response = insight.response;
           const relation = prepRelationMark(insight.prepRelationTone);
           const range = resultRange(insight);
-          const affinity = affinityItems(insight);
           const effects = effectItems(insight);
           const isInspected = inspected.response === response;
           return (
@@ -99,9 +97,17 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
               <strong className="response-aim">{compactAim(insight)}</strong>
               <span className="result-rail-label"><Icon name="scene" />成立見込み</span>
               <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
-              <div className="card-readout" aria-label="相性と影響の要約">
-                <span>相性 <strong>{affinity.map((item) => item.symbol).join('')}</strong></span>
-                <span>影響 <strong>{effects.map((item) => item.marker).join(' ')}</strong></span>
+              <div className="card-effect-summary" aria-label="影響の要約">
+                <span>影響</span>
+                <div>
+                  {effects.map((item) => (
+                    <em key={item.key} className={`effect-mini effect-${item.tone}`} title={item.title} aria-label={item.title}>
+                      {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
+                      <Icon name={item.icon} />
+                      <strong>{item.marker}</strong>
+                    </em>
+                  ))}
+                </div>
               </div>
               {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
             </button>
@@ -162,43 +168,11 @@ function ResultRail({ range, resultTier, danger }: { range: { lowIndex: number; 
   );
 }
 
-function ResponseLegend() {
-  return (
-    <details className="response-legend" open>
-      <summary>凡例</summary>
-      <div>
-        <span><Icon name="event" />出来事</span>
-        <span><Icon name="actor" />役者型</span>
-        <span><Icon name="state" />役者状態</span>
-        <span><Icon name="act" />公演回</span>
-        <span><Icon name="load" />負荷</span>
-        <span><Icon name="trust" />信頼</span>
-        <span><Icon name="flow" />流れ</span>
-        <span><Icon name="repeat" />連続</span>
-      </div>
-      <p>◎ 強い / ○ 合う / △ 普通 / × 注意</p>
-      <p>成立見込み: 事故 → ほころび → 小成功 → 場面化 → 名場面</p>
-    </details>
-  );
-}
-
 function ReadoutHud({ insight }: { insight: ResponseInsight }) {
   const affinity = affinityItems(insight);
   const effects = effectItems(insight);
   return (
     <div className="readout-hud" aria-label="選択中の相性と影響">
-      <section>
-        <span>相性</span>
-        <div>
-          {affinity.map((item) => (
-            <em key={item.id} className={`readout-chip affinity-${item.tone}`} title={item.title} aria-label={item.title}>
-              <Icon name={item.icon} />
-              <small>{item.label}</small>
-              <strong>{item.symbol}</strong>
-            </em>
-          ))}
-        </div>
-      </section>
       <section>
         <span>影響</span>
         <div>
@@ -211,6 +185,19 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
             </em>
           ))}
         </div>
+      </section>
+      <section>
+        <span>相性</span>
+        <div>
+          {affinity.map((item) => (
+            <em key={item.id} className={`readout-chip affinity-${item.tone}`} title={item.title} aria-label={item.title}>
+              <Icon name={item.icon} />
+              <small>{item.label}</small>
+              <strong>{item.symbol}</strong>
+            </em>
+          ))}
+        </div>
+        <p>◎ 強い / ○ 合う / △ 普通 / × 注意</p>
       </section>
     </div>
   );
@@ -296,11 +283,11 @@ function makeEffect(raw: string, icon: EffectIcon, value: number, repeat: boolea
 }
 
 function effectMarker(value: number) {
-  if (value >= 2) return '↑↑';
+  if (value >= 2) return '▲';
   if (value === 1) return '↑';
   if (value === 0) return '→';
   if (value === -1) return '↓';
-  return '↓↓';
+  return '▼';
 }
 
 function effectTone(icon: EffectIcon, value: number): EffectTone {

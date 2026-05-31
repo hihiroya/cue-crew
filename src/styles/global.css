@@ -1027,33 +1027,70 @@ button:disabled {
   font-weight: 800;
 }
 
-.card-readout {
+.card-effect-summary {
   grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  align-items: center;
   gap: 6px;
-}
-
-.card-readout span {
-  display: inline-flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 4px;
   min-width: 0;
   padding: 6px 7px;
   border-radius: 7px;
-  color: var(--muted);
   background: rgba(0, 0, 0, 0.18);
-  font-size: 0.62rem;
-  font-weight: 800;
-  white-space: nowrap;
 }
 
-.card-readout strong {
+.card-effect-summary > span {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 0.64rem;
+  font-weight: 800;
+}
+
+.card-effect-summary > div {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+}
+
+.effect-mini {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 36px;
+  min-height: 22px;
+  padding: 3px 5px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--muted);
+  font-style: normal;
+}
+
+.effect-mini .icon {
+  width: 0.82rem;
+  height: 0.82rem;
+  color: currentColor;
+}
+
+.choice-button .effect-mini .icon {
+  color: currentColor;
+}
+
+.effect-mini .repeat-icon {
+  width: 0.72rem;
+  height: 0.72rem;
+  margin-right: -3px;
+  opacity: 0.72;
+}
+
+.effect-mini strong {
+  min-width: 0.72rem;
   color: #f3e6c9;
-  font-size: 0.76rem;
-  letter-spacing: 0;
-  white-space: nowrap;
+  font-size: 0.78rem;
+  line-height: 1;
+  text-align: center;
 }
 
 .affinity-chip,
@@ -1199,6 +1236,13 @@ button:disabled {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 5px;
+}
+
+.readout-hud section > p {
+  margin: -1px 0 0;
+  color: var(--muted);
+  font-size: 0.68rem;
+  line-height: 1.4;
 }
 
 .readout-chip {
