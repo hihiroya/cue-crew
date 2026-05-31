@@ -349,8 +349,16 @@ async function runScenario(client, sessionId, name) {
         return true;
       })()
     `;
-    const result = await client.send('Runtime.evaluate', { expression, returnByValue: true }, sessionId);
-    if (!result.result.value) throw new Error(`Button was not found: ${text}`);
+    let clicked = false;
+    for (let i = 0; i < 15; i += 1) {
+      const result = await client.send('Runtime.evaluate', { expression, returnByValue: true }, sessionId);
+      if (result.result.value) {
+        clicked = true;
+        break;
+      }
+      await delay(100);
+    }
+    if (!clicked) throw new Error(`Button was not found: ${text}`);
     await delay(120);
   };
 
@@ -369,6 +377,14 @@ async function runScenario(client, sessionId, name) {
   }
 
   if (name === 'response') {
+    await clickByText('はじめる');
+    await clickByText('注視');
+    await clickByText('この読みで待つ');
+    await delay(850);
+    return;
+  }
+
+  if (name === 'cue') {
     await clickByText('はじめる');
     await clickByText('注視');
     await clickByText('この読みで待つ');

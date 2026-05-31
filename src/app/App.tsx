@@ -1,4 +1,4 @@
-import { useMemo, useReducer, useState } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
 import { PrepPanel, ResponsePanel } from '../components/game/ActionPanel';
 import { ActorStage } from '../components/game/ActorStage';
 import { ResultPreviewCard } from '../components/game/ResultPreviewCard';
@@ -7,15 +7,22 @@ import { GameHeader } from '../components/layout/GameHeader';
 import { Icon } from '../components/ui/Icon';
 import { ActorSilhouette } from '../components/actors/ActorSilhouette';
 import { pickFocusActor, topOmenEvents } from '../game/actorLogic';
-import { ACTOR_LABELS, EVENT_LABELS, PERFORMANCE_SLOT_LABELS, PERFORMANCE_STYLE_DETAILS, TOTAL_TURNS } from '../game/constants';
+import { ACTOR_LABELS, EVENT_LABELS, PERFORMANCE_SLOT_LABELS, PERFORMANCE_STYLE_DETAILS, PREP_LABELS, PREP_MATCHES, PREP_RESPONSE_READY_LABELS, TOTAL_TURNS } from '../game/constants';
 import { finishPerformance, gameReducer, readPerformanceHistory, titleState } from '../game/gameReducer';
 import { makeSeed } from '../game/rng';
 import { previewResult } from '../game/scoring';
-import type { PerformanceResult } from '../game/types';
+import type { ActorEventType, PerformanceResult, PrepAction } from '../game/types';
+
+type PendingPrepCue = {
+  prep: PrepAction;
+  coveredCount: number;
+  visibleCount: number;
+};
 
 export function App() {
   const [state, dispatch] = useReducer(gameReducer, titleState);
   const [historyVersion, setHistoryVersion] = useState(0);
+  const [pendingPrepCue, setPendingPrepCue] = useState<PendingPrepCue | null>(null);
   const history = useMemo(() => {
     historyVersion;
     return readPerformanceHistory();
@@ -32,6 +39,27 @@ export function App() {
   const focusActor = state.actors.find((actor) => actor.id === state.currentFocusActorId) ?? state.actors[0];
   const visibleOmenEvents = topOmenEvents(focusActor).map((omen) => omen.event);
   const nextFocusActorId = state.totalTurn < TOTAL_TURNS ? pickFocusActor(state.seed, state.totalTurn + 1) : null;
+
+  useEffect(() => {
+    if (!pendingPrepCue) return;
+    if (state.status !== 'prep') {
+      setPendingPrepCue(null);
+      return;
+    }
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const delay = prefersReducedMotion ? 120 : 760;
+    const timer = window.setTimeout(() => {
+      dispatch({ type: 'SELECT_PREP', prep: pendingPrepCue.prep });
+      setPendingPrepCue(null);
+    }, delay);
+    return () => window.clearTimeout(timer);
+  }, [pendingPrepCue, state.status]);
+
+  const beginPrepCue = (prep: PrepAction) => {
+    if (pendingPrepCue) return;
+    const coveredCount = visibleOmenEvents.filter((event: ActorEventType) => PREP_MATCHES[prep].includes(event)).length;
+    setPendingPrepCue({ prep, coveredCount, visibleCount: visibleOmenEvents.length });
+  };
 
   if (state.status === 'title') {
     return (
@@ -81,9 +109,9 @@ export function App() {
         {state.status === 'prep' ? (
           <PrepPanel
             selected={state.selectedPrep}
-            disabled={false}
+            disabled={Boolean(pendingPrepCue)}
             visibleOmens={visibleOmenEvents}
-            onSelect={(prep) => dispatch({ type: 'SELECT_PREP', prep })}
+            onSelect={beginPrepCue}
           />
         ) : null}
         {state.status === 'response' ? (
@@ -102,7 +130,22 @@ export function App() {
           />
         ) : null}
       </div>
+      {pendingPrepCue ? <PrepCueTransition cue={pendingPrepCue} /> : null}
     </main>
+  );
+}
+
+function PrepCueTransition({ cue }: { cue: PendingPrepCue }) {
+  return (
+    <div className="prep-cue-transition" role="status" aria-live="polite" aria-label="先読み待機中">
+      <div className="prep-cue-card">
+        <span className="prep-cue-icon"><Icon name={cue.prep} /></span>
+        <p>{PREP_RESPONSE_READY_LABELS[cue.prep]}</p>
+        <h2>{PREP_LABELS[cue.prep]}で読む</h2>
+        <strong>本番の揺れを待つ</strong>
+        <em>兆候カバー {cue.coveredCount}/{cue.visibleCount}</em>
+      </div>
+    </div>
   );
 }
 

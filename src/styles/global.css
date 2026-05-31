@@ -754,6 +754,99 @@ button:disabled {
   gap: 10px;
 }
 
+.prep-cue-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    linear-gradient(115deg, transparent 0 34%, rgba(229, 189, 104, 0.12) 45%, transparent 57%),
+    rgba(4, 5, 9, 0.72);
+  backdrop-filter: blur(3px);
+  animation: prepCueFade 760ms ease both;
+}
+
+.prep-cue-card {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  width: min(100%, 310px);
+  padding: 22px 20px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 217, 138, 0.46);
+  background:
+    linear-gradient(180deg, rgba(75, 15, 28, 0.94), rgba(9, 10, 16, 0.94)),
+    var(--surface-strong);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5), 0 0 34px rgba(229, 189, 104, 0.16);
+  overflow: hidden;
+  animation: prepCueRise 760ms ease both;
+}
+
+.prep-cue-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(112deg, transparent 0 22%, rgba(255, 217, 138, 0.2) 42%, transparent 56%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 18px);
+  pointer-events: none;
+  animation: prepCueLight 760ms ease both;
+}
+
+.prep-cue-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.prep-cue-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  color: var(--gold-strong);
+  background: rgba(229, 189, 104, 0.12);
+  border: 1px solid rgba(255, 217, 138, 0.36);
+}
+
+.prep-cue-icon .icon {
+  width: 1.55rem;
+  height: 1.55rem;
+}
+
+.prep-cue-card p,
+.prep-cue-card em {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.prep-cue-card h2 {
+  margin: 0;
+  color: var(--gold-strong);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1.12;
+  text-align: center;
+}
+
+.prep-cue-card strong {
+  color: #f5ead0;
+  font-size: 0.98rem;
+}
+
+.prep-cue-card em {
+  padding: 5px 9px;
+  border-radius: 999px;
+  color: #151017;
+  background: var(--gold);
+}
+
 .compact-fray {
   margin-top: 0;
 }
@@ -2517,6 +2610,50 @@ button:disabled {
   }
 }
 
+@keyframes prepCueFade {
+  0% {
+    opacity: 0;
+  }
+  18%,
+  76% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes prepCueRise {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  22%,
+  78% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.99);
+  }
+}
+
+@keyframes prepCueLight {
+  0% {
+    transform: translateX(-24%);
+    opacity: 0;
+  }
+  32%,
+  72% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(24%);
+    opacity: 0;
+  }
+}
+
 @media (min-width: 680px) {
   .game-header {
     grid-template-columns: auto minmax(170px, max-content) 1fr;
@@ -2677,5 +2814,9 @@ button:disabled {
   *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
+  }
+
+  .prep-cue-transition {
+    animation: none;
   }
 }
