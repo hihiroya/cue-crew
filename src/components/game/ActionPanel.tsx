@@ -99,24 +99,9 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
               <strong className="response-aim">{compactAim(insight)}</strong>
               <span className="result-rail-label"><Icon name="scene" />成立見込み</span>
               <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
-              <div className="affinity-row" aria-label="相性">
-                <span className="affinity-row-label">相性:</span>
-                {affinity.map((item) => (
-                  <span key={item.id} className={`affinity-chip affinity-${item.tone}`} title={item.title} aria-label={item.title}>
-                    <Icon name={item.icon} />
-                    <strong>{item.symbol}</strong>
-                  </span>
-                ))}
-              </div>
-              <div className="effect-row" aria-label="副作用">
-                <span className="effect-row-label">影響:</span>
-                {effects.map((item) => (
-                  <span key={item.key} className={`effect-chip effect-${item.tone}`} title={item.title} aria-label={item.title}>
-                    {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
-                    <Icon name={item.icon} />
-                    <strong>{item.marker}</strong>
-                  </span>
-                ))}
+              <div className="card-readout" aria-label="相性と影響の要約">
+                <span>相性 <strong>{affinity.map((item) => item.symbol).join('')}</strong></span>
+                <span>影響 <strong>{effects.map((item) => item.marker).join(' ')}</strong></span>
               </div>
               {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
             </button>
@@ -125,9 +110,10 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
       </div>
       <aside className={`decision-note relation-${inspected.prepRelationTone}`}>
         <div>
-          <span>判断メモ</span>
+          <span>この手の見立て</span>
           <strong>{RESPONSE_LABELS[inspected.response]} / {inspected.successRangeLabel}</strong>
         </div>
+        <ReadoutHud insight={inspected} />
         <p>{decisionMemo(inspected)}</p>
         <button className="primary-action decision-action" disabled={disabled} onClick={() => onSelect(inspected.response)}>
           この対応で進む
@@ -196,10 +182,45 @@ function ResponseLegend() {
   );
 }
 
+function ReadoutHud({ insight }: { insight: ResponseInsight }) {
+  const affinity = affinityItems(insight);
+  const effects = effectItems(insight);
+  return (
+    <div className="readout-hud" aria-label="選択中の相性と影響">
+      <section>
+        <span>相性</span>
+        <div>
+          {affinity.map((item) => (
+            <em key={item.id} className={`readout-chip affinity-${item.tone}`} title={item.title} aria-label={item.title}>
+              <Icon name={item.icon} />
+              <small>{item.label}</small>
+              <strong>{item.symbol}</strong>
+            </em>
+          ))}
+        </div>
+      </section>
+      <section>
+        <span>影響</span>
+        <div>
+          {effects.map((item) => (
+            <em key={item.key} className={`readout-chip effect-${item.tone}`} title={item.title} aria-label={item.title}>
+              {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
+              <Icon name={item.icon} />
+              <small>{effectTargetLabel(item.icon)}</small>
+              <strong>{item.marker}</strong>
+            </em>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function affinityItems(insight: ResponseInsight) {
   const item = (id: string, icon: 'event' | 'actor' | 'state' | 'act', label: string, value: number) => ({
     id,
     icon,
+    label,
     symbol: symbolForValue(value),
     tone: toneForValue(value),
     title: `${label}: ${symbolForValue(value)}`,
