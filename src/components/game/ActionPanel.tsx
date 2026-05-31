@@ -109,6 +109,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
                 ))}
               </div>
               <div className="effect-row" aria-label="副作用">
+                <span className="effect-row-label">影響:</span>
                 {effects.map((item) => (
                   <span key={item.key} className={`effect-chip effect-${item.tone}`} title={item.title} aria-label={item.title}>
                     {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
@@ -189,7 +190,7 @@ function ResponseLegend() {
         <span><Icon name="flow" />流れ</span>
         <span><Icon name="repeat" />連続</span>
       </div>
-      <p>◎ 強い / ○ 合う / △ 普通 / × 注意。</p>
+      <p>◎ 強い / ○ 合う / △ 普通 / × 注意</p>
       <p>成立見込み: 事故 → ほころび → 小成功 → 場面化 → 名場面</p>
     </details>
   );
@@ -325,5 +326,5 @@ function decisionMemo(insight: ResponseInsight) {
       ? '先読みとは別筋で成立する'
       : '先読みとは噛み合いにくい';
   const danger = insight.dangerWarning ? ` ${insight.downsideLabel}。` : '';
-  return `${prep}手。${insight.responseAimLabel}。見込みは${insight.successRangeLabel}。残る影響は${effectSummary(insight)}。${danger}`;
+  return `${prep}手。${insight.responseAimLabel}。見込みは${insight.successRangeLabel}。影響は${effectSummary(insight)}。${danger}`;
 }

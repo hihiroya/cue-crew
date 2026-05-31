@@ -67,7 +67,14 @@ export function App() {
         <span className={state.status === 'result' ? 'is-active' : ''}>場面を見る</span>
       </div>
       {state.status !== 'result' ? (
-        <ActorStage actors={state.actors} focusActorId={state.currentFocusActorId} nextFocusActorId={nextFocusActorId} backstageLoad={state.backstageLoad} event={state.currentActorEvent} />
+        <ActorStage
+          actors={state.actors}
+          focusActorId={state.currentFocusActorId}
+          nextFocusActorId={nextFocusActorId}
+          backstageLoad={state.backstageLoad}
+          event={state.currentActorEvent}
+          selectedPrep={state.selectedPrep}
+        />
       ) : null}
       {state.pendingFrayEvent ? <div className="fray-note compact-fray">前のほころび: {state.pendingFrayEvent.title}</div> : null}
       <div className="action-slot">
