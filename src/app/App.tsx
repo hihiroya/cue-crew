@@ -143,10 +143,17 @@ function PrepCueTransition({ cue }: { cue: PendingPrepCue }) {
         <p>{PREP_RESPONSE_READY_LABELS[cue.prep]}</p>
         <h2>{PREP_LABELS[cue.prep]}で読む</h2>
         <strong>本番の揺れを待つ</strong>
-        <em>兆候カバー {cue.coveredCount}/{cue.visibleCount}</em>
+        <em>{prepCueReadinessLabel(cue.coveredCount, cue.visibleCount)}</em>
       </div>
     </div>
   );
+}
+
+function prepCueReadinessLabel(coveredCount: number, visibleCount: number) {
+  if (coveredCount >= 2) return '備えは十分';
+  if (coveredCount === 1) return '一部に備えあり';
+  if (visibleCount === 0) return '別筋に備える';
+  return '別の揺れに備える';
 }
 
 function TitleScreen({ history, onStart, onReplay }: { history: PerformanceResult[]; onStart: () => void; onReplay: (seed: string) => void }) {

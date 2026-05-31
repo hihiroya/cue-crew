@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { EVENT_LABELS, PREP_DESCRIPTIONS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, PREP_RESPONSE_READY_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../game/constants';
+import { EVENT_LABELS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, PREP_RESPONSE_READY_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../game/constants';
 import { responseInsight } from '../../game/scoring';
 import type { ActorEventType, GameState, MainResponse, PrepAction, ResponseInsight, ResultTier } from '../../game/types';
 import { Icon } from '../ui/Icon';
@@ -48,15 +48,21 @@ export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepPr
                 </span>
               </div>
               <div className="cue-cover">
-                <span>兆候カバー</span>
-                <strong>{coveredOmens.length}/{visibleOmens.length}</strong>
-                <em>{prepToneLabel(tone)}</em>
+                <span>今の兆候への備え</span>
+                <strong>{prepToneLabel(tone)}</strong>
               </div>
               <div className="prep-primary-line">
                 <Icon name={PREP_PRIMARY_RESPONSE[prep]} />
-                <span>主対応: {RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}</span>
+                <span>本番で活きる手: {RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}</span>
               </div>
-              <small className="cover-line">{PREP_MATCHES[prep].map((event) => EVENT_LABELS[event]).join(' / ')}</small>
+              <div className="prep-event-set" aria-label="備える兆候">
+                <span>備える兆候</span>
+                <div>
+                  {PREP_MATCHES[prep].map((event) => (
+                    <em key={event} className={visibleOmens.includes(event) ? 'is-covered' : ''}>{EVENT_LABELS[event]}</em>
+                  ))}
+                </div>
+              </div>
               <em className={`selected-card-bar ${isInspected ? 'is-visible' : ''}`} aria-hidden={!isInspected}>
                 {isInspected ? '読み候補' : ''}
               </em>
@@ -66,40 +72,50 @@ export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepPr
       </div>
       <aside className={`cue-sheet cue-${inspectedTone}`}>
         <div className="cue-sheet-head">
-          <span>選択中のキューシート</span>
-          <strong>{PREP_LABELS[inspected]} / 兆候 {inspectedCoveredOmens.length}/{visibleOmens.length}</strong>
+          <span>袖の備え</span>
+          <strong>{PREP_LABELS[inspected]}で読む</strong>
         </div>
-        <div className="cue-sheet-grid">
+        <div className="cue-sheet-grid cue-sheet-focus">
           <section>
-            <span>張っている出来事</span>
-            <div className="cue-tags">
-              {PREP_MATCHES[inspected].map((event) => (
-                <em key={event} className={visibleOmens.includes(event) ? 'is-covered' : ''}>{EVENT_LABELS[event]}</em>
-              ))}
-            </div>
-          </section>
-          <section>
-            <span>見えている兆候</span>
-            <div className="cue-tags">
+            <span>見えている兆候への備え</span>
+            <div className="cue-readiness-list">
               {visibleOmens.map((event) => (
                 <em key={event} className={PREP_MATCHES[inspected].includes(event) ? 'is-covered' : 'is-missed'}>
-                  {EVENT_LABELS[event]} {PREP_MATCHES[inspected].includes(event) ? '○' : '×'}
+                  <b>{PREP_MATCHES[inspected].includes(event) ? '備えあり' : '別の揺れ'}</b>
+                  {EVENT_LABELS[event]}
                 </em>
               ))}
             </div>
           </section>
+          {prepExtraEvents(inspected, visibleOmens).length ? (
+            <section>
+              <span>ほかに備える兆候</span>
+              <div className="cue-tags">
+                {prepExtraEvents(inspected, visibleOmens).map((event) => (
+                  <em key={event}>{EVENT_LABELS[event]}</em>
+                ))}
+              </div>
+            </section>
+          ) : null}
         </div>
         <div className="cue-read">
           <p>{prepReadMemo(inspected, inspectedCoveredOmens.length, visibleOmens.length)}</p>
-          <p><strong>主対応:</strong> {RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[inspected]]}。{PREP_RESPONSE_HINTS[inspected].aim}。</p>
-          <p><strong>逃げ筋:</strong> {PREP_RESPONSE_HINTS[inspected].alternate}。</p>
+          <p><strong>本番で活きる手:</strong> {RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[inspected]]}。{PREP_RESPONSE_HINTS[inspected].aim}。</p>
+          <p><strong>外れた時の受け方:</strong> {PREP_RESPONSE_HINTS[inspected].alternate}。</p>
         </div>
-        <button className="primary-action cue-action" disabled={disabled} onClick={() => onSelect(inspected)}>
-          この読みで待つ
-        </button>
+        <div className="cue-commit">
+          <span>準備ができたら</span>
+          <button className="primary-action cue-action" disabled={disabled} onClick={() => onSelect(inspected)}>
+            この読みで本番を待つ
+          </button>
+        </div>
       </aside>
     </section>
   );
+}
+
+function prepExtraEvents(prep: PrepAction, visibleOmens: ActorEventType[]) {
+  return PREP_MATCHES[prep].filter((event) => !visibleOmens.includes(event));
 }
 
 function prepTone(covered: number, total: number): PrepTone {
@@ -110,24 +126,23 @@ function prepTone(covered: number, total: number): PrepTone {
 }
 
 function prepToneLabel(tone: PrepTone) {
-  if (tone === 'strong') return '濃い';
-  if (tone === 'good') return 'あり';
-  if (tone === 'thin') return '薄い';
-  return '危うい';
+  if (tone === 'strong') return '見えている兆候に合う';
+  if (tone === 'good') return '一部に備えあり';
+  if (tone === 'thin') return '別筋に備える';
+  return '今の兆候とは遠い';
 }
 
-function prepReadMemo(prep: PrepAction, covered: number, total: number) {
-  const cover = total > 0 ? `${covered}/${total}` : '0/0';
+function prepReadMemo(prep: PrepAction, covered: number, _total: number) {
   if (covered >= 2) {
-    return `見えている兆候に${cover}で張れている。起きた揺れを、次の対応へつなぎやすい読み。`;
+    return '見えている兆候に備えが入っている。起きた揺れを、次の対応へつなぎやすい読み。';
   }
   if (covered === 1) {
-    return `見えている兆候に${cover}で触れている。的中を狙いつつ、外れた時の受け方も残す読み。`;
+    return '見えている兆候の一部に備えている。的中を狙いつつ、外れた時の受け方も残す読み。';
   }
   if (prep === 'prepareTransition') {
-    return `見えている兆候には薄いが、崩れを小さく閉じるための読み。高負荷になる前に退路を残す。`;
+    return '今見えている兆候とは別筋だが、崩れを小さく閉じるための読み。高負荷になる前に退路を残す。';
   }
-  return `見えている兆候には薄い。役者の揺れが別方向へ動いた時に備える読み。`;
+  return '今見えている兆候とは別筋。役者の揺れが違う方向へ動いた時に備える読み。';
 }
 
 type ResponseProps = {
