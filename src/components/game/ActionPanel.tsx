@@ -88,7 +88,6 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
                   <strong>{RESPONSE_LABELS[response]}</strong>
                   <em>{insight.handTypeLabel}</em>
                 </span>
-                {isInspected ? <em className="selected-card-mark">選択中</em> : null}
               </div>
               <div className="outlook-summary" aria-label={`成立見込み: ${insight.successRangeLabel}`}>
                 <div className="outlook-head">
@@ -113,6 +112,9 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
                 </div>
               </div>
               {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
+              <em className={`selected-card-bar ${isInspected ? 'is-visible' : ''}`} aria-hidden={!isInspected}>
+                {isInspected ? '選択中' : ''}
+              </em>
             </button>
           );
         })}

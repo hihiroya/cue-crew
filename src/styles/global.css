@@ -842,7 +842,7 @@ button:disabled {
 .response-card-top {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr;
   gap: 8px;
   align-items: center;
   min-width: 0;
@@ -877,21 +877,6 @@ button:disabled {
   font-size: 0.64rem;
   font-style: normal;
   font-weight: 900;
-}
-
-.selected-card-mark {
-  align-self: center;
-  justify-self: end;
-  padding: 3px 7px;
-  border-radius: 999px;
-  color: #151017;
-  background: var(--gold-strong);
-  box-shadow: 0 0 0 2px rgba(255, 217, 138, 0.18);
-  font-size: 0.62rem;
-  font-style: normal;
-  font-weight: 900;
-  line-height: 1.1;
-  white-space: nowrap;
 }
 
 .response-badges {
@@ -1247,6 +1232,29 @@ button:disabled {
 
 .compact-danger {
   margin-top: -2px;
+}
+
+.selected-card-bar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 18px;
+  margin: -2px -3px -4px;
+  border-radius: 0 0 7px 7px;
+  color: transparent;
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0;
+}
+
+.selected-card-bar.is-visible {
+  color: #151017;
+  background: linear-gradient(90deg, rgba(229, 189, 104, 0.82), var(--gold-strong), rgba(229, 189, 104, 0.82));
+  box-shadow: 0 -1px 0 rgba(255, 217, 138, 0.18), 0 0 14px rgba(229, 189, 104, 0.2);
+  opacity: 1;
 }
 
 .decision-note {
@@ -1620,29 +1628,16 @@ button:disabled {
 }
 
 .choice-button.response-choice.is-selected {
-  position: relative;
   border-color: rgba(255, 217, 138, 0.78);
   background:
-    linear-gradient(135deg, rgba(229, 189, 104, 0.23), rgba(255, 255, 255, 0.055)),
-    rgba(229, 189, 104, 0.1);
-  box-shadow: inset 0 0 0 1px rgba(255, 217, 138, 0.34), 0 0 24px rgba(229, 189, 104, 0.18);
-}
-
-.choice-button.response-choice.is-selected::before {
-  content: "";
-  position: absolute;
-  inset: 7px auto 7px 7px;
-  width: 3px;
-  border-radius: 999px;
-  background: var(--gold-strong);
-  box-shadow: 0 0 12px rgba(255, 217, 138, 0.4);
-}
-
-.choice-button.fit-best {
-  border-color: rgba(255, 217, 138, 0.54);
-  background:
-    linear-gradient(135deg, rgba(229, 189, 104, 0.17), rgba(255, 255, 255, 0.045)),
+    linear-gradient(180deg, rgba(229, 189, 104, 0.14), rgba(229, 189, 104, 0.055)),
     rgba(255, 255, 255, 0.055);
+  box-shadow: inset 0 0 0 1px rgba(255, 217, 138, 0.34), 0 0 22px rgba(229, 189, 104, 0.16);
+}
+
+.choice-button.response-choice.fit-best:not(.is-selected) {
+  border-color: rgba(230, 190, 108, 0.24);
+  background: rgba(255, 255, 255, 0.055);
 }
 
 .fit-best .fit-label {
