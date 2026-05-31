@@ -88,15 +88,18 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
                   <strong>{RESPONSE_LABELS[response]}</strong>
                   <em>{insight.handTypeLabel}</em>
                 </span>
+                {isInspected ? <em className="selected-card-mark">選択中</em> : null}
               </div>
-              <div className="response-badges">
-                <em className={`prep-mark mark-${insight.prepRelationTone}`} aria-label={`先読みとの関係: ${insight.prepRelationLabel}`}>
-                  先読み{relation}
-                </em>
+              <div className="outlook-summary" aria-label={`成立見込み: ${insight.successRangeLabel}`}>
+                <div className="outlook-head">
+                  <span><Icon name="scene" />{compactAim(insight)}</span>
+                  <strong>{insight.successRangeLabel}</strong>
+                  <em className={`prep-mark mark-${insight.prepRelationTone}`} aria-label={`読み: ${insight.prepRelationLabel}`}>
+                    読み{relation}
+                  </em>
+                </div>
+                <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
               </div>
-              <strong className="response-aim">{compactAim(insight)}</strong>
-              <span className="result-rail-label"><Icon name="scene" />成立見込み</span>
-              <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
               <div className="card-effect-summary" aria-label="影響の要約">
                 <span>影響</span>
                 <div>
@@ -138,11 +141,11 @@ function prepRelationMark(tone: ResponseInsight['prepRelationTone']) {
 }
 
 function compactAim(insight: ResponseInsight) {
-  if (insight.resultTier === 'masterpiece') return '名場面まで狙う';
-  if (insight.resultTier === 'scene') return '場面化を狙う';
-  if (insight.resultTier === 'smallSuccess') return '小さく成立させる';
-  if (insight.resultTier === 'fray') return '崩れを小さく留める';
-  return '事故圏内を避けたい';
+  if (insight.resultTier === 'masterpiece') return '名場面狙い';
+  if (insight.resultTier === 'scene') return '場面化狙い';
+  if (insight.resultTier === 'smallSuccess') return '小成功狙い';
+  if (insight.resultTier === 'fray') return '崩れ抑え';
+  return '事故回避';
 }
 
 function resultRange(insight: ResponseInsight) {
