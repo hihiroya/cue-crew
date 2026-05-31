@@ -300,9 +300,9 @@ function EffectChangeIcon({ change }: { change: EffectChange }) {
     <svg className={`effect-change change-${change}`} viewBox="0 0 16 16" aria-hidden="true" focusable="false">
       {isStrongUp ? (
         <>
-          <path d="M8 13.4V4.2" />
-          <path d="M4.8 7.4 8 4.2l3.2 3.2" />
-          <path d="M4.8 4.4 8 1.2l3.2 3.2" />
+          <path d="M8 14V7.7" />
+          <path d="M4.7 11 8 7.7l3.3 3.3" />
+          <path d="M4.7 5.3 8 2l3.3 3.3" />
         </>
       ) : null}
       {change === 'up' ? <path d="M8 2.7v10.6M4.7 6 8 2.7 11.3 6" /> : null}
@@ -310,9 +310,9 @@ function EffectChangeIcon({ change }: { change: EffectChange }) {
       {change === 'down' ? <path d="M8 2.7v10.6M4.7 10 8 13.3 11.3 10" /> : null}
       {isStrongDown ? (
         <>
-          <path d="M8 2.6v9.2" />
-          <path d="M4.8 8.6 8 11.8l3.2-3.2" />
-          <path d="M4.8 11.6 8 14.8l3.2-3.2" />
+          <path d="M8 2v6.3" />
+          <path d="M4.7 5 8 8.3 11.3 5" />
+          <path d="M4.7 10.7 8 14l3.3-3.3" />
         </>
       ) : null}
       {!isUp && !isDown && change !== 'flat' ? <path d="M3 8h10M9.8 4.8 13 8l-3.2 3.2" /> : null}
