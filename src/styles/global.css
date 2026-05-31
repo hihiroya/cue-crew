@@ -705,6 +705,7 @@ button:disabled {
 }
 
 .omen-chip-panel {
+  grid-column: 1 / -1;
   display: grid;
   gap: 6px;
   align-self: end;
@@ -717,15 +718,17 @@ button:disabled {
 }
 
 .omen-chip-list {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 5px;
 }
 
 .omen-chip {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 5px;
+  min-width: 0;
   min-height: 28px;
   padding: 4px 6px;
   border-radius: 7px;
@@ -736,8 +739,12 @@ button:disabled {
 }
 
 .omen-chip b {
+  min-width: 0;
   font-size: 0.74rem;
   line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .omen-chip small {
