@@ -97,6 +97,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
                 </em>
               </div>
               <strong className="response-aim">{compactAim(insight)}</strong>
+              <span className="result-rail-label"><Icon name="scene" />成立見込み</span>
               <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
               <div className="affinity-row" aria-label="相性">
                 {affinity.map((item) => (
@@ -187,8 +188,8 @@ function ResponseLegend() {
         <span><Icon name="flow" />流れ</span>
         <span><Icon name="repeat" />連続</span>
       </div>
-      <p>◎ 強い / ○ 合う / △ 普通 / × 注意。↑↑ 大きく増える / ↑ 増える / → 維持 / ↓ 減る / ↓↓ 大きく減る。負荷は↑が悪化、↓が改善。</p>
-      <p>下の細い線は左から事故、ほころび、小成功、場面化、名場面。</p>
+      <p>◎ 強い / ○ 合う / △ 普通 / × 注意。</p>
+      <p>成立見込み: 事故 → ほころび → 小成功 → 場面化 → 名場面。</p>
     </details>
   );
 }

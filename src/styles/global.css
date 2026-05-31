@@ -838,6 +838,23 @@ button:disabled {
   line-height: 1.3;
 }
 
+.result-rail-label {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: fit-content;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.result-rail-label .icon {
+  width: 0.9rem;
+  height: 0.9rem;
+  color: var(--gold);
+}
+
 .result-rail {
   grid-column: 1 / -1;
   display: grid;
