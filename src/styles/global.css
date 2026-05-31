@@ -1051,9 +1051,14 @@ button:disabled {
   grid-column: 1 / -1;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  width: fit-content;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 217, 138, 0.18);
   color: #f5ead0;
-  font-size: 0.76rem;
+  background: rgba(229, 189, 104, 0.07);
+  font-size: 0.72rem;
   font-weight: 900;
 }
 
@@ -1086,41 +1091,6 @@ button:disabled {
   width: fit-content;
   padding: 3px 7px;
   border-radius: 999px;
-}
-
-.prep-event-set {
-  grid-column: 1 / -1;
-  display: grid;
-  gap: 5px;
-}
-
-.prep-event-set > span {
-  color: var(--muted);
-  font-size: 0.68rem;
-  font-weight: 800;
-}
-
-.prep-event-set > div {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.prep-event-set em {
-  padding: 3px 6px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #d9d1bf;
-  background: rgba(0, 0, 0, 0.16);
-  font-size: 0.66rem;
-  font-style: normal;
-  font-weight: 800;
-}
-
-.prep-event-set .is-covered {
-  color: var(--gold-strong);
-  border-color: rgba(255, 217, 138, 0.34);
-  background: rgba(229, 189, 104, 0.1);
 }
 
 .response-card-top {

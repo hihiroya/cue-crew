@@ -53,15 +53,7 @@ export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepPr
               </div>
               <div className="prep-primary-line">
                 <Icon name={PREP_PRIMARY_RESPONSE[prep]} />
-                <span>本番で活きる手: {RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}</span>
-              </div>
-              <div className="prep-event-set" aria-label="備える兆候">
-                <span>備える兆候</span>
-                <div>
-                  {PREP_MATCHES[prep].map((event) => (
-                    <em key={event} className={visibleOmens.includes(event) ? 'is-covered' : ''}>{EVENT_LABELS[event]}</em>
-                  ))}
-                </div>
+                <span>受け方は{RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}</span>
               </div>
               <em className={`selected-card-bar ${isInspected ? 'is-visible' : ''}`} aria-hidden={!isInspected}>
                 {isInspected ? '読み候補' : ''}
