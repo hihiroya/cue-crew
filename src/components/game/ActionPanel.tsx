@@ -106,7 +106,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
                     <em key={item.key} className={`effect-mini effect-${item.tone}`} title={item.title} aria-label={item.title}>
                       {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
                       <Icon name={item.icon} />
-                      <strong>{item.marker}</strong>
+                      <EffectChangeIcon change={item.change} />
                     </em>
                   ))}
                 </div>
@@ -186,7 +186,7 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
               {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
               <Icon name={item.icon} />
               <small>{effectTargetLabel(item.icon)}</small>
-              <strong>{item.marker}</strong>
+              <EffectChangeIcon change={item.change} />
             </em>
           ))}
         </div>
@@ -251,11 +251,13 @@ function effectItems(insight: ResponseInsight) {
 }
 
 type EffectIcon = 'load' | 'trust' | 'flow';
+type EffectChange = 'strong-up' | 'up' | 'flat' | 'down' | 'strong-down';
 type EffectTone = 'good' | 'watch' | 'bad' | 'neutral';
 type EffectItem = {
   key: string;
   icon: EffectIcon;
-  marker: string;
+  change: EffectChange;
+  changeLabel: string;
   raw: string;
   title: string;
   tone: EffectTone;
@@ -273,12 +275,14 @@ function parseEffect(part: string, repeat: boolean): EffectItem[] {
 
 function makeEffect(raw: string, icon: EffectIcon, value: number, repeat: boolean): EffectItem {
   const tone = effectTone(icon, value);
-  const marker = effectMarker(value);
-  const title = `${repeat ? '連続使用: ' : ''}${effectTargetLabel(icon)} ${marker}`;
+  const change = effectChange(value);
+  const changeLabel = effectChangeLabel(value);
+  const title = `${repeat ? '連続使用: ' : ''}${effectTargetLabel(icon)} ${changeLabel}`;
   return {
     key: `${repeat ? 'repeat-' : ''}${raw}`,
     icon,
-    marker,
+    change,
+    changeLabel,
     raw,
     title,
     tone,
@@ -287,12 +291,24 @@ function makeEffect(raw: string, icon: EffectIcon, value: number, repeat: boolea
   };
 }
 
-function effectMarker(value: number) {
-  if (value >= 2) return '▲';
-  if (value === 1) return '↑';
-  if (value === 0) return '→';
-  if (value === -1) return '↓';
-  return '▼';
+function EffectChangeIcon({ change }: { change: EffectChange }) {
+  return <span className={`effect-change change-${change}`} aria-hidden="true"><span /></span>;
+}
+
+function effectChange(value: number): EffectChange {
+  if (value >= 2) return 'strong-up';
+  if (value === 1) return 'up';
+  if (value === 0) return 'flat';
+  if (value === -1) return 'down';
+  return 'strong-down';
+}
+
+function effectChangeLabel(value: number) {
+  if (value >= 2) return '大きく増える';
+  if (value === 1) return '増える';
+  if (value === 0) return '維持';
+  if (value === -1) return '減る';
+  return '大きく減る';
 }
 
 function effectTone(icon: EffectIcon, value: number): EffectTone {
