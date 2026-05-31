@@ -1147,15 +1147,20 @@ button:disabled {
   vertical-align: -0.12em;
 }
 
-.effect-change .effect-boost {
-  stroke-width: 1.7;
-  opacity: 0.9;
+.effect-change.change-strong-up,
+.effect-change.change-strong-down {
+  stroke-width: 2.15;
 }
 
 .effect-mini .effect-change {
   width: 0.82rem;
   height: 0.82rem;
   stroke-width: 2.15;
+}
+
+.effect-mini .effect-change.change-strong-up,
+.effect-mini .effect-change.change-strong-down {
+  stroke-width: 2.25;
 }
 
 .affinity-chip,
