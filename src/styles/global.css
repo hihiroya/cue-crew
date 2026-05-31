@@ -704,30 +704,72 @@ button:disabled {
   background: #8bc9d5;
 }
 
-.omen-list {
+.omen-chip-panel {
   display: grid;
   gap: 6px;
-  margin: 0;
+  align-self: end;
 }
 
-.omen-list div {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
-  padding: 6px 8px;
+.omen-chip-panel > span {
+  color: var(--gold);
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.omen-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.omen-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 28px;
+  padding: 4px 6px;
   border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #d9d1bf;
   background: rgba(255, 255, 255, 0.05);
+  font-style: normal;
 }
 
-.omen-list dt,
-.omen-list dd {
-  margin: 0;
-  font-size: 0.78rem;
+.omen-chip b {
+  font-size: 0.74rem;
+  line-height: 1;
 }
 
-.omen-list dd {
+.omen-chip small {
+  padding: 2px 5px;
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 0.62rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.omen-chip.omen-高 {
   color: var(--gold-strong);
-  font-weight: 800;
+  border-color: rgba(255, 217, 138, 0.34);
+  background: rgba(229, 189, 104, 0.1);
+}
+
+.omen-chip.omen-高 small {
+  color: #151017;
+  background: var(--gold);
+}
+
+.omen-chip.omen-中 {
+  color: #a9dce5;
+  border-color: rgba(139, 201, 213, 0.28);
+  background: rgba(139, 201, 213, 0.08);
+}
+
+.omen-chip.omen-中 small {
+  color: #a9dce5;
+  background: rgba(139, 201, 213, 0.12);
 }
 
 .event-panel,

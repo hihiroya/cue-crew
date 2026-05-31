@@ -91,14 +91,17 @@ function prepRevealFor(actor: Actor, event: ActorEvent, prep: PrepAction) {
 function OmenList({ actor }: { actor: Actor }) {
   const sorted = topOmenEvents(actor);
   return (
-    <dl className="omen-list">
-      {sorted.map(({ event, intensity }) => (
-        <div key={event}>
-          <dt>{EVENT_LABELS[event]}</dt>
-          <dd>{intensity}</dd>
-        </div>
-      ))}
-    </dl>
+    <div className="omen-chip-panel" aria-label="見えている兆候">
+      <span>見えている兆候</span>
+      <div className="omen-chip-list">
+        {sorted.map(({ event, intensity }) => (
+          <em key={event} className={`omen-chip omen-${intensity}`}>
+            <b>{EVENT_LABELS[event]}</b>
+            <small>{intensity}</small>
+          </em>
+        ))}
+      </div>
+    </div>
   );
 }
 
