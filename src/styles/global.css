@@ -1133,132 +1133,29 @@ button:disabled {
 }
 
 .effect-change {
-  position: relative;
   display: inline-block;
   flex: 0 0 auto;
   width: 0.9rem;
   height: 0.9rem;
   color: currentColor;
+  overflow: visible;
+  stroke: currentColor;
+  stroke-width: 2.05;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  vertical-align: -0.12em;
 }
 
-.effect-change::before,
-.effect-change::after,
-.effect-change > span {
-  content: "";
-  position: absolute;
-  display: block;
-  background: currentColor;
-}
-
-.effect-change::before {
-  left: 50%;
-  top: 0.28rem;
-  width: 0.12rem;
-  height: 0.46rem;
-  border-radius: 999px;
-  transform: translateX(-50%);
-}
-
-.effect-change::after {
-  left: 50%;
-  top: 0.13rem;
-  width: 0.38rem;
-  height: 0.38rem;
-  border-top: 0.12rem solid currentColor;
-  border-left: 0.12rem solid currentColor;
-  background: transparent;
-  border-radius: 1px;
-  transform: translateX(-50%) rotate(45deg);
-}
-
-.effect-change > span {
-  display: none;
-}
-
-.effect-change.change-down::after,
-.effect-change.change-strong-down::after {
-  top: auto;
-  bottom: 0.13rem;
-  transform: translateX(-50%) rotate(225deg);
-}
-
-.effect-change.change-flat::before {
-  left: 0.18rem;
-  top: 50%;
-  width: 0.48rem;
-  height: 0.12rem;
-  transform: translateY(-50%);
-}
-
-.effect-change.change-flat::after {
-  left: auto;
-  right: 0.11rem;
-  top: 50%;
-  width: 0.34rem;
-  height: 0.34rem;
-  border-top: 0.12rem solid currentColor;
-  border-right: 0.12rem solid currentColor;
-  border-left: 0;
-  transform: translateY(-50%) rotate(45deg);
-}
-
-.effect-change.change-strong-up > span,
-.effect-change.change-strong-down > span {
-  display: block;
-  left: 0.05rem;
-  width: 0.23rem;
-  height: 0.1rem;
-  border-radius: 999px;
-  box-shadow: 0 0.23rem 0 currentColor;
-  opacity: 0.88;
-}
-
-.effect-change.change-strong-up > span {
-  top: 0.18rem;
-}
-
-.effect-change.change-strong-down > span {
-  bottom: 0.42rem;
+.effect-change .effect-boost {
+  stroke-width: 1.7;
+  opacity: 0.9;
 }
 
 .effect-mini .effect-change {
   width: 0.82rem;
   height: 0.82rem;
-}
-
-.effect-mini .effect-change::before {
-  top: 0.26rem;
-  height: 0.42rem;
-}
-
-.effect-mini .effect-change::after {
-  top: 0.12rem;
-  width: 0.34rem;
-  height: 0.34rem;
-}
-
-.effect-mini .effect-change.change-down::after,
-.effect-mini .effect-change.change-strong-down::after {
-  top: auto;
-  bottom: 0.12rem;
-}
-
-.effect-mini .effect-change.change-flat::before {
-  left: 0.16rem;
-  width: 0.44rem;
-}
-
-.effect-mini .effect-change.change-flat::after {
-  right: 0.1rem;
-  width: 0.3rem;
-  height: 0.3rem;
-}
-
-.effect-mini .effect-change.change-strong-up > span,
-.effect-mini .effect-change.change-strong-down > span {
-  left: 0.04rem;
-  width: 0.21rem;
-  box-shadow: 0 0.21rem 0 currentColor;
+  stroke-width: 2.15;
 }
 
 .affinity-chip,

@@ -292,7 +292,30 @@ function makeEffect(raw: string, icon: EffectIcon, value: number, repeat: boolea
 }
 
 function EffectChangeIcon({ change }: { change: EffectChange }) {
-  return <span className={`effect-change change-${change}`} aria-hidden="true"><span /></span>;
+  const isStrongUp = change === 'strong-up';
+  const isStrongDown = change === 'strong-down';
+  const isUp = change === 'up' || isStrongUp;
+  const isDown = change === 'down' || isStrongDown;
+  return (
+    <svg className={`effect-change change-${change}`} viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+      {isStrongUp ? (
+        <>
+          <path className="effect-boost" d="M5.2 12.2h5.6M6.2 14h3.6" />
+          <path d="M8 2.4v8.6M4.7 5.7 8 2.4l3.3 3.3" />
+        </>
+      ) : null}
+      {change === 'up' ? <path d="M8 2.7v10.6M4.7 6 8 2.7 11.3 6" /> : null}
+      {change === 'flat' ? <path d="M3 8h10M9.8 4.8 13 8l-3.2 3.2" /> : null}
+      {change === 'down' ? <path d="M8 2.7v10.6M4.7 10 8 13.3 11.3 10" /> : null}
+      {isStrongDown ? (
+        <>
+          <path className="effect-boost" d="M5.2 3.8h5.6M6.2 2h3.6" />
+          <path d="M8 5v8.6M4.7 10.3 8 13.6l3.3-3.3" />
+        </>
+      ) : null}
+      {!isUp && !isDown && change !== 'flat' ? <path d="M3 8h10M9.8 4.8 13 8l-3.2 3.2" /> : null}
+    </svg>
+  );
 }
 
 function effectChange(value: number): EffectChange {
