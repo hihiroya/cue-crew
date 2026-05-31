@@ -380,7 +380,7 @@ async function runScenario(client, sessionId, name) {
     await clickByText('はじめる');
     await clickByText('注視');
     await clickByText('この読みで待つ');
-    await delay(850);
+    await delay(1300);
     return;
   }
 

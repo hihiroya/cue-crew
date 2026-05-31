@@ -47,7 +47,7 @@ export function App() {
       return;
     }
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const delay = prefersReducedMotion ? 120 : 760;
+    const delay = prefersReducedMotion ? 120 : 1200;
     const timer = window.setTimeout(() => {
       dispatch({ type: 'SELECT_PREP', prep: pendingPrepCue.prep });
       setPendingPrepCue(null);
