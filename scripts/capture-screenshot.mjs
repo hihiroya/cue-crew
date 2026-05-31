@@ -362,6 +362,7 @@ async function runScenario(client, sessionId, name) {
   if (name === 'preview') {
     await clickByText('はじめる');
     await clickByText('注視');
+    await clickByText('この読みで待つ');
     await clickByText('拾う');
     await clickByText('この対応で進む');
     return;
@@ -370,26 +371,31 @@ async function runScenario(client, sessionId, name) {
   if (name === 'response') {
     await clickByText('はじめる');
     await clickByText('注視');
+    await clickByText('この読みで待つ');
     return;
   }
 
   if (name === 'repeatResponse') {
     await clickByText('はじめる');
     await clickByText('注視');
+    await clickByText('この読みで待つ');
     await clickByText('拾う');
     await clickByText('この対応で進む');
     await clickByText('決定して次へ');
     await clickByText('注視');
+    await clickByText('この読みで待つ');
     return;
   }
 
   if (name === 'repeatPreview') {
     await clickByText('はじめる');
     await clickByText('注視');
+    await clickByText('この読みで待つ');
     await clickByText('拾う');
     await clickByText('この対応で進む');
     await clickByText('決定して次へ');
     await clickByText('注視');
+    await clickByText('この読みで待つ');
     await clickByText('拾う');
     await clickByText('この対応で進む');
     return;
@@ -398,10 +404,12 @@ async function runScenario(client, sessionId, name) {
   if (name === 'stylePreview') {
     await clickByText('はじめる');
     await clickByText('注視');
+    await clickByText('この読みで待つ');
     await clickByText('拾う');
     await clickByText('この対応で進む');
     await clickByText('決定して次へ');
     await clickByText('注視');
+    await clickByText('この読みで待つ');
     await clickByText('拾う');
     await clickByText('この対応で進む');
     return;
@@ -411,6 +419,7 @@ async function runScenario(client, sessionId, name) {
     await clickByText('はじめる');
     for (let i = 0; i < 6; i += 1) {
       await clickByText('注視');
+      await clickByText('この読みで待つ');
       await clickByText('拾う');
       await clickByText('この対応で進む');
       await clickByText('決定して次へ');

@@ -13,8 +13,13 @@ type PrepProps = {
 
 const prepActions: PrepAction[] = ['watch', 'makeSpace', 'tightenFlow', 'prepareTransition'];
 const responses: MainResponse[] = ['catch', 'arrange', 'wait', 'cut'];
+type PrepTone = 'strong' | 'good' | 'thin' | 'danger';
 
 export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepProps) {
+  const [inspectedPrep, setInspectedPrep] = useState<PrepAction>(selected ?? 'watch');
+  const inspected = inspectedPrep;
+  const inspectedCoveredOmens = visibleOmens.filter((event) => PREP_MATCHES[inspected].includes(event));
+  const inspectedTone = prepTone(inspectedCoveredOmens.length, visibleOmens.length);
   return (
     <section className="choice-panel">
       <div className="section-heading">
@@ -24,26 +29,105 @@ export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepPr
       <div className="choice-grid">
         {prepActions.map((prep) => {
           const coveredOmens = visibleOmens.filter((event) => PREP_MATCHES[prep].includes(event));
-          const coverLabels = PREP_MATCHES[prep].map((event) => EVENT_LABELS[event]).join(' / ');
+          const tone = prepTone(coveredOmens.length, visibleOmens.length);
+          const isInspected = inspected === prep;
           return (
-            <button key={prep} className={`choice-button prep-choice ${selected === prep ? 'is-selected' : ''}`} disabled={disabled} onClick={() => onSelect(prep)}>
-              <Icon name={prep} />
-              <span>{PREP_LABELS[prep]}</span>
-              <em className="ready-label">{PREP_RESPONSE_READY_LABELS[prep]}</em>
-              <em className="fit-label">見えている兆候 {coveredOmens.length}/{visibleOmens.length}</em>
-              <small>{PREP_DESCRIPTIONS[prep]}</small>
-              <div className="prep-plan">
-                <strong>主対応: {RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}</strong>
-                <small>{PREP_RESPONSE_HINTS[prep].aim}</small>
-                <small>別筋: {PREP_RESPONSE_HINTS[prep].alternate}</small>
+            <button
+              key={prep}
+              aria-pressed={isInspected}
+              className={`choice-button prep-choice cue-${tone} ${isInspected ? 'is-selected' : ''}`}
+              disabled={disabled}
+              onClick={() => setInspectedPrep(prep)}
+              onFocus={() => setInspectedPrep(prep)}
+            >
+              <div className="prep-card-top">
+                <Icon name={prep} />
+                <span className="prep-title">
+                  <strong>{PREP_LABELS[prep]}</strong>
+                  <em>{PREP_RESPONSE_READY_LABELS[prep]}</em>
+                </span>
               </div>
-              <small className="cover-line">カバー: {coverLabels}</small>
+              <div className="cue-cover">
+                <span>兆候カバー</span>
+                <strong>{coveredOmens.length}/{visibleOmens.length}</strong>
+                <em>{prepToneLabel(tone)}</em>
+              </div>
+              <div className="prep-primary-line">
+                <Icon name={PREP_PRIMARY_RESPONSE[prep]} />
+                <span>主対応: {RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}</span>
+              </div>
+              <small className="cover-line">{PREP_MATCHES[prep].map((event) => EVENT_LABELS[event]).join(' / ')}</small>
+              <em className={`selected-card-bar ${isInspected ? 'is-visible' : ''}`} aria-hidden={!isInspected}>
+                {isInspected ? '読み候補' : ''}
+              </em>
             </button>
           );
         })}
       </div>
+      <aside className={`cue-sheet cue-${inspectedTone}`}>
+        <div className="cue-sheet-head">
+          <span>選択中のキューシート</span>
+          <strong>{PREP_LABELS[inspected]} / 兆候 {inspectedCoveredOmens.length}/{visibleOmens.length}</strong>
+        </div>
+        <div className="cue-sheet-grid">
+          <section>
+            <span>張っている出来事</span>
+            <div className="cue-tags">
+              {PREP_MATCHES[inspected].map((event) => (
+                <em key={event} className={visibleOmens.includes(event) ? 'is-covered' : ''}>{EVENT_LABELS[event]}</em>
+              ))}
+            </div>
+          </section>
+          <section>
+            <span>見えている兆候</span>
+            <div className="cue-tags">
+              {visibleOmens.map((event) => (
+                <em key={event} className={PREP_MATCHES[inspected].includes(event) ? 'is-covered' : 'is-missed'}>
+                  {EVENT_LABELS[event]} {PREP_MATCHES[inspected].includes(event) ? '○' : '×'}
+                </em>
+              ))}
+            </div>
+          </section>
+        </div>
+        <div className="cue-read">
+          <p>{prepReadMemo(inspected, inspectedCoveredOmens.length, visibleOmens.length)}</p>
+          <p><strong>主対応:</strong> {RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[inspected]]}。{PREP_RESPONSE_HINTS[inspected].aim}。</p>
+          <p><strong>逃げ筋:</strong> {PREP_RESPONSE_HINTS[inspected].alternate}。</p>
+        </div>
+        <button className="primary-action cue-action" disabled={disabled} onClick={() => onSelect(inspected)}>
+          この読みで待つ
+        </button>
+      </aside>
     </section>
   );
+}
+
+function prepTone(covered: number, total: number): PrepTone {
+  if (covered >= 2) return 'strong';
+  if (covered === 1) return 'good';
+  if (total === 0) return 'thin';
+  return 'danger';
+}
+
+function prepToneLabel(tone: PrepTone) {
+  if (tone === 'strong') return '濃い';
+  if (tone === 'good') return 'あり';
+  if (tone === 'thin') return '薄い';
+  return '危うい';
+}
+
+function prepReadMemo(prep: PrepAction, covered: number, total: number) {
+  const cover = total > 0 ? `${covered}/${total}` : '0/0';
+  if (covered >= 2) {
+    return `見えている兆候に${cover}で張れている。起きた揺れを、次の対応へつなぎやすい読み。`;
+  }
+  if (covered === 1) {
+    return `見えている兆候に${cover}で触れている。的中を狙いつつ、外れた時の受け方も残す読み。`;
+  }
+  if (prep === 'prepareTransition') {
+    return `見えている兆候には薄いが、崩れを小さく閉じるための読み。高負荷になる前に退路を残す。`;
+  }
+  return `見えている兆候には薄い。役者の揺れが別方向へ動いた時に備える読み。`;
 }
 
 type ResponseProps = {
@@ -113,7 +197,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
               </div>
               {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
               <em className={`selected-card-bar ${isInspected ? 'is-visible' : ''}`} aria-hidden={!isInspected}>
-                {isInspected ? '選択中' : ''}
+                {isInspected ? '対応候補' : ''}
               </em>
             </button>
           );
@@ -124,11 +208,19 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
           <span>この手の見立て</span>
           <strong>{RESPONSE_LABELS[inspected.response]} / {inspected.successRangeLabel}</strong>
         </div>
+        <div className="response-action-bar">
+          <div>
+            <span>{RESPONSE_LABELS[inspected.response]}</span>
+            <strong>{inspected.successRangeLabel}</strong>
+            <small>{compactEffectSummary(inspected)}</small>
+            {inspected.dangerWarning ? <em>{inspected.downsideLabel}</em> : null}
+          </div>
+          <button className="primary-action decision-action" disabled={disabled} onClick={() => onSelect(inspected.response)}>
+            この対応で進む
+          </button>
+        </div>
         <ReadoutHud insight={inspected} />
         <p>{decisionMemo(inspected)}</p>
-        <button className="primary-action decision-action" disabled={disabled} onClick={() => onSelect(inspected.response)}>
-          この対応で進む
-        </button>
       </aside>
     </section>
   );
@@ -371,6 +463,13 @@ function effectPhrase(item: EffectItem) {
 
 function effectSummary(insight: ResponseInsight) {
   return effectItems(insight).map(effectPhrase).join('、');
+}
+
+function compactEffectSummary(insight: ResponseInsight) {
+  return effectItems(insight).slice(0, 3).map((item) => {
+    const sign = item.value > 0 ? '+' : '';
+    return `${effectTargetLabel(item.icon)} ${sign}${item.value}`;
+  }).join(' / ');
 }
 
 function decisionMemo(insight: ResponseInsight) {
