@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { EVENT_LABELS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../game/constants';
+import { EVENT_LABELS, PERFORMANCE_SLOT_LABELS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../game/constants';
 import { responseInsight } from '../../game/scoring';
 import type { ActorEventType, GameState, MainResponse, PrepAction, ResponseInsight, ResultTier } from '../../game/types';
 import { Icon } from '../ui/Icon';
@@ -237,6 +237,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
             {prepConnectionLabel(inspected.prepRelationTone)}
           </em>
         </div>
+        <ConsoleRunSheet state={state} insight={inspected} />
         <div className="console-outlook">
           <span>送出見込み</span>
           <strong>{inspected.successRangeLabel}</strong>
@@ -246,6 +247,31 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
         <p>{decisionMemo(inspected)}</p>
       </aside>
     </section>
+  );
+}
+
+function ConsoleRunSheet({ state, insight }: { state: GameState; insight: ResponseInsight }) {
+  const slotKey = state.turnInAct === 1 ? 'matinee' : 'soiree';
+  const eventLabel = state.currentActorEvent ? EVENT_LABELS[state.currentActorEvent.type] : '未定';
+  return (
+    <div className="console-run-sheet" aria-label="進行表">
+      <span>
+        <small>ACT</small>
+        <strong>{state.act}日目 / {PERFORMANCE_SLOT_LABELS[slotKey].label}</strong>
+      </span>
+      <span>
+        <small>SCENE</small>
+        <strong>{eventLabel}</strong>
+      </span>
+      <span>
+        <small>CUE</small>
+        <strong>No.{String(state.totalTurn).padStart(2, '0')}</strong>
+      </span>
+      <span>
+        <small>CALL</small>
+        <strong>{RESPONSE_LABELS[insight.response]}</strong>
+      </span>
+    </div>
   );
 }
 
@@ -319,15 +345,24 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
           <span>送出後の影響</span>
           <small>送出ゲージ</small>
         </div>
-        <div className="indicator-grid">
+        <div className="effect-meter-grid">
           {effects.map((item) => (
-            <em key={item.key} className={`readout-chip effect-${item.tone}`} title={item.title} aria-label={item.title}>
-              {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
-              <Icon name={item.icon} />
-              <small>{effectTargetLabel(item.icon)}</small>
-              <span className={`impact-track change-${item.change}`} aria-hidden="true"><i /></span>
-              <strong>{signedEffectValue(item)}</strong>
-              <EffectChangeIcon change={item.change} />
+            <em
+              key={item.key}
+              className={`effect-meter effect-${item.tone} direction-${effectDirection(item)} intensity-${effectIntensity(item)}`}
+              title={item.title}
+              aria-label={item.title}
+            >
+              <span className="effect-meter-label">
+                {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
+                <Icon name={item.icon} />
+                <small>{effectTargetLabel(item.icon)}</small>
+              </span>
+              <span className="cue-meter" aria-hidden="true">
+                {effectLedSlots(item).map((isLit, index) => (
+                  <i key={index} className={`${isLit ? 'is-lit' : ''} ${index === 2 ? 'is-center' : ''}`} />
+                ))}
+              </span>
             </em>
           ))}
         </div>
@@ -485,6 +520,23 @@ function effectTargetLabel(icon: EffectIcon) {
   if (icon === 'load') return '負荷';
   if (icon === 'trust') return '信頼';
   return '流れ';
+}
+
+function effectDirection(item: EffectItem) {
+  if (item.value > 0) return 'up';
+  if (item.value < 0) return 'down';
+  return 'flat';
+}
+
+function effectIntensity(item: EffectItem) {
+  return Math.min(2, Math.abs(item.value));
+}
+
+function effectLedSlots(item: EffectItem) {
+  const magnitude = effectIntensity(item);
+  if (item.value > 0) return [false, false, true, true, magnitude >= 2];
+  if (item.value < 0) return [magnitude >= 2, true, true, false, false];
+  return [false, false, true, false, false];
 }
 
 function effectPhrase(item: EffectItem) {
