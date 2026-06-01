@@ -3432,11 +3432,6 @@ button:disabled {
   .response-grid {
     grid-template-columns: 1fr;
   }
-
-  .response-send-bar {
-    position: static;
-    margin-inline: 0;
-  }
 }
 
 @media (max-width: 359px) {
