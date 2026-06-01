@@ -105,13 +105,6 @@ export const PREP_PRIMARY_RESPONSE: Record<PrepAction, MainResponse> = {
   prepareTransition: 'cut',
 };
 
-export const PREP_RESPONSE_READY_LABELS: Record<PrepAction, string> = {
-  watch: '拾う備え',
-  makeSpace: '待つ備え',
-  tightenFlow: '整える備え',
-  prepareTransition: '切る備え',
-};
-
 export const PREP_RESPONSE_HINTS: Record<PrepAction, { aim: string; alternate: string }> = {
   watch: {
     aim: '予定外を見せ場に変える',

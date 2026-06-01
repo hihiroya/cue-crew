@@ -139,12 +139,17 @@ function PrepCueTransition({ cue }: { cue: PendingPrepCue }) {
   return (
     <div className="prep-cue-transition" role="status" aria-live="polite" aria-label="準備待機中">
       <div className="prep-cue-card">
-        <span className="prep-cue-icon"><Icon name={cue.prep} /></span>
-        <p>本番前メモ</p>
-        <h2>{PREP_LABELS[cue.prep]}の準備</h2>
-        <span className="prep-cue-stamp">承認済</span>
+        <div className="prep-cue-paper">
+          <span className="prep-cue-icon"><Icon name={cue.prep} /></span>
+          <p>本番前メモ</p>
+          <h2>{PREP_LABELS[cue.prep]}の準備</h2>
+          <div className="cue-approval-slot is-approved" aria-label="承認欄">
+            <span>承認欄</span>
+            <strong>承認済</strong>
+          </div>
+          <em>{prepCueReadinessLabel(cue.coveredCount, cue.visibleCount)}</em>
+        </div>
         <strong>本番へ進行</strong>
-        <em>{prepCueReadinessLabel(cue.coveredCount, cue.visibleCount)}</em>
       </div>
     </div>
   );

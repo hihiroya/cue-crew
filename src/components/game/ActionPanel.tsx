@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { EVENT_LABELS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, PREP_RESPONSE_READY_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../game/constants';
+import { EVENT_LABELS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../game/constants';
 import { responseInsight } from '../../game/scoring';
 import type { ActorEventType, GameState, MainResponse, PrepAction, ResponseInsight, ResultTier } from '../../game/types';
 import { Icon } from '../ui/Icon';
@@ -45,16 +45,12 @@ export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepPr
                 <Icon name={prep} />
                 <span className="prep-title">
                   <strong>{PREP_LABELS[prep]}</strong>
-                  <em>{PREP_RESPONSE_READY_LABELS[prep]}</em>
+                  <em>本番対応 {RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}</em>
                 </span>
               </div>
               <div className="cue-cover">
                 <span>今の兆候への備え</span>
                 <strong>{prepToneLabel(tone)}</strong>
-              </div>
-              <div className="prep-primary-line">
-                <Icon name={PREP_PRIMARY_RESPONSE[prep]} />
-                <span>受け方は{RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}</span>
               </div>
               <em className={`selected-card-bar ${isInspected ? 'is-visible' : ''}`} aria-hidden={!isInspected}>
                 {isInspected ? '準備候補' : ''}

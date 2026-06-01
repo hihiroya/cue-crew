@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { ACTOR_TRAITS, EVENT_LABELS, PREP_LABELS, PREP_MATCHES, STATE_LABELS } from '../../game/constants';
 import { topOmenEvents } from '../../game/actorLogic';
-import type { Actor, ActorEvent, ActorType, PrepAction } from '../../game/types';
+import type { Actor, ActorEvent, ActorState, ActorType, PrepAction } from '../../game/types';
 import { ActorSilhouette } from '../actors/ActorSilhouette';
 
 type Props = {
@@ -55,15 +55,19 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
   return (
     <section className="actor-stage focus-stage" aria-label="役者の兆候">
       <article className="actor-card focus-actor-card is-focus">
+        <span className="actor-role-badge focus-role">焦点役者</span>
         <div className={`actor-figure-wrap actor-figure-${focusActor.type} figure-state-${focusActor.state}`}>
           <ActorSilhouette type={focusActor.type} />
         </div>
         <div className="actor-card-head">
           <div>
             <h3>{focusActor.name}</h3>
-            <p>焦点役者</p>
+            <p className="actor-state-line">
+              <span>状態</span>
+              <strong>{STATE_LABELS[focusActor.state]}</strong>
+              <em>{STATE_HINTS[focusActor.state]}</em>
+            </p>
           </div>
-          <span className={`state-badge state-${focusActor.state}`}>{STATE_LABELS[focusActor.state]}</span>
         </div>
         <p className="actor-trait">{ACTOR_TRAITS[focusActor.type]}</p>
         <OmenList actor={focusActor} />
@@ -71,7 +75,9 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
       <div className="support-actors" aria-label="他の役者">
         {supportingActors.map((actor) => (
           <div key={actor.id} className={`support-actor-chip ${actor.id === nextFocusActorId ? 'is-next' : ''}`}>
-            <span>{actor.id === nextFocusActorId ? '次に来そう' : '控え'}</span>
+            <span className={`actor-role-badge ${actor.id === nextFocusActorId ? 'next-role' : 'reserve-role'}`}>
+              {actor.id === nextFocusActorId ? '次に来そう' : '控え'}
+            </span>
             <strong>{actor.name}</strong>
             <em>{STATE_LABELS[actor.state]} / {nextPressure(actor, actor.id === nextFocusActorId, backstageLoad)}</em>
           </div>
@@ -80,6 +86,14 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
     </section>
   );
 }
+
+const STATE_HINTS: Record<ActorState, string> = {
+  elated: '拾うと伸びやすい',
+  contemplative: '待つと活きやすい',
+  anxious: '整えると崩れにくい',
+  immersed: '拾う・待つが効きやすい',
+  fatigued: '整える・切るで守りやすい',
+};
 
 function prepRevealFor(actor: Actor, event: ActorEvent, prep: PrepAction) {
   if (PREP_MATCHES[prep].includes(event.type)) return { tone: 'hit', label: '準備が活きた' };
