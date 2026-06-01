@@ -147,10 +147,10 @@ function prepResponseScoreItem(state: GameState, response: MainResponse, prepQua
     return scoreItem('prep-response-guard', '転換の備えが切る判断を支えた', 0, '場面の伸びより、崩れを小さく閉じる。');
   }
   if (prepQuality === 'hit') {
-    return scoreItem('prep-response', `${PREP_LABELS[prep]}の読みが活きた`, 1, `${RESPONSE_LABELS[response]}の上振れを少し広げた。`);
+    return scoreItem('prep-response', `${PREP_LABELS[prep]}の準備が活きた`, 1, `${RESPONSE_LABELS[response]}の上振れを少し広げた。`);
   }
   if (prepQuality === 'partial') {
-    return scoreItem('prep-response', `${PREP_LABELS[prep]}の読みを受けた`, 0, '見えていた兆候には沿っているため、判断が安定する。');
+    return scoreItem('prep-response', `${PREP_LABELS[prep]}の準備を受けた`, 0, '見えていた兆候には沿っているため、判断が安定する。');
   }
   return undefined;
 }

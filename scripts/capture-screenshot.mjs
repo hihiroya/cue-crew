@@ -378,7 +378,7 @@ async function runScenario(client, sessionId, name) {
     await clickByText('注視');
     await clickByText('この準備で本番へ');
     await clickByText('拾う');
-    await clickByText('この対応で進む');
+    await clickByText('この対応を送る');
     return;
   }
 
@@ -402,7 +402,7 @@ async function runScenario(client, sessionId, name) {
     await clickByText('注視');
     await clickByText('この準備で本番へ');
     await clickByText('拾う');
-    await clickByText('この対応で進む');
+    await clickByText('この対応を送る');
     await clickByText('決定して次へ');
     await clickByText('注視');
     await clickByText('この準備で本番へ');
@@ -414,12 +414,12 @@ async function runScenario(client, sessionId, name) {
     await clickByText('注視');
     await clickByText('この準備で本番へ');
     await clickByText('拾う');
-    await clickByText('この対応で進む');
+    await clickByText('この対応を送る');
     await clickByText('決定して次へ');
     await clickByText('注視');
     await clickByText('この準備で本番へ');
     await clickByText('拾う');
-    await clickByText('この対応で進む');
+    await clickByText('この対応を送る');
     return;
   }
 
@@ -428,12 +428,12 @@ async function runScenario(client, sessionId, name) {
     await clickByText('注視');
     await clickByText('この準備で本番へ');
     await clickByText('拾う');
-    await clickByText('この対応で進む');
+    await clickByText('この対応を送る');
     await clickByText('決定して次へ');
     await clickByText('注視');
     await clickByText('この準備で本番へ');
     await clickByText('拾う');
-    await clickByText('この対応で進む');
+    await clickByText('この対応を送る');
     return;
   }
 
@@ -443,7 +443,7 @@ async function runScenario(client, sessionId, name) {
       await clickByText('注視');
       await clickByText('この準備で本番へ');
       await clickByText('拾う');
-      await clickByText('この対応で進む');
+      await clickByText('この対応を送る');
       await clickByText('決定して次へ');
     }
     return;

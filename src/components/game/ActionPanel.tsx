@@ -25,7 +25,6 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
   return (
     <section className={`choice-panel prep-panel ${isApproving ? 'is-approving' : ''}`}>
       <div className="section-heading">
-        <p>一手目</p>
         <h2>準備を決める</h2>
         <small>役者の兆候を見て、本番中の想定外に備える準備を選ぶ。</small>
       </div>
@@ -47,15 +46,15 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
                 <Icon name={prep} />
                 <span className="prep-title">
                   <strong>{PREP_LABELS[prep]}</strong>
-                  <em>本番対応 {RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}</em>
+                  <em>本番で{RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}と活きる</em>
                 </span>
               </div>
               <div className="cue-cover">
-                <span>今の兆候への備え</span>
+                <span>兆候との相性</span>
                 <strong>{prepToneLabel(tone)}</strong>
               </div>
               <em className={`selected-card-bar ${isInspected ? 'is-visible' : ''}`} aria-hidden={!isInspected}>
-                {isInspected ? '準備候補' : ''}
+                {isInspected ? 'メモ反映中' : ''}
               </em>
             </button>
           );
@@ -170,8 +169,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
   return (
     <section className="choice-panel">
       <div className="section-heading">
-        <p>二手目{state.selectedPrep ? ` / 準備: ${PREP_LABELS[state.selectedPrep]}` : ''}</p>
-        <h2>本対応を選ぶ</h2>
+        <h2>行動に対応</h2>
       </div>
       <div className="choice-grid response-grid">
         {insights.map((insight) => {
@@ -200,7 +198,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
                 <div className="outlook-head">
                   <span><Icon name="scene" />{compactAim(insight)}</span>
                   <strong>{insight.successRangeLabel}</strong>
-                  <em className={`prep-mark mark-${insight.prepRelationTone}`} aria-label={`読み: ${insight.prepRelationLabel}`}>
+                  <em className={`prep-mark mark-${insight.prepRelationTone}`} aria-label={`準備との関係: ${insight.prepRelationLabel}`}>
                     準備{relation}
                   </em>
                 </div>
@@ -220,27 +218,35 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
               </div>
               {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
               <em className={`selected-card-bar ${isInspected ? 'is-visible' : ''}`} aria-hidden={!isInspected}>
-                {isInspected ? '対応候補' : ''}
+                {isInspected ? '進行卓で確認中' : ''}
               </em>
             </button>
           );
         })}
       </div>
-      <aside className={`decision-note relation-${inspected.prepRelationTone}`}>
-        <div>
-          <span>この手の見立て</span>
-          <strong>{RESPONSE_LABELS[inspected.response]} / {inspected.successRangeLabel}</strong>
+      <aside className={`decision-note response-console relation-${inspected.prepRelationTone}`}>
+        <div className="console-head">
+          <span>進行卓</span>
+          <strong>{RESPONSE_LABELS[inspected.response]}で受ける</strong>
+          <em className={`console-prep-link mark-${inspected.prepRelationTone}`}>
+            {prepConnectionLabel(inspected.prepRelationTone)}
+          </em>
         </div>
         <div className="response-action-bar">
           <div>
-            <span>{RESPONSE_LABELS[inspected.response]}</span>
-            <strong>{inspected.successRangeLabel}</strong>
+            <span>送出する対応</span>
+            <strong>{RESPONSE_LABELS[inspected.response]}で受ける</strong>
             <small>{compactEffectSummary(inspected)}</small>
             {inspected.dangerWarning ? <em>{inspected.downsideLabel}</em> : null}
           </div>
           <button className="primary-action decision-action" disabled={disabled} onClick={() => onSelect(inspected.response)}>
-            この対応で進む
+            この対応を送る
           </button>
+        </div>
+        <div className="console-outlook">
+          <span>送出見込み</span>
+          <strong>{inspected.successRangeLabel}</strong>
+          <small>{inspected.responseAimLabel}</small>
         </div>
         <ReadoutHud insight={inspected} />
         <p>{decisionMemo(inspected)}</p>
@@ -255,6 +261,12 @@ function prepRelationMark(tone: ResponseInsight['prepRelationTone']) {
   if (tone === 'primary') return '◎';
   if (tone === 'alternate') return '△';
   return '×';
+}
+
+function prepConnectionLabel(tone: ResponseInsight['prepRelationTone']) {
+  if (tone === 'primary') return '準備が活きる';
+  if (tone === 'alternate') return '別筋で受ける';
+  return '準備とは遠い';
 }
 
 function compactAim(insight: ResponseInsight) {
@@ -293,31 +305,31 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
   const effects = effectItems(insight);
   return (
     <div className="readout-hud" aria-label="選択中の相性と影響">
-      <section>
-        <span>影響</span>
+      <section className="affinity-board">
+        <span>相性盤</span>
+        <div>
+          {affinity.map((item) => (
+            <em key={item.id} className={`readout-chip affinity-${item.tone}`} title={item.title} aria-label={item.title}>
+              <Icon name={item.icon} />
+              <small>{item.label}</small>
+              <strong>{item.symbol} {item.rank}</strong>
+            </em>
+          ))}
+        </div>
+      </section>
+      <section className="effect-board">
+        <span>送出後の影響</span>
         <div>
           {effects.map((item) => (
             <em key={item.key} className={`readout-chip effect-${item.tone}`} title={item.title} aria-label={item.title}>
               {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
               <Icon name={item.icon} />
               <small>{effectTargetLabel(item.icon)}</small>
+              <strong>{signedEffectValue(item)}</strong>
               <EffectChangeIcon change={item.change} />
             </em>
           ))}
         </div>
-      </section>
-      <section>
-        <span>相性</span>
-        <div>
-          {affinity.map((item) => (
-            <em key={item.id} className={`readout-chip affinity-${item.tone}`} title={item.title} aria-label={item.title}>
-              <Icon name={item.icon} />
-              <small>{item.label}</small>
-              <strong>{item.symbol}</strong>
-            </em>
-          ))}
-        </div>
-        <p>◎ 強い / ○ 合う / △ 普通 / × 注意</p>
       </section>
     </div>
   );
@@ -329,14 +341,15 @@ function affinityItems(insight: ResponseInsight) {
     icon,
     label,
     symbol: symbolForValue(value),
+    rank: rankForValue(value),
     tone: toneForValue(value),
-    title: `${label}: ${symbolForValue(value)}`,
+    title: `${label}: ${symbolForValue(value)} ${rankForValue(value)}`,
   });
   const value = (id: string) => insight.scoreBreakdown.find((entry) => entry.id === id)?.value ?? 0;
   return [
     item('event', 'event', '出来事', value('event')),
     item('actor', 'actor', '役者型', value('actor')),
-    item('state', 'state', '役者状態', value('state')),
+    item('state', 'state', '状態', value('state')),
     item('act', 'act', '公演回', value('act')),
   ];
 }
@@ -346,6 +359,13 @@ function symbolForValue(value: number) {
   if (value > 0) return '○';
   if (value < 0) return '×';
   return '△';
+}
+
+function rankForValue(value: number) {
+  if (value >= 3) return '強い';
+  if (value > 0) return '合う';
+  if (value < 0) return '注意';
+  return '普通';
 }
 
 function toneForValue(value: number) {
@@ -490,9 +510,14 @@ function effectSummary(insight: ResponseInsight) {
 
 function compactEffectSummary(insight: ResponseInsight) {
   return effectItems(insight).slice(0, 3).map((item) => {
-    const sign = item.value > 0 ? '+' : '';
-    return `${effectTargetLabel(item.icon)} ${sign}${item.value}`;
+    return `${effectTargetLabel(item.icon)} ${signedEffectValue(item)}`;
   }).join(' / ');
+}
+
+function signedEffectValue(item: EffectItem) {
+  if (item.value > 0) return `+${item.value}`;
+  if (item.value < 0) return String(item.value);
+  return '±0';
 }
 
 function decisionMemo(insight: ResponseInsight) {
