@@ -306,25 +306,32 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
   return (
     <div className="readout-hud" aria-label="選択中の相性と影響">
       <section className="affinity-board">
-        <span>相性盤</span>
-        <div>
+        <div className="console-module-head">
+          <span>相性盤</span>
+          <small>判定ランプ</small>
+        </div>
+        <div className="indicator-grid">
           {affinity.map((item) => (
             <em key={item.id} className={`readout-chip affinity-${item.tone}`} title={item.title} aria-label={item.title}>
-              <Icon name={item.icon} />
+              <span className="indicator-lamp" aria-hidden="true"><i /></span>
               <small>{item.label}</small>
-              <strong>{item.symbol} {item.rank}</strong>
+              <strong><b>{item.symbol}</b><span>{item.rank}</span></strong>
             </em>
           ))}
         </div>
       </section>
       <section className="effect-board">
-        <span>送出後の影響</span>
-        <div>
+        <div className="console-module-head">
+          <span>送出後の影響</span>
+          <small>送出ゲージ</small>
+        </div>
+        <div className="indicator-grid">
           {effects.map((item) => (
             <em key={item.key} className={`readout-chip effect-${item.tone}`} title={item.title} aria-label={item.title}>
               {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
               <Icon name={item.icon} />
               <small>{effectTargetLabel(item.icon)}</small>
+              <span className={`impact-track change-${item.change}`} aria-hidden="true"><i /></span>
               <strong>{signedEffectValue(item)}</strong>
               <EffectChangeIcon change={item.change} />
             </em>

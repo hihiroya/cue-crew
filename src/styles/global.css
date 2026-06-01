@@ -1940,19 +1940,32 @@ button:disabled {
     rgba(0, 0, 0, 0.18);
 }
 
-.readout-hud section > span {
+.console-module-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.console-module-head span {
   color: var(--gold);
   font-size: 0.7rem;
   font-weight: 900;
 }
 
-.readout-hud section > div {
+.console-module-head small {
+  color: rgba(217, 209, 191, 0.72);
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.indicator-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 5px;
 }
 
-.effect-board > div {
+.effect-board .indicator-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
@@ -1964,6 +1977,7 @@ button:disabled {
 }
 
 .readout-chip {
+  position: relative;
   display: grid;
   grid-template-columns: auto 1fr auto;
   gap: 5px;
@@ -1975,6 +1989,65 @@ button:disabled {
   background: rgba(0, 0, 0, 0.18);
   color: var(--muted);
   font-style: normal;
+}
+
+.affinity-board .readout-chip {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  min-height: 40px;
+  padding: 7px 8px;
+  border-color: rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(0, 0, 0, 0.12)),
+    rgba(6, 7, 10, 0.54);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    inset 0 -10px 16px rgba(0, 0, 0, 0.16);
+}
+
+.indicator-lamp {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background:
+    radial-gradient(circle at 42% 34%, rgba(255, 255, 255, 0.28), transparent 27%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.44));
+  box-shadow:
+    inset 0 0 5px rgba(0, 0, 0, 0.54),
+    0 0 0 1px rgba(0, 0, 0, 0.28);
+}
+
+.indicator-lamp i {
+  width: 9px;
+  height: 9px;
+  border-radius: inherit;
+  background: currentColor;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.affinity-strong .indicator-lamp {
+  color: var(--gold-strong);
+}
+
+.affinity-good .indicator-lamp {
+  color: #c6e7b5;
+}
+
+.affinity-neutral .indicator-lamp {
+  color: #d9d1bf;
+}
+
+.affinity-bad .indicator-lamp {
+  color: #ff7770;
+}
+
+.affinity-strong .indicator-lamp i,
+.affinity-good .indicator-lamp i,
+.affinity-neutral .indicator-lamp i,
+.affinity-bad .indicator-lamp i {
+  opacity: 0.95;
 }
 
 .readout-chip .icon {
@@ -2006,19 +2079,91 @@ button:disabled {
 }
 
 .readout-chip strong {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 3px;
   color: #f3e6c9;
   font-size: 0.74rem;
   line-height: 1;
   white-space: nowrap;
 }
 
+.readout-chip strong b {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.readout-chip strong span {
+  font-size: 0.66rem;
+}
+
 .effect-board .readout-chip {
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
-  padding-inline: 6px;
+  grid-template-columns: auto auto minmax(20px, 1fr) auto;
+  padding-inline: 7px;
+  gap: 4px;
 }
 
 .effect-board .readout-chip strong {
   font-size: 0.8rem;
+}
+
+.effect-board .readout-chip small {
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.effect-board .readout-chip .effect-change {
+  display: none;
+}
+
+.impact-track {
+  position: relative;
+  display: block;
+  min-width: 18px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.impact-track i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 50%;
+  border-radius: inherit;
+  background: currentColor;
+  transform-origin: left center;
+}
+
+.impact-track.change-strong-up i {
+  transform: scaleX(1);
+}
+
+.impact-track.change-up i {
+  transform: scaleX(0.62);
+}
+
+.impact-track.change-flat i {
+  width: 18%;
+  transform: translateX(-50%);
+  opacity: 0.55;
+}
+
+.impact-track.change-down i {
+  left: auto;
+  right: 50%;
+  transform-origin: right center;
+  transform: scaleX(0.62);
+}
+
+.impact-track.change-strong-down i {
+  left: auto;
+  right: 50%;
+  transform-origin: right center;
+  transform: scaleX(1);
 }
 
 .decision-note p {
