@@ -362,11 +362,11 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
                 <small>{effectTargetLabel(item.icon)}</small>
               </span>
               <span className="cue-meter" aria-hidden="true">
-                <b>{meterEdgeLabels(item).low}</b>
+                <b>-</b>
                 {effectLedSlots(item).map((isLit, index) => (
                   <i key={index} className={`${isLit ? 'is-lit' : ''} ${index === 2 ? 'is-center' : ''}`} />
                 ))}
-                <b>{meterEdgeLabels(item).high}</b>
+                <b>+</b>
               </span>
             </em>
           ))}
@@ -542,12 +542,6 @@ function effectLedSlots(item: EffectItem) {
   if (item.value > 0) return [false, false, true, true, magnitude >= 2];
   if (item.value < 0) return [magnitude >= 2, true, true, false, false];
   return [false, false, true, false, false];
-}
-
-function meterEdgeLabels(item: EffectItem) {
-  if (item.icon === 'load') return { low: '軽', high: '重' };
-  if (item.icon === 'trust') return { low: '低', high: '高' };
-  return { low: '乱', high: '整' };
 }
 
 function effectPhrase(item: EffectItem) {

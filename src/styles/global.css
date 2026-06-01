@@ -472,6 +472,7 @@ button:disabled {
 }
 
 .event-reveal-figure {
+  position: relative;
   display: grid;
   place-items: end center;
   min-height: 178px;
@@ -489,6 +490,32 @@ button:disabled {
   height: 138px;
 }
 
+.event-actor-tag {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  left: 7px;
+  display: block;
+  padding: 5px 6px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 217, 138, 0.22);
+  color: #f6e8cb;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.24)),
+    rgba(6, 8, 12, 0.68);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 8px 18px rgba(0, 0, 0, 0.28);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1.05;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .event-reveal-body {
   display: grid;
   align-content: center;
@@ -499,7 +526,7 @@ button:disabled {
 .event-reveal-kicker {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 6px 10px;
   align-items: baseline;
 }
@@ -508,13 +535,6 @@ button:disabled {
   color: var(--gold);
   font-size: 0.78rem;
   font-weight: 900;
-}
-
-.event-reveal-kicker em {
-  color: var(--muted);
-  font-size: 0.7rem;
-  font-style: normal;
-  font-weight: 800;
 }
 
 .event-reveal h2 {
@@ -532,57 +552,6 @@ button:disabled {
   color: #f3e6c9;
   font-size: 0.9rem;
   line-height: 1.58;
-}
-
-.event-prep-badge {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  width: fit-content;
-  margin-top: 2px;
-  padding: 6px 8px;
-  border-radius: 7px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.24);
-}
-
-.event-prep-badge span {
-  color: var(--muted);
-  font-size: 0.7rem;
-  font-weight: 800;
-}
-
-.event-prep-badge strong {
-  color: #f3e6c9;
-  font-size: 0.74rem;
-}
-
-.event-prep-badge.prep-hit {
-  border-color: rgba(255, 217, 138, 0.46);
-  background: rgba(229, 189, 104, 0.12);
-}
-
-.event-prep-badge.prep-hit strong {
-  color: var(--gold-strong);
-}
-
-.event-prep-badge.prep-partial {
-  border-color: rgba(139, 201, 213, 0.34);
-  background: rgba(139, 201, 213, 0.09);
-}
-
-.event-prep-badge.prep-partial strong {
-  color: #a9dce5;
-}
-
-.event-prep-badge.prep-miss {
-  border-color: rgba(255, 119, 111, 0.34);
-  background: rgba(255, 119, 111, 0.09);
-}
-
-.event-prep-badge.prep-miss strong {
-  color: #ffc0b9;
 }
 
 .support-actors {
@@ -2397,10 +2366,12 @@ button:disabled {
 }
 
 .cue-meter b {
-  color: rgba(245, 234, 208, 0.68);
-  font-size: 0.58rem;
+  min-width: 0.42rem;
+  color: rgba(245, 234, 208, 0.84);
+  font-size: 0.64rem;
   font-weight: 900;
   line-height: 1;
+  text-align: center;
 }
 
 .cue-meter i {

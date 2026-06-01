@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { ACTOR_TRAITS, EVENT_LABELS, PREP_LABELS, PREP_MATCHES, STATE_LABELS } from '../../game/constants';
+import { ACTOR_TRAITS, EVENT_LABELS, STATE_LABELS } from '../../game/constants';
 import { topOmenEvents } from '../../game/actorLogic';
 import type { Actor, ActorEvent, ActorState, ActorType, PrepAction } from '../../game/types';
 import { ActorSilhouette } from '../actors/ActorSilhouette';
@@ -13,7 +13,7 @@ type Props = {
   selectedPrep?: PrepAction | null;
 };
 
-export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLoad, event, selectedPrep }: Props) {
+export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLoad, event }: Props) {
   const revealRef = useRef<HTMLElement | null>(null);
   const focusActor = actors.find((actor) => actor.id === focusActorId) ?? actors[0];
   const supportingActors = actors.filter((actor) => actor.id !== focusActor.id);
@@ -28,26 +28,18 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
   }, [event]);
 
   if (event) {
-    const prep = selectedPrep ?? null;
-    const prepReveal = prep ? prepRevealFor(focusActor, event, prep) : null;
     return (
       <section ref={revealRef} className={`event-reveal actor-figure-${focusActor.type} figure-state-${focusActor.state}`} aria-label="本番の出来事">
         <div className="event-reveal-figure">
           <ActorSilhouette type={focusActor.type} />
+          <em className="event-actor-tag">{focusActor.name} / {STATE_LABELS[focusActor.state]}</em>
         </div>
         <div className="event-reveal-body">
           <div className="event-reveal-kicker">
             <span>本番で起きた</span>
-            <em>{focusActor.name} / {STATE_LABELS[focusActor.state]}</em>
           </div>
           <h2>{event.title}</h2>
           <p>{event.description}</p>
-          {prepReveal ? (
-            <div className={`event-prep-badge prep-${prepReveal.tone}`}>
-              <span>{prep ? PREP_LABELS[prep] : ''}</span>
-              <strong>{prepReveal.label}</strong>
-            </div>
-          ) : null}
         </div>
       </section>
     );
@@ -94,13 +86,6 @@ const STATE_HINTS: Record<ActorState, string> = {
   immersed: '拾う・待つが効きやすい',
   fatigued: '整える・切るで守りやすい',
 };
-
-function prepRevealFor(actor: Actor, event: ActorEvent, prep: PrepAction) {
-  if (PREP_MATCHES[prep].includes(event.type)) return { tone: 'hit', label: '準備が活きた' };
-  const omens = topOmenEvents(actor).map((omen) => omen.event);
-  if (omens.some((omen) => PREP_MATCHES[prep].includes(omen))) return { tone: 'partial', label: '兆候には備えていた' };
-  return { tone: 'miss', label: '別の備えだった' };
-}
 
 function OmenList({ actor }: { actor: Actor }) {
   const sorted = topOmenEvents(actor);
