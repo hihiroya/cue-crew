@@ -7,7 +7,7 @@ import { GameHeader } from '../components/layout/GameHeader';
 import { Icon } from '../components/ui/Icon';
 import { ActorSilhouette } from '../components/actors/ActorSilhouette';
 import { pickFocusActor, topOmenEvents } from '../game/actorLogic';
-import { ACTOR_LABELS, EVENT_LABELS, PERFORMANCE_SLOT_LABELS, PERFORMANCE_STYLE_DETAILS, PREP_LABELS, PREP_MATCHES, PREP_RESPONSE_READY_LABELS, TOTAL_TURNS } from '../game/constants';
+import { ACTOR_LABELS, EVENT_LABELS, PERFORMANCE_SLOT_LABELS, PERFORMANCE_STYLE_DETAILS, PREP_LABELS, PREP_MATCHES, TOTAL_TURNS } from '../game/constants';
 import { finishPerformance, gameReducer, readPerformanceHistory, titleState } from '../game/gameReducer';
 import { makeSeed } from '../game/rng';
 import { previewResult } from '../game/scoring';
@@ -140,9 +140,10 @@ function PrepCueTransition({ cue }: { cue: PendingPrepCue }) {
     <div className="prep-cue-transition" role="status" aria-live="polite" aria-label="準備待機中">
       <div className="prep-cue-card">
         <span className="prep-cue-icon"><Icon name={cue.prep} /></span>
-        <p>{PREP_RESPONSE_READY_LABELS[cue.prep]}</p>
-        <h2>{PREP_LABELS[cue.prep]}で備える</h2>
-        <strong>本番を待つ</strong>
+        <p>本番前メモ</p>
+        <h2>{PREP_LABELS[cue.prep]}の準備</h2>
+        <span className="prep-cue-stamp">承認済</span>
+        <strong>本番へ進行</strong>
         <em>{prepCueReadinessLabel(cue.coveredCount, cue.visibleCount)}</em>
       </div>
     </div>

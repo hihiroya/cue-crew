@@ -109,14 +109,17 @@ export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepPr
               </section>
             </div>
           </div>
-          <div className="cue-commit" aria-label="準備を確定">
-            <button className="cue-stamp-action" disabled={disabled} onClick={() => onSelect(inspected)}>
-              <span>準備確認</span>
-              <strong>本番を待つ</strong>
-            </button>
+          <div className="cue-approval-slot" aria-label="承認欄">
+            <span>承認欄</span>
+            <strong>未承認</strong>
           </div>
         </div>
       </aside>
+      <div className="prep-commit-bar">
+        <button className="primary-action prep-commit-action" disabled={disabled} onClick={() => onSelect(inspected)}>
+          この準備で本番へ
+        </button>
+      </div>
     </section>
   );
 }
