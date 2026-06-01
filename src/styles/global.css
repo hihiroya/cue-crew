@@ -2244,9 +2244,8 @@ button:disabled {
 }
 
 .response-send-bar {
-  position: sticky;
-  top: calc(100vh - 86px - env(safe-area-inset-bottom));
-  z-index: 5;
+  position: relative;
+  z-index: 1;
   display: grid !important;
   grid-template-columns: minmax(0, 1fr);
   align-items: stretch !important;
