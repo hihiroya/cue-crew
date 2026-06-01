@@ -242,14 +242,16 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
               <strong>{RESPONSE_LABELS[inspected.response]}</strong>
             </em>
           </div>
-          <em className={`console-prep-link mark-${inspected.prepRelationTone}`}>
-            {prepConnectionLabel(inspected.prepRelationTone)}
-          </em>
         </div>
-        <ConsoleRunSheet state={state} insight={inspected} />
+        <ConsoleRunSheet state={state} />
         <div className="console-outlook">
           <span>送出見込み</span>
-          <strong>{inspected.successRangeLabel}</strong>
+          <div className="console-outlook-line">
+            <em className={`console-outlook-prep mark-${inspected.prepRelationTone}`}>
+              {prepConnectionLabel(inspected.prepRelationTone)}
+            </em>
+            <strong>{inspected.successRangeLabel}</strong>
+          </div>
           <small>{inspected.responseAimLabel}</small>
         </div>
         <ReadoutHud insight={inspected} />
@@ -259,7 +261,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
   );
 }
 
-function ConsoleRunSheet({ state, insight }: { state: GameState; insight: ResponseInsight }) {
+function ConsoleRunSheet({ state }: { state: GameState }) {
   const slotKey = state.turnInAct === 1 ? 'matinee' : 'soiree';
   const eventLabel = state.currentActorEvent ? EVENT_LABELS[state.currentActorEvent.type] : '未定';
   return (
@@ -271,10 +273,6 @@ function ConsoleRunSheet({ state, insight }: { state: GameState; insight: Respon
       <span>
         <small>SCENE</small>
         <strong>{eventLabel}</strong>
-      </span>
-      <span className="run-sheet-wide">
-        <small>PLAN</small>
-        <strong>{prepConnectionLabel(insight.prepRelationTone)} / {insight.responseAimLabel}</strong>
       </span>
     </div>
   );
@@ -295,9 +293,9 @@ function prepConnectionShortLabel(tone: ResponseInsight['prepRelationTone']) {
 }
 
 function compactAim(insight: ResponseInsight) {
-  if (insight.resultTier === 'masterpiece') return '名場面狙い';
-  if (insight.resultTier === 'scene') return '場面化狙い';
-  if (insight.resultTier === 'smallSuccess') return '小成功狙い';
+  if (insight.resultTier === 'masterpiece') return '名場面';
+  if (insight.resultTier === 'scene') return '場面化';
+  if (insight.resultTier === 'smallSuccess') return '小成功';
   if (insight.resultTier === 'fray') return '崩れ抑え';
   return '事故回避';
 }

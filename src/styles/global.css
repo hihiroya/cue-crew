@@ -1194,6 +1194,7 @@ button:disabled {
   font-size: 0.8rem;
   font-weight: 900;
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .outlook-head > span .icon {
@@ -1903,7 +1904,7 @@ button:disabled {
   display: grid;
   grid-template-columns: minmax(116px, 0.95fr) minmax(0, 1.35fr);
   gap: 6px 8px;
-  align-items: stretch;
+  align-items: center;
   padding: 7px;
   border: 1px solid rgba(255, 217, 138, 0.14);
   border-radius: 7px;
@@ -1937,7 +1938,6 @@ button:disabled {
 
 .console-cue-strip {
   grid-column: 2 / 3;
-  grid-row: 1 / span 2;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
@@ -1984,19 +1984,6 @@ button:disabled {
   white-space: nowrap;
 }
 
-.console-prep-link {
-  grid-column: 1 / 2;
-  grid-row: 2 / 3;
-  align-self: center;
-  justify-self: start;
-  padding: 3px 7px;
-  border-radius: 5px;
-  font-size: 0.62rem;
-  font-style: normal;
-  font-weight: 900;
-  line-height: 1;
-}
-
 .console-run-sheet {
   position: relative;
   z-index: 1;
@@ -2022,10 +2009,6 @@ button:disabled {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(0, 0, 0, 0.18)),
     rgba(5, 6, 8, 0.7);
-}
-
-.console-run-sheet .run-sheet-wide {
-  grid-column: 1 / -1;
 }
 
 .console-run-sheet small,
@@ -2077,6 +2060,24 @@ button:disabled {
 .console-outlook strong {
   color: #fff2cf;
   font-size: 0.9rem;
+}
+
+.console-outlook-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+}
+
+.console-outlook-prep {
+  flex: 0 0 auto;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .console-outlook small {
