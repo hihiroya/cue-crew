@@ -223,6 +223,11 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
           );
         })}
       </div>
+      <div className="response-send-bar" aria-label={`${RESPONSE_LABELS[inspected.response]}を送出`}>
+        <button className="primary-action decision-action" disabled={disabled} onClick={() => onSelect(inspected.response)}>
+          この対応を送る
+        </button>
+      </div>
       <aside className={`decision-note response-console relation-${inspected.prepRelationTone}`}>
         <div className="console-head">
           <span>進行卓</span>
@@ -239,11 +244,6 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
         <ReadoutHud insight={inspected} />
         <p>{decisionMemo(inspected)}</p>
       </aside>
-      <div className="response-send-bar" aria-label={`${RESPONSE_LABELS[inspected.response]}を送出`}>
-        <button className="primary-action decision-action" disabled={disabled} onClick={() => onSelect(inspected.response)}>
-          この対応を送る
-        </button>
-      </div>
     </section>
   );
 }

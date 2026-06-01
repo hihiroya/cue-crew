@@ -1501,12 +1501,13 @@ button:disabled {
 }
 
 .response-panel {
-  padding-bottom: 74px;
+  padding-bottom: 92px;
 }
 
 .response-console {
   position: relative;
   overflow: hidden;
+  padding-bottom: 82px;
 }
 
 .response-console::before {
@@ -2196,7 +2197,7 @@ button:disabled {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr);
   align-items: stretch !important;
-  margin: 4px 0 0;
+  margin: 8px 10px -2px;
   padding: 8px;
   border-radius: 12px;
   border: 1px solid rgba(255, 217, 138, 0.36);
@@ -3166,7 +3167,7 @@ button:disabled {
   }
 
   .response-send-bar {
-    margin-inline: -2px;
+    margin-inline: 6px;
   }
 }
 
