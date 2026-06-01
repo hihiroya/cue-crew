@@ -62,14 +62,14 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
         <div className="actor-card-head">
           <div>
             <h3>{focusActor.name}</h3>
-            <p className="actor-state-line">
-              <span>状態</span>
-              <strong>{STATE_LABELS[focusActor.state]}</strong>
-              <em>{STATE_HINTS[focusActor.state]}</em>
-            </p>
+            <p className="actor-trait">{ACTOR_TRAITS[focusActor.type]}</p>
           </div>
         </div>
-        <p className="actor-trait">{ACTOR_TRAITS[focusActor.type]}</p>
+        <div className="actor-state-card">
+          <span>状態</span>
+          <strong>{STATE_LABELS[focusActor.state]}</strong>
+          <em>{STATE_HINTS[focusActor.state]}</em>
+        </div>
         <OmenList actor={focusActor} />
       </article>
       <div className="support-actors" aria-label="他の役者">

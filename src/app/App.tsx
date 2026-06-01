@@ -7,16 +7,14 @@ import { GameHeader } from '../components/layout/GameHeader';
 import { Icon } from '../components/ui/Icon';
 import { ActorSilhouette } from '../components/actors/ActorSilhouette';
 import { pickFocusActor, topOmenEvents } from '../game/actorLogic';
-import { ACTOR_LABELS, EVENT_LABELS, PERFORMANCE_SLOT_LABELS, PERFORMANCE_STYLE_DETAILS, PREP_LABELS, PREP_MATCHES, TOTAL_TURNS } from '../game/constants';
+import { ACTOR_LABELS, EVENT_LABELS, PERFORMANCE_SLOT_LABELS, PERFORMANCE_STYLE_DETAILS, TOTAL_TURNS } from '../game/constants';
 import { finishPerformance, gameReducer, readPerformanceHistory, titleState } from '../game/gameReducer';
 import { makeSeed } from '../game/rng';
 import { previewResult } from '../game/scoring';
-import type { ActorEventType, PerformanceResult, PrepAction } from '../game/types';
+import type { PerformanceResult, PrepAction } from '../game/types';
 
 type PendingPrepCue = {
   prep: PrepAction;
-  coveredCount: number;
-  visibleCount: number;
 };
 
 export function App() {
@@ -57,8 +55,7 @@ export function App() {
 
   const beginPrepCue = (prep: PrepAction) => {
     if (pendingPrepCue) return;
-    const coveredCount = visibleOmenEvents.filter((event: ActorEventType) => PREP_MATCHES[prep].includes(event)).length;
-    setPendingPrepCue({ prep, coveredCount, visibleCount: visibleOmenEvents.length });
+    setPendingPrepCue({ prep });
   };
 
   if (state.status === 'title') {
@@ -110,6 +107,7 @@ export function App() {
           <PrepPanel
             selected={state.selectedPrep}
             disabled={Boolean(pendingPrepCue)}
+            approvingPrep={pendingPrepCue?.prep ?? null}
             visibleOmens={visibleOmenEvents}
             onSelect={beginPrepCue}
           />
@@ -130,36 +128,8 @@ export function App() {
           />
         ) : null}
       </div>
-      {pendingPrepCue ? <PrepCueTransition cue={pendingPrepCue} /> : null}
     </main>
   );
-}
-
-function PrepCueTransition({ cue }: { cue: PendingPrepCue }) {
-  return (
-    <div className="prep-cue-transition" role="status" aria-live="polite" aria-label="準備待機中">
-      <div className="prep-cue-card">
-        <div className="prep-cue-paper">
-          <span className="prep-cue-icon"><Icon name={cue.prep} /></span>
-          <p>本番前メモ</p>
-          <h2>{PREP_LABELS[cue.prep]}の準備</h2>
-          <div className="cue-approval-slot is-approved" aria-label="承認欄">
-            <span>承認欄</span>
-            <strong>承認済</strong>
-          </div>
-          <em>{prepCueReadinessLabel(cue.coveredCount, cue.visibleCount)}</em>
-        </div>
-        <strong>本番へ進行</strong>
-      </div>
-    </div>
-  );
-}
-
-function prepCueReadinessLabel(coveredCount: number, visibleCount: number) {
-  if (coveredCount >= 2) return '備えは十分';
-  if (coveredCount === 1) return '一部に備えあり';
-  if (visibleCount === 0) return '別筋に備える';
-  return '別筋の準備';
 }
 
 function TitleScreen({ history, onStart, onReplay }: { history: PerformanceResult[]; onStart: () => void; onReplay: (seed: string) => void }) {

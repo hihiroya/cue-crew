@@ -703,31 +703,6 @@ button:disabled {
   background: var(--gold);
 }
 
-.actor-state-line {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px 7px;
-  align-items: baseline;
-  line-height: 1.4;
-}
-
-.actor-state-line span {
-  color: var(--muted);
-  font-size: 0.68rem;
-  font-weight: 900;
-}
-
-.actor-state-line strong {
-  color: var(--gold-strong);
-  font-size: 0.8rem;
-}
-
-.actor-state-line em {
-  color: #d9d1bf;
-  font-size: 0.72rem;
-  font-style: normal;
-}
-
 .actor-card .actor-trait {
   align-self: start;
   margin: 0;
@@ -736,6 +711,39 @@ button:disabled {
   color: #d9d1bf;
   background: rgba(255, 255, 255, 0.055);
   line-height: 1.55;
+}
+
+.actor-state-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 8px;
+  align-items: start;
+  align-self: start;
+  padding: 7px 9px;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 217, 138, 0.14);
+  background: rgba(229, 189, 104, 0.07);
+}
+
+.actor-state-card span {
+  grid-row: 1 / span 2;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1.45;
+}
+
+.actor-state-card strong {
+  color: var(--gold-strong);
+  font-size: 0.82rem;
+  line-height: 1.25;
+}
+
+.actor-state-card em {
+  color: #d9d1bf;
+  font-size: 0.72rem;
+  font-style: normal;
+  line-height: 1.35;
 }
 
 .state-badge {
@@ -854,118 +862,6 @@ button:disabled {
 .action-slot {
   display: grid;
   gap: 10px;
-}
-
-.prep-cue-transition {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  background:
-    linear-gradient(115deg, transparent 0 34%, rgba(229, 189, 104, 0.12) 45%, transparent 57%),
-    rgba(4, 5, 9, 0.72);
-  backdrop-filter: blur(3px);
-  animation: prepCueFade 1200ms ease both;
-}
-
-.prep-cue-card {
-  position: relative;
-  display: grid;
-  justify-items: center;
-  gap: 10px;
-  width: min(100%, 330px);
-  padding: 15px;
-  border-radius: var(--radius);
-  border: 1px solid rgba(255, 217, 138, 0.46);
-  background:
-    linear-gradient(90deg, rgba(84, 41, 34, 0.84), rgba(18, 18, 22, 0.96) 18%, rgba(18, 18, 22, 0.96)),
-    var(--surface-strong);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5), 0 0 34px rgba(229, 189, 104, 0.16);
-  overflow: hidden;
-  animation: prepCueRise 1200ms ease both;
-}
-
-.prep-cue-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(112deg, transparent 0 22%, rgba(255, 217, 138, 0.2) 42%, transparent 56%),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 18px);
-  pointer-events: none;
-  animation: prepCueLight 1200ms ease both;
-}
-
-.prep-cue-paper {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  justify-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 16px 14px;
-  border: 1px solid rgba(94, 66, 40, 0.42);
-  border-radius: 6px;
-  background:
-    linear-gradient(90deg, transparent 0 24px, rgba(161, 56, 52, 0.2) 24px 25px, transparent 25px),
-    repeating-linear-gradient(0deg, transparent 0 26px, rgba(117, 86, 51, 0.13) 26px 27px),
-    linear-gradient(180deg, #f0dfb9, #dfc895);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.58),
-    0 8px 18px rgba(0, 0, 0, 0.22);
-}
-
-.prep-cue-card > * {
-  position: relative;
-  z-index: 1;
-}
-
-.prep-cue-icon {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  color: #8f2834;
-  background: rgba(255, 246, 222, 0.42);
-  border: 1px solid rgba(81, 37, 31, 0.14);
-}
-
-.prep-cue-icon .icon {
-  width: 1.55rem;
-  height: 1.55rem;
-}
-
-.prep-cue-card p,
-.prep-cue-card em {
-  margin: 0;
-  color: #8d5f20;
-  font-size: 0.76rem;
-  font-style: normal;
-  font-weight: 900;
-}
-
-.prep-cue-card h2 {
-  margin: 0;
-  color: #51251f;
-  font-family: var(--font-display);
-  font-size: 2rem;
-  line-height: 1.12;
-  text-align: center;
-}
-
-.prep-cue-card > strong {
-  color: #f5ead0;
-  font-size: 0.98rem;
-}
-
-.prep-cue-card em {
-  padding: 5px 9px;
-  border-radius: 999px;
-  color: #151017;
-  background: var(--gold);
 }
 
 .compact-fray {
@@ -1615,6 +1511,27 @@ button:disabled {
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     inset 8px 0 0 rgba(255, 217, 138, 0.08),
     0 14px 32px rgba(0, 0, 0, 0.26);
+}
+
+.prep-panel.is-approving > .section-heading,
+.prep-panel.is-approving > .choice-grid,
+.prep-panel.is-approving > .prep-commit-bar {
+  opacity: 0.42;
+  filter: saturate(0.72);
+}
+
+.cue-sheet.is-approving {
+  border-color: rgba(255, 217, 138, 0.52);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 8px 0 0 rgba(255, 217, 138, 0.08),
+    0 18px 42px rgba(0, 0, 0, 0.36),
+    0 0 0 1px rgba(255, 217, 138, 0.18),
+    0 0 36px rgba(229, 189, 104, 0.26);
+}
+
+.cue-sheet.is-approving .cue-paper {
+  animation: cuePaperApprove 1200ms ease both;
 }
 
 .cue-sheet::before {
@@ -2937,65 +2854,34 @@ button:disabled {
   }
 }
 
-@keyframes prepCueFade {
-  0% {
-    opacity: 0;
-  }
-  18%,
-  76% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes prepCueRise {
-  0% {
-    opacity: 0;
-    transform: translateY(10px) scale(0.98);
-  }
-  22%,
-  78% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.99);
-  }
-}
-
-@keyframes prepCueLight {
-  0% {
-    transform: translateX(-24%);
-    opacity: 0;
-  }
-  32%,
-  72% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(24%);
-    opacity: 0;
-  }
-}
-
 @keyframes prepApprovalStamp {
   0% {
     opacity: 0;
-    transform: rotate(-6deg) scale(1.18);
+    transform: rotate(-5deg) scale(1.18);
     filter: blur(1px);
   }
   24% {
     opacity: 1;
-    transform: rotate(-6deg) scale(0.94);
+    transform: rotate(-5deg) scale(0.94);
     filter: blur(0);
   }
   42%,
   100% {
     opacity: 1;
-    transform: rotate(-6deg) scale(1);
+    transform: rotate(-5deg) scale(1);
+  }
+}
+
+@keyframes cuePaperApprove {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  18% {
+    transform: translateY(1px) scale(0.995);
+  }
+  34% {
+    transform: translateY(0) scale(1.006);
   }
 }
 
@@ -3165,7 +3051,4 @@ button:disabled {
     transition-duration: 0.001ms !important;
   }
 
-  .prep-cue-transition {
-    animation: none;
-  }
 }

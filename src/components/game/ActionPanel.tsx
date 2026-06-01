@@ -7,6 +7,7 @@ import { Icon } from '../ui/Icon';
 type PrepProps = {
   selected: PrepAction | null;
   disabled: boolean;
+  approvingPrep: PrepAction | null;
   visibleOmens: ActorEventType[];
   onSelect: (prep: PrepAction) => void;
 };
@@ -15,13 +16,14 @@ const prepActions: PrepAction[] = ['watch', 'makeSpace', 'tightenFlow', 'prepare
 const responses: MainResponse[] = ['catch', 'arrange', 'wait', 'cut'];
 type PrepTone = 'strong' | 'good' | 'thin' | 'danger';
 
-export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepProps) {
+export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onSelect }: PrepProps) {
   const [inspectedPrep, setInspectedPrep] = useState<PrepAction>(selected ?? 'watch');
   const inspected = inspectedPrep;
+  const isApproving = approvingPrep === inspected;
   const inspectedCoveredOmens = visibleOmens.filter((event) => PREP_MATCHES[inspected].includes(event));
   const inspectedTone = prepTone(inspectedCoveredOmens.length, visibleOmens.length);
   return (
-    <section className="choice-panel">
+    <section className={`choice-panel prep-panel ${isApproving ? 'is-approving' : ''}`}>
       <div className="section-heading">
         <p>一手目</p>
         <h2>準備を決める</h2>
@@ -59,7 +61,7 @@ export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepPr
           );
         })}
       </div>
-      <aside className={`cue-sheet cue-${inspectedTone}`}>
+      <aside className={`cue-sheet cue-${inspectedTone} ${isApproving ? 'is-approving' : ''}`}>
         <div className="cue-paper">
           <div className="cue-sheet-head">
             <span>本番前メモ</span>
@@ -105,9 +107,9 @@ export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepPr
               </section>
             </div>
           </div>
-          <div className="cue-approval-slot" aria-label="承認欄">
+          <div className={`cue-approval-slot ${isApproving ? 'is-approved' : ''}`} aria-label="承認欄" aria-live="polite">
             <span>承認欄</span>
-            <strong>未承認</strong>
+            <strong>{isApproving ? '承認済' : '未承認'}</strong>
           </div>
         </div>
       </aside>
