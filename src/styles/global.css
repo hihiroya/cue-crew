@@ -1504,7 +1504,7 @@ button:disabled {
 
 .response-console {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   gap: 12px;
   padding: 18px 14px 92px;
   border-color: rgba(255, 217, 138, 0.36);
@@ -2301,7 +2301,7 @@ button:disabled {
 
 .response-send-bar {
   position: sticky;
-  bottom: max(10px, env(safe-area-inset-bottom));
+  top: calc(100vh - 86px - env(safe-area-inset-bottom));
   z-index: 5;
   display: grid !important;
   grid-template-columns: minmax(0, 1fr);
@@ -2320,6 +2320,10 @@ button:disabled {
     0 -8px 26px rgba(0, 0, 0, 0.34),
     0 12px 36px rgba(0, 0, 0, 0.36),
     0 0 0 1px rgba(255, 217, 138, 0.08);
+}
+
+.response-console .response-send-bar {
+  margin: 8px 0 -76px;
 }
 
 .response-send-bar .decision-action {
