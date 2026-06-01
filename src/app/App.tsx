@@ -153,7 +153,7 @@ function prepCueReadinessLabel(coveredCount: number, visibleCount: number) {
   if (coveredCount >= 2) return '備えは十分';
   if (coveredCount === 1) return '一部に備えあり';
   if (visibleCount === 0) return '別筋に備える';
-  return '別の揺れに備える';
+  return '別筋の準備';
 }
 
 function TitleScreen({ history, onStart, onReplay }: { history: PerformanceResult[]; onStart: () => void; onReplay: (seed: string) => void }) {

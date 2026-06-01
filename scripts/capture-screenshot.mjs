@@ -367,6 +367,12 @@ async function runScenario(client, sessionId, name) {
     return;
   }
 
+  if (name === 'prepSpace') {
+    await clickByText('はじめる');
+    await clickByText('余白');
+    return;
+  }
+
   if (name === 'preview') {
     await clickByText('はじめる');
     await clickByText('注視');
