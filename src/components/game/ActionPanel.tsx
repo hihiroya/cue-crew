@@ -231,8 +231,17 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
       </div>
       <aside className={`decision-note response-console relation-${inspected.prepRelationTone}`}>
         <div className="console-head">
-          <span>進行卓</span>
-          <strong>{RESPONSE_LABELS[inspected.response]}で受ける</strong>
+          <span>進行卓（コンソール）</span>
+          <div className="console-cue-strip" aria-label="送出キュー">
+            <em>
+              <small>CUE</small>
+              <strong>No.{String(state.totalTurn).padStart(2, '0')}</strong>
+            </em>
+            <em>
+              <small>CALL</small>
+              <strong>{RESPONSE_LABELS[inspected.response]}</strong>
+            </em>
+          </div>
           <em className={`console-prep-link mark-${inspected.prepRelationTone}`}>
             {prepConnectionLabel(inspected.prepRelationTone)}
           </em>
@@ -263,13 +272,9 @@ function ConsoleRunSheet({ state, insight }: { state: GameState; insight: Respon
         <small>SCENE</small>
         <strong>{eventLabel}</strong>
       </span>
-      <span>
-        <small>CUE</small>
-        <strong>No.{String(state.totalTurn).padStart(2, '0')}</strong>
-      </span>
-      <span>
-        <small>CALL</small>
-        <strong>{RESPONSE_LABELS[insight.response]}</strong>
+      <span className="run-sheet-wide">
+        <small>PLAN</small>
+        <strong>{prepConnectionLabel(insight.prepRelationTone)} / {insight.responseAimLabel}</strong>
       </span>
     </div>
   );
@@ -359,9 +364,11 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
                 <small>{effectTargetLabel(item.icon)}</small>
               </span>
               <span className="cue-meter" aria-hidden="true">
+                <b>{meterEdgeLabels(item).low}</b>
                 {effectLedSlots(item).map((isLit, index) => (
                   <i key={index} className={`${isLit ? 'is-lit' : ''} ${index === 2 ? 'is-center' : ''}`} />
                 ))}
+                <b>{meterEdgeLabels(item).high}</b>
               </span>
             </em>
           ))}
@@ -537,6 +544,12 @@ function effectLedSlots(item: EffectItem) {
   if (item.value > 0) return [false, false, true, true, magnitude >= 2];
   if (item.value < 0) return [magnitude >= 2, true, true, false, false];
   return [false, false, true, false, false];
+}
+
+function meterEdgeLabels(item: EffectItem) {
+  if (item.icon === 'load') return { low: '軽', high: '重' };
+  if (item.icon === 'trust') return { low: '低', high: '高' };
+  return { low: '乱', high: '整' };
 }
 
 function effectPhrase(item: EffectItem) {

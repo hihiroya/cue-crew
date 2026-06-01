@@ -1181,7 +1181,7 @@ button:disabled {
 .outlook-head {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 5px 7px;
+  gap: 4px 6px;
   align-items: center;
 }
 
@@ -1204,18 +1204,18 @@ button:disabled {
 }
 
 .outlook-head > strong {
-  grid-column: 1 / 2;
-  color: var(--muted);
-  font-size: 0.68rem;
-  line-height: 1.15;
+  display: none;
 }
 
 .outlook-summary .prep-mark {
   grid-column: 2 / 3;
-  grid-row: 1 / span 2;
-  align-self: center;
+  grid-row: 1 / 2;
+  align-self: start;
   justify-self: end;
-  padding-inline: 6px;
+  padding: 2px 5px;
+  font-size: 0.56rem;
+  line-height: 1.05;
+  opacity: 0.92;
 }
 
 .result-rail-label {
@@ -1509,10 +1509,15 @@ button:disabled {
 .response-console {
   position: relative;
   overflow: visible;
-  gap: 12px;
-  padding: 18px 14px;
+  gap: 10px;
+  padding: 17px 13px;
   border-color: rgba(255, 217, 138, 0.36);
   background:
+    radial-gradient(circle at 13px 13px, rgba(255, 238, 184, 0.34) 0 2px, transparent 3px),
+    radial-gradient(circle at calc(100% - 13px) 13px, rgba(255, 238, 184, 0.26) 0 2px, transparent 3px),
+    radial-gradient(circle at 13px calc(100% - 13px), rgba(255, 238, 184, 0.2) 0 2px, transparent 3px),
+    radial-gradient(circle at calc(100% - 13px) calc(100% - 13px), rgba(255, 238, 184, 0.18) 0 2px, transparent 3px),
+    repeating-linear-gradient(165deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 13px),
     radial-gradient(circle at 18% 8%, rgba(255, 217, 138, 0.1), transparent 18%),
     linear-gradient(90deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 18px),
     linear-gradient(180deg, rgba(37, 35, 32, 0.98), rgba(9, 10, 13, 0.98) 38%, rgba(3, 4, 7, 0.98)),
@@ -1896,10 +1901,10 @@ button:disabled {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 7px 8px;
-  align-items: center;
-  padding: 8px;
+  grid-template-columns: minmax(116px, 0.95fr) minmax(0, 1.35fr);
+  gap: 6px 8px;
+  align-items: stretch;
+  padding: 7px;
   border: 1px solid rgba(255, 217, 138, 0.14);
   border-radius: 7px;
   background:
@@ -1911,8 +1916,9 @@ button:disabled {
 }
 
 .console-head span {
-  grid-column: 1 / -1;
+  grid-column: 1 / 2;
   justify-self: start;
+  align-self: start;
   padding: 3px 8px;
   border-radius: 2px;
   color: #1d1812;
@@ -1923,25 +1929,69 @@ button:disabled {
     inset 0 1px 0 rgba(255, 255, 255, 0.7),
     0 2px 6px rgba(0, 0, 0, 0.22);
   font-family: var(--font-body);
-  font-size: 0.66rem;
+  font-size: 0.61rem;
   font-weight: 900;
   letter-spacing: 0;
   text-transform: uppercase;
 }
 
-.console-head strong {
-  color: #f3e6c9;
+.console-cue-strip {
+  grid-column: 2 / 3;
+  grid-row: 1 / span 2;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  min-width: 0;
+}
+
+.console-cue-strip em {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 6px 7px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.22)),
+    rgba(3, 4, 6, 0.78);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 -10px 14px rgba(0, 0, 0, 0.2);
+  font-style: normal;
+}
+
+.console-cue-strip small {
+  width: fit-content;
+  padding: 2px 6px;
+  border-radius: 2px;
+  color: #181410;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(224, 214, 192, 0.9)),
+    #efe3ca;
+  font-size: 0.54rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.console-cue-strip strong {
+  min-width: 0;
+  color: #f5ead0;
   font-family: var(--font-display);
-  font-size: 1.08rem;
-  line-height: 1.1;
+  font-size: 0.94rem;
+  line-height: 1.08;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .console-prep-link {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
   align-self: center;
-  justify-self: end;
-  padding: 4px 8px;
+  justify-self: start;
+  padding: 3px 7px;
   border-radius: 5px;
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-style: normal;
   font-weight: 900;
   line-height: 1;
@@ -1952,8 +2002,8 @@ button:disabled {
   z-index: 1;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
-  padding: 8px;
+  gap: 5px;
+  padding: 7px;
   border-radius: 7px;
   border: 1px solid rgba(255, 255, 255, 0.07);
   background:
@@ -1964,14 +2014,18 @@ button:disabled {
 .console-run-sheet span {
   min-width: 0;
   display: grid;
-  gap: 4px;
+  gap: 3px;
   align-content: start;
-  padding: 7px 8px;
+  padding: 6px 7px;
   border-radius: 5px;
   border: 1px solid rgba(255, 255, 255, 0.07);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(0, 0, 0, 0.18)),
     rgba(5, 6, 8, 0.7);
+}
+
+.console-run-sheet .run-sheet-wide {
+  grid-column: 1 / -1;
 }
 
 .console-run-sheet small,
@@ -2330,15 +2384,22 @@ button:disabled {
 
 .cue-meter {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: auto repeat(5, minmax(0, 1fr)) auto;
   gap: 3px;
   align-items: center;
-  padding: 4px;
+  padding: 4px 5px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.07);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(0, 0, 0, 0.18)),
     rgba(0, 0, 0, 0.36);
+}
+
+.cue-meter b {
+  color: rgba(245, 234, 208, 0.68);
+  font-size: 0.58rem;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .cue-meter i {
@@ -2659,8 +2720,7 @@ button:disabled {
   border-color: rgba(255, 217, 138, 0.44);
 }
 
-.relation-primary .console-head span,
-.relation-primary .console-head strong {
+.relation-primary .console-cue-strip strong {
   color: var(--gold-strong);
 }
 
@@ -2668,8 +2728,7 @@ button:disabled {
   border-color: rgba(139, 201, 213, 0.32);
 }
 
-.relation-alternate .console-head span,
-.relation-alternate .console-head strong {
+.relation-alternate .console-cue-strip strong {
   color: #a9dce5;
 }
 
@@ -2677,8 +2736,7 @@ button:disabled {
   border-color: rgba(255, 119, 111, 0.26);
 }
 
-.relation-poor .console-head span,
-.relation-poor .console-head strong {
+.relation-poor .console-cue-strip strong {
   color: #ffc0b9;
 }
 
