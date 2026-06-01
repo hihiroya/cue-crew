@@ -167,14 +167,13 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
   const [inspectedResponse, setInspectedResponse] = useState<MainResponse>(selected ?? 'catch');
   const inspected = insights.find((insight) => insight.response === inspectedResponse) ?? insights[0];
   return (
-    <section className="choice-panel">
+    <section className="choice-panel response-panel">
       <div className="section-heading">
         <h2>行動に対応</h2>
       </div>
       <div className="choice-grid response-grid">
         {insights.map((insight) => {
           const response = insight.response;
-          const relation = prepRelationMark(insight.prepRelationTone);
           const range = resultRange(insight);
           const effects = effectItems(insight);
           const isInspected = inspected.response === response;
@@ -199,7 +198,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
                   <span><Icon name="scene" />{compactAim(insight)}</span>
                   <strong>{insight.successRangeLabel}</strong>
                   <em className={`prep-mark mark-${insight.prepRelationTone}`} aria-label={`準備との関係: ${insight.prepRelationLabel}`}>
-                    準備{relation}
+                    {prepConnectionShortLabel(insight.prepRelationTone)}
                   </em>
                 </div>
                 <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
@@ -232,17 +231,6 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
             {prepConnectionLabel(inspected.prepRelationTone)}
           </em>
         </div>
-        <div className="response-action-bar">
-          <div>
-            <span>送出する対応</span>
-            <strong>{RESPONSE_LABELS[inspected.response]}で受ける</strong>
-            <small>{compactEffectSummary(inspected)}</small>
-            {inspected.dangerWarning ? <em>{inspected.downsideLabel}</em> : null}
-          </div>
-          <button className="primary-action decision-action" disabled={disabled} onClick={() => onSelect(inspected.response)}>
-            この対応を送る
-          </button>
-        </div>
         <div className="console-outlook">
           <span>送出見込み</span>
           <strong>{inspected.successRangeLabel}</strong>
@@ -251,22 +239,27 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
         <ReadoutHud insight={inspected} />
         <p>{decisionMemo(inspected)}</p>
       </aside>
+      <div className="response-send-bar" aria-label={`${RESPONSE_LABELS[inspected.response]}を送出`}>
+        <button className="primary-action decision-action" disabled={disabled} onClick={() => onSelect(inspected.response)}>
+          この対応を送る
+        </button>
+      </div>
     </section>
   );
 }
 
 const tierOrder: ResultTier[] = ['accident', 'fray', 'smallSuccess', 'scene', 'masterpiece'];
 
-function prepRelationMark(tone: ResponseInsight['prepRelationTone']) {
-  if (tone === 'primary') return '◎';
-  if (tone === 'alternate') return '△';
-  return '×';
-}
-
 function prepConnectionLabel(tone: ResponseInsight['prepRelationTone']) {
   if (tone === 'primary') return '準備が活きる';
   if (tone === 'alternate') return '別筋で受ける';
   return '準備とは遠い';
+}
+
+function prepConnectionShortLabel(tone: ResponseInsight['prepRelationTone']) {
+  if (tone === 'primary') return '準備活きる';
+  if (tone === 'alternate') return '別筋で可';
+  return '準備遠い';
 }
 
 function compactAim(insight: ResponseInsight) {
@@ -513,12 +506,6 @@ function effectPhrase(item: EffectItem) {
 
 function effectSummary(insight: ResponseInsight) {
   return effectItems(insight).map(effectPhrase).join('、');
-}
-
-function compactEffectSummary(insight: ResponseInsight) {
-  return effectItems(insight).slice(0, 3).map((item) => {
-    return `${effectTargetLabel(item.icon)} ${signedEffectValue(item)}`;
-  }).join(' / ');
 }
 
 function signedEffectValue(item: EffectItem) {
