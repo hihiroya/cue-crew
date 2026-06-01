@@ -1503,7 +1503,7 @@ button:disabled {
 }
 
 .response-panel {
-  padding-bottom: 92px;
+  padding-bottom: 0;
 }
 
 .response-console {
@@ -2304,9 +2304,8 @@ button:disabled {
 }
 
 .response-send-bar {
-  position: sticky;
-  bottom: max(10px, env(safe-area-inset-bottom));
-  z-index: 5;
+  position: relative;
+  z-index: 1;
   display: grid !important;
   grid-template-columns: minmax(0, 1fr);
   align-items: stretch !important;
