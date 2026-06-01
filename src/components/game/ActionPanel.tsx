@@ -223,8 +223,14 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
         })}
       </div>
       <div className="response-send-bar" aria-label={`${RESPONSE_LABELS[inspected.response]}を送出`}>
-        <button className="primary-action decision-action" disabled={disabled} onClick={() => onSelect(inspected.response)}>
-          この対応を送る
+        <button className="primary-action decision-action cue-send-action" disabled={disabled} onClick={() => onSelect(inspected.response)}>
+          <span className="cue-lamp-face cue-lamp-standby" aria-hidden="true">
+            <small>ST-BY</small>
+          </span>
+          <span className="cue-send-label">この対応を送る</span>
+          <span className="cue-lamp-face cue-lamp-go" aria-hidden="true">
+            <small>GO</small>
+          </span>
         </button>
       </div>
       <aside className={`decision-note response-console relation-${inspected.prepRelationTone}`}>
@@ -234,6 +240,11 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
           <em className={`console-prep-link mark-${inspected.prepRelationTone}`}>
             {prepConnectionLabel(inspected.prepRelationTone)}
           </em>
+          <div className="console-status-rail" aria-hidden="true">
+            <i className="status-lamp status-standby"><small>ST-BY</small></i>
+            <i className="status-lamp status-cue"><small>CUE</small></i>
+            <i className="status-lamp status-go"><small>GO</small></i>
+          </div>
         </div>
         <div className="console-outlook">
           <span>送出見込み</span>
