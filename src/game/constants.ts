@@ -160,13 +160,6 @@ export const ACTOR_TRAITS: Record<ActorType, string> = {
   skilled: '制御型。立ち位置・群像の乱れが多い。整えると伸びやすい。',
 };
 
-export const RESPONSE_HAND_TYPES: Record<MainResponse, string> = {
-  catch: '攻め手',
-  arrange: '安定手',
-  wait: '余韻手',
-  cut: '収束手',
-};
-
 export const ACT_RESPONSE_GUIDES: Record<number, Partial<Record<MainResponse, string>>> = {
   1: {
     catch: '1日目。初日の熱を評判に変えるが、型は攻め寄りになる。',

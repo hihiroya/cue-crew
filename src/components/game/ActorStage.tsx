@@ -37,7 +37,7 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
         </div>
         <div className="event-reveal-body">
           <div className="event-reveal-kicker">
-            <span>本番が動いた</span>
+            <span>本番で起きた</span>
             <em>{focusActor.name} / {STATE_LABELS[focusActor.state]}</em>
           </div>
           <h2>{event.title}</h2>

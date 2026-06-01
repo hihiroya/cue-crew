@@ -67,7 +67,6 @@ export type ResponseInsight = {
   score: number;
   resultTier: ResultTier;
   deltaLoad: number;
-  handTypeLabel: string;
   successRangeLabel: string;
   upsideLabel: string;
   downsideLabel: string;

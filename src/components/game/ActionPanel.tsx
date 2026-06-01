@@ -190,7 +190,6 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
                 <Icon name={response} />
                 <span className="response-title">
                   <strong>{RESPONSE_LABELS[response]}</strong>
-                  <em>{insight.handTypeLabel}</em>
                 </span>
               </div>
               <div className="outlook-summary" aria-label={`成立見込み: ${insight.successRangeLabel}`}>
@@ -252,14 +251,14 @@ const tierOrder: ResultTier[] = ['accident', 'fray', 'smallSuccess', 'scene', 'm
 
 function prepConnectionLabel(tone: ResponseInsight['prepRelationTone']) {
   if (tone === 'primary') return '準備が活きる';
-  if (tone === 'alternate') return '別筋で受ける';
-  return '準備とは遠い';
+  if (tone === 'alternate') return '準備外でも効く';
+  return '準備と合わない';
 }
 
 function prepConnectionShortLabel(tone: ResponseInsight['prepRelationTone']) {
   if (tone === 'primary') return '準備活きる';
-  if (tone === 'alternate') return '別筋で可';
-  return '準備遠い';
+  if (tone === 'alternate') return '準備外で効く';
+  return '準備合わず';
 }
 
 function compactAim(insight: ResponseInsight) {
@@ -308,7 +307,7 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
             <em key={item.id} className={`readout-chip affinity-${item.tone}`} title={item.title} aria-label={item.title}>
               <span className="indicator-lamp" aria-hidden="true"><i /></span>
               <small>{item.label}</small>
-              <strong><b>{item.symbol}</b><span>{item.rank}</span></strong>
+              <strong><span>{item.rank}</span></strong>
             </em>
           ))}
         </div>
@@ -518,7 +517,7 @@ function decisionMemo(insight: ResponseInsight) {
   const prep = insight.prepRelationTone === 'primary'
     ? '準備と正面から噛み合う'
     : insight.prepRelationTone === 'alternate'
-      ? '準備とは別筋で成立する'
+      ? '準備の想定外でも効く'
       : '準備とは噛み合いにくい';
   const danger = insight.dangerWarning ? ` ${insight.downsideLabel}。` : '';
   return `${prep}手。${insight.responseAimLabel}。見込みは${insight.successRangeLabel}。影響は${effectSummary(insight)}。${danger}`;
