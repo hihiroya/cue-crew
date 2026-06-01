@@ -1506,7 +1506,7 @@ button:disabled {
   position: relative;
   overflow: visible;
   gap: 12px;
-  padding: 18px 14px 92px;
+  padding: 18px 14px;
   border-color: rgba(255, 217, 138, 0.36);
   background:
     radial-gradient(circle at 18% 8%, rgba(255, 217, 138, 0.1), transparent 18%),
@@ -2301,12 +2301,12 @@ button:disabled {
 
 .response-send-bar {
   position: sticky;
-  top: calc(100vh - 86px - env(safe-area-inset-bottom));
+  bottom: max(10px, env(safe-area-inset-bottom));
   z-index: 5;
   display: grid !important;
   grid-template-columns: minmax(0, 1fr);
   align-items: stretch !important;
-  margin: 8px 10px -2px;
+  margin: 8px 10px;
   padding: 9px;
   border-radius: 8px;
   border: 1px solid rgba(255, 217, 138, 0.3);
@@ -2320,10 +2320,6 @@ button:disabled {
     0 -8px 26px rgba(0, 0, 0, 0.34),
     0 12px 36px rgba(0, 0, 0, 0.36),
     0 0 0 1px rgba(255, 217, 138, 0.08);
-}
-
-.response-console .response-send-bar {
-  margin: 8px 0 -76px;
 }
 
 .response-send-bar .decision-action {
@@ -3434,7 +3430,7 @@ button:disabled {
   }
 
   .response-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
