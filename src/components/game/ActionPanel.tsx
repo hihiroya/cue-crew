@@ -64,55 +64,57 @@ export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepPr
         })}
       </div>
       <aside className={`cue-sheet cue-${inspectedTone}`}>
-        <div className="cue-sheet-head">
-          <span>本番前メモ</span>
-          <strong>{PREP_LABELS[inspected]}の準備</strong>
-        </div>
-        <div className="cue-sheet-grid cue-sheet-focus">
-          <section>
-            <span>見えている兆候</span>
-            <div className="cue-readiness-list">
-              {visibleOmens.map((event) => {
-                const isCovered = PREP_MATCHES[inspected].includes(event);
-                return (
-                  <em key={event} className={isCovered ? 'is-covered' : 'is-missed'}>
-                    <span className="cue-check" aria-hidden="true">{isCovered ? '✓' : ''}</span>
-                    <span>{EVENT_LABELS[event]}</span>
-                    <b>{isCovered ? '準備済み' : '対象外'}</b>
-                  </em>
-                );
-              })}
-            </div>
-          </section>
-          {prepExtraEvents(inspected, visibleOmens).length ? (
+        <div className="cue-paper">
+          <div className="cue-sheet-head">
+            <span>本番前メモ</span>
+            <strong>{PREP_LABELS[inspected]}の準備</strong>
+          </div>
+          <div className="cue-sheet-grid cue-sheet-focus">
             <section>
-              <span>同じ準備で拾える出来事</span>
-              <div className="cue-tags">
-                {prepExtraEvents(inspected, visibleOmens).map((event) => (
-                  <em key={event}>{EVENT_LABELS[event]}</em>
-                ))}
+              <span>見えている兆候</span>
+              <div className="cue-readiness-list">
+                {visibleOmens.map((event) => {
+                  const isCovered = PREP_MATCHES[inspected].includes(event);
+                  return (
+                    <em key={event} className={isCovered ? 'is-covered' : 'is-missed'}>
+                      <span className="cue-check" aria-hidden="true">{isCovered ? '✓' : ''}</span>
+                      <span>{EVENT_LABELS[event]}</span>
+                      <b>{isCovered ? '準備済み' : '対象外'}</b>
+                    </em>
+                  );
+                })}
               </div>
             </section>
-          ) : null}
-        </div>
-        <div className="cue-read">
-          <p>{prepReadMemo(inspected, inspectedCoveredOmens.length, visibleOmens.length)}</p>
-          <div className="cue-note-branches">
-            <section>
-              <span>備えどおりに来たら</span>
-              <p><strong>{RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[inspected]]}</strong>で受ける。{PREP_RESPONSE_HINTS[inspected].aim}。</p>
-            </section>
-            <section>
-              <span>外れたら</span>
-              <p>{PREP_RESPONSE_HINTS[inspected].alternate}。</p>
-            </section>
+            {prepExtraEvents(inspected, visibleOmens).length ? (
+              <section>
+                <span>同じ準備で拾える出来事</span>
+                <div className="cue-tags">
+                  {prepExtraEvents(inspected, visibleOmens).map((event) => (
+                    <em key={event}>{EVENT_LABELS[event]}</em>
+                  ))}
+                </div>
+              </section>
+            ) : null}
           </div>
-        </div>
-        <div className="cue-commit" aria-label="準備を確定">
-          <span>準備OK</span>
-          <button className="cue-stamp-action" disabled={disabled} onClick={() => onSelect(inspected)}>
-            <strong>本番を待つ</strong>
-          </button>
+          <div className="cue-read">
+            <p>{prepReadMemo(inspected, inspectedCoveredOmens.length, visibleOmens.length)}</p>
+            <div className="cue-note-branches">
+              <section>
+                <span>備えどおりに来たら</span>
+                <p><strong>{RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[inspected]]}</strong>で受ける。{PREP_RESPONSE_HINTS[inspected].aim}。</p>
+              </section>
+              <section>
+                <span>外れたら</span>
+                <p>{PREP_RESPONSE_HINTS[inspected].alternate}。</p>
+              </section>
+            </div>
+          </div>
+          <div className="cue-commit" aria-label="準備を確定">
+            <button className="cue-stamp-action" disabled={disabled} onClick={() => onSelect(inspected)}>
+              <span>準備確認</span>
+              <strong>本番を待つ</strong>
+            </button>
+          </div>
         </div>
       </aside>
     </section>
