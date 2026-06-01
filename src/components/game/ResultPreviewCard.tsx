@@ -21,9 +21,9 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
     );
   }
   const prepBanner = {
-    hit: { className: 'is-hit', label: '先読み的中', detail: '上振れ幅が広がった' },
-    partial: { className: 'is-partial', label: '先読み部分的中', detail: '崩れを抑えた' },
-    miss: { className: 'is-miss', label: '先読み空振り', detail: '上限が下がった' },
+    hit: { className: 'is-hit', label: '準備が活きた', detail: '上振れ幅が広がった' },
+    partial: { className: 'is-partial', label: '準備が一部活きた', detail: '崩れを抑えた' },
+    miss: { className: 'is-miss', label: '別の備えだった', detail: '上限が下がった' },
   }[preview.prepQuality];
   const isMatinee = preview.resultMode === 'matinee';
   const isFinale = preview.resultMode === 'finale';
@@ -55,7 +55,7 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
         <p>{preview.prepRecoveryText}</p>
       </div>
       <div className={`prep-relation-result relation-${preview.prepRelationTone}`}>
-        <span>先読みとの関係</span>
+        <span>準備との関係</span>
         <strong>{preview.prepRelationLabel}</strong>
         <p>{preview.responseAimLabel}</p>
       </div>

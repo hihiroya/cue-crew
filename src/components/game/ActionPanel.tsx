@@ -24,7 +24,8 @@ export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepPr
     <section className="choice-panel">
       <div className="section-heading">
         <p>一手目</p>
-        <h2>先読みを決める</h2>
+        <h2>準備を決める</h2>
+        <small>兆候を見て、想定外に備える一手を選ぶ。</small>
       </div>
       <div className="choice-grid">
         {prepActions.map((prep) => {
@@ -56,7 +57,7 @@ export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepPr
                 <span>受け方は{RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}</span>
               </div>
               <em className={`selected-card-bar ${isInspected ? 'is-visible' : ''}`} aria-hidden={!isInspected}>
-                {isInspected ? '読み候補' : ''}
+                {isInspected ? '準備候補' : ''}
               </em>
             </button>
           );
@@ -64,12 +65,12 @@ export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepPr
       </div>
       <aside className={`cue-sheet cue-${inspectedTone}`}>
         <div className="cue-sheet-head">
-          <span>袖の備え</span>
-          <strong>{PREP_LABELS[inspected]}で読む</strong>
+          <span>対応メモ</span>
+          <strong>{PREP_LABELS[inspected]}で備える</strong>
         </div>
         <div className="cue-sheet-grid cue-sheet-focus">
           <section>
-            <span>見えている兆候への備え</span>
+            <span>見えている兆候</span>
             <div className="cue-readiness-list">
               {visibleOmens.map((event) => (
                 <em key={event} className={PREP_MATCHES[inspected].includes(event) ? 'is-covered' : 'is-missed'}>
@@ -92,13 +93,13 @@ export function PrepPanel({ selected, disabled, visibleOmens, onSelect }: PrepPr
         </div>
         <div className="cue-read">
           <p>{prepReadMemo(inspected, inspectedCoveredOmens.length, visibleOmens.length)}</p>
-          <p><strong>本番で活きる手:</strong> {RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[inspected]]}。{PREP_RESPONSE_HINTS[inspected].aim}。</p>
-          <p><strong>外れた時の受け方:</strong> {PREP_RESPONSE_HINTS[inspected].alternate}。</p>
+          <p><strong>備えた出来事なら:</strong> {RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[inspected]]}で受ける。{PREP_RESPONSE_HINTS[inspected].aim}。</p>
+          <p><strong>違う出来事なら:</strong> {PREP_RESPONSE_HINTS[inspected].alternate}。</p>
         </div>
         <div className="cue-commit">
           <span>準備ができたら</span>
           <button className="primary-action cue-action" disabled={disabled} onClick={() => onSelect(inspected)}>
-            この読みで本番を待つ
+            本番を待つ
           </button>
         </div>
       </aside>
@@ -126,15 +127,15 @@ function prepToneLabel(tone: PrepTone) {
 
 function prepReadMemo(prep: PrepAction, covered: number, _total: number) {
   if (covered >= 2) {
-    return '見えている兆候に備えが入っている。起きた揺れを、次の対応へつなぎやすい読み。';
+    return '見えている兆候に備えが入っている。起きた出来事を、次の対応へつなぎやすい準備。';
   }
   if (covered === 1) {
-    return '見えている兆候の一部に備えている。的中を狙いつつ、外れた時の受け方も残す読み。';
+    return '見えている兆候の一部に備えている。備えが外れた時の受け方も残す準備。';
   }
   if (prep === 'prepareTransition') {
-    return '今見えている兆候とは別筋だが、崩れを小さく閉じるための読み。高負荷になる前に退路を残す。';
+    return '今見えている兆候とは別筋だが、崩れを小さく閉じるための準備。高負荷になる前に退路を残す。';
   }
-  return '今見えている兆候とは別筋。役者の揺れが違う方向へ動いた時に備える読み。';
+  return '今見えている兆候とは別筋。役者の出来事が違う方向へ動いた時に備える準備。';
 }
 
 type ResponseProps = {
@@ -154,7 +155,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
   return (
     <section className="choice-panel">
       <div className="section-heading">
-        <p>二手目{state.selectedPrep ? ` / 先読み: ${PREP_LABELS[state.selectedPrep]}` : ''}</p>
+        <p>二手目{state.selectedPrep ? ` / 準備: ${PREP_LABELS[state.selectedPrep]}` : ''}</p>
         <h2>本対応を選ぶ</h2>
       </div>
       <div className="choice-grid response-grid">
@@ -185,7 +186,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
                   <span><Icon name="scene" />{compactAim(insight)}</span>
                   <strong>{insight.successRangeLabel}</strong>
                   <em className={`prep-mark mark-${insight.prepRelationTone}`} aria-label={`読み: ${insight.prepRelationLabel}`}>
-                    読み{relation}
+                    準備{relation}
                   </em>
                 </div>
                 <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
@@ -481,10 +482,10 @@ function compactEffectSummary(insight: ResponseInsight) {
 
 function decisionMemo(insight: ResponseInsight) {
   const prep = insight.prepRelationTone === 'primary'
-    ? '先読みと正面から噛み合う'
+    ? '準備と正面から噛み合う'
     : insight.prepRelationTone === 'alternate'
-      ? '先読みとは別筋で成立する'
-      : '先読みとは噛み合いにくい';
+      ? '準備とは別筋で成立する'
+      : '準備とは噛み合いにくい';
   const danger = insight.dangerWarning ? ` ${insight.downsideLabel}。` : '';
   return `${prep}手。${insight.responseAimLabel}。見込みは${insight.successRangeLabel}。影響は${effectSummary(insight)}。${danger}`;
 }

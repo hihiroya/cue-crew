@@ -5,7 +5,7 @@ export const TURNS_PER_ACT = 2;
 export const MAX_LOAD = 5;
 
 export const ACTS = [
-  { act: 1, name: '1日目', role: '呼吸作り。先読みと座組信頼が公演の型を作る' },
+  { act: 1, name: '1日目', role: '呼吸作り。準備と座組信頼が公演の型を作る' },
   { act: 2, name: '2日目', role: '揺らぎ。型を活かして攻めるか、負荷を整える' },
   { act: 3, name: '3日目', role: '千秋楽。残った信頼と負荷を回収して閉じる' },
 ] as const;
@@ -92,10 +92,10 @@ export const PREP_LABELS: Record<PrepAction, string> = {
 };
 
 export const PREP_DESCRIPTIONS: Record<PrepAction, string> = {
-  watch: '前へ出る・アドリブ・熱を先読みする',
-  makeSpace: '沈黙・退場の余韻・熱を先読みする',
-  tightenFlow: '立ち位置・テンポ・群像の乱れを先読みする',
-  prepareTransition: '走り・退場・群像・立ち位置を先読みする',
+  watch: '前へ出る・アドリブ・熱に備える',
+  makeSpace: '沈黙・退場の余韻・熱に備える',
+  tightenFlow: '立ち位置・テンポ・群像の乱れに備える',
+  prepareTransition: '走り・退場・群像・立ち位置に備える',
 };
 
 export const PREP_PRIMARY_RESPONSE: Record<PrepAction, MainResponse> = {

@@ -927,6 +927,12 @@ button:disabled {
   line-height: 1.35;
 }
 
+.section-heading small {
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
 .event-panel > p,
 .result-preview > p,
 .howto-panel p,
@@ -1067,20 +1073,17 @@ button:disabled {
   height: 0.92rem;
 }
 
-.prep-choice.cue-good .cue-cover strong,
-.cue-sheet.cue-good .cue-sheet-head strong {
+.prep-choice.cue-good .cue-cover strong {
   color: #c6e7b5;
   background: rgba(168, 212, 143, 0.12);
 }
 
-.prep-choice.cue-thin .cue-cover strong,
-.cue-sheet.cue-thin .cue-sheet-head strong {
+.prep-choice.cue-thin .cue-cover strong {
   color: #d9d1bf;
   background: rgba(255, 255, 255, 0.08);
 }
 
-.prep-choice.cue-danger .cue-cover strong,
-.cue-sheet.cue-danger .cue-sheet-head strong {
+.prep-choice.cue-danger .cue-cover strong {
   color: #ffc0b9;
   background: rgba(255, 119, 111, 0.13);
 }
@@ -1558,11 +1561,8 @@ button:disabled {
 }
 
 .cue-sheet-head {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 6px 10px;
-  align-items: baseline;
+  display: grid;
+  gap: 3px;
 }
 
 .cue-sheet-head span,
@@ -1573,11 +1573,10 @@ button:disabled {
 }
 
 .cue-sheet-head strong {
-  padding: 3px 8px;
-  border-radius: 999px;
-  color: #151017;
-  background: var(--gold);
-  font-size: 0.72rem;
+  color: var(--gold-strong);
+  font-family: var(--font-display);
+  font-size: 1.16rem;
+  line-height: 1.2;
 }
 
 .cue-sheet-grid {

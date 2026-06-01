@@ -90,7 +90,7 @@ export function App() {
       <GameHeader state={state} onTitle={() => dispatch({ type: 'RESET_TO_TITLE' })} />
       <ScoreBar state={state} />
       <div className="phase-strip">
-        <span className={state.status === 'prep' ? 'is-active' : ''}>先読みを決める</span>
+        <span className={state.status === 'prep' ? 'is-active' : ''}>準備を決める</span>
         <span className={state.status === 'response' ? 'is-active' : ''}>行動に対応</span>
         <span className={state.status === 'result' ? 'is-active' : ''}>場面を見る</span>
       </div>
@@ -137,12 +137,12 @@ export function App() {
 
 function PrepCueTransition({ cue }: { cue: PendingPrepCue }) {
   return (
-    <div className="prep-cue-transition" role="status" aria-live="polite" aria-label="先読み待機中">
+    <div className="prep-cue-transition" role="status" aria-live="polite" aria-label="準備待機中">
       <div className="prep-cue-card">
         <span className="prep-cue-icon"><Icon name={cue.prep} /></span>
         <p>{PREP_RESPONSE_READY_LABELS[cue.prep]}</p>
-        <h2>{PREP_LABELS[cue.prep]}で読む</h2>
-        <strong>本番の揺れを待つ</strong>
+        <h2>{PREP_LABELS[cue.prep]}で備える</h2>
+        <strong>本番を待つ</strong>
         <em>{prepCueReadinessLabel(cue.coveredCount, cue.visibleCount)}</em>
       </div>
     </div>

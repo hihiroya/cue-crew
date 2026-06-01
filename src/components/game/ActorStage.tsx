@@ -82,10 +82,10 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
 }
 
 function prepRevealFor(actor: Actor, event: ActorEvent, prep: PrepAction) {
-  if (PREP_MATCHES[prep].includes(event.type)) return { tone: 'hit', label: '先読みが捉えた' };
+  if (PREP_MATCHES[prep].includes(event.type)) return { tone: 'hit', label: '準備が活きた' };
   const omens = topOmenEvents(actor).map((omen) => omen.event);
-  if (omens.some((omen) => PREP_MATCHES[prep].includes(omen))) return { tone: 'partial', label: '兆候には張れていた' };
-  return { tone: 'miss', label: '読みは外れた' };
+  if (omens.some((omen) => PREP_MATCHES[prep].includes(omen))) return { tone: 'partial', label: '兆候には備えていた' };
+  return { tone: 'miss', label: '別の備えだった' };
 }
 
 function OmenList({ actor }: { actor: Actor }) {

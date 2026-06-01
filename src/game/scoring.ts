@@ -369,9 +369,9 @@ function prepPredictionQuality(state: GameState, actor: Actor): PrepPredictionQu
 }
 
 function prepScoreItem(quality: PrepPredictionQuality): ScoreBreakdownItem {
-  if (quality === 'hit') return scoreItem('prep-hit', '先読みが的中した', 2, '上振れ幅が広がり、名場面まで届く。');
-  if (quality === 'partial') return scoreItem('prep-partial', '先読みが部分的中した', 0, '見えている兆候には張れていたため、崩れにくい。');
-  return scoreItem('prep-miss', '先読みは空振りした', -1, '上限が下がり、攻めるほど負荷が残りやすい。');
+  if (quality === 'hit') return scoreItem('prep-hit', '準備が活きた', 2, '上振れ幅が広がり、名場面まで届く。');
+  if (quality === 'partial') return scoreItem('prep-partial', '準備が一部活きた', 0, '見えている兆候には備えていたため、崩れにくい。');
+  return scoreItem('prep-miss', '別の備えだった', -1, '上限が下がり、攻めるほど負荷が残りやすい。');
 }
 
 function capForPrepQuality(quality: PrepPredictionQuality) {
@@ -417,7 +417,7 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
   const rawScore = sumBreakdown(items);
   const cap = capForPrepQuality(prepQuality);
   if (rawScore > cap) {
-    items.push(scoreItem('prep-cap', '先読みの上限', cap - rawScore, prepQuality === 'partial' ? '部分的中なので場面化までに留まる。' : '空振りなので小さな成功までに留まる。'));
+    items.push(scoreItem('prep-cap', '準備の上限', cap - rawScore, prepQuality === 'partial' ? '一部だけ活きたため場面化までに留まる。' : '別の備えだったため小さな成功までに留まる。'));
   }
   return items.filter((item) => item.value !== 0 || ['prep-partial', 'prep-response', 'prep-response-guard'].includes(item.id));
 }
@@ -708,7 +708,7 @@ export function createPerformanceReview(logs: TurnLog[], sceneScore: number, flo
   const hitRate = logs.length > 0 ? Math.round((prepHitCount / logs.length) * 100) : 0;
   const reviewNotes = [
     `初日を経て、型は「${styleLabel}」になった。`,
-    `先読みは${prepHitCount}/${logs.length}回的中し、的中率は${hitRate}%だった。`,
+    `準備は${prepHitCount}/${logs.length}回噛み合い、噛み合い率は${hitRate}%だった。`,
     `${dominantResponse.response}判断が多く、${dominantResponse.response === '拾う' ? '予定外を熱に変える場面が伸びた。' : dominantResponse.response === '待つ' ? '余韻を残す判断が信頼を支えた。' : dominantResponse.response === '整える' ? '乱れを舞台の呼吸へ戻す判断が流れを守った。' : '崩れを閉じて進行を守る判断が目立った。'}`,
     earlyFray
       ? `${earlyFray.act}日目${PERFORMANCE_SLOT_LABELS[earlyFray.turnInAct === 1 ? 'matinee' : 'soiree'].label}でほころびが出たため、以降は負荷管理が課題になった。`
@@ -717,7 +717,7 @@ export function createPerformanceReview(logs: TurnLog[], sceneScore: number, flo
       ? `${lateRecovery.act}日目${PERFORMANCE_SLOT_LABELS[lateRecovery.turnInAct === 1 ? 'matinee' : 'soiree'].label}で整えた判断により、千秋楽の流れは持ち直した。`
       : backstageLoad >= 3
         ? '次回は2日目マチネか3日目マチネで一度待つか整えると、ソワレへ負荷を残しにくい。'
-        : '次回は高負荷を恐れすぎず、的中した先読みから強い本対応を狙うと名場面を増やせる。',
+        : '次回は高負荷を恐れすぎず、噛み合った準備から強い本対応を狙うと名場面を増やせる。',
   ];
   if (frayCount >= 3) reviewNotes.push('ほころびが多かったため、同じ対応の連続使用と負荷4以上の局面に注意したい。');
   const review = reviewNotes.join('');

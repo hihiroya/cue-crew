@@ -106,7 +106,7 @@ export function flavorText(args: {
 }
 
 const recoveryTitles: Record<PrepAction, string> = {
-  watch: '先読みが効いた',
+  watch: '注視の準備が効いた',
   makeSpace: '余白が場面を支えた',
   tightenFlow: '締めた流れが乱れを包んだ',
   prepareTransition: '備えた転換が効いた',
@@ -145,7 +145,7 @@ export function prepRecovery(args: {
   if (args.quality === 'hit' && !['fray', 'accident'].includes(args.tier)) {
     return {
       tone: 'matched',
-      label: '先読み的中',
+      label: '準備が活きた',
       title: recoveryTitles[args.prep],
       text: `${combo}。${actor}の「${event}」が、客席まで届く揺れになった。`,
     };
@@ -153,22 +153,22 @@ export function prepRecovery(args: {
   if (args.quality === 'partial' && args.tier !== 'accident') {
     return {
       tone: 'partial',
-      label: '先読み部分的中',
+      label: '準備が一部活きた',
       title: thinTitles[args.prep],
-      text: `${combo}。張った先とは違う揺れだったが、舞台の呼吸は崩れなかった。`,
+      text: `${combo}。備えた出来事とは違ったが、舞台の呼吸は崩れなかった。`,
     };
   }
   if (args.tier === 'smallSuccess' || args.tier === 'scene') {
     return {
       tone: 'thin',
-      label: '先読み空振り',
+      label: '別の備えだった',
       title: thinTitles[args.prep],
-      text: `${combo}。張った先とは違う揺れが来た。`,
+      text: `${combo}。備えた出来事とは違う流れが来た。`,
     };
   }
   return {
     tone: 'missed',
-    label: '先読み空振り',
+    label: '別の備えだった',
     title: missedTitles[args.prep],
     text: `${combo}。起きた「${event}」に対して、最初の備えは十分には届かなかった。`,
   };

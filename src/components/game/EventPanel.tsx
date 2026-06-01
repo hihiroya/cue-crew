@@ -10,7 +10,7 @@ export function EventPanel({ state }: { state: GameState }) {
         <p>本番の出来事</p>
         <h2>{event ? `${actor}：${event.title}` : 'まだ起きていない'}</h2>
       </div>
-      <p>{event ? event.description : state.selectedPrep ? `${PREP_LABELS[state.selectedPrep]}を先読みした。役者の次の動きを待っている。` : '兆候を読み、どの未来に張るか選ぶ。'}</p>
+      <p>{event ? event.description : state.selectedPrep ? `${PREP_LABELS[state.selectedPrep]}で備えた。役者の次の動きを待っている。` : '兆候を見て、想定外に備える一手を選ぶ。'}</p>
       {state.pendingFrayEvent ? <div className="fray-note">前のほころび: {state.pendingFrayEvent.title}</div> : null}
     </section>
   );
