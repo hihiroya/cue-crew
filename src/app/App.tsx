@@ -275,6 +275,16 @@ function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: { result: 
         <div className="review-notes">
           {(result.reviewNotes?.length ? result.reviewNotes.slice(0, 3) : [result.review]).map((note) => <p key={note}>{note}</p>)}
         </div>
+        <div className={`performance-rank-card rank-${rankClass(result.insight.rank)}`}>
+          <span>公演ランク</span>
+          <strong>{result.insight.rank}</strong>
+          <p>総合スコア {result.insight.totalScore}</p>
+          <em>{result.insight.pointsToNextRank === null ? '最高ランク到達' : `あと${result.insight.pointsToNextRank}点で ${result.insight.nextRank}`}</em>
+        </div>
+        <div className="score-attack-note">
+          <span>スコアメモ</span>
+          <p>{result.insight.scoreNote}</p>
+        </div>
         <div className="packet-metrics">
           <span>準備 <strong>{result.insight.prepHits}/6</strong><small>{result.insight.prepHitRate}%</small></span>
           <span>名場面 <strong>{result.insight.masterpieceCount}</strong><small>場面</small></span>
@@ -410,4 +420,8 @@ function loadNote(value: number) {
   if (value >= 4) return '次回注意';
   if (value >= 2) return '余熱あり';
   return '軽い';
+}
+
+function rankClass(rank: PerformanceResult['insight']['rank']) {
+  return rank.replace('+', 'plus').toLowerCase();
 }

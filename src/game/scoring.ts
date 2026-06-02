@@ -799,7 +799,22 @@ function clampPercent(value: number) {
   return Math.max(18, Math.min(98, Math.round(value)));
 }
 
-export function createPerformanceInsight(logs: TurnLog[], backstageLoad = 0): PerformanceInsight {
+const PERFORMANCE_RANKS: Array<{ rank: PerformanceInsight['rank']; threshold: number }> = [
+  { rank: 'S+', threshold: 52 },
+  { rank: 'S', threshold: 44 },
+  { rank: 'A', threshold: 34 },
+  { rank: 'B', threshold: 24 },
+  { rank: 'C', threshold: 14 },
+  { rank: 'D', threshold: Number.NEGATIVE_INFINITY },
+];
+
+export function createPerformanceInsight(logs: TurnLog[], sceneScore = 0, flowScore = 0, trustScore = 0, backstageLoad = 0): PerformanceInsight {
+  const totalScore = sceneScore * 2 + flowScore + trustScore - backstageLoad;
+  const rankIndex = PERFORMANCE_RANKS.findIndex((item) => totalScore >= item.threshold);
+  const rank = PERFORMANCE_RANKS[rankIndex]?.rank ?? 'D';
+  const nextRankEntry = rankIndex > 0 ? PERFORMANCE_RANKS[rankIndex - 1] : null;
+  const nextRank = (nextRankEntry?.rank ?? null) as PerformanceInsight['nextRank'];
+  const pointsToNextRank = nextRankEntry ? Math.max(0, nextRankEntry.threshold - totalScore) : null;
   const prepHits = logs.filter((log) => log.prepMatched).length;
   const prepHitRate = logs.length > 0 ? Math.round((prepHits / logs.length) * 100) : 0;
   const masterpieceCount = logs.filter((log) => log.resultTier === 'masterpiece').length;
@@ -825,7 +840,21 @@ export function createPerformanceInsight(logs: TurnLog[], backstageLoad = 0): Pe
         : sceneOrBetterCount <= 1
           ? '舞台は支えられた。次回は噛み合った準備から、評判を伸ばす対応を一度強く狙いたい。'
           : '次回は高負荷を恐れすぎず、噛み合った準備から強い本対応を狙うと名場面を増やせる。';
+  const scoreNote = pointsToNextRank === null
+    ? '最高ランク。次は同じseedで安定再現を狙える。'
+    : masterpieceCount === 0
+      ? `${nextRank}まであと${pointsToNextRank}点。名場面を1回作ると大きく伸びる。`
+      : backstageLoad >= 4
+        ? `${nextRank}まであと${pointsToNextRank}点。終盤の負荷を抑えると届きやすい。`
+        : prepHitRate < 67
+          ? `${nextRank}まであと${pointsToNextRank}点。準備の噛み合いを増やすと底上げできる。`
+          : `${nextRank}まであと${pointsToNextRank}点。場面化以上をもう1回増やしたい。`;
   return {
+    totalScore,
+    rank,
+    nextRank,
+    pointsToNextRank,
+    scoreNote,
     prepHits,
     prepHitRate,
     masterpieceCount,

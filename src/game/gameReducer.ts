@@ -48,7 +48,7 @@ export const titleState: GameState = {
 
 export function finishPerformance(state: GameState): PerformanceResult {
   const { title, review, reviewNotes } = createPerformanceReview(state.logs, state.sceneScore, state.flowScore, state.trustScore, state.backstageLoad);
-  const insight = createPerformanceInsight(state.logs, state.backstageLoad);
+  const insight = createPerformanceInsight(state.logs, state.sceneScore, state.flowScore, state.trustScore, state.backstageLoad);
   const audienceSurvey = createAudienceSurvey(state.logs, state.sceneScore, state.flowScore, state.trustScore, state.backstageLoad);
   const mediaReview = createMediaReview(state.logs, state.sceneScore, state.flowScore, state.trustScore, state.backstageLoad);
   const highlights = [...state.logs]

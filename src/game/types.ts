@@ -93,6 +93,11 @@ export type DecisionDistributionItem = {
 };
 
 export type PerformanceInsight = {
+  totalScore: number;
+  rank: 'S+' | 'S' | 'A' | 'B' | 'C' | 'D';
+  nextRank: 'S+' | 'S' | 'A' | 'B' | 'C' | null;
+  pointsToNextRank: number | null;
+  scoreNote: string;
   prepHits: number;
   prepHitRate: number;
   masterpieceCount: number;
