@@ -4,6 +4,7 @@ import {
   ACT_RESPONSE_GUIDES,
   EVENT_COMPATIBILITY,
   EVENT_LABELS,
+  LOAD_LABELS,
   MAX_LOAD,
   PERFORMANCE_SLOT_LABELS,
   PERFORMANCE_STYLE_DETAILS,
@@ -22,7 +23,7 @@ import { topOmenEvents } from './actorLogic';
 import { createRng } from './rng';
 import { frayFitFor, guardTierForFrayRecovery } from './fray';
 import { flavorText, prepRecovery, sceneTitle } from './sceneTemplates';
-import type { Actor, GameState, LoadBias, MainResponse, PerformanceSlot, PerformanceStyle, PrepPredictionQuality, ResponseInsight, ResultPreview, ResultTier, ScoreBreakdownItem, TurnLog } from './types';
+import type { Actor, AudienceSurvey, CueResultSummary, GameState, LoadBias, MainResponse, MediaReview, PerformanceInsight, PerformanceSlot, PerformanceStyle, PrepPredictionQuality, ResponseInsight, ResultPreview, ResultTier, ScoreBreakdownItem, TurnLog } from './types';
 
 function slotForTurnInAct(turnInAct: number): PerformanceSlot {
   return turnInAct === 1 ? 'matinee' : 'soiree';
@@ -488,6 +489,69 @@ function sideEffectLabel(deltas: ReturnType<typeof deltasFor>) {
   return [load, trust, flow, repeat].filter(Boolean).join(' / ');
 }
 
+function cueKeyPoint(preview: Pick<ResultPreview, 'actorEventType' | 'mainResponse' | 'prepQuality' | 'resultTier' | 'scoreBreakdown'>) {
+  const eventLabel = EVENT_LABELS[preview.actorEventType];
+  const responseLabel = RESPONSE_LABELS[preview.mainResponse];
+  if (preview.prepQuality === 'hit' && ['masterpiece', 'scene'].includes(preview.resultTier)) {
+    return `${eventLabel}に備えが届き、${responseLabel}判断が場面の芯になった。`;
+  }
+  const strongest = [...preview.scoreBreakdown]
+    .filter((item) => item.value > 0)
+    .sort((a, b) => b.value - a.value)[0];
+  if (strongest) return `${strongest.label}が決め手になった。`;
+  if (preview.resultTier === 'accident') return `${eventLabel}への${responseLabel}が一拍遅れ、流れから外れた。`;
+  return `${eventLabel}を${responseLabel}で受け、小さく次へ渡した。`;
+}
+
+function cueCost(preview: Pick<ResultPreview, 'deltaLoad' | 'deltaFlow' | 'deltaTrust' | 'resultTier' | 'mainResponse'>) {
+  if (preview.deltaLoad >= 2) return `評判は伸びたが、${RESPONSE_LABELS[preview.mainResponse]}の代償として裏方負荷が重く残った。`;
+  if (preview.deltaFlow < 0) return '場面の揺れが進行へ残り、次の公演で整える余地がある。';
+  if (preview.deltaTrust < 0) return '進行は守ったが、役者との呼吸は少し削れた。';
+  if (preview.resultTier === 'masterpiece') return '負荷は残るが、客席まで届く見せ場として回収できた。';
+  if (preview.resultTier === 'fray' || preview.resultTier === 'accident') return '舞台裏に揺れが残り、次の判断で拾う余白になった。';
+  return '大きな代償は抑えつつ、次の場面へ渡せた。';
+}
+
+function cueHandoff(state: GameState, preview: Pick<ResultPreview, 'resultMode' | 'deltaLoad' | 'mainResponse' | 'performanceStyle'>) {
+  if (preview.resultMode === 'finale') return 'この手応えを終演後パケットへ回す。';
+  if (state.pendingFrayEvent) {
+    return `${LOAD_LABELS[state.pendingFrayEvent.bias]}のほころびが残る。次は拾える対応を優先したい。`;
+  }
+  if (state.backstageLoad + preview.deltaLoad >= 4) {
+    return '次公演は負荷4以上で入る。整えるか待つ判断で一度息を戻したい。';
+  }
+  if (preview.performanceStyle) {
+    const style = PERFORMANCE_STYLE_DETAILS[preview.performanceStyle];
+    return `公演の色は「${style.label}」。${RESPONSE_LABELS[style.strength]}が次の軸になりやすい。`;
+  }
+  if (preview.mainResponse === 'catch') return '攻めの手応えがある。ソワレでは負荷との釣り合いを見る。';
+  if (preview.mainResponse === 'arrange') return '流れは戻った。次は場面を伸ばす余地を探す。';
+  if (preview.mainResponse === 'wait') return '余韻は残った。次は熱が来たら拾う判断も視野に入る。';
+  return '崩れは閉じた。次は信頼を戻す判断を置きたい。';
+}
+
+function audienceReaction(preview: Pick<ResultPreview, 'resultTier' | 'actorEventType' | 'mainResponse' | 'deltaScene'>) {
+  if (preview.resultTier === 'masterpiece') {
+    if (preview.mainResponse === 'catch') return '客席反応: 予定外の一言に、拍手が少し長く残った。';
+    if (preview.mainResponse === 'wait') return '客席反応: 沈黙のあと、客席の息が揃った。';
+    if (preview.mainResponse === 'arrange') return '客席反応: 乱れが意味に変わり、場面の輪郭が締まった。';
+    return '客席反応: 暗転の切れ味に、次の場面を待つ空気が生まれた。';
+  }
+  if (preview.resultTier === 'scene') return '客席反応: 危うさごと場面として受け取られた。';
+  if (preview.resultTier === 'smallSuccess') return '客席反応: 大きな拍手ではないが、舞台の呼吸は途切れなかった。';
+  if (preview.resultTier === 'fray') return '客席反応: ざわめきは残ったが、生の揺れとして受け止められた。';
+  return '客席反応: 一拍の乱れが見えたが、熱は消えなかった。';
+}
+
+function cueResultSummary(state: GameState, preview: ResultPreview): CueResultSummary {
+  return {
+    keyPoint: cueKeyPoint(preview),
+    cost: cueCost(preview),
+    handoff: cueHandoff(state, preview),
+    audienceReaction: audienceReaction(preview),
+  };
+}
+
 type StyleSource = Pick<TurnLog, 'mainResponse' | 'deltaScene' | 'deltaFlow' | 'deltaTrust' | 'deltaLoad'>;
 
 export function determinePerformanceStyle(logs: StyleSource[]): PerformanceStyle {
@@ -604,7 +668,7 @@ export function previewResult(state: GameState): ResultPreview {
       ]
     : insight.scoreBreakdown;
 
-  return {
+  const preview: ResultPreview = {
     score,
     day: state.act,
     performanceSlot: slot,
@@ -637,6 +701,12 @@ export function previewResult(state: GameState): ResultPreview {
     prepRecoveryLabel: recovery.label,
     prepRecoveryTitle: recovery.title,
     prepRecoveryText: recovery.text,
+    cueSummary: {
+      keyPoint: '',
+      cost: '',
+      handoff: '',
+      audienceReaction: '',
+    },
     scoreBreakdown,
     loadBias: RESPONSE_BIAS[response],
     eventTitle: state.currentActorEvent.title,
@@ -645,6 +715,10 @@ export function previewResult(state: GameState): ResultPreview {
     prepRelationTone: insight.prepRelationTone,
     responseAimLabel: insight.responseAimLabel,
     ...deltas,
+  };
+  return {
+    ...preview,
+    cueSummary: cueResultSummary(state, preview),
   };
 }
 
@@ -719,6 +793,90 @@ export function createPerformanceReview(logs: TurnLog[], sceneScore: number, flo
   if (frayCount >= 3) reviewNotes.push('ほころびが多かったため、同じ対応の連続使用と負荷4以上の局面に注意したい。');
   const review = reviewNotes.join('');
   return { title, review, reviewNotes };
+}
+
+function clampPercent(value: number) {
+  return Math.max(18, Math.min(98, Math.round(value)));
+}
+
+export function createPerformanceInsight(logs: TurnLog[], backstageLoad = 0): PerformanceInsight {
+  const prepHits = logs.filter((log) => log.prepMatched).length;
+  const prepHitRate = logs.length > 0 ? Math.round((prepHits / logs.length) * 100) : 0;
+  const masterpieceCount = logs.filter((log) => log.resultTier === 'masterpiece').length;
+  const sceneOrBetterCount = logs.filter((log) => log.resultTier === 'masterpiece' || log.resultTier === 'scene').length;
+  const frayOrAccidentCount = logs.filter((log) => log.resultTier === 'fray' || log.resultTier === 'accident').length;
+  const decisionDistribution = (['catch', 'arrange', 'wait', 'cut'] as MainResponse[]).map((response) => ({
+    response,
+    count: logs.filter((log) => log.mainResponse === response).length,
+  }));
+  const dominantResponse = [...decisionDistribution].sort((a, b) => b.count - a.count)[0]?.response ?? 'catch';
+  const tierRank: Record<ResultTier, number> = { masterpiece: 4, scene: 3, smallSuccess: 2, fray: 1, accident: 0 };
+  const bestCue = [...logs].sort((a, b) => (
+    tierRank[b.resultTier] - tierRank[a.resultTier]
+    || b.deltaScene - a.deltaScene
+    || b.score - a.score
+  ))[0] ?? null;
+  const nextNote = frayOrAccidentCount >= 3
+    ? 'ほころびが多い公演だった。次回は同じ対応を続けすぎず、負荷4に入る前に整える判断を挟みたい。'
+    : backstageLoad >= 3
+      ? '裏方負荷が高く残った。次回は2日目マチネか3日目マチネで待つか整えると、ソワレへ負荷を残しにくい。'
+      : prepHitRate < 50
+        ? '準備の読みが外れやすかった。焦点役者の兆候上位と準備カードの対応範囲を合わせると安定する。'
+        : sceneOrBetterCount <= 1
+          ? '舞台は支えられた。次回は噛み合った準備から、評判を伸ばす対応を一度強く狙いたい。'
+          : '次回は高負荷を恐れすぎず、噛み合った準備から強い本対応を狙うと名場面を増やせる。';
+  return {
+    prepHits,
+    prepHitRate,
+    masterpieceCount,
+    sceneOrBetterCount,
+    frayOrAccidentCount,
+    dominantResponse,
+    decisionDistribution,
+    bestCue,
+    nextNote,
+  };
+}
+
+export function createAudienceSurvey(logs: TurnLog[], sceneScore: number, flowScore: number, trustScore: number, backstageLoad = 0): AudienceSurvey {
+  const catchCount = logs.filter((log) => log.mainResponse === 'catch').length;
+  const waitCount = logs.filter((log) => log.mainResponse === 'wait').length;
+  const arrangeCount = logs.filter((log) => log.mainResponse === 'arrange').length;
+  const sceneOrBetterCount = logs.filter((log) => log.resultTier === 'masterpiece' || log.resultTier === 'scene').length;
+  const frayOrAccidentCount = logs.filter((log) => log.resultTier === 'fray' || log.resultTier === 'accident').length;
+  return {
+    encoreInterest: clampPercent(54 + sceneScore * 2 + trustScore * 3 + sceneOrBetterCount * 4 - backstageLoad * 3),
+    lingeringAfterglow: clampPercent(50 + trustScore * 4 + waitCount * 5 + sceneOrBetterCount * 5 - frayOrAccidentCount * 4),
+    sceneHeat: clampPercent(52 + sceneScore * 3 + catchCount * 5 + sceneOrBetterCount * 4 - frayOrAccidentCount * 3),
+    stability: clampPercent(60 + flowScore * 4 + arrangeCount * 5 - backstageLoad * 8 - frayOrAccidentCount * 6),
+  };
+}
+
+export function createMediaReview(logs: TurnLog[], sceneScore: number, flowScore: number, trustScore: number, backstageLoad = 0): MediaReview {
+  const style = logs.find((log) => log.performanceStyle)?.performanceStyle ?? determinePerformanceStyle(logs);
+  const styleLabel = PERFORMANCE_STYLE_DETAILS[style].label;
+  const sceneOrBetterCount = logs.filter((log) => log.resultTier === 'masterpiece' || log.resultTier === 'scene').length;
+  const frayOrAccidentCount = logs.filter((log) => log.resultTier === 'fray' || log.resultTier === 'accident').length;
+  const reviewScore = sceneScore + flowScore + trustScore - backstageLoad * 2 + sceneOrBetterCount * 3 - frayOrAccidentCount * 2;
+  const stars = reviewScore >= 28 ? 5 : reviewScore >= 16 ? 4 : reviewScore >= 6 ? 3 : reviewScore >= 0 ? 2 : 1;
+  const headline = stars >= 5
+    ? '予定外を客席の記憶へ変えた三日間'
+    : stars >= 4
+      ? '揺れを隠さず、舞台の呼吸へ変えた公演'
+      : stars >= 3
+        ? '危うさごと支えた、手触りの残る公演'
+        : '荒さは残るが、本番の熱は途切れなかった';
+  const quote = stars >= 4
+    ? `「${styleLabel}」の色が明確で、裏方の判断が場面の輪郭を作った。`
+    : backstageLoad >= 4
+      ? '負荷の重さは見えたが、崩れを次の熱へ渡そうとする姿勢が残った。'
+      : '大きな名場面は限られたが、三日間を通して舞台は途切れなかった。';
+  return {
+    outlet: '小劇場レビュー',
+    stars,
+    headline,
+    quote,
+  };
 }
 
 export function actForTurn(totalTurn: number) {

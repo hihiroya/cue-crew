@@ -394,6 +394,9 @@ try {
   if (scenario !== 'title' && !uiScenario) {
     await runScenario(client, sessionId, scenario);
   }
+  await client.send('Runtime.evaluate', {
+    expression: 'window.scrollTo(0, 0)',
+  }, sessionId);
   await delay(250);
   if (checkPage) {
     await assertPageHealth(client, sessionId, uiScenario ?? scenario);
@@ -486,7 +489,7 @@ async function runScenario(client, sessionId, name) {
     await clickByText('この準備で本番へ');
     await clickByText('拾う');
     await clickByText('この対応を送る');
-    await clickByText('決定して次へ');
+    await clickByText('この結果で');
     await clickByText('注視');
     await clickByText('この準備で本番へ');
     return;
@@ -498,7 +501,7 @@ async function runScenario(client, sessionId, name) {
     await clickByText('この準備で本番へ');
     await clickByText('拾う');
     await clickByText('この対応を送る');
-    await clickByText('決定して次へ');
+    await clickByText('この結果で');
     await clickByText('注視');
     await clickByText('この準備で本番へ');
     await clickByText('拾う');
@@ -512,7 +515,7 @@ async function runScenario(client, sessionId, name) {
     await clickByText('この準備で本番へ');
     await clickByText('拾う');
     await clickByText('この対応を送る');
-    await clickByText('決定して次へ');
+    await clickByText('この結果で');
     await clickByText('注視');
     await clickByText('この準備で本番へ');
     await clickByText('拾う');
@@ -527,7 +530,7 @@ async function runScenario(client, sessionId, name) {
       await clickByText('この準備で本番へ');
       await clickByText('拾う');
       await clickByText('この対応を送る');
-      await clickByText('決定して次へ');
+      await clickByText('この結果で');
     }
     return;
   }

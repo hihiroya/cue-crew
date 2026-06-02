@@ -66,6 +66,44 @@ export type ScoreBreakdownItem = {
   detail?: string;
 };
 
+export type CueResultSummary = {
+  keyPoint: string;
+  cost: string;
+  handoff: string;
+  audienceReaction: string;
+};
+
+export type AudienceSurvey = {
+  encoreInterest: number;
+  lingeringAfterglow: number;
+  sceneHeat: number;
+  stability: number;
+};
+
+export type MediaReview = {
+  outlet: string;
+  stars: number;
+  headline: string;
+  quote: string;
+};
+
+export type DecisionDistributionItem = {
+  response: MainResponse;
+  count: number;
+};
+
+export type PerformanceInsight = {
+  prepHits: number;
+  prepHitRate: number;
+  masterpieceCount: number;
+  sceneOrBetterCount: number;
+  frayOrAccidentCount: number;
+  dominantResponse: MainResponse;
+  decisionDistribution: DecisionDistributionItem[];
+  bestCue: TurnLog | null;
+  nextNote: string;
+};
+
 export type ResponseInsight = {
   response: MainResponse;
   score: number;
@@ -137,6 +175,7 @@ export type ResultPreview = Omit<TurnLog, 'act' | 'turnInAct' | 'totalTurn'> & {
   prepRecoveryLabel: string;
   prepRecoveryTitle: string;
   prepRecoveryText: string;
+  cueSummary: CueResultSummary;
   scoreBreakdown: ScoreBreakdownItem[];
 };
 
@@ -175,5 +214,9 @@ export type PerformanceResult = {
   title: string;
   review: string;
   reviewNotes: string[];
+  insight: PerformanceInsight;
+  audienceSurvey: AudienceSurvey;
+  mediaReview: MediaReview;
+  logs: TurnLog[];
   highlights: TurnLog[];
 };

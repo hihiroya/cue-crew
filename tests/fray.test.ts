@@ -63,6 +63,12 @@ function resultPreview(overrides: Partial<ResultPreview> = {}): ResultPreview {
     prepRecoveryLabel: '準備が活きた',
     prepRecoveryTitle: '余白が場面を支えた',
     prepRecoveryText: 'テスト',
+    cueSummary: {
+      keyPoint: 'テスト',
+      cost: 'テスト',
+      handoff: 'テスト',
+      audienceReaction: 'テスト',
+    },
     ...overrides,
   };
 }

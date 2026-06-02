@@ -2,7 +2,7 @@ import { ACTS, INITIAL_ACTORS, INITIAL_LOAD_STRAIN, TURNS_PER_ACT, TOTAL_TURNS }
 import { advanceActorStates, assignActorRoles, pickFocusActor, resolveActorEvent } from './actorLogic';
 import { nextLoadStrain, resolvePendingFray } from './fray';
 import { makeSeed } from './rng';
-import { actForTurn, clampLoad, createPerformanceReview, determinePerformanceStyle, previewResult, toTurnLog } from './scoring';
+import { actForTurn, clampLoad, createAudienceSurvey, createMediaReview, createPerformanceInsight, createPerformanceReview, determinePerformanceStyle, previewResult, toTurnLog } from './scoring';
 import type { GameState, MainResponse, PerformanceResult, PrepAction } from './types';
 
 export type GameAction =
@@ -48,6 +48,9 @@ export const titleState: GameState = {
 
 export function finishPerformance(state: GameState): PerformanceResult {
   const { title, review, reviewNotes } = createPerformanceReview(state.logs, state.sceneScore, state.flowScore, state.trustScore, state.backstageLoad);
+  const insight = createPerformanceInsight(state.logs, state.backstageLoad);
+  const audienceSurvey = createAudienceSurvey(state.logs, state.sceneScore, state.flowScore, state.trustScore, state.backstageLoad);
+  const mediaReview = createMediaReview(state.logs, state.sceneScore, state.flowScore, state.trustScore, state.backstageLoad);
   const highlights = [...state.logs]
     .sort((a, b) => {
       const tierRank = { masterpiece: 4, scene: 3, smallSuccess: 2, fray: 1, accident: 0 };
@@ -66,6 +69,10 @@ export function finishPerformance(state: GameState): PerformanceResult {
     title,
     review,
     reviewNotes,
+    insight,
+    audienceSurvey,
+    mediaReview,
+    logs: state.logs,
     highlights,
   };
 }

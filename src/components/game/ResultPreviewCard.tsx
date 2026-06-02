@@ -1,4 +1,4 @@
-import { ACTOR_LABELS, EVENT_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS, RESULT_TIER_STARS } from '../../game/constants';
+import { ACTOR_LABELS, EVENT_LABELS, PREP_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS, RESULT_TIER_STARS } from '../../game/constants';
 import type { ResultPreview } from '../../game/types';
 import { Icon } from '../ui/Icon';
 
@@ -29,23 +29,45 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
   const isFinale = preview.resultMode === 'finale';
   const breakdownItems = isMatinee ? preview.scoreBreakdown.slice(0, 3) : preview.scoreBreakdown;
   return (
-      <section className={`result-preview tier-${preview.resultTier} result-mode-${preview.resultMode}`}>
-      <div className="result-kicker">
-        <span>{preview.performanceLabel}{isFinale ? ' / 千秋楽' : ''}</span>
-        <span>{ACTOR_LABELS[preview.focusActorType]} / {EVENT_LABELS[preview.actorEventType]} / {RESPONSE_LABELS[preview.mainResponse]}</span>
+    <section className={`result-preview cue-result-ticket tier-${preview.resultTier} result-mode-${preview.resultMode}`}>
+      <div className="result-ticket-head">
+        <div className="result-kicker">
+          <span>キュー結果票</span>
+          <span>{preview.performanceLabel}{isFinale ? ' / 千秋楽' : ''}</span>
+        </div>
+        <h2>{preview.sceneTitle}</h2>
+        <div className="scene-rating" aria-label={`場面成立度 ${RESULT_TIER_LABELS[preview.resultTier]}`}>
+          <span>成立</span>
+          <strong>{RESULT_TIER_LABELS[preview.resultTier]}</strong>
+          <em>{RESULT_TIER_STARS[preview.resultTier]}</em>
+        </div>
       </div>
-      <div className="result-kicker">
-        <span>実際は「{RESULT_TIER_LABELS[preview.resultTier]}」</span>
-        <span>{isMatinee ? 'ソワレへの調整' : isFinale ? '最終公演の手応え' : 'その日の評判'}</span>
+      <div className="cue-route">
+        <span><Icon name="actor" />{ACTOR_LABELS[preview.focusActorType]}</span>
+        <span><Icon name="event" />{EVENT_LABELS[preview.actorEventType]}</span>
+        <span><Icon name={preview.mainResponse} />{RESPONSE_LABELS[preview.mainResponse]}</span>
       </div>
-      <div className={`prep-hit-banner ${prepBanner.className}`}>
+      <div className={`prep-hit-banner cue-stamp ${prepBanner.className}`}>
         <span>{prepBanner.label}</span>
-        <strong>{prepBanner.detail}</strong>
+        <strong>{PREP_LABELS[preview.prepAction]} / {prepBanner.detail}</strong>
       </div>
-      <div className="scene-rating" aria-label={`場面成立度 ${RESULT_TIER_LABELS[preview.resultTier]}`}>
-        <span>結果ランク</span>
-        <strong>{RESULT_TIER_LABELS[preview.resultTier]}</strong>
-        <em>{RESULT_TIER_STARS[preview.resultTier]}</em>
+      <div className="cue-summary-grid">
+        <article className="cue-summary-card is-key">
+          <span>決め手</span>
+          <p>{preview.cueSummary.keyPoint}</p>
+        </article>
+        <article className="cue-summary-card">
+          <span>代償</span>
+          <p>{preview.cueSummary.cost}</p>
+        </article>
+        <article className="cue-summary-card">
+          <span>{isFinale ? '終演へ' : '申し送り'}</span>
+          <p>{preview.cueSummary.handoff}</p>
+        </article>
+        <article className="cue-summary-card is-audience">
+          <span>客席</span>
+          <p>{preview.cueSummary.audienceReaction.replace(/^客席反応: /, '')}</p>
+        </article>
       </div>
       <div className={`prep-recovery recovery-${preview.prepRecoveryTone}`}>
         <div>
@@ -54,11 +76,6 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
         </div>
         <p>{preview.prepRecoveryText}</p>
       </div>
-      <div className={`prep-relation-result relation-${preview.prepRelationTone}`}>
-        <span>準備との関係</span>
-        <strong>{preview.prepRelationLabel}</strong>
-        <p>{preview.responseAimLabel}</p>
-      </div>
       {preview.styleLabel ? (
         <div className={`performance-style-note ${preview.styleIsNew ? 'is-new' : ''}`}>
           <span>{preview.styleIsNew ? 'この公演の色が決まった' : '公演の色'}</span>
@@ -66,16 +83,14 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
           {preview.styleText ? <p>{preview.styleText}</p> : null}
         </div>
       ) : null}
-      <h2>{preview.sceneTitle}</h2>
-      <p>{preview.flavorText}</p>
       <div className="delta-row">
         <Delta kind="scene" label="場面" value={preview.deltaScene} />
         <Delta kind="flow" label="流れ" value={preview.deltaFlow} />
         <Delta kind="trust" label="信頼" value={preview.deltaTrust} />
         <Delta kind="load" label="負荷" value={preview.deltaLoad} />
       </div>
-      <div className="score-breakdown">
-        <h3>{isMatinee ? 'ソワレへ残る手応え' : isFinale ? '千秋楽に残った理由' : `${RESULT_TIER_LABELS[preview.resultTier]}になった理由`}</h3>
+      <details className="score-breakdown cue-detail-log">
+        <summary>{isMatinee ? 'ソワレへ残る手応え' : isFinale ? '千秋楽に残った理由' : `${RESULT_TIER_LABELS[preview.resultTier]}になった理由`}</summary>
         <ul>
           {breakdownItems.map((item) => (
             <li key={item.id} className={`breakdown-${item.tone}`}>
@@ -85,8 +100,8 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
             </li>
           ))}
         </ul>
-      </div>
-      <button className="primary-action" disabled={!canCommit} onClick={onCommit}>決定して次へ</button>
+      </details>
+      <button className="primary-action" disabled={!canCommit} onClick={onCommit}>{isFinale ? 'この結果で終演へ' : 'この結果で次公演へ'}</button>
     </section>
   );
 }
