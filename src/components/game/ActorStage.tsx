@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react';
 import { ACTOR_TRAITS, EVENT_LABELS, STATE_LABELS } from '../../game/constants';
 import { topOmenEvents } from '../../game/actorLogic';
 import type { Actor, ActorEvent, ActorState, ActorType, PrepAction } from '../../game/types';
@@ -14,22 +13,12 @@ type Props = {
 };
 
 export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLoad, event }: Props) {
-  const revealRef = useRef<HTMLElement | null>(null);
   const focusActor = actors.find((actor) => actor.id === focusActorId) ?? actors[0];
   const supportingActors = actors.filter((actor) => actor.id !== focusActor.id);
 
-  useEffect(() => {
-    if (!event || !revealRef.current) return;
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    revealRef.current.scrollIntoView({
-      behavior: prefersReducedMotion ? 'auto' : 'smooth',
-      block: 'start',
-    });
-  }, [event]);
-
   if (event) {
     return (
-      <section ref={revealRef} className={`event-reveal actor-figure-${focusActor.type} figure-state-${focusActor.state}`} aria-label="本番の出来事">
+      <section className={`event-reveal actor-figure-${focusActor.type} figure-state-${focusActor.state}`} aria-label="本番の出来事">
         <div className="event-reveal-figure">
           <ActorSilhouette type={focusActor.type} />
           <em className="event-actor-tag">{focusActor.name} / {STATE_LABELS[focusActor.state]}</em>

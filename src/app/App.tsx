@@ -57,6 +57,13 @@ export function App() {
     return () => window.clearTimeout(timer);
   }, [pendingPrepCue, state.status]);
 
+  useEffect(() => {
+    if (isUiScenario) return;
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    });
+  }, [displayState.status, displayState.totalTurn, isUiScenario]);
+
   const beginPrepCue = (prep: PrepAction) => {
     if (pendingPrepCue) return;
     setPendingPrepCue({ prep });

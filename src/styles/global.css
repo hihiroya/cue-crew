@@ -4417,6 +4417,156 @@ button:disabled {
   }
 }
 
+@media (max-width: 679px) {
+  .game-shell {
+    gap: 10px;
+  }
+
+  .game-header {
+    grid-template-columns: auto 1fr;
+    gap: 6px 8px;
+    padding: 7px;
+  }
+
+  .game-header .ghost-button {
+    min-height: 34px;
+    padding: 6px 9px;
+    border-radius: 7px;
+    font-size: 0.74rem;
+    white-space: nowrap;
+  }
+
+  .performance-status {
+    gap: 0 7px;
+  }
+
+  .performance-status span {
+    min-width: 2.35rem;
+    padding: 4px 6px;
+    border-radius: 7px;
+    font-size: 0.72rem;
+  }
+
+  .performance-status strong {
+    font-size: 0.95rem;
+  }
+
+  .performance-status small {
+    font-size: 0.68rem;
+  }
+
+  .performance-color-chip {
+    min-height: 30px;
+    padding: 6px 8px;
+    gap: 5px;
+    border-radius: 8px;
+  }
+
+  .performance-color-chip span {
+    font-size: 0.66rem;
+  }
+
+  .performance-color-chip strong {
+    font-size: 0.8rem;
+  }
+
+  .performance-color-chip small {
+    font-size: 0.68rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .score-rail {
+    gap: 6px;
+  }
+
+  .score-trio {
+    gap: 6px;
+  }
+
+  .score-rail-item {
+    min-height: 40px;
+    gap: 5px;
+    padding: 6px;
+    border-radius: 8px;
+  }
+
+  .score-rail-item .score-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .score-rail-item small {
+    font-size: 0.62rem;
+  }
+
+  .score-rail-item strong {
+    font-size: 0.96rem;
+  }
+
+  .backstage-load-console {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 6px 8px;
+    padding: 7px 8px;
+    border-radius: 8px;
+  }
+
+  .backstage-load-head {
+    grid-template-columns: auto auto auto;
+    gap: 5px;
+  }
+
+  .backstage-load-head .score-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .backstage-load-head span:not(.score-icon) {
+    font-size: 0.68rem;
+  }
+
+  .backstage-load-head strong {
+    padding: 2px 7px;
+    font-size: 0.68rem;
+  }
+
+  .load-light-row {
+    gap: 4px;
+  }
+
+  .load-light-row span {
+    height: 7px;
+  }
+
+  .fray-ribbon {
+    grid-column: 1 / -1;
+    padding: 7px 8px;
+    border-radius: 8px;
+  }
+
+  .fray-ribbon span {
+    font-size: 0.64rem;
+  }
+
+  .fray-ribbon strong {
+    font-size: 0.76rem;
+  }
+
+  .phase-strip {
+    gap: 4px;
+    padding: 4px;
+    border-radius: 8px;
+  }
+
+  .phase-strip span {
+    min-height: 24px;
+    padding: 4px 5px;
+    font-size: 0.7rem;
+  }
+}
+
 @media (max-width: 390px) {
   .game-shell,
   .title-screen,
@@ -4438,12 +4588,12 @@ button:disabled {
   }
 
   .score-rail-item {
-    min-height: 50px;
-    padding: 7px;
+    min-height: 40px;
+    padding: 6px;
   }
 
   .load-rail-item {
-    min-height: 46px;
+    min-height: 40px;
   }
 
   .score-chip {
@@ -4452,8 +4602,8 @@ button:disabled {
   }
 
   .score-icon {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
   }
 
   .score-copy span,
