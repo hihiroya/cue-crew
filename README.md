@@ -47,6 +47,24 @@ npm run screenshot -- --scenario=preview --out=tmp/preview.png
 npm run screenshot -- --scenario=result --out=tmp/result.png
 ```
 
+UI変更の確認では、固定シナリオをまとめ撮りできます。Browserプラグインが使えない環境では、このCDPベースの確認を標準の代替導線にします。
+
+```bash
+npm run verify:ui
+```
+
+対象を絞る場合は以下を使います。
+
+```bash
+npm run screenshot:prep
+npm run screenshot:response
+npm run screenshot:result
+```
+
+これらのコマンドは順番にスクリーンショットを撮り、横スクロール、ボタン内テキストのはみ出し、カード重なり、準備/本番の選択マーカー混入などを検出します。出力先は `tmp/screenshots/` 配下です。
+
+詳細な運用、固定シナリオの追加方針、スクショ成果物の扱いは [UI検証ワークフロー](docs/ui-verification-workflow.md) を参照してください。
+
 ## Cloudflare Pages デプロイ
 
 Cloudflare Pages では `wrangler.jsonc` を設定ファイルとして使います。

@@ -25,6 +25,11 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "screenshot": "node scripts/capture-screenshot.mjs",
+    "screenshot:prep": "node scripts/capture-screenshot.mjs --preset=prep-panel --outDir=tmp/screenshots/prep-panel",
+    "screenshot:response": "node scripts/capture-screenshot.mjs --preset=response-panel --outDir=tmp/screenshots/response-panel",
+    "screenshot:result": "node scripts/capture-screenshot.mjs --preset=result-panel --outDir=tmp/screenshots/result-panel",
+    "screenshot:ui": "node scripts/capture-screenshot.mjs --preset=ui-critical --outDir=tmp/screenshots/ui-critical",
+    "verify:ui": "npm run build && npm run screenshot:ui",
     "verify": "npm audit signatures && npm run build",
     "cf:preview": "npm run build && wrangler pages dev dist --compatibility-date=2026-05-30",
     "cf:deploy": "npm run build && wrangler pages deploy dist --project-name=cue-crew"
