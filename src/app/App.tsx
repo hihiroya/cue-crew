@@ -266,7 +266,7 @@ function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: { result: 
     <main className="result-screen">
       <section className="result-hero">
         <div className="stage-mark"><Icon name="spark" /></div>
-        <p>終演後パケット</p>
+        <p>公演報告書</p>
         <h1>{result.title}</h1>
         <div className="final-style-badge">
           <span>公演の色</span>
@@ -275,15 +275,23 @@ function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: { result: 
         <div className="review-notes">
           {(result.reviewNotes?.length ? result.reviewNotes.slice(0, 3) : [result.review]).map((note) => <p key={note}>{note}</p>)}
         </div>
+        <div className="report-section-label">
+          <span>総合評価欄</span>
+          <small>全公演結果</small>
+        </div>
         <div className={`performance-rank-card rank-${rankClass(result.insight.rank)}`}>
           <span>公演ランク</span>
           <strong>{result.insight.rank}</strong>
-          <p>総合スコア {result.insight.totalScore}</p>
+          <p>総合評価点 {result.insight.totalScore}</p>
           <em>{result.insight.pointsToNextRank === null ? '最高ランク到達' : `あと${result.insight.pointsToNextRank}点で ${result.insight.nextRank}`}</em>
         </div>
         <div className="score-attack-note">
-          <span>スコアメモ</span>
+          <span>次回改善メモ</span>
           <p>{result.insight.scoreNote}</p>
+        </div>
+        <div className="report-section-label">
+          <span>公演指標</span>
+          <small>集計</small>
         </div>
         <div className="packet-metrics">
           <span>準備 <strong>{result.insight.prepHits}/6</strong><small>{result.insight.prepHitRate}%</small></span>
@@ -300,8 +308,8 @@ function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: { result: 
       </section>
       <section className="packet-panel cue-note-panel">
         <div className="section-heading">
-          <p>Best Cue</p>
-          <h2>決め手の一手</h2>
+          <p>進行記録</p>
+          <h2>代表的な一手</h2>
         </div>
         {result.insight.bestCue ? (
           <article className="best-cue-card">
@@ -311,7 +319,7 @@ function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: { result: 
           </article>
         ) : null}
         <div className="next-note">
-          <span>Next Note</span>
+          <span>次回への申し送り</span>
           <p>{result.insight.nextNote}</p>
         </div>
       </section>
@@ -340,8 +348,8 @@ function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: { result: 
       </section>
       <section className="packet-panel decision-report-panel">
         <div className="section-heading">
-          <p>判断傾向</p>
-          <h2>今回の裏方タイプ</h2>
+          <p>進行記録</p>
+          <h2>判断傾向</h2>
         </div>
         <div className="decision-bars">
           {result.insight.decisionDistribution.map((item) => (
@@ -355,8 +363,8 @@ function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: { result: 
       </section>
       <section className="highlight-panel packet-panel timeline-report-panel">
         <div className="section-heading">
-          <p>三日間タイムライン</p>
-          <h2>公演の流れ</h2>
+          <p>進行記録</p>
+          <h2>三日間の流れ</h2>
         </div>
         <div className="performance-timeline">
           {timelineLogs.map((log) => (

@@ -63,7 +63,7 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
           <p>{preview.cueSummary.cost}</p>
         </article>
         <article className="cue-summary-card">
-          <span>{isFinale ? '終演へ' : '申し送り'}</span>
+          <span>{isFinale ? '公演報告へ' : '申し送り'}</span>
           <p>{preview.cueSummary.handoff}</p>
         </article>
         <article className="cue-summary-card is-audience">
@@ -105,7 +105,7 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
         <Delta kind="trust" label="信頼" value={preview.deltaTrust} />
         <Delta kind="load" label="負荷" value={preview.deltaLoad} />
       </div>
-      <button className="primary-action" disabled={!canCommit} onClick={onCommit}>{isFinale ? 'この結果で終演へ' : 'この結果で次公演へ'}</button>
+      <button className="primary-action" disabled={!canCommit} onClick={onCommit}>{isFinale ? 'この結果で公演報告へ' : 'この結果で次公演へ'}</button>
     </section>
   );
 }

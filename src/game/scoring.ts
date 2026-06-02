@@ -513,7 +513,7 @@ function cueCost(preview: Pick<ResultPreview, 'deltaLoad' | 'deltaFlow' | 'delta
 }
 
 function cueHandoff(state: GameState, preview: Pick<ResultPreview, 'resultMode' | 'deltaLoad' | 'mainResponse' | 'performanceStyle'>) {
-  if (preview.resultMode === 'finale') return 'この手応えを終演後パケットへ回す。';
+  if (preview.resultMode === 'finale') return 'この手応えを公演報告書へ回す。';
   if (state.pendingFrayEvent) {
     return `${LOAD_LABELS[state.pendingFrayEvent.bias]}のほころびが残る。次は拾える対応を優先したい。`;
   }
@@ -778,7 +778,7 @@ export function createPerformanceReview(logs: TurnLog[], sceneScore: number, flo
   const earlyFray = logs.find((log) => log.act <= 3 && (log.resultTier === 'fray' || log.resultTier === 'accident'));
   const hitRate = logs.length > 0 ? Math.round((prepHitCount / logs.length) * 100) : 0;
   const reviewNotes = [
-    `初日を経て、公演の色は「${styleLabel}」になった。`,
+    `全日程を終えて、公演の色は「${styleLabel}」になった。`,
     `準備は${prepHitCount}/${logs.length}回噛み合い、噛み合い率は${hitRate}%だった。`,
     `${dominantResponse.response}判断が多く、${dominantResponse.response === '拾う' ? '予定外を熱に変える場面が伸びた。' : dominantResponse.response === '待つ' ? '余韻を残す判断が信頼を支えた。' : dominantResponse.response === '整える' ? '乱れを舞台の呼吸へ戻す判断が流れを守った。' : '崩れを閉じて進行を守る判断が目立った。'}`,
     earlyFray
