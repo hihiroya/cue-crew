@@ -98,7 +98,8 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
           {preview.styleText ? <p>{preview.styleText}</p> : null}
         </div>
       ) : null}
-      <div className="delta-row">
+      <div className="delta-table" aria-label="結果差分">
+        <span className="delta-table-title">結果差分</span>
         <Delta kind="scene" label="場面" value={preview.deltaScene} />
         <Delta kind="flow" label="流れ" value={preview.deltaFlow} />
         <Delta kind="trust" label="信頼" value={preview.deltaTrust} />
@@ -113,22 +114,12 @@ type DeltaKind = 'scene' | 'flow' | 'trust' | 'load';
 
 function Delta({ kind, label, value }: { kind: DeltaKind; label: string; value: number }) {
   const sign = value > 0 ? '+' : '';
-  const meterSlots = kind === 'load' ? 5 : 4;
-  const impact = deltaImpact(kind, value, meterSlots);
+  const impact = deltaImpact(kind, value);
   return (
-    <div className={`delta delta-${kind} ${impact.tone}`} aria-label={`${label}: ${impact.label}, ${impact.level}/${meterSlots}, ${sign}${value}`}>
-      <div className="delta-head">
-        <Icon name={kind} />
-        <span>{label}</span>
-        <strong>{sign}{value}</strong>
-      </div>
+    <div className={`delta-line delta-${kind} ${impact.tone}`} aria-label={`${label}: ${impact.label}, ${sign}${value}`}>
+      <span className="delta-line-label"><Icon name={kind} />{label}</span>
       <b>{impact.label}</b>
-      <div className="delta-meter" aria-hidden="true">
-        {Array.from({ length: meterSlots }, (_, index) => (
-          <span key={index} className={index < impact.level ? 'is-filled' : ''} />
-        ))}
-        <em>{impact.level}/{meterSlots}</em>
-      </div>
+      <strong>{sign}{value}</strong>
     </div>
   );
 }
