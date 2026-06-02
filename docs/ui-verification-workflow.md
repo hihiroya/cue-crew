@@ -39,7 +39,9 @@ npm run screenshot -- --scenario=ui:response-primary --width=440 --height=956 --
 - `response-danger`
 - `response-many-effects`
 - `response-long-label`
+- `response-fray`
 - `result-preview`
+- `result-fray`
 
 新しいUI分岐を追加した場合は、クリック進行のE2Eシナリオを増やす前に固定シナリオを増やしてください。
 

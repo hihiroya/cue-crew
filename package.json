@@ -30,6 +30,7 @@
     "screenshot:result": "node scripts/capture-screenshot.mjs --preset=result-panel --outDir=tmp/screenshots/result-panel",
     "screenshot:ui": "node scripts/capture-screenshot.mjs --preset=ui-critical --outDir=tmp/screenshots/ui-critical",
     "verify:ui": "npm run build && npm run screenshot:ui",
+    "test:logic": "tsc -p tsconfig.test.json && node scripts/fix-test-imports.mjs tmp/test-build && node --test tmp/test-build/tests/fray.test.js",
     "verify": "npm audit signatures && npm run build",
     "cf:preview": "npm run build && wrangler pages dev dist --compatibility-date=2026-05-30",
     "cf:deploy": "npm run build && wrangler pages deploy dist --project-name=cue-crew"

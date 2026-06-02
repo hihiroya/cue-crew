@@ -1,7 +1,8 @@
 import { ACTS, INITIAL_ACTORS, INITIAL_LOAD_STRAIN, TURNS_PER_ACT, TOTAL_TURNS } from './constants';
 import { advanceActorStates, assignActorRoles, pickFocusActor, resolveActorEvent } from './actorLogic';
+import { nextLoadStrain, resolvePendingFray } from './fray';
 import { makeSeed } from './rng';
-import { actForTurn, clampLoad, createPerformanceReview, determinePerformanceStyle, nextLoadStrain, previewResult, resolvePendingFray, toTurnLog } from './scoring';
+import { actForTurn, clampLoad, createPerformanceReview, determinePerformanceStyle, previewResult, toTurnLog } from './scoring';
 import type { GameState, MainResponse, PerformanceResult, PrepAction } from './types';
 
 export type GameAction =

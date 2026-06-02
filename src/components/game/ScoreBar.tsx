@@ -1,4 +1,4 @@
-import { likelyFrayBias } from '../../game/scoring';
+import { likelyFrayBias } from '../../game/fray';
 import type { GameState } from '../../game/types';
 import { Icon } from '../ui/Icon';
 
