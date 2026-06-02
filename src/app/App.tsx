@@ -221,9 +221,9 @@ function TitleScreen({ history, onStart, onReplay }: { history: PerformanceResul
           <ActorSilhouette type="skilled" />
         </div>
         <div className="stage-mark"><Icon name="spark" /></div>
-        <p className="title-series">本番中につき！</p>
-        <h1>舞台裏の一手</h1>
-        <p className="title-copy">3日間のマチネとソワレを回し、初日の手応えから公演の色を作る。</p>
+        <p className="title-series">1人用舞台裏マネジメント</p>
+        <h1>本番中 x 舞台裏</h1>
+        <p className="title-copy">兆候を読み 予定外を名場面へ</p>
         <div className="title-actions">
           <button className="primary-action" onClick={onStart}>はじめる</button>
           <button className="secondary-action" onClick={() => setShowHowTo((value) => !value)}>遊び方</button>
