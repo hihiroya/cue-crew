@@ -487,6 +487,12 @@ async function runScenario(client, sessionId, name) {
     return;
   }
 
+  if (name === 'exitConfirm') {
+    await clickByText('はじめる');
+    await clickByText('公演を降りる');
+    return;
+  }
+
   if (name === 'repeatResponse') {
     await clickByText('はじめる');
     await clickByText('注視');

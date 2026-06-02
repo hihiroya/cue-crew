@@ -51,7 +51,7 @@ button:disabled {
 
 .game-header {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: minmax(0, auto);
   gap: 8px 10px;
   align-items: center;
   padding: 10px;
@@ -169,6 +169,7 @@ button:disabled {
 }
 
 .ghost-button,
+.danger-outline-action,
 .secondary-action,
 .primary-action {
   min-height: 44px;
@@ -200,7 +201,16 @@ button:disabled {
   box-shadow: 0 12px 32px rgba(143, 23, 48, 0.34);
 }
 
+.danger-outline-action {
+  padding: 11px 16px;
+  color: #ffc0b9;
+  background: rgba(255, 119, 111, 0.06);
+  border-color: rgba(255, 119, 111, 0.32);
+  font-weight: 800;
+}
+
 .ghost-button:hover,
+.danger-outline-action:hover,
 .secondary-action:hover,
 .primary-action:hover {
   transform: translateY(-1px);
@@ -478,6 +488,81 @@ button:disabled {
 .phase-strip .is-done i {
   background: rgba(168, 212, 143, 0.8);
   box-shadow: 0 0 10px rgba(168, 212, 143, 0.24);
+}
+
+.game-exit-control {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 0;
+}
+
+.game-exit-control button {
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.025);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.game-exit-control button:hover {
+  color: #f3e6c9;
+  border-color: rgba(230, 190, 108, 0.22);
+  background: rgba(229, 189, 104, 0.055);
+}
+
+.exit-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(4, 4, 8, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.exit-dialog {
+  width: min(100%, 360px);
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(230, 190, 108, 0.28);
+  background:
+    linear-gradient(140deg, rgba(75, 15, 28, 0.88), rgba(8, 9, 15, 0.96)),
+    var(--surface-strong);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.54);
+}
+
+.exit-dialog p {
+  margin: 0 0 4px;
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.exit-dialog h2 {
+  margin: 0;
+  color: #fff3d3;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+}
+
+.exit-dialog span {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.exit-dialog-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
 }
 
 .actor-stage {
@@ -4339,7 +4424,7 @@ button:disabled {
 
 @media (min-width: 680px) {
   .game-header {
-    grid-template-columns: auto minmax(210px, 1fr) minmax(250px, 1fr);
+    grid-template-columns: minmax(210px, auto) minmax(250px, 1fr);
   }
 
   .performance-color-chip {
@@ -4423,17 +4508,9 @@ button:disabled {
   }
 
   .game-header {
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 1fr;
     gap: 6px 8px;
     padding: 7px;
-  }
-
-  .game-header .ghost-button {
-    min-height: 34px;
-    padding: 6px 9px;
-    border-radius: 7px;
-    font-size: 0.74rem;
-    white-space: nowrap;
   }
 
   .performance-status {

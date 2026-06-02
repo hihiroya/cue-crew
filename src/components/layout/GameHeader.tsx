@@ -3,16 +3,14 @@ import type { GameState } from '../../game/types';
 
 type Props = {
   state: GameState;
-  onTitle: () => void;
 };
 
-export function GameHeader({ state, onTitle }: Props) {
+export function GameHeader({ state }: Props) {
   const slot = state.turnInAct === 1 ? 'matinee' : 'soiree';
   const slotDetail = state.turnInAct === 1 ? '昼公演' : '夜公演';
   const color = state.performanceStyle ? PERFORMANCE_COLOR_HUD[state.performanceStyle] : null;
   return (
     <header className="game-header">
-      <button className="ghost-button" onClick={onTitle}>公演を降りる</button>
       <div className="performance-status">
         <span>{state.totalTurn}/{TOTAL_TURNS}</span>
         <strong>{state.act}日目 {PERFORMANCE_SLOT_LABELS[slot].label}</strong>

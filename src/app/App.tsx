@@ -25,6 +25,7 @@ export function App() {
   const isUiScenario = Boolean(uiScenarioState);
   const [historyVersion, setHistoryVersion] = useState(0);
   const [pendingPrepCue, setPendingPrepCue] = useState<PendingPrepCue | null>(null);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
   const history = useMemo(() => {
     historyVersion;
     return readPerformanceHistory();
@@ -64,6 +65,15 @@ export function App() {
     });
   }, [displayState.status, displayState.totalTurn, isUiScenario]);
 
+  useEffect(() => {
+    if (!showExitConfirm) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setShowExitConfirm(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [showExitConfirm]);
+
   const beginPrepCue = (prep: PrepAction) => {
     if (pendingPrepCue) return;
     setPendingPrepCue({ prep });
@@ -95,9 +105,7 @@ export function App() {
 
   return (
     <main className="game-shell">
-      <GameHeader state={displayState} onTitle={() => {
-        if (!isUiScenario) dispatch({ type: 'RESET_TO_TITLE' });
-      }} />
+      <GameHeader state={displayState} />
       <ScoreBar state={displayState} />
       <div className="phase-strip">
         <span className={phaseStepClass(displayState.status, 'prep')}><i aria-hidden="true" />準備</span>
@@ -146,6 +154,19 @@ export function App() {
           />
         ) : null}
       </div>
+      <GameExitControl
+        disabled={isUiScenario}
+        onRequestExit={() => setShowExitConfirm(true)}
+      />
+      {showExitConfirm ? (
+        <ExitConfirmDialog
+          onCancel={() => setShowExitConfirm(false)}
+          onConfirm={() => {
+            setShowExitConfirm(false);
+            dispatch({ type: 'RESET_TO_TITLE' });
+          }}
+        />
+      ) : null}
     </main>
   );
 }
@@ -155,6 +176,38 @@ function phaseStepClass(status: GameStatus, step: 'prep' | 'response' | 'result'
   if (status === step) return 'is-active';
   if (status in order && order[status as keyof typeof order] > order[step]) return 'is-done';
   return '';
+}
+
+function GameExitControl({ disabled, onRequestExit }: { disabled: boolean; onRequestExit: () => void }) {
+  return (
+    <div className="game-exit-control">
+      <button type="button" disabled={disabled} onClick={onRequestExit}>公演を降りる</button>
+    </div>
+  );
+}
+
+function ExitConfirmDialog({ onCancel, onConfirm }: { onCancel: () => void; onConfirm: () => void }) {
+  return (
+    <div className="exit-dialog-backdrop" role="presentation" onClick={onCancel}>
+      <section
+        className="exit-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="exit-dialog-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div>
+          <p>途中退場</p>
+          <h2 id="exit-dialog-title">公演を降りますか？</h2>
+          <span>この公演の途中経過は保存されません。</span>
+        </div>
+        <div className="exit-dialog-actions">
+          <button type="button" className="primary-action" onClick={onCancel}>続ける</button>
+          <button type="button" className="danger-outline-action" onClick={onConfirm}>タイトルへ戻る</button>
+        </div>
+      </section>
+    </div>
+  );
 }
 
 function TitleScreen({ history, onStart, onReplay }: { history: PerformanceResult[]; onStart: () => void; onReplay: (seed: string) => void }) {
