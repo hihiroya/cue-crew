@@ -354,6 +354,19 @@ button:disabled {
   line-height: 1.35;
 }
 
+.fray-ribbon--warning {
+  border-left-color: var(--gold);
+  background: rgba(229, 189, 104, 0.08);
+}
+
+.fray-ribbon--warning span {
+  color: var(--gold-strong);
+}
+
+.fray-ribbon--warning strong {
+  color: #f3e6c9;
+}
+
 .score-chip {
   display: flex;
   align-items: center;
@@ -2627,6 +2640,39 @@ button:disabled {
   color: #d9d1bf;
   font-size: 0.72rem;
   line-height: 1.48;
+}
+
+.console-fray {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 4px;
+  padding: 8px 9px;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 217, 138, 0.18);
+  background: rgba(229, 189, 104, 0.075);
+}
+
+.console-fray span {
+  color: var(--gold);
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.console-fray strong {
+  color: #f3e6c9;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.console-fray.relation-miss {
+  border-color: rgba(255, 119, 111, 0.24);
+  background: rgba(255, 119, 111, 0.075);
+}
+
+.console-fray.relation-miss span,
+.console-fray.relation-miss strong {
+  color: #ffc0b9;
 }
 
 .decision-action {

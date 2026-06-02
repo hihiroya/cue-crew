@@ -2,7 +2,7 @@ import { assignActorRoles } from './actorLogic';
 import { EVENT_DESCRIPTIONS, EVENT_LABELS, INITIAL_ACTORS } from './constants';
 import { createInitialGame } from './gameReducer';
 import { actForTurn } from './scoring';
-import type { ActorEvent, ActorEventType, ActorState, ActorType, GameState, MainResponse, PerformanceStyle, PrepAction } from './types';
+import type { ActorEvent, ActorEventType, ActorState, ActorType, FrayEvent, GameState, LoadStrain, MainResponse, PerformanceStyle, PrepAction } from './types';
 
 export const UI_SCENARIO_QUERY_KEY = 'uiScenario';
 
@@ -22,6 +22,8 @@ type ResponseScenarioOptions = {
   trustScore?: number;
   backstageLoad?: number;
   lastResponses?: MainResponse[];
+  pendingFrayEvent?: FrayEvent;
+  loadStrain?: LoadStrain;
 };
 
 export function getUiScenarioStateFromLocation(search = globalThis.location?.search ?? ''): GameState | null {
@@ -100,6 +102,20 @@ export function uiScenarioState(name: string): GameState | null {
       backstageLoad: 3,
     });
   }
+  if (name === 'response-fray') {
+    return responseScenario(name, {
+      prep: 'makeSpace',
+      event: 'silence',
+      selectedResponse: 'wait',
+      focus: 'lead',
+      focusState: 'contemplative',
+      totalTurn: 3,
+      trustScore: 2,
+      backstageLoad: 4,
+      pendingFrayEvent: { bias: 'sound', title: '残響が少し長く残った' },
+      loadStrain: { light: 0, sound: 4, stageManagement: 1, props: 0 },
+    });
+  }
   if (name === 'result-preview') {
     return {
       ...responseScenario(name, {
@@ -111,6 +127,23 @@ export function uiScenarioState(name: string): GameState | null {
         totalTurn: 2,
         sceneScore: 3,
         trustScore: 2,
+      }),
+      status: 'result',
+    };
+  }
+  if (name === 'result-fray') {
+    return {
+      ...responseScenario(name, {
+        prep: 'makeSpace',
+        event: 'silence',
+        selectedResponse: 'wait',
+        focus: 'lead',
+        focusState: 'contemplative',
+        totalTurn: 3,
+        trustScore: 2,
+        backstageLoad: 4,
+        pendingFrayEvent: { bias: 'sound', title: '残響が少し長く残った' },
+        loadStrain: { light: 0, sound: 4, stageManagement: 1, props: 0 },
       }),
       status: 'result',
     };
@@ -149,6 +182,8 @@ function responseScenario(name: string, options: ResponseScenarioOptions): GameS
     flowScore: options.flowScore ?? base.flowScore,
     trustScore: options.trustScore ?? base.trustScore,
     backstageLoad: options.backstageLoad ?? base.backstageLoad,
+    pendingFrayEvent: options.pendingFrayEvent,
+    loadStrain: options.loadStrain ?? base.loadStrain,
     status: 'response',
   };
 }

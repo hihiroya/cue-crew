@@ -1,4 +1,4 @@
-import type { Actor, ActorEventType, ActorState, ActorType, LoadBias, MainResponse, PerformanceSlot, PerformanceStyle, PrepAction, ResultTier } from './types';
+import type { Actor, ActorEventType, ActorState, ActorType, LoadBias, LoadBiasArea, LoadStrain, MainResponse, PerformanceSlot, PerformanceStyle, PrepAction, ResultTier } from './types';
 
 export const TOTAL_TURNS = 6;
 export const TURNS_PER_ACT = 2;
@@ -186,6 +186,15 @@ export const LOAD_LABELS: Record<Exclude<LoadBias, null>, string> = {
   sound: '音',
   stageManagement: '進行',
   props: '道具',
+};
+
+export const LOAD_BIAS_AREAS: LoadBiasArea[] = ['light', 'sound', 'stageManagement', 'props'];
+
+export const INITIAL_LOAD_STRAIN: LoadStrain = {
+  light: 0,
+  sound: 0,
+  stageManagement: 0,
+  props: 0,
 };
 
 export const EVENT_COMPATIBILITY: Record<ActorEventType, Record<MainResponse, number>> = {

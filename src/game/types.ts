@@ -40,6 +40,10 @@ export type MainResponse = 'catch' | 'arrange' | 'wait' | 'cut';
 
 export type LoadBias = 'light' | 'sound' | 'stageManagement' | 'props' | null;
 
+export type LoadBiasArea = Exclude<LoadBias, null>;
+
+export type LoadStrain = Record<LoadBiasArea, number>;
+
 export type ResultTier = 'masterpiece' | 'scene' | 'smallSuccess' | 'fray' | 'accident';
 
 export type PrepPredictionQuality = 'hit' | 'partial' | 'miss';
@@ -77,13 +81,15 @@ export type ResponseInsight = {
   actorAffinityLabel: string;
   actInfluenceLabel: string;
   sideEffectLabel: string;
+  frayRelationLabel?: string;
+  frayRelationTone?: 'recover' | 'miss';
   dangerWarning?: string;
   rangeTone: 'best' | 'good' | 'thin' | 'danger';
   scoreBreakdown: ScoreBreakdownItem[];
 };
 
 export type FrayEvent = {
-  bias: Exclude<LoadBias, null>;
+  bias: LoadBiasArea;
   title: string;
 };
 
@@ -146,6 +152,7 @@ export type GameState = {
   trustScore: number;
   backstageLoad: number;
   loadBias: LoadBias;
+  loadStrain: LoadStrain;
   actors: Actor[];
   currentFocusActorId: ActorType | null;
   currentActorEvent: ActorEvent | null;

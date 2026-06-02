@@ -1,7 +1,7 @@
-import { ACTS, INITIAL_ACTORS, TURNS_PER_ACT, TOTAL_TURNS } from './constants';
+import { ACTS, INITIAL_ACTORS, INITIAL_LOAD_STRAIN, TURNS_PER_ACT, TOTAL_TURNS } from './constants';
 import { advanceActorStates, assignActorRoles, pickFocusActor, resolveActorEvent } from './actorLogic';
 import { makeSeed } from './rng';
-import { actForTurn, clampLoad, createPerformanceReview, determinePerformanceStyle, maybeCreateFray, previewResult, toTurnLog } from './scoring';
+import { actForTurn, clampLoad, createPerformanceReview, determinePerformanceStyle, nextLoadStrain, previewResult, resolvePendingFray, toTurnLog } from './scoring';
 import type { GameState, MainResponse, PerformanceResult, PrepAction } from './types';
 
 export type GameAction =
@@ -26,6 +26,7 @@ export function createInitialGame(seed = makeSeed()): GameState {
     performanceStyle: null,
     backstageLoad: 0,
     loadBias: null,
+    loadStrain: { ...INITIAL_LOAD_STRAIN },
     actors: assignActorRoles(INITIAL_ACTORS, focus),
     currentFocusActorId: focus,
     currentActorEvent: null,
@@ -116,6 +117,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const loadAfterResult = clampLoad(state.backstageLoad + preview.deltaLoad);
       const actBreakRelief = state.turnInAct === TURNS_PER_ACT ? -1 : 0;
       const backstageLoad = clampLoad(loadAfterResult + actBreakRelief);
+      const loadStrain = nextLoadStrain(state, preview, actBreakRelief);
       const nextBase = {
         ...state,
         logs,
@@ -125,8 +127,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         performanceStyle,
         backstageLoad,
         loadBias: preview.loadBias,
+        loadStrain,
         lastResponses: [...state.lastResponses, preview.mainResponse].slice(-4),
-        pendingFrayEvent: maybeCreateFray(state, preview),
+        pendingFrayEvent: resolvePendingFray(state, preview, loadStrain),
       };
       const withActors = { ...nextBase, actors: advanceActorStates(nextBase) };
       if (state.totalTurn >= TOTAL_TURNS) {

@@ -4,6 +4,8 @@ import {
   ACT_RESPONSE_GUIDES,
   EVENT_COMPATIBILITY,
   EVENT_LABELS,
+  INITIAL_LOAD_STRAIN,
+  LOAD_BIAS_AREAS,
   MAX_LOAD,
   PERFORMANCE_SLOT_LABELS,
   PERFORMANCE_STYLE_DETAILS,
@@ -21,7 +23,7 @@ import {
 import { topOmenEvents } from './actorLogic';
 import { createRng } from './rng';
 import { flavorText, prepRecovery, sceneTitle } from './sceneTemplates';
-import type { Actor, FrayEvent, GameState, LoadBias, MainResponse, PerformanceSlot, PerformanceStyle, PrepPredictionQuality, ResponseInsight, ResultPreview, ResultTier, ScoreBreakdownItem, TurnLog } from './types';
+import type { Actor, FrayEvent, GameState, LoadBias, LoadBiasArea, LoadStrain, MainResponse, PerformanceSlot, PerformanceStyle, PrepPredictionQuality, ResponseInsight, ResultPreview, ResultTier, ScoreBreakdownItem, TurnLog } from './types';
 
 function slotForTurnInAct(turnInAct: number): PerformanceSlot {
   return turnInAct === 1 ? 'matinee' : 'soiree';
@@ -73,6 +75,105 @@ function repeatPenalty(state: GameState, response: MainResponse): number {
   if (response === 'catch' || response === 'cut') return -1;
   if (response === 'arrange' || response === 'wait') return -1;
   return 0;
+}
+
+type FrayFit = {
+  status: 'none' | 'strong' | 'match' | 'miss';
+  value: number;
+  label?: string;
+  detail?: string;
+  deltaFlow: number;
+  deltaLoad: number;
+};
+
+const FRAY_RESPONSE_RULES: Record<LoadBiasArea, { strong: MainResponse; match: MainResponse; label: string; strongDetail: string; matchDetail: string; missDetail: string }> = {
+  light: {
+    strong: 'catch',
+    match: 'arrange',
+    label: '照明まわり',
+    strongDetail: '遅れた光を見せ場に変えられる。',
+    matchDetail: '照明の軸を舞台の呼吸へ戻せる。',
+    missDetail: '光の遅れが舞台の流れに残りそう。',
+  },
+  sound: {
+    strong: 'wait',
+    match: 'arrange',
+    label: '音響まわり',
+    strongDetail: '残った音を余韻として扱える。',
+    matchDetail: '音の入りを舞台の呼吸へ戻せる。',
+    missDetail: '音の乱れが次の拍を邪魔しそう。',
+  },
+  stageManagement: {
+    strong: 'arrange',
+    match: 'cut',
+    label: '進行まわり',
+    strongDetail: 'ずれた合図を進行へ戻せる。',
+    matchDetail: '崩れを次の場面へ小さく閉じられる。',
+    missDetail: '進行のずれが場面の受け渡しに残りそう。',
+  },
+  props: {
+    strong: 'cut',
+    match: 'arrange',
+    label: '道具まわり',
+    strongDetail: '転換で道具の遅れを回収できる。',
+    matchDetail: '受け渡しを舞台全体の流れに戻せる。',
+    missDetail: '道具の遅れが袖に残りそう。',
+  },
+};
+
+function frayFitFor(state: GameState, response: MainResponse): FrayFit {
+  const fray = state.pendingFrayEvent;
+  if (!fray) return { status: 'none', value: 0, deltaFlow: 0, deltaLoad: 0 };
+  const rule = FRAY_RESPONSE_RULES[fray.bias];
+  if (response === rule.strong) {
+    return {
+      status: 'strong',
+      value: 1,
+      label: `${rule.label}のほころびを拾える`,
+      detail: rule.strongDetail,
+      deltaFlow: 0,
+      deltaLoad: 0,
+    };
+  }
+  if (response === rule.match) {
+    return {
+      status: 'match',
+      value: 1,
+      label: `${rule.label}のほころびを整えられる`,
+      detail: rule.matchDetail,
+      deltaFlow: 0,
+      deltaLoad: 0,
+    };
+  }
+  return {
+    status: 'miss',
+    value: 0,
+    label: `${rule.label}のほころびは残りそう`,
+    detail: rule.missDetail,
+    deltaFlow: -1,
+    deltaLoad: state.backstageLoad >= 4 ? 1 : 0,
+  };
+}
+
+function guardTierForFrayRecovery(tier: ResultTier, state: GameState, response: MainResponse): ResultTier {
+  const fit = frayFitFor(state, response);
+  if (fit.status !== 'strong') return tier;
+  if (tier === 'accident') return 'fray';
+  return tier;
+}
+
+function frayScoreItem(state: GameState, response: MainResponse): ScoreBreakdownItem | undefined {
+  const fit = frayFitFor(state, response);
+  if (fit.status === 'none') return undefined;
+  if (fit.status === 'miss') return scoreItem('fray-miss', fit.label ?? '舞台裏のほころびは残りそう', 0, fit.detail);
+  return scoreItem('fray', fit.label ?? '舞台裏のほころびを拾った', fit.value, fit.detail);
+}
+
+function frayRelationLabel(state: GameState, response: MainResponse): Pick<ResponseInsight, 'frayRelationLabel' | 'frayRelationTone'> {
+  const fit = frayFitFor(state, response);
+  if (fit.status === 'none') return {};
+  if (fit.status === 'miss') return { frayRelationLabel: '舞台裏のほころびは残りそう', frayRelationTone: 'miss' };
+  return { frayRelationLabel: fit.status === 'strong' ? '舞台裏のほころびを拾える' : '舞台裏のほころびを整えられる', frayRelationTone: 'recover' };
 }
 
 type PrepResponseRelation = {
@@ -286,6 +387,7 @@ function deltasFor(tier: ResultTier, response: MainResponse, state: GameState, p
   const success = ['masterpiece', 'scene', 'smallSuccess'].includes(tier);
   const consecutiveCount = consecutiveUseCount(state, response);
   const repeat = repeatAdjustment(response, consecutiveCount, success);
+  const frayFit = frayFitFor(state, response);
   const base = {
     masterpiece: { scene: 4, flow: 2, trust: 2 },
     scene: { scene: 3, flow: 1, trust: 1 },
@@ -315,10 +417,11 @@ function deltasFor(tier: ResultTier, response: MainResponse, state: GameState, p
   const styleSceneBonus = state.performanceStyle === 'heat' && response === 'catch' && success ? 1 : 0;
   return {
     deltaScene: base.scene + repeat.deltaScene + styleSceneBonus,
-    deltaFlow: base.flow + loadPenalty + repeat.deltaFlow,
+    deltaFlow: base.flow + loadPenalty + repeat.deltaFlow + frayFit.deltaFlow,
     deltaTrust: base.trust + waitTrustBonus + styleTrustBonus + cutTrustPenalty + repeat.deltaTrust,
-    deltaLoad: deltaLoad + repeat.deltaLoad,
+    deltaLoad: deltaLoad + repeat.deltaLoad + frayFit.deltaLoad,
     repeat,
+    frayFit,
     consecutiveCount,
   };
 }
@@ -394,7 +497,7 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
   const repeat = repeatAdjustment(response, consecutiveUseCount(state, response), true);
   const prepResponseItem = prepResponseScoreItem(state, response, prepQuality);
   const styleItem = performanceStyleScoreItem(state, response);
-  const frayValue = state.pendingFrayEvent && ['catch', 'wait', 'arrange'].includes(response) ? 1 : 0;
+  const frayItem = frayScoreItem(state, response);
   const items = [
     scoreItem(
       'event',
@@ -411,14 +514,14 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
     scoreItem('trust', '公演全体の信頼補正', trustValue),
     scoreItem('load', '裏方負荷の重さ', loadValue),
     scoreItem('repeat', repeat.label ?? '同じ対応の連続使用', repeatedValue, repeat.detail),
-    scoreItem('fray', '前のほころびを回収できる', frayValue),
+    frayItem,
   ].filter((item): item is ScoreBreakdownItem => Boolean(item));
   const rawScore = sumBreakdown(items);
   const cap = capForPrepQuality(prepQuality);
   if (rawScore > cap) {
     items.push(scoreItem('prep-cap', '準備の上限', cap - rawScore, prepQuality === 'partial' ? '一部だけ活きたため場面化までに留まる。' : '別の備えだったため小さな成功までに留まる。'));
   }
-  return items.filter((item) => item.value !== 0 || ['prep-partial', 'prep-response', 'prep-response-guard'].includes(item.id));
+  return items.filter((item) => item.value !== 0 || ['prep-partial', 'prep-response', 'prep-response-guard', 'fray-miss'].includes(item.id));
 }
 
 function sumBreakdown(items: ScoreBreakdownItem[]) {
@@ -508,7 +611,7 @@ export function responseInsight(state: GameState, response: MainResponse): Respo
   const scoreBreakdown = buildScoreBreakdown(state, actor, response);
   const score = sumBreakdown(scoreBreakdown);
   const rawResultTier = tierFromScore(score);
-  const resultTier = guardTierForTransitionCut(rawResultTier, state, response, prepQuality);
+  const resultTier = guardTierForFrayRecovery(guardTierForTransitionCut(rawResultTier, state, response, prepQuality), state, response);
   const deltas = deltasFor(resultTier, response, state, prepQuality);
   const deltaLoad = deltas.deltaLoad;
   const eventValue = EVENT_COMPATIBILITY[state.currentActorEvent.type][response];
@@ -530,6 +633,7 @@ export function responseInsight(state: GameState, response: MainResponse): Respo
     actorAffinityLabel: `${ACTOR_LABELS[actor.type]}${symbolFor(actorValue)} / ${STATE_LABELS[actor.state]}${symbolFor(stateResponseBonus(actor, response))}`,
     actInfluenceLabel: ACT_RESPONSE_GUIDES[state.act]?.[response] ?? `${state.theme}の判断。`,
     sideEffectLabel: sideEffectLabel(deltas),
+    ...frayRelationLabel(state, response),
     dangerWarning: range.dangerWarning,
     rangeTone: range.tone,
     scoreBreakdown,
@@ -553,7 +657,10 @@ export function previewResult(state: GameState): ResultPreview {
   const slot = slotForTurnInAct(state.turnInAct);
   const resultMode = state.act === 3 && slot === 'soiree' ? 'finale' : slot;
   const rng = createRng(`${state.seed}:title:${state.totalTurn}:${score}`);
-  const recoveredBias = tier !== 'accident' && state.pendingFrayEvent ? state.pendingFrayEvent.bias : undefined;
+  const frayFit = frayFitFor(state, response);
+  const recoveredBias = tier !== 'accident' && state.pendingFrayEvent && frayFit.status !== 'miss' && frayFit.status !== 'none'
+    ? state.pendingFrayEvent.bias
+    : undefined;
   const title = sceneTitle({
     actor: actor.type,
     event: state.currentActorEvent.type,
@@ -631,7 +738,60 @@ export function clampLoad(load: number): number {
   return Math.max(0, Math.min(MAX_LOAD, load));
 }
 
-export function maybeCreateFray(state: GameState, preview: ResultPreview): FrayEvent | undefined {
+function normalizeLoadStrain(strain?: LoadStrain): LoadStrain {
+  return {
+    ...INITIAL_LOAD_STRAIN,
+    ...(strain ?? {}),
+  };
+}
+
+function clampStrain(value: number) {
+  return Math.max(0, Math.min(MAX_LOAD, value));
+}
+
+export function nextLoadStrain(state: GameState, preview: ResultPreview, actBreakRelief = 0): LoadStrain {
+  const next = normalizeLoadStrain(state.loadStrain);
+  const bias = preview.loadBias ?? RESPONSE_BIAS[preview.mainResponse];
+  if (preview.deltaLoad > 0) {
+    next[bias] = clampStrain(next[bias] + preview.deltaLoad);
+  }
+  if (preview.deltaLoad < 0) {
+    next[bias] = clampStrain(next[bias] + preview.deltaLoad);
+  }
+  if (actBreakRelief < 0) {
+    LOAD_BIAS_AREAS.forEach((area) => {
+      next[area] = clampStrain(next[area] + actBreakRelief);
+    });
+  }
+  return next;
+}
+
+function strongestStrainBias(strain: LoadStrain, fallback: LoadBiasArea): LoadBiasArea {
+  const sorted = LOAD_BIAS_AREAS
+    .map((area) => ({ area, value: strain[area] }))
+    .sort((a, b) => b.value - a.value);
+  return sorted[0]?.value > 0 ? sorted[0].area : fallback;
+}
+
+function chooseFrayBias(strain: LoadStrain, rng: () => number, fallback: LoadBiasArea): LoadBiasArea {
+  const total = LOAD_BIAS_AREAS.reduce((sum, area) => sum + strain[area], 0);
+  if (total <= 0) return fallback;
+  let roll = rng() * total;
+  for (const area of LOAD_BIAS_AREAS) {
+    roll -= strain[area];
+    if (roll <= 0) return area;
+  }
+  return strongestStrainBias(strain, fallback);
+}
+
+export function likelyFrayBias(state: GameState): LoadBiasArea | null {
+  const strain = normalizeLoadStrain(state.loadStrain);
+  const fallback = (state.loadBias ?? 'stageManagement') as LoadBiasArea;
+  const area = strongestStrainBias(strain, fallback);
+  return strain[area] > 0 || state.backstageLoad >= 3 ? area : null;
+}
+
+export function maybeCreateFray(state: GameState, preview: ResultPreview, loadStrain = nextLoadStrain(state, preview)): FrayEvent | undefined {
   const nextLoad = clampLoad(state.backstageLoad + preview.deltaLoad);
   if (nextLoad < 4 || preview.resultTier === 'masterpiece') return undefined;
   const rng = createRng(`${state.seed}:fray:${state.totalTurn}:${nextLoad}`);
@@ -640,8 +800,9 @@ export function maybeCreateFray(state: GameState, preview: ResultPreview): FrayE
   const frayByTier = guard || styleGuard ? preview.resultTier === 'accident' || (preview.resultTier === 'fray' && rng() < 0.38) : preview.resultTier === 'fray' || preview.resultTier === 'accident';
   const randomFrayRate = guard || styleGuard ? 0.18 : 0.48;
   if (frayByTier || rng() < randomFrayRate) {
-    const bias = (preview.loadBias ?? state.loadBias ?? 'stageManagement') as Exclude<LoadBias, null>;
-    const titles: Record<Exclude<LoadBias, null>, string[]> = {
+    const fallback = (preview.loadBias ?? state.loadBias ?? 'stageManagement') as LoadBiasArea;
+    const bias = chooseFrayBias(loadStrain, rng, fallback);
+    const titles: Record<LoadBiasArea, string[]> = {
       light: ['照明が一歩遅れた', 'スポットの輪郭が揺れた'],
       sound: ['音が感情を先取りしすぎた', '残響が少し長く残った'],
       stageManagement: ['転換が急ぎすぎた', '進行の合図が一拍ずれた'],
@@ -650,6 +811,14 @@ export function maybeCreateFray(state: GameState, preview: ResultPreview): FrayE
     const list = titles[bias];
     return { bias, title: list[Math.floor(rng() * list.length)] };
   }
+  return undefined;
+}
+
+export function resolvePendingFray(state: GameState, preview: ResultPreview, loadStrain: LoadStrain): FrayEvent | undefined {
+  const created = maybeCreateFray(state, preview, loadStrain);
+  if (created) return created;
+  const fit = frayFitFor(state, preview.mainResponse);
+  if (state.pendingFrayEvent && fit.status === 'miss') return state.pendingFrayEvent;
   return undefined;
 }
 

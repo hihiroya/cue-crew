@@ -61,14 +61,17 @@ const genericByTier: Record<ResultTier, string[]> = {
 };
 
 export function sceneTitle(input: TemplateKey & { seedIndex: number }): string {
-  const found = templates.find((template) => {
+  const matches = (template: SceneTemplate) => {
     if (template.frayBias && template.frayBias !== input.frayBias) return false;
     if (template.actor && template.actor !== input.actor) return false;
     if (template.event && template.event !== input.event) return false;
     if (template.response && template.response !== input.response) return false;
     if (template.tier && template.tier !== input.tier) return false;
     return template.title;
-  });
+  };
+  const found = input.frayBias
+    ? templates.find((template) => template.frayBias && matches(template)) ?? templates.find(matches)
+    : templates.find(matches);
   if (found) return found.title;
   const list = genericByTier[input.tier ?? 'smallSuccess'];
   return list[input.seedIndex % list.length];
@@ -88,7 +91,7 @@ export function flavorText(args: {
   const event = EVENT_LABELS[args.event];
   const response = RESPONSE_LABELS[args.response];
   if (args.recoveredFray) {
-    return `前のほころびを恐れずに見つめ直したことで、舞台の遅れが意味を持った。${actor}の「${event}」は、裏方の${response}によって本番だけの輪郭を得た。`;
+    return `舞台裏のほころびを見つめ直したことで、袖で起きた乱れが意味を持った。${actor}の「${event}」は、裏方の${response}によって本番だけの輪郭を得た。`;
   }
   if (args.tier === 'masterpiece') {
     return `${actor}の「${event}」を、裏方が見逃さなかった。予定外の揺れが客席まで届く名場面に変わった。`;

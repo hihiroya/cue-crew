@@ -317,6 +317,12 @@ function ResponseConsole({ insight, state }: { insight: ResponseInsight; state: 
         <span>進行メモ</span>
         <p>{decisionMemo(insight)}</p>
       </div>
+      {insight.frayRelationLabel ? (
+        <div className={`console-fray relation-${insight.frayRelationTone}`}>
+          <span>舞台裏のほころび</span>
+          <strong>{insight.frayRelationLabel}</strong>
+        </div>
+      ) : null}
     </aside>
   );
 }

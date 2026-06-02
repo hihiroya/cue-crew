@@ -46,10 +46,14 @@ const presetJobs = {
     ['response-many-effects', 440, 956],
     ['response-long-label', 360, 780],
     ['response-long-label', 440, 956],
+    ['response-fray', 360, 780],
+    ['response-fray', 440, 956],
   ],
   'result-panel': [
     ['result-preview', 360, 900],
     ['result-preview', 440, 1040],
+    ['result-fray', 360, 960],
+    ['result-fray', 440, 1100],
   ],
 };
 presetJobs['ui-critical'] = [

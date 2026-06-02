@@ -107,7 +107,6 @@ export function App() {
           selectedPrep={displayState.selectedPrep}
         />
       ) : null}
-      {displayState.pendingFrayEvent ? <div className="fray-note compact-fray">前のほころび: {displayState.pendingFrayEvent.title}</div> : null}
       <div className="action-slot">
         {displayState.status === 'prep' ? (
           <PrepPanel

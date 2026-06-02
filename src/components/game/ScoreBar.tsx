@@ -1,3 +1,4 @@
+import { likelyFrayBias } from '../../game/scoring';
 import type { GameState } from '../../game/types';
 import { Icon } from '../ui/Icon';
 
@@ -7,6 +8,7 @@ type Props = {
 
 export function ScoreBar({ state }: Props) {
   const loadRisk = loadRiskLabel(state.backstageLoad);
+  const likelyBias = !state.pendingFrayEvent && state.backstageLoad >= 3 ? likelyFrayBias(state) : null;
   return (
     <section className="score-rail" aria-label="公演スコア">
       <div className="score-trio">
@@ -27,9 +29,14 @@ export function ScoreBar({ state }: Props) {
         </div>
       </div>
       {state.pendingFrayEvent ? (
-        <div className="fray-ribbon" aria-label={`前のほころび: ${frayAreaLabel(state.pendingFrayEvent.bias)} ${state.pendingFrayEvent.title}`}>
-          <span>前のほころび</span>
+        <div className="fray-ribbon" aria-label={`舞台裏のほころび: ${frayAreaLabel(state.pendingFrayEvent.bias)} ${state.pendingFrayEvent.title}`}>
+          <span>舞台裏のほころび</span>
           <strong>{frayAreaLabel(state.pendingFrayEvent.bias)}: {state.pendingFrayEvent.title}</strong>
+        </div>
+      ) : likelyBias ? (
+        <div className="fray-ribbon fray-ribbon--warning" aria-label={`乱れそう: ${frayAreaLabel(likelyBias)}`}>
+          <span>乱れそう</span>
+          <strong>{frayAreaLabel(likelyBias)}</strong>
         </div>
       ) : null}
     </section>
