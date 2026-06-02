@@ -3813,15 +3813,15 @@ button:disabled {
 }
 
 .title-panel .title-actions {
-  width: min(100%, 330px);
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  padding-top: 4px;
+  width: min(100%, 260px);
+  grid-template-columns: 1fr;
+  gap: 7px;
+  padding-top: 8px;
 }
 
 .title-panel .primary-action,
 .title-panel .secondary-action {
-  min-height: 48px;
+  min-height: 46px;
   border-radius: 7px;
   box-shadow: none;
 }
@@ -3834,8 +3834,8 @@ button:disabled {
 
 .title-panel .secondary-action {
   color: #f3e6c9;
-  background: rgba(3, 5, 10, 0.42);
-  border-color: rgba(255, 217, 138, 0.24);
+  background: rgba(3, 5, 10, 0.24);
+  border-color: rgba(255, 217, 138, 0.16);
 }
 
 .title-screen .history-panel {
