@@ -38,7 +38,7 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
           <div className="event-reveal-kicker">
             <span>本番で起きた</span>
           </div>
-          <h2>{event.title}</h2>
+          <h2 className={`event-title title-${eventTitleSize(event.title)}`}>{event.title}</h2>
           <p>{event.description}</p>
         </div>
       </section>
@@ -86,6 +86,12 @@ const STATE_HINTS: Record<ActorState, string> = {
   immersed: '拾う・待つが効きやすい',
   fatigued: '整える・切るで守りやすい',
 };
+
+function eventTitleSize(title: string) {
+  if (title.length <= 6) return 'large';
+  if (title.length <= 10) return 'medium';
+  return 'compact';
+}
 
 function OmenList({ actor }: { actor: Actor }) {
   const sorted = topOmenEvents(actor);

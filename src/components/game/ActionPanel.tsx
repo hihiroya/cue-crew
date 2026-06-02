@@ -209,14 +209,15 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
                     <em key={item.key} className={`effect-mini effect-${item.tone}`} title={item.title} aria-label={item.title}>
                       {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
                       <Icon name={item.icon} />
-                      <EffectChangeIcon change={item.change} />
+                      <strong>{effectTargetLabel(item.icon)}</strong>
+                      <b>{evaluationSign(item)}</b>
                     </em>
                   ))}
                 </div>
               </div>
               {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
-              <em className={`selected-card-bar ${isInspected ? 'is-visible' : ''}`} aria-hidden={!isInspected}>
-                {isInspected ? '進行卓で確認中' : ''}
+              <em className={`selected-card-badge ${isInspected ? 'is-visible' : ''}`} aria-hidden={!isInspected}>
+                {isInspected ? '確認中' : ''}
               </em>
             </button>
           );
@@ -255,7 +256,10 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
           <small>{inspected.responseAimLabel}</small>
         </div>
         <ReadoutHud insight={inspected} />
-        <p>{decisionMemo(inspected)}</p>
+        <div className="console-log">
+          <span>進行メモ</span>
+          <p>{decisionMemo(inspected)}</p>
+        </div>
       </aside>
     </section>
   );
@@ -427,13 +431,10 @@ function effectItems(insight: ResponseInsight) {
 }
 
 type EffectIcon = 'load' | 'trust' | 'flow';
-type EffectChange = 'strong-up' | 'up' | 'flat' | 'down' | 'strong-down';
 type EffectTone = 'good' | 'watch' | 'bad' | 'neutral';
 type EffectItem = {
   key: string;
   icon: EffectIcon;
-  change: EffectChange;
-  changeLabel: string;
   raw: string;
   title: string;
   tone: EffectTone;
@@ -451,57 +452,17 @@ function parseEffect(part: string, repeat: boolean): EffectItem[] {
 
 function makeEffect(raw: string, icon: EffectIcon, value: number, repeat: boolean): EffectItem {
   const tone = effectTone(icon, value);
-  const change = effectChange(value);
   const changeLabel = effectChangeLabel(value);
   const title = `${repeat ? '連続使用: ' : ''}${effectTargetLabel(icon)} ${changeLabel}`;
   return {
     key: `${repeat ? 'repeat-' : ''}${raw}`,
     icon,
-    change,
-    changeLabel,
     raw,
     title,
     tone,
     value,
     repeat,
   };
-}
-
-function EffectChangeIcon({ change }: { change: EffectChange }) {
-  const isStrongUp = change === 'strong-up';
-  const isStrongDown = change === 'strong-down';
-  const isUp = change === 'up' || isStrongUp;
-  const isDown = change === 'down' || isStrongDown;
-  return (
-    <svg className={`effect-change change-${change}`} viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-      {isStrongUp ? (
-        <>
-          <path d="M8 14V7.7" />
-          <path d="M4.7 11 8 7.7l3.3 3.3" />
-          <path d="M4.7 5.3 8 2l3.3 3.3" />
-        </>
-      ) : null}
-      {change === 'up' ? <path d="M8 2.7v10.6M4.7 6 8 2.7 11.3 6" /> : null}
-      {change === 'flat' ? <path d="M3 8h10M9.8 4.8 13 8l-3.2 3.2" /> : null}
-      {change === 'down' ? <path d="M8 2.7v10.6M4.7 10 8 13.3 11.3 10" /> : null}
-      {isStrongDown ? (
-        <>
-          <path d="M8 2v6.3" />
-          <path d="M4.7 5 8 8.3 11.3 5" />
-          <path d="M4.7 10.7 8 14l3.3-3.3" />
-        </>
-      ) : null}
-      {!isUp && !isDown && change !== 'flat' ? <path d="M3 8h10M9.8 4.8 13 8l-3.2 3.2" /> : null}
-    </svg>
-  );
-}
-
-function effectChange(value: number): EffectChange {
-  if (value >= 2) return 'strong-up';
-  if (value === 1) return 'up';
-  if (value === 0) return 'flat';
-  if (value === -1) return 'down';
-  return 'strong-down';
 }
 
 function effectChangeLabel(value: number) {
@@ -519,6 +480,18 @@ function effectTone(icon: EffectIcon, value: number): EffectTone {
     return value >= 2 ? 'bad' : 'watch';
   }
   return value > 0 ? 'good' : 'bad';
+}
+
+function evaluationValue(item: EffectItem) {
+  if (item.icon === 'load') return -item.value;
+  return item.value;
+}
+
+function evaluationSign(item: EffectItem) {
+  const value = evaluationValue(item);
+  if (value > 0) return '+';
+  if (value < 0) return '-';
+  return '±';
 }
 
 function effectTargetLabel(icon: EffectIcon) {
