@@ -23,6 +23,13 @@ const fullPage = args.get('fullPage') === 'true';
 const port = Number(args.get('port') ?? 9223);
 const servePort = Number(args.get('servePort') ?? 4174);
 const scenario = args.get('scenario') ?? 'title';
+const uiScenario = scenario.startsWith('ui:') ? scenario.slice('ui:'.length) : null;
+
+function withSearchParam(targetUrl, key, value) {
+  const next = new URL(targetUrl);
+  next.searchParams.set(key, value);
+  return next.toString();
+}
 
 function findChrome() {
   const candidates = [
@@ -303,6 +310,9 @@ try {
     screenHeight: height,
   }, sessionId);
 
+  if (uiScenario) {
+    url = withSearchParam(url, 'uiScenario', uiScenario);
+  }
   const loaded = client.once('Page.loadEventFired', (_params, eventSessionId) => eventSessionId === sessionId);
   await client.send('Page.navigate', { url }, sessionId);
   await loaded;
@@ -311,7 +321,7 @@ try {
     awaitPromise: true,
   }, sessionId);
 
-  if (scenario !== 'title') {
+  if (scenario !== 'title' && !uiScenario) {
     await runScenario(client, sessionId, scenario);
   }
   await delay(250);

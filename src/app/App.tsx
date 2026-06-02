@@ -12,6 +12,7 @@ import { finishPerformance, gameReducer, readPerformanceHistory, titleState } fr
 import { makeSeed } from '../game/rng';
 import { previewResult } from '../game/scoring';
 import type { PerformanceResult, PrepAction } from '../game/types';
+import { getUiScenarioStateFromLocation } from '../game/uiScenarios';
 
 type PendingPrepCue = {
   prep: PrepAction;
@@ -19,6 +20,9 @@ type PendingPrepCue = {
 
 export function App() {
   const [state, dispatch] = useReducer(gameReducer, titleState);
+  const uiScenarioState = useMemo(() => getUiScenarioStateFromLocation(), []);
+  const displayState = uiScenarioState ?? state;
+  const isUiScenario = Boolean(uiScenarioState);
   const [historyVersion, setHistoryVersion] = useState(0);
   const [pendingPrepCue, setPendingPrepCue] = useState<PendingPrepCue | null>(null);
   const history = useMemo(() => {
@@ -27,16 +31,16 @@ export function App() {
   }, [historyVersion]);
 
   const resultPreview = useMemo(() => {
-    if (state.status !== 'result') return null;
+    if (displayState.status !== 'result') return null;
     try {
-      return previewResult(state);
+      return previewResult(displayState);
     } catch {
       return null;
     }
-  }, [state]);
-  const focusActor = state.actors.find((actor) => actor.id === state.currentFocusActorId) ?? state.actors[0];
+  }, [displayState]);
+  const focusActor = displayState.actors.find((actor) => actor.id === displayState.currentFocusActorId) ?? displayState.actors[0];
   const visibleOmenEvents = topOmenEvents(focusActor).map((omen) => omen.event);
-  const nextFocusActorId = state.totalTurn < TOTAL_TURNS ? pickFocusActor(state.seed, state.totalTurn + 1) : null;
+  const nextFocusActorId = displayState.totalTurn < TOTAL_TURNS ? pickFocusActor(displayState.seed, displayState.totalTurn + 1) : null;
 
   useEffect(() => {
     if (!pendingPrepCue) return;
@@ -58,7 +62,7 @@ export function App() {
     setPendingPrepCue({ prep });
   };
 
-  if (state.status === 'title') {
+  if (displayState.status === 'title') {
     return (
       <TitleScreen
         history={history}
@@ -68,10 +72,10 @@ export function App() {
     );
   }
 
-  if (state.status === 'finished') {
+  if (displayState.status === 'finished') {
     return (
       <ResultScreen
-        result={finishPerformance(state)}
+        result={finishPerformance(displayState)}
         onTitle={() => {
           setHistoryVersion((version) => version + 1);
           dispatch({ type: 'RESET_TO_TITLE' });
@@ -84,47 +88,55 @@ export function App() {
 
   return (
     <main className="game-shell">
-      <GameHeader state={state} onTitle={() => dispatch({ type: 'RESET_TO_TITLE' })} />
-      <ScoreBar state={state} />
+      <GameHeader state={displayState} onTitle={() => {
+        if (!isUiScenario) dispatch({ type: 'RESET_TO_TITLE' });
+      }} />
+      <ScoreBar state={displayState} />
       <div className="phase-strip">
-        <span className={state.status === 'prep' ? 'is-active' : ''}>準備を決める</span>
-        <span className={state.status === 'response' ? 'is-active' : ''}>行動に対応</span>
-        <span className={state.status === 'result' ? 'is-active' : ''}>場面を見る</span>
+        <span className={displayState.status === 'prep' ? 'is-active' : ''}>準備を決める</span>
+        <span className={displayState.status === 'response' ? 'is-active' : ''}>行動に対応</span>
+        <span className={displayState.status === 'result' ? 'is-active' : ''}>場面を見る</span>
       </div>
-      {state.status !== 'result' ? (
+      {displayState.status !== 'result' ? (
         <ActorStage
-          actors={state.actors}
-          focusActorId={state.currentFocusActorId}
+          actors={displayState.actors}
+          focusActorId={displayState.currentFocusActorId}
           nextFocusActorId={nextFocusActorId}
-          backstageLoad={state.backstageLoad}
-          event={state.currentActorEvent}
-          selectedPrep={state.selectedPrep}
+          backstageLoad={displayState.backstageLoad}
+          event={displayState.currentActorEvent}
+          selectedPrep={displayState.selectedPrep}
         />
       ) : null}
-      {state.pendingFrayEvent ? <div className="fray-note compact-fray">前のほころび: {state.pendingFrayEvent.title}</div> : null}
+      {displayState.pendingFrayEvent ? <div className="fray-note compact-fray">前のほころび: {displayState.pendingFrayEvent.title}</div> : null}
       <div className="action-slot">
-        {state.status === 'prep' ? (
+        {displayState.status === 'prep' ? (
           <PrepPanel
-            selected={state.selectedPrep}
+            selected={displayState.selectedPrep}
             disabled={Boolean(pendingPrepCue)}
             approvingPrep={pendingPrepCue?.prep ?? null}
             visibleOmens={visibleOmenEvents}
-            onSelect={beginPrepCue}
+            onSelect={(prep) => {
+              if (!isUiScenario) beginPrepCue(prep);
+            }}
           />
         ) : null}
-        {state.status === 'response' ? (
+        {displayState.status === 'response' ? (
           <ResponsePanel
-            selected={state.selectedResponse}
+            selected={displayState.selectedResponse}
             disabled={false}
-            state={state}
-            onSelect={(response) => dispatch({ type: 'SELECT_RESPONSE', response })}
+            state={displayState}
+            onSelect={(response) => {
+              if (!isUiScenario) dispatch({ type: 'SELECT_RESPONSE', response });
+            }}
           />
         ) : null}
-        {state.status === 'result' ? (
+        {displayState.status === 'result' ? (
           <ResultPreviewCard
             preview={resultPreview}
             canCommit
-            onCommit={() => dispatch({ type: 'COMMIT_RESULT' })}
+            onCommit={() => {
+              if (!isUiScenario) dispatch({ type: 'COMMIT_RESULT' });
+            }}
           />
         ) : null}
       </div>

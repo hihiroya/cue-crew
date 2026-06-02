@@ -53,9 +53,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
                 <span>兆候との相性</span>
                 <strong>{prepToneLabel(tone)}</strong>
               </div>
-              <em className={`selected-card-bar ${isInspected ? 'is-visible' : ''}`} aria-hidden={!isInspected}>
-                {isInspected ? 'メモ反映中' : ''}
-              </em>
+              <PrepSelectionMarker visible={isInspected} />
             </button>
           );
         })}
@@ -172,96 +170,154 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
         <h2>行動に対応</h2>
       </div>
       <div className="choice-grid response-grid">
-        {insights.map((insight) => {
-          const response = insight.response;
-          const range = resultRange(insight);
-          const effects = effectItems(insight);
-          const isInspected = inspected.response === response;
-          return (
-            <button
-              key={response}
-              aria-pressed={isInspected}
-              className={`choice-button response-choice fit-${insight.rangeTone} ${isInspected ? 'is-selected' : ''}`}
-              disabled={disabled}
-              onClick={() => setInspectedResponse(response)}
-              onFocus={() => setInspectedResponse(response)}
-            >
-              <div className="response-card-top">
-                <Icon name={response} />
-                <span className="response-title">
-                  <strong>{RESPONSE_LABELS[response]}</strong>
-                </span>
-              </div>
-              <div className="outlook-summary" aria-label={`成立見込み: ${insight.successRangeLabel}`}>
-                <div className="outlook-head">
-                  <span><Icon name="scene" />{compactAim(insight)}</span>
-                  <strong>{insight.successRangeLabel}</strong>
-                  <em className={`prep-mark mark-${insight.prepRelationTone}`} aria-label={`準備との関係: ${insight.prepRelationLabel}`}>
-                    {prepConnectionShortLabel(insight.prepRelationTone)}
-                  </em>
-                </div>
-                <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
-              </div>
-              <div className="card-effect-summary" aria-label="影響の要約">
-                <span>影響</span>
-                <div>
-                  {effects.map((item) => (
-                    <em key={item.key} className={`effect-mini effect-${item.tone}`} title={item.title} aria-label={item.title}>
-                      {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
-                      <Icon name={item.icon} />
-                      <strong>{effectTargetLabel(item.icon)}</strong>
-                      <b>{evaluationSign(item)}</b>
-                    </em>
-                  ))}
-                </div>
-              </div>
-              {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
-              <em className={`selected-card-badge ${isInspected ? 'is-visible' : ''}`} aria-hidden={!isInspected}>
-                {isInspected ? '確認中' : ''}
-              </em>
-            </button>
-          );
-        })}
+        {insights.map((insight) => (
+          <ResponseChoiceCard
+            key={insight.response}
+            disabled={disabled}
+            insight={insight}
+            isInspected={inspected.response === insight.response}
+            onInspect={setInspectedResponse}
+          />
+        ))}
       </div>
-      <div className="response-send-bar" aria-label={`${RESPONSE_LABELS[inspected.response]}を送出`}>
-        <button className="primary-action decision-action cue-send-action" disabled={disabled} onClick={() => onSelect(inspected.response)}>
-          <span className="cue-lamp-face cue-lamp-ready" aria-hidden="true" />
-          <span className="cue-send-label">この対応を送る</span>
-          <span className="cue-lamp-face cue-lamp-send" aria-hidden="true" />
-        </button>
-      </div>
-      <aside className={`decision-note response-console relation-${inspected.prepRelationTone}`}>
-        <div className="console-head">
-          <span>進行卓（コンソール）</span>
-          <div className="console-cue-strip" aria-label="送出キュー">
-            <em>
-              <small>CUE</small>
-              <strong>No.{String(state.totalTurn).padStart(2, '0')}</strong>
-            </em>
-            <em>
-              <small>CALL</small>
-              <strong>{RESPONSE_LABELS[inspected.response]}</strong>
-            </em>
-          </div>
-        </div>
-        <ConsoleRunSheet state={state} />
-        <div className="console-outlook">
-          <span>送出見込み</span>
-          <div className="console-outlook-line">
-            <em className={`console-outlook-prep mark-${inspected.prepRelationTone}`}>
-              {prepConnectionLabel(inspected.prepRelationTone)}
-            </em>
-            <strong>{inspected.successRangeLabel}</strong>
-          </div>
-          <small>{inspected.responseAimLabel}</small>
-        </div>
-        <ReadoutHud insight={inspected} />
-        <div className="console-log">
-          <span>進行メモ</span>
-          <p>{decisionMemo(inspected)}</p>
-        </div>
-      </aside>
+      <ResponseSendBar disabled={disabled} response={inspected.response} onSelect={onSelect} />
+      <ResponseConsole insight={inspected} state={state} />
     </section>
+  );
+}
+
+function PrepSelectionMarker({ visible }: { visible: boolean }) {
+  return (
+    <em className={`selection-marker selection-marker--prep ${visible ? 'is-visible' : ''}`} aria-hidden={!visible}>
+      {visible ? 'メモ反映中' : ''}
+    </em>
+  );
+}
+
+function ResponseSelectionMarker({ visible }: { visible: boolean }) {
+  return (
+    <em className={`selection-marker selection-marker--response ${visible ? 'is-visible' : ''}`} aria-hidden={!visible}>
+      {visible ? '確認中' : ''}
+    </em>
+  );
+}
+
+function ResponseChoiceCard({
+  disabled,
+  insight,
+  isInspected,
+  onInspect,
+}: {
+  disabled: boolean;
+  insight: ResponseInsight;
+  isInspected: boolean;
+  onInspect: (response: MainResponse) => void;
+}) {
+  const response = insight.response;
+  const range = resultRange(insight);
+  return (
+    <button
+      aria-pressed={isInspected}
+      className={`choice-button response-choice fit-${insight.rangeTone} ${isInspected ? 'is-selected' : ''}`}
+      disabled={disabled}
+      onClick={() => onInspect(response)}
+      onFocus={() => onInspect(response)}
+    >
+      <div className="response-card-top">
+        <Icon name={response} />
+        <span className="response-title">
+          <strong>{RESPONSE_LABELS[response]}</strong>
+        </span>
+      </div>
+      <div className="outlook-summary" aria-label={`成立見込み: ${insight.successRangeLabel}`}>
+        <div className="outlook-head">
+          <span><Icon name="scene" />{compactAim(insight)}</span>
+          <strong>{insight.successRangeLabel}</strong>
+          <em className={`prep-mark mark-${insight.prepRelationTone}`} aria-label={`準備との関係: ${insight.prepRelationLabel}`}>
+            {prepConnectionShortLabel(insight.prepRelationTone)}
+          </em>
+        </div>
+        <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
+      </div>
+      <ResponseEffectSummary insight={insight} />
+      {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
+      <ResponseSelectionMarker visible={isInspected} />
+    </button>
+  );
+}
+
+function ResponseEffectSummary({ insight }: { insight: ResponseInsight }) {
+  const effects = effectItems(insight);
+  return (
+    <div className="card-effect-summary response-effect-summary" aria-label="影響の要約">
+      <span>影響</span>
+      <div>
+        {effects.map((item) => (
+          <em key={item.key} className={`effect-mini effect-${item.tone}`} title={item.title} aria-label={item.title}>
+            {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
+            <Icon name={item.icon} />
+            <strong>{effectTargetLabel(item.icon)}</strong>
+            <b>{evaluationSign(item)}</b>
+          </em>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ResponseSendBar({
+  disabled,
+  response,
+  onSelect,
+}: {
+  disabled: boolean;
+  response: MainResponse;
+  onSelect: (response: MainResponse) => void;
+}) {
+  return (
+    <div className="response-send-bar" aria-label={`${RESPONSE_LABELS[response]}を送出`}>
+      <button className="primary-action decision-action cue-send-action" disabled={disabled} onClick={() => onSelect(response)}>
+        <span className="cue-lamp-face cue-lamp-ready" aria-hidden="true" />
+        <span className="cue-send-label">この対応を送る</span>
+        <span className="cue-lamp-face cue-lamp-send" aria-hidden="true" />
+      </button>
+    </div>
+  );
+}
+
+function ResponseConsole({ insight, state }: { insight: ResponseInsight; state: GameState }) {
+  return (
+    <aside className={`decision-note response-console relation-${insight.prepRelationTone}`}>
+      <div className="console-head">
+        <span>進行卓（コンソール）</span>
+        <div className="console-cue-strip" aria-label="送出キュー">
+          <em>
+            <small>CUE</small>
+            <strong>No.{String(state.totalTurn).padStart(2, '0')}</strong>
+          </em>
+          <em>
+            <small>CALL</small>
+            <strong>{RESPONSE_LABELS[insight.response]}</strong>
+          </em>
+        </div>
+      </div>
+      <ConsoleRunSheet state={state} />
+      <div className="console-outlook">
+        <span>送出見込み</span>
+        <div className="console-outlook-line">
+          <em className={`console-outlook-prep mark-${insight.prepRelationTone}`}>
+            {prepConnectionLabel(insight.prepRelationTone)}
+          </em>
+          <strong>{insight.successRangeLabel}</strong>
+        </div>
+        <small>{insight.responseAimLabel}</small>
+      </div>
+      <ReadoutHud insight={insight} />
+      <div className="console-log">
+        <span>進行メモ</span>
+        <p>{decisionMemo(insight)}</p>
+      </div>
+    </aside>
   );
 }
 
