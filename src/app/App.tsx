@@ -228,7 +228,7 @@ function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: { result: 
           <FinalScore label="裏方負荷" value={`${result.backstageLoad}/5`} note={loadNote(result.backstageLoad)} />
         </div>
       </section>
-      <section className="packet-panel">
+      <section className="packet-panel cue-note-panel">
         <div className="section-heading">
           <p>Best Cue</p>
           <h2>決め手の一手</h2>
@@ -245,7 +245,7 @@ function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: { result: 
           <p>{result.insight.nextNote}</p>
         </div>
       </section>
-      <section className="packet-panel">
+      <section className="packet-panel survey-panel">
         <div className="section-heading">
           <p>観客アンケート</p>
           <h2>客席に届いたもの</h2>
@@ -268,7 +268,7 @@ function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: { result: 
           <p>{result.mediaReview.quote}</p>
         </div>
       </section>
-      <section className="packet-panel">
+      <section className="packet-panel decision-report-panel">
         <div className="section-heading">
           <p>判断傾向</p>
           <h2>今回の裏方タイプ</h2>
@@ -283,7 +283,7 @@ function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: { result: 
           ))}
         </div>
       </section>
-      <section className="highlight-panel packet-panel">
+      <section className="highlight-panel packet-panel timeline-report-panel">
         <div className="section-heading">
           <p>三日間タイムライン</p>
           <h2>公演の流れ</h2>
