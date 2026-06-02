@@ -10,6 +10,8 @@ type ResponseScenarioOptions = {
   prep: PrepAction;
   event: ActorEventType;
   selectedResponse: MainResponse;
+  eventTitle?: string;
+  eventDescription?: string;
   focus?: ActorType;
   focusState?: ActorState;
   focusFatigue?: number;
@@ -29,6 +31,7 @@ export function getUiScenarioStateFromLocation(search = globalThis.location?.sea
 }
 
 export function uiScenarioState(name: string): GameState | null {
+  if (name === 'prep-default') return prepScenario('watch');
   if (name === 'prep-selected-space') return prepScenario('makeSpace');
   if (name === 'response-primary') {
     return responseScenario(name, {
@@ -80,6 +83,38 @@ export function uiScenarioState(name: string): GameState | null {
       lastResponses: ['catch', 'catch'],
     });
   }
+  if (name === 'response-long-label') {
+    return responseScenario(name, {
+      prep: 'tightenFlow',
+      event: 'positionShift',
+      eventTitle: '立ち位置と照明の軸が大きくズレる',
+      eventDescription: '立ち位置のズレが照明と客席の視線まで巻き込み、舞台全体の軸が揺れている。',
+      selectedResponse: 'arrange',
+      focus: 'skilled',
+      focusState: 'fatigued',
+      focusFatigue: 3,
+      totalTurn: 5,
+      performanceStyle: 'control',
+      flowScore: 6,
+      trustScore: 2,
+      backstageLoad: 3,
+    });
+  }
+  if (name === 'result-preview') {
+    return {
+      ...responseScenario(name, {
+        prep: 'watch',
+        event: 'adlib',
+        selectedResponse: 'catch',
+        focus: 'junior',
+        focusState: 'elated',
+        totalTurn: 2,
+        sceneScore: 3,
+        trustScore: 2,
+      }),
+      status: 'result',
+    };
+  }
   return null;
 }
 
@@ -105,7 +140,7 @@ function responseScenario(name: string, options: ResponseScenarioOptions): GameS
     totalTurn,
     actors: scenarioActors(focus, options.focusState ?? 'elated', options.focusFatigue ?? 0),
     currentFocusActorId: focus,
-    currentActorEvent: scenarioEvent(options.event, focus),
+    currentActorEvent: scenarioEvent(options.event, focus, options.eventTitle, options.eventDescription),
     selectedPrep: options.prep,
     selectedResponse: options.selectedResponse,
     lastResponses: options.lastResponses ?? [],
@@ -125,11 +160,11 @@ function scenarioActors(focus: ActorType, state: ActorState, fatigue = 0) {
   return assignActorRoles(actors, focus);
 }
 
-function scenarioEvent(type: ActorEventType, actorId: ActorType): ActorEvent {
+function scenarioEvent(type: ActorEventType, actorId: ActorType, title = EVENT_LABELS[type], description = EVENT_DESCRIPTIONS[type]): ActorEvent {
   return {
     type,
     actorId,
-    title: EVENT_LABELS[type],
-    description: EVENT_DESCRIPTIONS[type],
+    title,
+    description,
   };
 }

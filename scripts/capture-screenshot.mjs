@@ -1,4 +1,4 @@
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
@@ -7,6 +7,7 @@ import { connect } from 'node:net';
 import { tmpdir } from 'node:os';
 import { dirname, extname, join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
+import { fileURLToPath } from 'node:url';
 
 const args = new Map(
   process.argv.slice(2).map((arg) => {
@@ -23,12 +24,77 @@ const fullPage = args.get('fullPage') === 'true';
 const port = Number(args.get('port') ?? 9223);
 const servePort = Number(args.get('servePort') ?? 4174);
 const scenario = args.get('scenario') ?? 'title';
+const preset = args.get('preset');
 const uiScenario = scenario.startsWith('ui:') ? scenario.slice('ui:'.length) : null;
+const checkPage = args.get('check') !== 'false';
+
+const presetJobs = {
+  'prep-panel': [
+    ['prep-default', 360, 780],
+    ['prep-default', 440, 956],
+    ['prep-selected-space', 360, 780],
+    ['prep-selected-space', 440, 956],
+  ],
+  'response-panel': [
+    ['response-primary', 360, 780],
+    ['response-primary', 440, 956],
+    ['response-alternate', 360, 780],
+    ['response-alternate', 440, 956],
+    ['response-danger', 360, 780],
+    ['response-danger', 440, 956],
+    ['response-many-effects', 360, 780],
+    ['response-many-effects', 440, 956],
+    ['response-long-label', 360, 780],
+    ['response-long-label', 440, 956],
+  ],
+  'result-panel': [
+    ['result-preview', 360, 900],
+    ['result-preview', 440, 1040],
+  ],
+};
+presetJobs['ui-critical'] = [
+  ...presetJobs['prep-panel'],
+  ...presetJobs['response-panel'],
+  ...presetJobs['result-panel'],
+];
 
 function withSearchParam(targetUrl, key, value) {
   const next = new URL(targetUrl);
   next.searchParams.set(key, value);
   return next.toString();
+}
+
+function runPreset(name) {
+  const jobs = presetJobs[name];
+  if (!jobs) {
+    throw new Error(`Unknown screenshot preset: ${name}. Known presets: ${Object.keys(presetJobs).join(', ')}`);
+  }
+  const scriptPath = fileURLToPath(import.meta.url);
+  const outDir = resolve(args.get('outDir') ?? join('tmp', 'screenshots', name));
+  const baseArgs = [];
+  if (args.has('url')) baseArgs.push(`--url=${args.get('url')}`);
+  if (args.has('check')) baseArgs.push(`--check=${args.get('check')}`);
+  jobs.forEach(([jobScenario, jobWidth, jobHeight], index) => {
+    const childArgs = [
+      scriptPath,
+      ...baseArgs,
+      `--scenario=ui:${jobScenario}`,
+      `--width=${jobWidth}`,
+      `--height=${jobHeight}`,
+      `--port=${port + index}`,
+      `--servePort=${servePort + index}`,
+      `--out=${join(outDir, `${jobScenario}-${jobWidth}.png`)}`,
+    ];
+    const result = spawnSync(process.execPath, childArgs, { stdio: 'inherit' });
+    if (result.status !== 0) {
+      process.exit(result.status ?? 1);
+    }
+  });
+}
+
+if (preset) {
+  runPreset(preset);
+  process.exit(0);
 }
 
 function findChrome() {
@@ -325,6 +391,9 @@ try {
     await runScenario(client, sessionId, scenario);
   }
   await delay(250);
+  if (checkPage) {
+    await assertPageHealth(client, sessionId, uiScenario ?? scenario);
+  }
 
   let captureParams = { format: 'png', fromSurface: true };
   if (fullPage) {
@@ -460,4 +529,68 @@ async function runScenario(client, sessionId, name) {
   }
 
   throw new Error(`Unknown screenshot scenario: ${name}`);
+}
+
+async function assertPageHealth(client, sessionId, name) {
+  const expression = `
+    (() => {
+      const failures = [];
+      const visibleRect = (element) => {
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        if (style.display === 'none' || style.visibility === 'hidden' || rect.width <= 0 || rect.height <= 0) return null;
+        return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height };
+      };
+      const intersects = (a, b) => (
+        Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left)) *
+        Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top))
+      );
+      const html = document.documentElement;
+      if (html.scrollWidth > html.clientWidth + 1) {
+        failures.push(\`horizontal overflow: scrollWidth \${html.scrollWidth}, clientWidth \${html.clientWidth}\`);
+      }
+      if ((document.body?.innerText ?? '').trim().length < 20) {
+        failures.push('page appears blank');
+      }
+      if (/vite|webpack|runtime error|failed to fetch/i.test(document.body?.innerText ?? '') && document.querySelector('[plugin], vite-error-overlay')) {
+        failures.push('framework error overlay text detected');
+      }
+      document.querySelectorAll('button').forEach((button) => {
+        const rect = visibleRect(button);
+        if (!rect) return;
+        if (button.scrollWidth > button.clientWidth + 2) {
+          failures.push(\`button horizontal overflow: "\${button.textContent.trim().replace(/\\s+/g, ' ').slice(0, 40)}"\`);
+        }
+        if (button.scrollHeight > button.clientHeight + 2 && getComputedStyle(button).overflow !== 'visible') {
+          failures.push(\`button vertical overflow: "\${button.textContent.trim().replace(/\\s+/g, ' ').slice(0, 40)}"\`);
+        }
+      });
+      document.querySelectorAll('.choice-grid').forEach((grid, gridIndex) => {
+        const items = Array.from(grid.children).map((element) => ({ element, rect: visibleRect(element) })).filter((item) => item.rect);
+        for (let i = 0; i < items.length; i += 1) {
+          for (let j = i + 1; j < items.length; j += 1) {
+            if (intersects(items[i].rect, items[j].rect) > 1) {
+              failures.push(\`choice-grid \${gridIndex} overlapping items: \${i} and \${j}\`);
+            }
+          }
+        }
+      });
+      document.querySelectorAll('.response-choice').forEach((card) => {
+        const rect = visibleRect(card);
+        if (rect && rect.height < 120) failures.push('response card is shorter than expected');
+      });
+      if (${JSON.stringify(name)}.startsWith('prep-') && document.querySelector('.selection-marker--response.is-visible')) {
+        failures.push('response selection marker is visible in prep scenario');
+      }
+      if (${JSON.stringify(name)}.startsWith('response-') && document.querySelector('.selection-marker--prep.is-visible')) {
+        failures.push('prep selection marker is visible in response scenario');
+      }
+      return failures;
+    })()
+  `;
+  const result = await client.send('Runtime.evaluate', { expression, returnByValue: true }, sessionId);
+  const failures = result.result.value ?? [];
+  if (failures.length) {
+    throw new Error(`UI health check failed for ${name}: ${failures.join('; ')}`);
+  }
 }

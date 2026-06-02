@@ -233,7 +233,7 @@ function ResponseChoiceCard({
         <div className="outlook-head">
           <span><Icon name="scene" />{compactAim(insight)}</span>
           <strong>{insight.successRangeLabel}</strong>
-          <em className={`prep-mark mark-${insight.prepRelationTone}`} aria-label={`準備との関係: ${insight.prepRelationLabel}`}>
+          <em className={`response-prep-mark mark-${insight.prepRelationTone}`} aria-label={`準備との関係: ${insight.prepRelationLabel}`}>
             {prepConnectionShortLabel(insight.prepRelationTone)}
           </em>
         </div>
@@ -249,11 +249,11 @@ function ResponseChoiceCard({
 function ResponseEffectSummary({ insight }: { insight: ResponseInsight }) {
   const effects = effectItems(insight);
   return (
-    <div className="card-effect-summary response-effect-summary" aria-label="影響の要約">
+    <div className="response-effect-summary" aria-label="影響の要約">
       <span>影響</span>
       <div>
         {effects.map((item) => (
-          <em key={item.key} className={`effect-mini effect-${item.tone}`} title={item.title} aria-label={item.title}>
+          <em key={item.key} className={`response-effect-mini effect-${item.tone}`} title={item.title} aria-label={item.title}>
             {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
             <Icon name={item.icon} />
             <strong>{effectTargetLabel(item.icon)}</strong>
