@@ -25,9 +25,7 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
     partial: { className: 'is-partial', label: '準備が一部活きた', detail: '崩れを抑えた' },
     miss: { className: 'is-miss', label: '別の備えだった', detail: '上限が下がった' },
   }[preview.prepQuality];
-  const isMatinee = preview.resultMode === 'matinee';
   const isFinale = preview.resultMode === 'finale';
-  const breakdownItems = isMatinee ? preview.scoreBreakdown.slice(0, 3) : preview.scoreBreakdown;
   const reasonItems = [...preview.scoreBreakdown]
     .filter((item) => item.value !== 0)
     .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
@@ -106,18 +104,6 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
         <Delta kind="trust" label="信頼" value={preview.deltaTrust} />
         <Delta kind="load" label="負荷" value={preview.deltaLoad} />
       </div>
-      <details className="score-breakdown cue-detail-log">
-        <summary>{isMatinee ? 'ソワレへ残る手応え' : isFinale ? '千秋楽に残った理由' : `${RESULT_TIER_LABELS[preview.resultTier]}になった理由`}</summary>
-        <ul>
-          {breakdownItems.map((item) => (
-            <li key={item.id} className={`breakdown-${item.tone}`}>
-              <span>{item.label}</span>
-              <strong>{item.value > 0 ? `+${item.value}` : item.value}</strong>
-              {item.detail ? <small>{item.detail}</small> : null}
-            </li>
-          ))}
-        </ul>
-      </details>
       <button className="primary-action" disabled={!canCommit} onClick={onCommit}>{isFinale ? 'この結果で終演へ' : 'この結果で次公演へ'}</button>
     </section>
   );

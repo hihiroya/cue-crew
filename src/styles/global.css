@@ -3558,17 +3558,6 @@ button:disabled {
   font-size: 0.92rem;
 }
 
-.score-breakdown summary {
-  cursor: pointer;
-  color: var(--gold-strong);
-  font-size: 0.92rem;
-  font-weight: 900;
-}
-
-.cue-detail-log[open] summary {
-  margin-bottom: 7px;
-}
-
 .score-breakdown ul {
   display: grid;
   gap: 5px;
@@ -4083,16 +4072,14 @@ button:disabled {
 
 .cue-result-ticket .result-kicker,
 .cue-result-ticket .scene-rating span,
-.cue-result-ticket .prep-recovery p,
-.cue-result-ticket .score-breakdown li small {
+.cue-result-ticket .prep-recovery p {
   color: rgba(32, 23, 25, 0.68);
 }
 
 .cue-result-ticket .result-kicker span:first-child,
 .cue-result-ticket .result-ticket-head h2,
 .cue-result-ticket .scene-rating strong,
-.cue-result-ticket .prep-recovery strong,
-.cue-result-ticket .score-breakdown summary {
+.cue-result-ticket .prep-recovery strong {
   color: #421f23;
 }
 
@@ -4105,8 +4092,7 @@ button:disabled {
 .cue-result-ticket .cue-route span,
 .cue-result-ticket .cue-summary-card,
 .cue-result-ticket .cue-reason-list,
-.cue-result-ticket .prep-recovery,
-.cue-result-ticket .score-breakdown {
+.cue-result-ticket .prep-recovery {
   border-color: rgba(66, 31, 35, 0.24);
   background: rgba(255, 250, 231, 0.54);
 }
@@ -4146,8 +4132,7 @@ button:disabled {
 }
 
 .cue-result-ticket .cue-summary-card p,
-.cue-result-ticket .cue-reason-list p,
-.cue-result-ticket .score-breakdown li span {
+.cue-result-ticket .cue-reason-list p {
   color: #2d2020;
 }
 
