@@ -188,6 +188,7 @@ function TitleScreen({ history, onStart, onReplay }: { history: PerformanceResul
               <button key={`${item.seed}-${item.finishedAt}`} onClick={() => onReplay(item.seed)}>
                 <strong>{item.title}</strong>
                 <span>評判 {item.sceneScore} / 段取り {item.flowScore} / 座組信頼 {item.trustScore}</span>
+                <small>同じ公演をやり直す</small>
               </button>
             ))}
           </div>
@@ -229,6 +230,23 @@ function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: { result: 
       </section>
       <section className="packet-panel">
         <div className="section-heading">
+          <p>Best Cue</p>
+          <h2>決め手の一手</h2>
+        </div>
+        {result.insight.bestCue ? (
+          <article className="best-cue-card">
+            <span>{result.insight.bestCue.act}日目 {PERFORMANCE_SLOT_LABELS[result.insight.bestCue.turnInAct === 1 ? 'matinee' : 'soiree'].label} / {RESULT_TIER_LABELS[result.insight.bestCue.resultTier]} {RESULT_TIER_STARS[result.insight.bestCue.resultTier]}</span>
+            <h3>{result.insight.bestCue.sceneTitle}</h3>
+            <p>{ACTOR_LABELS[result.insight.bestCue.focusActorType]}の{EVENT_LABELS[result.insight.bestCue.actorEventType]}を{RESPONSE_LABELS[result.insight.bestCue.mainResponse]}で受けた。</p>
+          </article>
+        ) : null}
+        <div className="next-note">
+          <span>Next Note</span>
+          <p>{result.insight.nextNote}</p>
+        </div>
+      </section>
+      <section className="packet-panel">
+        <div className="section-heading">
           <p>観客アンケート</p>
           <h2>客席に届いたもの</h2>
         </div>
@@ -263,23 +281,6 @@ function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: { result: 
               <strong>{item.count}回</strong>
             </div>
           ))}
-        </div>
-      </section>
-      <section className="packet-panel">
-        <div className="section-heading">
-          <p>Best Cue</p>
-          <h2>決め手の一手</h2>
-        </div>
-        {result.insight.bestCue ? (
-          <article className="best-cue-card">
-            <span>{result.insight.bestCue.act}日目 {PERFORMANCE_SLOT_LABELS[result.insight.bestCue.turnInAct === 1 ? 'matinee' : 'soiree'].label} / {RESULT_TIER_LABELS[result.insight.bestCue.resultTier]} {RESULT_TIER_STARS[result.insight.bestCue.resultTier]}</span>
-            <h3>{result.insight.bestCue.sceneTitle}</h3>
-            <p>{ACTOR_LABELS[result.insight.bestCue.focusActorType]}の{EVENT_LABELS[result.insight.bestCue.actorEventType]}を{RESPONSE_LABELS[result.insight.bestCue.mainResponse]}で受けた。</p>
-          </article>
-        ) : null}
-        <div className="next-note">
-          <span>Next Note</span>
-          <p>{result.insight.nextNote}</p>
         </div>
       </section>
       <section className="highlight-panel packet-panel">

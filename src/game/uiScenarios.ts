@@ -2,7 +2,7 @@ import { assignActorRoles } from './actorLogic';
 import { EVENT_DESCRIPTIONS, EVENT_LABELS, INITIAL_ACTORS } from './constants';
 import { createInitialGame } from './gameReducer';
 import { actForTurn } from './scoring';
-import type { ActorEvent, ActorEventType, ActorState, ActorType, FrayEvent, GameState, LoadStrain, MainResponse, PerformanceStyle, PrepAction } from './types';
+import type { ActorEvent, ActorEventType, ActorState, ActorType, FrayEvent, GameState, LoadBias, LoadStrain, MainResponse, PerformanceStyle, PrepAction, PrepPredictionQuality, ResultTier, TurnLog } from './types';
 
 export const UI_SCENARIO_QUERY_KEY = 'uiScenario';
 
@@ -148,6 +148,14 @@ export function uiScenarioState(name: string): GameState | null {
       status: 'result',
     };
   }
+  if (name === 'finished-heat') return finishedScenario('finished-heat');
+  if (name === 'finished-rough') return finishedScenario('finished-rough', {
+    sceneScore: 8,
+    flowScore: -6,
+    trustScore: -1,
+    backstageLoad: 4,
+    performanceStyle: 'heat',
+  });
   return null;
 }
 
@@ -201,5 +209,86 @@ function scenarioEvent(type: ActorEventType, actorId: ActorType, title = EVENT_L
     actorId,
     title,
     description,
+  };
+}
+
+type FinishedScenarioOptions = {
+  sceneScore?: number;
+  flowScore?: number;
+  trustScore?: number;
+  backstageLoad?: number;
+  performanceStyle?: PerformanceStyle;
+};
+
+function finishedScenario(name: string, options: FinishedScenarioOptions = {}): GameState {
+  const base = createInitialGame(`ui-${name}`);
+  const performanceStyle = options.performanceStyle ?? 'control';
+  return {
+    ...base,
+    ...actForTurn(6),
+    totalTurn: 6,
+    performanceStyle,
+    sceneScore: options.sceneScore ?? 18,
+    flowScore: options.flowScore ?? 7,
+    trustScore: options.trustScore ?? 6,
+    backstageLoad: options.backstageLoad ?? 2,
+    loadBias: 'sound',
+    logs: finishedLogs(performanceStyle),
+    status: 'finished',
+  };
+}
+
+function finishedLogs(performanceStyle: PerformanceStyle): TurnLog[] {
+  return [
+    turnLog(1, 1, 'junior', 'elated', 'adlib', 'watch', 'catch', 'scene', 5, 3, 1, 1, 1, '拾われたアドリブ', 'light', true, 'hit', performanceStyle),
+    turnLog(1, 2, 'lead', 'contemplative', 'silence', 'makeSpace', 'wait', 'smallSuccess', 3, 1, 1, 1, -1, '客席まで届いた間', 'sound', true, 'hit', performanceStyle),
+    turnLog(2, 1, 'skilled', 'anxious', 'positionShift', 'tightenFlow', 'arrange', 'scene', 4, 3, 2, 1, -1, '意味を持った立ち位置', 'stageManagement', true, 'hit', performanceStyle),
+    turnLog(2, 2, 'junior', 'elated', 'heatUp', 'watch', 'catch', 'fray', 0, 0, -1, -1, 2, '熱だけが残った一瞬', 'light', false, 'partial', performanceStyle),
+    turnLog(3, 1, 'lead', 'immersed', 'delayedExit', 'makeSpace', 'wait', 'masterpiece', 8, 4, 2, 3, -1, '余韻を残す退場', 'sound', true, 'hit', performanceStyle),
+    turnLog(3, 2, 'skilled', 'fatigued', 'ensembleWaver', 'tightenFlow', 'arrange', 'smallSuccess', 3, 1, 1, 0, -1, '小さく整った呼吸', 'stageManagement', true, 'hit', performanceStyle),
+  ];
+}
+
+function turnLog(
+  act: number,
+  turnInAct: number,
+  focusActorType: ActorType,
+  actorState: ActorState,
+  actorEventType: ActorEventType,
+  prepAction: PrepAction,
+  mainResponse: MainResponse,
+  resultTier: ResultTier,
+  score: number,
+  deltaScene: number,
+  deltaFlow: number,
+  deltaTrust: number,
+  deltaLoad: number,
+  sceneTitle: string,
+  loadBias: LoadBias,
+  prepMatched: boolean,
+  prepQuality: PrepPredictionQuality,
+  performanceStyle: PerformanceStyle,
+): TurnLog {
+  return {
+    act,
+    turnInAct,
+    totalTurn: (act - 1) * 2 + turnInAct,
+    focusActorType,
+    actorState,
+    actorEventType,
+    prepAction,
+    mainResponse,
+    resultTier,
+    score,
+    performanceStyle,
+    prepMatched,
+    prepQuality,
+    sceneTitle,
+    flavorText: '固定シナリオ用の場面記録。',
+    deltaScene,
+    deltaFlow,
+    deltaTrust,
+    deltaLoad,
+    loadBias,
   };
 }

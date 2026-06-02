@@ -54,6 +54,10 @@ const presetJobs = {
     ['result-preview', 440, 1040],
     ['result-fray', 360, 960],
     ['result-fray', 440, 1100],
+    ['finished-heat', 360, 1500],
+    ['finished-heat', 440, 1500],
+    ['finished-rough', 360, 1500],
+    ['finished-rough', 440, 1500],
   ],
 };
 presetJobs['ui-critical'] = [

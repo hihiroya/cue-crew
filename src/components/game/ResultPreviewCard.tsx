@@ -28,6 +28,10 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
   const isMatinee = preview.resultMode === 'matinee';
   const isFinale = preview.resultMode === 'finale';
   const breakdownItems = isMatinee ? preview.scoreBreakdown.slice(0, 3) : preview.scoreBreakdown;
+  const reasonItems = [...preview.scoreBreakdown]
+    .filter((item) => item.value !== 0)
+    .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
+    .slice(0, 3);
   return (
     <section className={`result-preview cue-result-ticket tier-${preview.resultTier} result-mode-${preview.resultMode}`}>
       <div className="result-ticket-head">
@@ -69,6 +73,19 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
           <p>{preview.cueSummary.audienceReaction.replace(/^客席反応: /, '')}</p>
         </article>
       </div>
+      {reasonItems.length > 0 ? (
+        <div className="cue-reason-list">
+          <span>主な理由</span>
+          <ul>
+            {reasonItems.map((item) => (
+              <li key={item.id} className={`breakdown-${item.tone}`}>
+                <strong>{item.value > 0 ? `+${item.value}` : item.value}</strong>
+                <p>{item.label}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       <div className={`prep-recovery recovery-${preview.prepRecoveryTone}`}>
         <div>
           <span>{preview.prepRecoveryLabel}</span>

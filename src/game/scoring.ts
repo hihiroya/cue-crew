@@ -858,16 +858,23 @@ export function createMediaReview(logs: TurnLog[], sceneScore: number, flowScore
   const sceneOrBetterCount = logs.filter((log) => log.resultTier === 'masterpiece' || log.resultTier === 'scene').length;
   const frayOrAccidentCount = logs.filter((log) => log.resultTier === 'fray' || log.resultTier === 'accident').length;
   const reviewScore = sceneScore + flowScore + trustScore - backstageLoad * 2 + sceneOrBetterCount * 3 - frayOrAccidentCount * 2;
-  const stars = reviewScore >= 28 ? 5 : reviewScore >= 16 ? 4 : reviewScore >= 6 ? 3 : reviewScore >= 0 ? 2 : 1;
+  const baseStars = reviewScore >= 28 ? 5 : reviewScore >= 16 ? 4 : reviewScore >= 6 ? 3 : reviewScore >= 0 ? 2 : 1;
+  const heatFloor = sceneScore >= 16 || sceneOrBetterCount >= 4 ? 4 : sceneScore >= 10 || sceneOrBetterCount >= 3 ? 3 : 1;
+  const roughCap = (flowScore < 0 || backstageLoad >= 4) && sceneOrBetterCount < 4 ? 3 : 5;
+  const stars = Math.min(Math.max(baseStars, heatFloor), roughCap);
   const headline = stars >= 5
     ? '予定外を客席の記憶へ変えた三日間'
     : stars >= 4
       ? '揺れを隠さず、舞台の呼吸へ変えた公演'
       : stars >= 3
-        ? '危うさごと支えた、手触りの残る公演'
+        ? sceneScore >= 10 && backstageLoad >= 4
+          ? '熱は届いたが、荒さも残した公演'
+          : '危うさごと支えた、手触りの残る公演'
         : '荒さは残るが、本番の熱は途切れなかった';
   const quote = stars >= 4
     ? `「${styleLabel}」の色が明確で、裏方の判断が場面の輪郭を作った。`
+    : sceneScore >= 10 && backstageLoad >= 4
+      ? '客席の熱量は高い。一方で、負荷の重さが進行の粗さとして見える瞬間もあった。'
     : backstageLoad >= 4
       ? '負荷の重さは見えたが、崩れを次の熱へ渡そうとする姿勢が残った。'
       : '大きな名場面は限られたが、三日間を通して舞台は途切れなかった。';
