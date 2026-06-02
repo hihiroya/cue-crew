@@ -135,7 +135,7 @@ export const RESPONSE_DESCRIPTIONS: Record<MainResponse, string> = {
   catch: '予定外の行動を見せ場に変える',
   arrange: '乱れを舞台全体の呼吸に戻す',
   wait: '間や余韻を信じて急かさない',
-  cut: '場面を閉じ、崩れを次へ送る',
+  cut: '場面を閉じ、転換と道具を次へ送る',
 };
 
 export const RESULT_TIER_LABELS: Record<ResultTier, string> = {
@@ -296,5 +296,5 @@ export const RESPONSE_BIAS: Record<MainResponse, Exclude<LoadBias, null>> = {
   catch: 'light',
   arrange: 'stageManagement',
   wait: 'sound',
-  cut: 'stageManagement',
+  cut: 'props',
 };
