@@ -61,7 +61,7 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
       </div>
       {preview.styleLabel ? (
         <div className={`performance-style-note ${preview.styleIsNew ? 'is-new' : ''}`}>
-          <span>{preview.styleIsNew ? 'この公演の型が決まった' : '公演の型'}</span>
+          <span>{preview.styleIsNew ? 'この公演の色が決まった' : '公演の色'}</span>
           <strong>{preview.styleLabel}</strong>
           {preview.styleText ? <p>{preview.styleText}</p> : null}
         </div>

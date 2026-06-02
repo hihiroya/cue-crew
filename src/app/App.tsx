@@ -11,7 +11,7 @@ import { ACTOR_LABELS, EVENT_LABELS, PERFORMANCE_SLOT_LABELS, PERFORMANCE_STYLE_
 import { finishPerformance, gameReducer, readPerformanceHistory, titleState } from '../game/gameReducer';
 import { makeSeed } from '../game/rng';
 import { previewResult } from '../game/scoring';
-import type { PerformanceResult, PrepAction } from '../game/types';
+import type { GameStatus, PerformanceResult, PrepAction } from '../game/types';
 import { getUiScenarioStateFromLocation } from '../game/uiScenarios';
 
 type PendingPrepCue = {
@@ -93,9 +93,9 @@ export function App() {
       }} />
       <ScoreBar state={displayState} />
       <div className="phase-strip">
-        <span className={displayState.status === 'prep' ? 'is-active' : ''}>準備を決める</span>
-        <span className={displayState.status === 'response' ? 'is-active' : ''}>行動に対応</span>
-        <span className={displayState.status === 'result' ? 'is-active' : ''}>場面を見る</span>
+        <span className={phaseStepClass(displayState.status, 'prep')}><i aria-hidden="true" />準備</span>
+        <span className={phaseStepClass(displayState.status, 'response')}><i aria-hidden="true" />対応</span>
+        <span className={phaseStepClass(displayState.status, 'result')}><i aria-hidden="true" />場面</span>
       </div>
       {displayState.status !== 'result' ? (
         <ActorStage
@@ -144,6 +144,13 @@ export function App() {
   );
 }
 
+function phaseStepClass(status: GameStatus, step: 'prep' | 'response' | 'result') {
+  const order = { prep: 0, response: 1, result: 2 };
+  if (status === step) return 'is-active';
+  if (status in order && order[status as keyof typeof order] > order[step]) return 'is-done';
+  return '';
+}
+
 function TitleScreen({ history, onStart, onReplay }: { history: PerformanceResult[]; onStart: () => void; onReplay: (seed: string) => void }) {
   const [showHowTo, setShowHowTo] = useState(false);
   return (
@@ -157,7 +164,7 @@ function TitleScreen({ history, onStart, onReplay }: { history: PerformanceResul
         <div className="stage-mark"><Icon name="spark" /></div>
         <p className="title-series">本番中につき！</p>
         <h1>舞台裏の一手</h1>
-        <p className="title-copy">3日間のマチネとソワレを回し、初日の手応えから公演の型を作る。</p>
+        <p className="title-copy">3日間のマチネとソワレを回し、初日の手応えから公演の色を作る。</p>
         <div className="title-actions">
           <button className="primary-action" onClick={onStart}>はじめる</button>
           <button className="secondary-action" onClick={() => setShowHowTo((value) => !value)}>遊び方</button>
@@ -165,7 +172,7 @@ function TitleScreen({ history, onStart, onReplay }: { history: PerformanceResul
         {showHowTo ? (
           <div className="howto-panel">
             <p>全6公演。マチネは次のソワレへ向けた調整、ソワレはその日の評判と公演全体への影響が大きい。</p>
-            <p>1日目ソワレ後に公演の型が決まり、2日目以降の拾う・待つ・整える・切るの意味が少し変わる。</p>
+            <p>1日目ソワレ後に公演の色が決まり、2日目以降の拾う・待つ・整える・切るの意味が少し変わる。</p>
           </div>
         ) : null}
       </section>
