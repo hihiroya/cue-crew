@@ -95,9 +95,10 @@ type DeltaKind = 'scene' | 'flow' | 'trust' | 'load';
 
 function Delta({ kind, label, value }: { kind: DeltaKind; label: string; value: number }) {
   const sign = value > 0 ? '+' : '';
-  const impact = deltaImpact(kind, value);
+  const meterSlots = kind === 'load' ? 5 : 4;
+  const impact = deltaImpact(kind, value, meterSlots);
   return (
-    <div className={`delta delta-${kind} ${impact.tone}`} aria-label={`${label}: ${impact.label}, ${impact.level}/4, ${sign}${value}`}>
+    <div className={`delta delta-${kind} ${impact.tone}`} aria-label={`${label}: ${impact.label}, ${impact.level}/${meterSlots}, ${sign}${value}`}>
       <div className="delta-head">
         <Icon name={kind} />
         <span>{label}</span>
@@ -105,17 +106,17 @@ function Delta({ kind, label, value }: { kind: DeltaKind; label: string; value: 
       </div>
       <b>{impact.label}</b>
       <div className="delta-meter" aria-hidden="true">
-        {Array.from({ length: 4 }, (_, index) => (
+        {Array.from({ length: meterSlots }, (_, index) => (
           <span key={index} className={index < impact.level ? 'is-filled' : ''} />
         ))}
-        <em>{impact.level}/4</em>
+        <em>{impact.level}/{meterSlots}</em>
       </div>
     </div>
   );
 }
 
-function deltaImpact(kind: DeltaKind, value: number): { label: string; level: number; tone: 'positive' | 'neutral' | 'negative' } {
-  const level = Math.min(4, Math.abs(value));
+function deltaImpact(kind: DeltaKind, value: number, maxLevel = 4): { label: string; level: number; tone: 'positive' | 'neutral' | 'negative' } {
+  const level = Math.min(maxLevel, Math.abs(value));
   if (kind === 'scene') {
     if (value >= 4) return { label: '見せ場級', level: 4, tone: 'positive' };
     if (value >= 3) return { label: '場面が伸びた', level: 3, tone: 'positive' };
@@ -137,6 +138,6 @@ function deltaImpact(kind: DeltaKind, value: number): { label: string; level: nu
   }
   if (value < 0) return { label: '軽くなった', level, tone: 'positive' };
   if (value === 0) return { label: '維持', level: 0, tone: 'neutral' };
-  if (value >= 3) return { label: '危険圏', level: Math.min(4, value), tone: 'negative' };
+  if (value >= 3) return { label: '危険圏', level: Math.min(maxLevel, value), tone: 'negative' };
   return { label: value >= 2 ? '重い代償' : '攻めの代償', level: value, tone: 'negative' };
 }
