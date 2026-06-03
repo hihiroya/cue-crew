@@ -102,7 +102,9 @@ def remove_chroma_key(
     output = []
     span = max(1.0, opaque_threshold - transparent_threshold)
 
-    for r, g, b, a in rgba.getdata():
+    pixels = rgba.get_flattened_data() if hasattr(rgba, "get_flattened_data") else rgba.getdata()
+
+    for r, g, b, a in pixels:
         distance = color_distance((r, g, b), key_color)
         if distance <= transparent_threshold:
             alpha_scale = 0.0
@@ -113,11 +115,10 @@ def remove_chroma_key(
 
         next_alpha = round(a * alpha_scale)
 
-        if despill and next_alpha < 255:
-            spill_strength = 1.0 - (next_alpha / 255)
-            if g > r and g > b:
-                neutral_green = max(r, b) + 18
-                g = round(g - max(0, g - neutral_green) * spill_strength)
+        if despill and g > r + 8 and g > b + 8:
+            spill_strength = max(0.82, 1.0 - (next_alpha / 255))
+            neutral_green = max(r, b)
+            g = round(g - max(0, g - neutral_green) * spill_strength)
 
         output.append((r, g, b, next_alpha))
 

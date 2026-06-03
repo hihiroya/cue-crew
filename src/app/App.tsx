@@ -5,7 +5,7 @@ import { ResultPreviewCard } from '../components/game/ResultPreviewCard';
 import { ScoreBar } from '../components/game/ScoreBar';
 import { GameHeader } from '../components/layout/GameHeader';
 import { Icon } from '../components/ui/Icon';
-import { ActorSilhouette } from '../components/actors/ActorSilhouette';
+import titlePosterImage from '../assets/title/title-poster.png';
 import { pickFocusActor, topOmenEvents } from '../game/actorLogic';
 import { ACTOR_LABELS, EVENT_LABELS, PERFORMANCE_SLOT_LABELS, PERFORMANCE_STYLE_DETAILS, RESPONSE_LABELS, RESULT_TIER_LABELS, RESULT_TIER_STARS, TOTAL_TURNS } from '../game/constants';
 import { finishPerformance, gameReducer, readPerformanceHistory, titleState } from '../game/gameReducer';
@@ -216,9 +216,7 @@ function TitleScreen({ history, onStart, onReplay }: { history: PerformanceResul
     <main className="title-screen">
       <section className="title-panel">
         <div className="title-ghost-stage" aria-hidden="true">
-          <ActorSilhouette type="lead" />
-          <ActorSilhouette type="junior" />
-          <ActorSilhouette type="skilled" />
+          <img src={titlePosterImage} alt="" draggable={false} />
         </div>
         <div className="stage-mark"><Icon name="spark" /></div>
         <p className="title-series">1人用舞台裏マネジメント</p>

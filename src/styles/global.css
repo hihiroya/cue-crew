@@ -3604,7 +3604,7 @@ button:disabled {
 
 .title-panel {
   min-height: 430px;
-  align-content: end;
+  align-content: center;
   gap: 16px;
   padding: clamp(28px, 6vw, 46px);
   border-color: rgba(255, 217, 138, 0.18);
@@ -3648,11 +3648,11 @@ button:disabled {
 
 .title-ghost-stage {
   position: absolute;
-  inset: auto -38px -10px auto;
-  width: min(70%, 320px);
-  height: 88%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  opacity: 0.3;
+  opacity: 0.82;
   z-index: 0;
 }
 
@@ -3661,31 +3661,18 @@ button:disabled {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(100deg, transparent 0 24%, rgba(229, 189, 104, 0.28) 45%, transparent 62%),
-    linear-gradient(180deg, transparent 0 58%, rgba(0, 0, 0, 0.62) 100%);
+    linear-gradient(90deg, rgba(6, 5, 9, 0.9) 0%, rgba(14, 7, 13, 0.72) 34%, rgba(7, 8, 13, 0.2) 72%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0%, transparent 36%, rgba(0, 0, 0, 0.68) 100%);
+  z-index: 1;
 }
 
-.title-ghost-stage .silhouette {
-  position: absolute;
-  width: 118px;
-  height: 176px;
-  bottom: -2px;
-  opacity: 0.88;
-}
-
-.title-ghost-stage .silhouette-lead {
-  right: 128px;
-  transform: scale(1.16);
-}
-
-.title-ghost-stage .silhouette-junior {
-  right: 54px;
-  transform: scale(1.08);
-}
-
-.title-ghost-stage .silhouette-skilled {
-  right: -18px;
-  transform: scale(1.1);
+.title-ghost-stage img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: 50% 34%;
+  filter: saturate(1.05) contrast(1.06);
 }
 
 .stage-mark {
