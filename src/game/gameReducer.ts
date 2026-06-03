@@ -90,10 +90,37 @@ export function readPerformanceHistory(): PerformanceResult[] {
   try {
     const raw = localStorage.getItem(HISTORY_KEY);
     if (!raw) return [];
-    return JSON.parse(raw) as PerformanceResult[];
+    const parsed = JSON.parse(raw) as Partial<PerformanceResult>[];
+    return parsed.map(normalizePerformanceResult);
   } catch {
     return [];
   }
+}
+
+function normalizePerformanceResult(result: Partial<PerformanceResult>): PerformanceResult {
+  const logs = result.logs ?? [];
+  const sceneScore = result.sceneScore ?? 0;
+  const flowScore = result.flowScore ?? 0;
+  const trustScore = result.trustScore ?? 0;
+  const backstageLoad = result.backstageLoad ?? 0;
+  const fallbackReview = createPerformanceReview(logs, sceneScore, flowScore, trustScore, backstageLoad);
+  return {
+    seed: result.seed ?? 'unknown-seed',
+    finishedAt: result.finishedAt ?? new Date(0).toISOString(),
+    sceneScore,
+    flowScore,
+    trustScore,
+    backstageLoad,
+    performanceStyle: result.performanceStyle ?? null,
+    title: result.title ?? fallbackReview.title,
+    review: result.review ?? fallbackReview.review,
+    reviewNotes: result.reviewNotes ?? fallbackReview.reviewNotes,
+    insight: result.insight ?? createPerformanceInsight(logs, sceneScore, flowScore, trustScore, backstageLoad),
+    audienceSurvey: result.audienceSurvey ?? createAudienceSurvey(logs, sceneScore, flowScore, trustScore, backstageLoad),
+    mediaReview: result.mediaReview ?? createMediaReview(logs, sceneScore, flowScore, trustScore, backstageLoad),
+    logs,
+    highlights: result.highlights ?? logs.slice(0, 5),
+  };
 }
 
 export function commitResult(state: GameState): GameState {

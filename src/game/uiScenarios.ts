@@ -33,6 +33,7 @@ export function getUiScenarioStateFromLocation(search = globalThis.location?.sea
 }
 
 export function uiScenarioState(name: string): GameState | null {
+  if (name === 'title-default') return { ...createInitialGame('ui-title-default'), currentFocusActorId: null, status: 'title' };
   if (name === 'prep-default') return prepScenario('watch');
   if (name === 'prep-selected-space') return prepScenario('makeSpace');
   if (name === 'response-primary') {

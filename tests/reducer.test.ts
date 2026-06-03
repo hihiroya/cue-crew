@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { assignActorRoles } from '../src/game/actorLogic';
 import { INITIAL_ACTORS, INITIAL_LOAD_STRAIN } from '../src/game/constants';
-import { gameReducer } from '../src/game/gameReducer';
+import { gameReducer, readPerformanceHistory } from '../src/game/gameReducer';
 import type { GameState, MainResponse, PrepAction } from '../src/game/types';
 
 function resultState(overrides: Partial<GameState> = {}): GameState {
@@ -92,4 +92,41 @@ test('a full performance is deterministic for the same seed and choices', () => 
     tiers: ['smallSuccess', 'scene', 'fray', 'masterpiece', 'scene', 'scene'],
     titles: ['小さく整った呼吸', '言葉を泳がせた一瞬', '揺れたまま進んだ拍', '静かに閉じた場面', '遅れた背中の見せ場', '裏方がつないだ一幕'],
   });
+});
+
+test('readPerformanceHistory normalizes legacy results without insight', () => {
+  const originalStorage = globalThis.localStorage;
+  const store = new Map<string, string>();
+  Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    value: {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => store.set(key, value),
+    },
+  });
+  store.set('honban.performance.history.v1', JSON.stringify([{
+    seed: 'legacy-seed',
+    finishedAt: '2026-01-01T00:00:00.000Z',
+    sceneScore: 8,
+    flowScore: -1,
+    trustScore: 2,
+    backstageLoad: 4,
+    title: '古い公演',
+    review: '古いレビュー',
+    highlights: [],
+    logs: [],
+  }]));
+
+  try {
+    const [result] = readPerformanceHistory();
+    assert.equal(result.seed, 'legacy-seed');
+    assert.equal(result.insight.rank, 'D');
+    assert.equal(result.insight.prepHits, 0);
+    assert.equal(result.audienceSurvey.encoreInterest > 0, true);
+  } finally {
+    Object.defineProperty(globalThis, 'localStorage', {
+      configurable: true,
+      value: originalStorage,
+    });
+  }
 });

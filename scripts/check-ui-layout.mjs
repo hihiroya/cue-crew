@@ -16,6 +16,10 @@ const args = new Map(
 );
 
 const presetJobs = {
+  'title-panel': [
+    ['title-default', 360, 780],
+    ['title-default', 440, 956],
+  ],
   'prep-panel': [
     ['prep-default', 360, 780],
     ['prep-default', 440, 956],
@@ -48,6 +52,7 @@ const presetJobs = {
   ],
 };
 presetJobs['ui-critical'] = [
+  ...presetJobs['title-panel'],
   ...presetJobs['prep-panel'],
   ...presetJobs['response-panel'],
   ...presetJobs['result-panel'],
