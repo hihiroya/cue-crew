@@ -78,12 +78,13 @@ function ResponseChoiceCard({
         <Icon name={response} />
         <span className="response-title">
           <strong>{RESPONSE_LABELS[response]}</strong>
+          <em>{insight.tacticalSummary}</em>
         </span>
       </div>
       <div className="outlook-summary" aria-label={`成立見込み: ${insight.successRangeLabel}`}>
         <div className="outlook-head">
-          <span><Icon name="scene" />{insight.tacticalSummary}</span>
-          <strong>{insight.successRangeLabel}</strong>
+          <span><Icon name="scene" />成立見込み</span>
+          <strong className="response-range-badge">{insight.successRangeLabel}</strong>
           <em className={`response-prep-mark mark-${insight.prepRelationTone}`} aria-label={`準備との関係: ${insight.prepRelationLabel}`}>
             {prepConnectionShortLabel(insight.prepRelationTone)}
           </em>
@@ -98,10 +99,13 @@ function ResponseChoiceCard({
 }
 
 function ResponseEffectSummary({ insight }: { insight: ResponseInsight }) {
-  const effects = effectItems(insight);
+  const effects = effectItems(insight).sort((a, b) => (
+    Number(b.repeat) - Number(a.repeat)
+    || Math.abs(b.value) - Math.abs(a.value)
+  )).slice(0, 2);
   return (
     <div className="response-effect-summary" aria-label="影響の要約">
-      <span>影響</span>
+      <span>主要影響</span>
       <div>
         {effects.map((item) => (
           <em key={item.key} className={`response-effect-mini effect-${item.tone}`} title={item.title} aria-label={item.title}>

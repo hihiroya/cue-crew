@@ -40,6 +40,11 @@ export function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: Pro
           <span>次回改善メモ</span>
           <p>{result.insight.scoreNote}</p>
         </div>
+        <div className="replay-challenge-note">
+          <span>次回チャレンジ</span>
+          <strong>{nextChallenge(result)}</strong>
+          <p>{sameSeedHint(result)}</p>
+        </div>
         <div className="report-section-label">
           <span>公演指標</span>
           <small>集計</small>
@@ -179,6 +184,25 @@ function loadNote(value: number) {
   if (value >= 4) return '次回注意';
   if (value >= 2) return '余熱あり';
   return '軽い';
+}
+
+function nextChallenge(result: PerformanceResult) {
+  if (result.insight.pointsToNextRank !== null && result.insight.pointsToNextRank <= 8) {
+    return `同じseedで${result.insight.nextRank}到達`;
+  }
+  if (result.insight.prepHits < 4) return '準備ヒット4回以上';
+  if (result.insight.frayOrAccidentCount >= 2) return 'ほころび1回以下で終演';
+  if (result.backstageLoad >= 3) return '最終負荷2以下';
+  if (result.insight.masterpieceCount < 2) return '名場面2回以上';
+  return `${RESPONSE_LABELS[result.insight.dominantResponse]}型の最高ランク更新`;
+}
+
+function sameSeedHint(result: PerformanceResult) {
+  if (result.insight.pointsToNextRank === null) return '最高ランク到達。同じ公演で別の型を狙える。';
+  if (result.insight.bestCue) {
+    return `${result.insight.bestCue.act}日目${PERFORMANCE_SLOT_LABELS[result.insight.bestCue.turnInAct === 1 ? 'matinee' : 'soiree'].label}を基準に、あと${result.insight.pointsToNextRank}点を詰めたい。`;
+  }
+  return `あと${result.insight.pointsToNextRank}点。準備と負荷管理を詰める。`;
 }
 
 function rankClass(rank: PerformanceResult['insight']['rank']) {

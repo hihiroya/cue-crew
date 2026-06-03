@@ -53,6 +53,10 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
         <span>{prepBanner.label}</span>
         <strong>{PREP_LABELS[preview.prepAction]} / {prepBanner.detail}</strong>
       </div>
+      <div className="next-note result-lesson-note">
+        <span>次回改善メモ</span>
+        <p>{preview.cueSummary.lesson}</p>
+      </div>
       <div className="cue-summary-grid">
         <article className="cue-summary-card is-key">
           <span>決め手</span>
@@ -70,10 +74,6 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
           <span>客席</span>
           <p>{preview.cueSummary.audienceReaction.replace(/^客席反応: /, '')}</p>
         </article>
-      </div>
-      <div className="next-note result-lesson-note">
-        <span>次回改善メモ</span>
-        <p>{preview.cueSummary.lesson}</p>
       </div>
       {reasonItems.length > 0 ? (
         <div className="cue-reason-list">

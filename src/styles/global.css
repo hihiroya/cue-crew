@@ -1341,7 +1341,10 @@ button:disabled {
 
 .response-title {
   min-width: 0;
-  display: block;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 7px;
+  align-items: center;
   color: var(--text);
   font-size: 1.04rem;
   line-height: 1.1;
@@ -1349,6 +1352,18 @@ button:disabled {
 
 .response-title strong {
   font-size: 1.08rem;
+}
+
+.response-title em {
+  min-height: 18px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: #151017;
+  background: rgba(229, 189, 104, 0.9);
+  font-size: 0.6rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .response-badges {
@@ -1438,7 +1453,7 @@ button:disabled {
 
 .outlook-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 4px 6px;
   align-items: center;
 }
@@ -1462,12 +1477,24 @@ button:disabled {
   color: var(--gold);
 }
 
-.outlook-head > strong {
-  display: none;
+.outlook-head > strong,
+.response-range-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: #f5ead0;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.62rem;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .outlook-summary .response-prep-mark {
-  grid-column: 2 / 3;
+  grid-column: 3 / 4;
   grid-row: 1 / 2;
   align-self: start;
   justify-self: end;
@@ -4034,6 +4061,34 @@ button:disabled {
   line-height: 1.6;
 }
 
+.replay-challenge-note {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(230, 190, 108, 0.2);
+  background: rgba(229, 189, 104, 0.07);
+}
+
+.replay-challenge-note span {
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.replay-challenge-note strong {
+  color: #fff3d3;
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+
+.replay-challenge-note p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
 .report-section-label {
   display: flex;
   align-items: center;
@@ -4330,7 +4385,8 @@ button:disabled {
 .cue-result-ticket .cue-route span,
 .cue-result-ticket .cue-summary-card,
 .cue-result-ticket .cue-reason-list,
-.cue-result-ticket .prep-recovery {
+.cue-result-ticket .prep-recovery,
+.cue-result-ticket .result-lesson-note {
   border-color: rgba(66, 31, 35, 0.24);
   background: rgba(255, 250, 231, 0.54);
 }
@@ -4365,13 +4421,21 @@ button:disabled {
 }
 
 .cue-result-ticket .cue-summary-card span,
-.cue-result-ticket .cue-reason-list > span {
+.cue-result-ticket .cue-reason-list > span,
+.cue-result-ticket .result-lesson-note span {
   color: #7e4a25;
 }
 
 .cue-result-ticket .cue-summary-card p,
-.cue-result-ticket .cue-reason-list p {
+.cue-result-ticket .cue-reason-list p,
+.cue-result-ticket .result-lesson-note p {
   color: #2d2020;
+}
+
+.cue-result-ticket .result-lesson-note {
+  margin-top: 0;
+  border-width: 2px;
+  border-color: rgba(126, 74, 37, 0.42);
 }
 
 .cue-result-ticket .cue-reason-list {

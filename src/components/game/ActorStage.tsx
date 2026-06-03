@@ -60,7 +60,7 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
               {actor.id === nextFocusActorId ? '次に来そう' : '控え'}
             </span>
             <strong>{actor.name}</strong>
-            <em>{STATE_LABELS[actor.state]} / {trustHint(actor)} / {nextPressure(actor, actor.id === nextFocusActorId, backstageLoad)}</em>
+            <em>{supportActorSummary(actor, actor.id === nextFocusActorId, backstageLoad)}</em>
           </div>
         ))}
       </div>
@@ -110,6 +110,14 @@ function nextPressure(actor: Actor, isNext: boolean, backstageLoad: number) {
   if (actor.type === 'junior') return '拾うが活きやすいかも';
   if (actor.type === 'lead') return '待つが活きやすいかも';
   return '整えるが活きやすいかも';
+}
+
+function supportActorSummary(actor: Actor, isNext: boolean, backstageLoad: number) {
+  if (!isNext) return `${STATE_LABELS[actor.state]} / ${trustHint(actor)}`;
+  if (backstageLoad >= 3) return `${STATE_LABELS[actor.state]} / 次は負荷注意`;
+  if (actor.state === 'fatigued') return `${STATE_LABELS[actor.state]} / 守りたい`;
+  if (actor.state === 'anxious') return `${STATE_LABELS[actor.state]} / 整えたい`;
+  return `${STATE_LABELS[actor.state]} / ${nextPressure(actor, true, backstageLoad).replace('かも', '')}`;
 }
 
 function trustHint(actor: Actor) {
