@@ -1,6 +1,6 @@
-import leadImage from '../../assets/actors/lead.png';
-import juniorImage from '../../assets/actors/junior.png';
-import skilledImage from '../../assets/actors/skilled.png';
+import leadImage from '../../assets/actors/lead.webp';
+import juniorImage from '../../assets/actors/junior.webp';
+import skilledImage from '../../assets/actors/skilled.webp';
 import type { ActorType } from '../../game/types';
 
 type Props = {

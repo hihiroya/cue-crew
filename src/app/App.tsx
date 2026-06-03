@@ -5,7 +5,7 @@ import { ResultPreviewCard } from '../components/game/ResultPreviewCard';
 import { ScoreBar } from '../components/game/ScoreBar';
 import { GameHeader } from '../components/layout/GameHeader';
 import { Icon } from '../components/ui/Icon';
-import titlePosterImage from '../assets/title/title-poster.png';
+import titlePosterImage from '../assets/title/title-poster.webp';
 import { pickFocusActor, topOmenEvents } from '../game/actorLogic';
 import { ACTOR_LABELS, EVENT_LABELS, PERFORMANCE_SLOT_LABELS, PERFORMANCE_STYLE_DETAILS, RESPONSE_LABELS, RESULT_TIER_LABELS, RESULT_TIER_STARS, TOTAL_TURNS } from '../game/constants';
 import { finishPerformance, gameReducer, readPerformanceHistory, titleState } from '../game/gameReducer';

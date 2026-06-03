@@ -31,7 +31,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         default="src/assets/actors",
-        help="Directory where transparent actor PNGs will be written.",
+        help="Directory where transparent actor images will be written.",
+    )
+    parser.add_argument(
+        "--output-format",
+        choices=("webp", "png"),
+        default="webp",
+        help="Output image format.",
+    )
+    parser.add_argument(
+        "--quality",
+        type=int,
+        default=88,
+        help="WebP quality, used only when --output-format=webp.",
     )
     parser.add_argument(
         "--roles",
@@ -142,9 +154,11 @@ def process_role(
     opaque_threshold: float,
     max_height: int,
     despill: bool,
+    output_format: str,
+    quality: int,
 ) -> None:
     source = input_dir / f"{role}.png"
-    target = output_dir / f"{role}.png"
+    target = output_dir / f"{role}.{output_format}"
 
     if not source.exists():
         raise FileNotFoundError(f"Source image was not found: {source}")
@@ -160,7 +174,10 @@ def process_role(
     )
     transparent = resize_if_needed(transparent, max_height)
     output_dir.mkdir(parents=True, exist_ok=True)
-    transparent.save(target, optimize=True)
+    if output_format == "webp":
+        transparent.save(target, format="WEBP", quality=quality, method=6, exact=True)
+    else:
+        transparent.save(target, optimize=True)
     print(f"{source} -> {target} key={key_color} size={transparent.width}x{transparent.height}")
 
 
@@ -179,6 +196,8 @@ def main() -> int:
             options.opaque_threshold,
             options.max_height,
             not options.no_despill,
+            options.output_format,
+            options.quality,
         )
 
     return 0

@@ -1,6 +1,6 @@
 # Actor Image Workflow
 
-役者画像は、生成したグリーン背景PNGを透明PNGへ変換して `src/assets/actors/` に配置します。作業用のPythonはプロジェクト内 `.venv` を使います。
+役者画像は、生成したグリーン背景PNGを透過WebPへ変換して `src/assets/actors/` に配置します。作業用のPythonはプロジェクト内 `.venv` を使います。
 
 ## 入力
 
@@ -25,9 +25,9 @@ npm run images:actors
 
 ```txt
 src/assets/actors/
-  lead.png
-  junior.png
-  skilled.png
+  lead.webp
+  junior.webp
+  skilled.webp
 ```
 
 ## 調整
@@ -42,4 +42,10 @@ npm run images:actors -- --transparent-threshold 18 --opaque-threshold 220
 
 ```bash
 npm run images:actors -- --max-height 1200
+```
+
+PNGで出力したい場合だけ形式を指定します。
+
+```bash
+npm run images:actors -- --output-format png
 ```
