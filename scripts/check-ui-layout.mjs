@@ -19,6 +19,8 @@ const presetJobs = {
   'title-panel': [
     ['title-default', 360, 780],
     ['title-default', 440, 956],
+    ['title-history-legacy', 360, 780],
+    ['title-history-legacy', 440, 956],
   ],
   'prep-panel': [
     ['prep-default', 360, 780],

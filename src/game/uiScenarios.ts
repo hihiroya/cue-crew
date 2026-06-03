@@ -29,11 +29,13 @@ type ResponseScenarioOptions = {
 export function getUiScenarioStateFromLocation(search = globalThis.location?.search ?? ''): GameState | null {
   const name = new URLSearchParams(search).get(UI_SCENARIO_QUERY_KEY);
   if (!name) return null;
+  seedUiScenarioStorage(name);
   return uiScenarioState(name);
 }
 
 export function uiScenarioState(name: string): GameState | null {
   if (name === 'title-default') return { ...createInitialGame('ui-title-default'), currentFocusActorId: null, status: 'title' };
+  if (name === 'title-history-legacy') return { ...createInitialGame('ui-title-history-legacy'), currentFocusActorId: null, status: 'title' };
   if (name === 'prep-default') return prepScenario('watch');
   if (name === 'prep-selected-space') return prepScenario('makeSpace');
   if (name === 'response-primary') {
@@ -158,6 +160,29 @@ export function uiScenarioState(name: string): GameState | null {
     performanceStyle: 'heat',
   });
   return null;
+}
+
+function seedUiScenarioStorage(name: string) {
+  if (name !== 'title-history-legacy') return;
+  try {
+    globalThis.localStorage?.setItem('honban.performance.history.v1', JSON.stringify([
+      {
+        seed: 'legacy-history-seed',
+        finishedAt: '2026-01-01T00:00:00.000Z',
+        sceneScore: 8,
+        flowScore: -2,
+        trustScore: 1,
+        backstageLoad: 4,
+        performanceStyle: 'heat',
+        title: '古い履歴の公演',
+        review: '旧形式の公演記録。',
+        highlights: [],
+        logs: [],
+      },
+    ]));
+  } catch {
+    // UI scenario helpers must not affect normal play if storage is unavailable.
+  }
 }
 
 function prepScenario(selectedPrep: PrepAction): GameState {

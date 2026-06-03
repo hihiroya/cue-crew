@@ -91,7 +91,11 @@ export function readPerformanceHistory(): PerformanceResult[] {
     const raw = localStorage.getItem(HISTORY_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as Partial<PerformanceResult>[];
-    return parsed.map(normalizePerformanceResult);
+    const normalized = parsed.map(normalizePerformanceResult);
+    if (JSON.stringify(parsed) !== JSON.stringify(normalized)) {
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(normalized));
+    }
+    return normalized;
   } catch {
     return [];
   }

@@ -123,6 +123,9 @@ test('readPerformanceHistory normalizes legacy results without insight', () => {
     assert.equal(result.insight.rank, 'D');
     assert.equal(result.insight.prepHits, 0);
     assert.equal(result.audienceSurvey.encoreInterest > 0, true);
+    const persisted = JSON.parse(store.get('honban.performance.history.v1') ?? '[]');
+    assert.equal(persisted[0].insight.rank, 'D');
+    assert.equal(persisted[0].audienceSurvey.encoreInterest > 0, true);
   } finally {
     Object.defineProperty(globalThis, 'localStorage', {
       configurable: true,
