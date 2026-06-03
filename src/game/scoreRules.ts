@@ -60,10 +60,16 @@ function performanceStyleScoreItem(state: GameState, response: MainResponse): Sc
   return scoreItem('performance-style', `${style.label}に${RESPONSE_LABELS[response]}が沿った`, 1, style.short);
 }
 
+function previousCutSetupActive(state: GameState): boolean {
+  return state.lastResponses[state.lastResponses.length - 1] === 'cut';
+}
+
 function repeatPenalty(state: GameState, response: MainResponse): number {
   const count = consecutiveUseCount(state, response);
+  if (response === 'cut' && count === 2) return -1;
+  if (response === 'cut' && count >= 3) return -3;
   if (count < 3) return 0;
-  if (response === 'catch' || response === 'cut') return -1;
+  if (response === 'catch') return -1;
   if (response === 'arrange' || response === 'wait') return -1;
   return 0;
 }
@@ -150,6 +156,12 @@ function prepResponseScoreItem(state: GameState, response: MainResponse, prepQua
   const primary = PREP_PRIMARY_RESPONSE[prep];
   if (response !== primary) return undefined;
   if (prep === 'prepareTransition' && response === 'cut') {
+    if (prepQuality === 'hit') {
+      return scoreItem('prep-response-guard', '転換の備えが切る判断を支えた', 2, '崩れを閉じるだけでなく、次へ渡す場面の切れ味になった。');
+    }
+    if (prepQuality === 'partial') {
+      return scoreItem('prep-response-guard', '転換の備えが切る判断を支えた', 1, '読みの一部を使い、崩れを小さく閉じた。');
+    }
     return scoreItem('prep-response-guard', '転換の備えが切る判断を支えた', 0, '場面の伸びより、崩れを小さく閉じる。');
   }
   if (prepQuality === 'hit') {
@@ -163,6 +175,20 @@ function prepResponseScoreItem(state: GameState, response: MainResponse, prepQua
 
 function transitionCutGuardActive(state: GameState, response: MainResponse): boolean {
   return state.selectedPrep === 'prepareTransition' && response === 'cut';
+}
+
+function cutContainmentBonus(state: GameState, response: MainResponse): ScoreBreakdownItem | undefined {
+  if (response !== 'cut') return undefined;
+  if (transitionCutGuardActive(state, response) && state.backstageLoad >= 3) {
+    return scoreItem('cut-containment', '転換で高負荷を閉じた', 3, '場面を伸ばすより、崩れを次へ持ち越さない判断。');
+  }
+  if (transitionCutGuardActive(state, response)) {
+    return scoreItem('cut-containment', '転換の備えで閉じた', 2, '次の場面へ渡すために崩れを小さくした。');
+  }
+  if (state.backstageLoad >= 4) {
+    return scoreItem('cut-containment', '高負荷を早めに閉じた', 2, '負荷が重い局面では、閉じる判断が事故を抑える。');
+  }
+  return undefined;
 }
 
 function guardTierForTransitionCut(tier: ResultTier, state: GameState, response: MainResponse, prepQuality: PrepPredictionQuality): ResultTier {
@@ -262,22 +288,22 @@ function repeatAdjustment(response: MainResponse, count: number, success: boolea
   if (count >= 3) {
     return {
       deltaLoad: 1,
-      deltaFlow: 0,
-      deltaScene: 0,
-      deltaTrust: -1,
+      deltaFlow: -1,
+      deltaScene: -1,
+      deltaTrust: -2,
       label: '切る判断が続いた',
       detail: '進行は守ったが、役者との信頼が削れた。',
-      cardLabel: '連続使用: 信頼-1 / 負荷+1',
+      cardLabel: '連続使用: 場面-1 / 流れ-1 / 信頼-2 / 負荷+1',
     };
   }
   return {
     deltaLoad: 0,
     deltaFlow: 0,
     deltaScene: 0,
-    deltaTrust: -1,
+    deltaTrust: -2,
     label: '切る判断が続いた',
-    detail: '進行は守ったが、役者との信頼が少し削れた。',
-    cardLabel: '連続使用: 信頼-1',
+    detail: '進行は守ったが、役者との信頼が削れた。',
+    cardLabel: '連続使用: 信頼-2',
   };
 }
 
@@ -309,6 +335,7 @@ function deltasFor(tier: ResultTier, response: MainResponse, state: GameState, p
   if (state.act === 2 && response === 'catch') deltaLoad += 1;
   if (state.act === 3 && success && ['arrange', 'cut'].includes(response)) deltaLoad -= 1;
   if (prepQuality === 'miss' && response === 'catch') deltaLoad += 1;
+  if (prepQuality === 'hit' && deltaLoad > 0) deltaLoad -= 1;
   if (transitionCutGuardActive(state, response) && deltaLoad > 0) deltaLoad -= 1;
   const slot = slotForTurnInAct(state.turnInAct);
   if (slot === 'matinee' && success && ['arrange', 'wait'].includes(response)) deltaLoad -= 1;
@@ -316,10 +343,11 @@ function deltasFor(tier: ResultTier, response: MainResponse, state: GameState, p
   if (state.performanceStyle === 'heat' && response === 'catch' && success) deltaLoad += 1;
   if (state.performanceStyle === 'control' && response === 'arrange' && success) deltaLoad -= 1;
   if (state.performanceStyle === 'closure' && response === 'cut' && deltaLoad > 0) deltaLoad -= 1;
+  if (previousCutSetupActive(state) && deltaLoad > 0) deltaLoad -= 1;
   const loadPenalty = state.backstageLoad >= 4 && tier !== 'masterpiece' ? -1 : 0;
   const waitTrustBonus = response === 'wait' && success ? 1 : 0;
   const styleTrustBonus = state.performanceStyle === 'breath' && response === 'wait' && success ? 1 : 0;
-  const cutTrustPenalty = response === 'cut' && success ? -1 : 0;
+  const cutTrustPenalty = response === 'cut' && success && state.backstageLoad < 3 && !transitionCutGuardActive(state, response) ? -1 : 0;
   const styleSceneBonus = state.performanceStyle === 'heat' && response === 'catch' && success ? 1 : 0;
   return {
     deltaScene: base.scene + repeat.deltaScene + styleSceneBonus,
@@ -377,15 +405,25 @@ function prepPredictionQuality(state: GameState, actor: Actor): PrepPredictionQu
 }
 
 function prepScoreItem(quality: PrepPredictionQuality): ScoreBreakdownItem {
-  if (quality === 'hit') return scoreItem('prep-hit', '準備が活きた', 2, '上振れ幅が広がり、名場面まで届く。');
+  if (quality === 'hit') return scoreItem('prep-hit', '準備が活きた', 1, '上振れ幅が広がり、副作用を抑えやすくなる。');
   if (quality === 'partial') return scoreItem('prep-partial', '準備が一部活きた', 0, '見えている兆候には備えていたため、崩れにくい。');
   return scoreItem('prep-miss', '別の備えだった', -1, '上限が下がり、攻めるほど負荷が残りやすい。');
 }
 
-function capForPrepQuality(quality: PrepPredictionQuality) {
+function capForPrepQuality(quality: PrepPredictionQuality, state?: GameState) {
   if (quality === 'hit') return Number.POSITIVE_INFINITY;
+  if (quality === 'miss' && state && previousCutSetupActive(state)) return 4;
   if (quality === 'partial') return 6;
   return 3;
+}
+
+function arrangeMasterpieceCap(state: GameState, actor: Actor, response: MainResponse, quality: PrepPredictionQuality): ScoreBreakdownItem | undefined {
+  if (response !== 'arrange' || quality !== 'hit') return undefined;
+  const canReachMasterpiece = actor.type === 'skilled'
+    || actor.state === 'anxious'
+    || actor.state === 'fatigued'
+    || frayFitFor(state, response).status !== 'none';
+  return canReachMasterpiece ? undefined : scoreItem('arrange-cap', '整える判断の上限', 6, '安定して場面化へ戻す手。名場面化には技巧派、不安/疲労、ほころび回収などの強い理由がいる。');
 }
 
 function buildScoreBreakdown(state: GameState, actor: Actor, response: MainResponse): ScoreBreakdownItem[] {
@@ -397,13 +435,15 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
   const actorValue = actorResponseBonus(actor, response);
   const stateValue = stateResponseBonus(actor, response);
   const actValue = actBonus(state, response);
-  const trustValue = Math.max(-2, Math.min(2, Math.floor(state.trustScore / 3)));
-  const loadValue = state.backstageLoad >= 5 ? -3 : state.backstageLoad >= 4 ? -2 : state.backstageLoad >= 3 ? -1 : 0;
+  const trustValue = Math.max(-2, Math.min(2, Math.floor(state.trustScore / 4)));
+  const rawLoadValue = state.backstageLoad >= 5 ? -4 : state.backstageLoad >= 4 ? -3 : state.backstageLoad >= 3 ? -1 : 0;
+  const loadValue = previousCutSetupActive(state) && rawLoadValue < 0 ? rawLoadValue + 1 : rawLoadValue;
   const repeatedValue = repeatPenalty(state, response);
   const repeat = repeatAdjustment(response, consecutiveUseCount(state, response), true);
   const prepResponseItem = prepResponseScoreItem(state, response, prepQuality);
   const styleItem = performanceStyleScoreItem(state, response);
   const frayItem = frayScoreItem(state, response);
+  const cutItem = cutContainmentBonus(state, response);
   const items = [
     scoreItem(
       'event',
@@ -417,15 +457,30 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
     prepResponseItem,
     scoreItem('act', actLabel(state, response, actValue), actValue),
     styleItem,
+    cutItem,
     scoreItem('trust', '公演全体の信頼補正', trustValue),
     scoreItem('load', '裏方負荷の重さ', loadValue),
     scoreItem('repeat', repeat.label ?? '同じ対応の連続使用', repeatedValue, repeat.detail),
     frayItem,
   ].filter((item): item is ScoreBreakdownItem => Boolean(item));
   const rawScore = sumBreakdown(items);
-  const cap = capForPrepQuality(prepQuality);
+  const prepCap = capForPrepQuality(prepQuality, state);
+  const arrangeCap = arrangeMasterpieceCap(state, actor, response, prepQuality)?.value ?? Number.POSITIVE_INFINITY;
+  const cap = Math.min(prepCap, arrangeCap);
   if (rawScore > cap) {
-    items.push(scoreItem('prep-cap', '準備の上限', cap - rawScore, prepQuality === 'partial' ? '一部だけ活きたため場面化までに留まる。' : '別の備えだったため小さな成功までに留まる。'));
+    const isArrangeCap = arrangeCap <= prepCap;
+    items.push(scoreItem(
+      isArrangeCap ? 'arrange-cap' : 'prep-cap',
+      isArrangeCap ? '整える判断の上限' : '準備の上限',
+      cap - rawScore,
+      isArrangeCap
+        ? '安定して場面化へ戻す手。名場面化には技巧派、不安/疲労、ほころび回収などの強い理由がいる。'
+        : prepQuality === 'partial'
+          ? '一部だけ活きたため場面化までに留まる。'
+          : previousCutSetupActive(state)
+            ? '前の場面を閉じていたため、別の備えでも場面化までは届く。'
+            : '別の備えだったため小さな成功までに留まる。',
+    ));
   }
   return items.filter((item) => item.value !== 0 || ['prep-partial', 'prep-response', 'prep-response-guard', 'fray-miss'].includes(item.id));
 }
@@ -434,10 +489,10 @@ function sumBreakdown(items: ScoreBreakdownItem[]) {
   return items.reduce((total, item) => total + item.value, 0);
 }
 
-function rangeForScore(score: number, quality: PrepPredictionQuality): { label: string; tone: ResponseInsight['rangeTone']; dangerWarning?: string; highTier: ResultTier; lowTier: ResultTier } {
+function rangeForScore(score: number, quality: PrepPredictionQuality, cap = capForPrepQuality(quality)): { label: string; tone: ResponseInsight['rangeTone']; dangerWarning?: string; highTier: ResultTier; lowTier: ResultTier } {
   const lowScore = score + (quality === 'hit' ? -1 : -2);
   const highScore = score + (quality === 'hit' ? 2 : quality === 'partial' ? 1 : 0);
-  const highTier = tierFromScore(Math.min(highScore, capForPrepQuality(quality)));
+  const highTier = tierFromScore(Math.min(highScore, cap));
   const lowTier = tierFromScore(lowScore);
   const dangerWarning = lowTier === 'accident' ? '危険: 事故圏内' : undefined;
   const visibleLow = lowTier === 'accident' ? 'ほころび' : RESULT_TIER_LABELS[lowTier];
@@ -447,7 +502,10 @@ function rangeForScore(score: number, quality: PrepPredictionQuality): { label: 
 }
 
 function guardedRangeForScore(score: number, quality: PrepPredictionQuality, state: GameState, response: MainResponse): { label: string; tone: ResponseInsight['rangeTone']; dangerWarning?: string; highTier: ResultTier; lowTier: ResultTier } {
-  const range = rangeForScore(score, quality);
+  const actor = state.actors.find((item) => item.id === state.currentFocusActorId) ?? state.actors[0];
+  const prepCap = capForPrepQuality(quality, state);
+  const arrangeCap = actor ? arrangeMasterpieceCap(state, actor, response, quality)?.value ?? Number.POSITIVE_INFINITY : Number.POSITIVE_INFINITY;
+  const range = rangeForScore(score, quality, Math.min(prepCap, arrangeCap));
   const lowTier = guardTierForTransitionCut(range.lowTier, state, response, quality);
   const highTier = guardTierForTransitionCut(range.highTier, state, response, quality);
   const dangerWarning = lowTier === 'accident' ? range.dangerWarning : undefined;

@@ -54,7 +54,7 @@ test('previewResult scores a prepared silence and wait as a masterpiece with tru
 
   assert.equal(preview.prepQuality, 'hit');
   assert.equal(preview.resultTier, 'masterpiece');
-  assert.equal(preview.score, 9);
+  assert.equal(preview.score, 8);
   assert.equal(preview.deltaScene, 4);
   assert.equal(preview.deltaFlow, 2);
   assert.equal(preview.deltaTrust, 3);
@@ -91,4 +91,55 @@ test('responseInsight exposes repeated response penalties before committing', ()
   assert.equal(insight.scoreBreakdown.find((item) => item.id === 'repeat')?.value, -1);
   assert.equal(insight.sideEffects.some((effect) => effect.target === 'load' && effect.repeat && effect.value === 2), true);
   assert.equal(insight.sideEffects.some((effect) => effect.target === 'flow' && effect.repeat && effect.value === -1), true);
+});
+
+test('arrange usually stabilizes to a scene unless the actor strongly supports it', () => {
+  const leadArrange = previewResult(gameState({
+    act: 2,
+    turnInAct: 1,
+    totalTurn: 3,
+    theme: '2日目',
+    currentActorEvent: event('positionShift', 'lead'),
+    selectedPrep: 'tightenFlow',
+    selectedResponse: 'arrange',
+  }));
+  const skilledArrange = previewResult(gameState({
+    act: 2,
+    turnInAct: 1,
+    totalTurn: 3,
+    theme: '2日目',
+    currentFocusActorId: 'skilled',
+    actors: assignActorRoles(INITIAL_ACTORS, 'skilled'),
+    currentActorEvent: event('positionShift', 'skilled'),
+    selectedPrep: 'tightenFlow',
+    selectedResponse: 'arrange',
+  }));
+
+  assert.equal(leadArrange.resultTier, 'scene');
+  assert.equal(leadArrange.scoreBreakdown.some((item) => item.id === 'arrange-cap'), true);
+  assert.equal(skilledArrange.resultTier, 'masterpiece');
+});
+
+test('prepared transition makes cut a strong single-use closure', () => {
+  const preview = previewResult(gameState({
+    act: 2,
+    turnInAct: 1,
+    totalTurn: 3,
+    theme: '2日目',
+    currentFocusActorId: 'skilled',
+    actors: assignActorRoles(INITIAL_ACTORS, 'skilled'),
+    currentActorEvent: event('positionShift', 'skilled'),
+    selectedPrep: 'prepareTransition',
+    selectedResponse: 'cut',
+  }));
+  const repeated = responseInsight(gameState({
+    selectedResponse: null,
+    lastResponses: ['cut'],
+  }), 'cut');
+
+  assert.equal(preview.resultTier, 'masterpiece');
+  assert.equal(preview.scoreBreakdown.some((item) => item.id === 'prep-response-guard' && item.value === 2), true);
+  assert.equal(preview.scoreBreakdown.some((item) => item.id === 'cut-containment' && item.value === 2), true);
+  assert.equal(repeated.scoreBreakdown.find((item) => item.id === 'repeat')?.value, -1);
+  assert.equal(repeated.sideEffects.some((effect) => effect.target === 'trust' && effect.repeat && effect.value === -2), true);
 });

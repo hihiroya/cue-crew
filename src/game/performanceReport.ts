@@ -60,7 +60,7 @@ const PERFORMANCE_RANKS: Array<{ rank: PerformanceInsight['rank']; threshold: nu
 ];
 
 export function createPerformanceInsight(logs: TurnLog[], sceneScore = 0, flowScore = 0, trustScore = 0, backstageLoad = 0): PerformanceInsight {
-  const totalScore = sceneScore * 2 + flowScore + trustScore - backstageLoad;
+  const totalScore = sceneScore * 2 + flowScore + trustScore - backstageLoad * 2 - (backstageLoad >= 4 ? 3 : 0);
   const rankIndex = PERFORMANCE_RANKS.findIndex((item) => totalScore >= item.threshold);
   const rank = PERFORMANCE_RANKS[rankIndex]?.rank ?? 'D';
   const nextRankEntry = rankIndex > 0 ? PERFORMANCE_RANKS[rankIndex - 1] : null;
