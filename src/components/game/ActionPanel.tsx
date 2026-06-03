@@ -120,7 +120,7 @@ function ResponseEffectSummary({ insight }: { insight: ResponseInsight }) {
 }
 
 function effectTargetShortLabel(target: Parameters<typeof effectTargetLabel>[0]) {
-  if (target === 'scene') return '場';
+  if (target === 'scene') return '評';
   if (target === 'flow') return '流';
   if (target === 'trust') return '信';
   return '負';
@@ -186,7 +186,7 @@ function ResponseConsole({ insight, state }: { insight: ResponseInsight; state: 
       ) : null}
       {insight.actorTrustLabel ? (
         <div className="console-fray relation-recover">
-          <span>役者との呼吸</span>
+          <span>パッシブ効果</span>
           <strong>{insight.actorTrustLabel}</strong>
         </div>
       ) : null}

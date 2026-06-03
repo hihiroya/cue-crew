@@ -31,7 +31,7 @@ export function createPerformanceReview(logs: TurnLog[], sceneScore: number, flo
   const reviewNotes = [
     `全日程を終えて、公演の色は「${styleLabel}」になった。`,
     `準備は${prepHitCount}/${logs.length}回噛み合い、噛み合い率は${hitRate}%だった。`,
-    `${dominantResponse.response}判断が多く、${dominantResponse.response === '拾う' ? '予定外を熱に変える場面が伸びた。' : dominantResponse.response === '待つ' ? '余韻を残す判断が信頼を支えた。' : dominantResponse.response === '整える' ? '乱れを舞台の呼吸へ戻す判断が流れを守った。' : '崩れを閉じて進行を守る判断が目立った。'}`,
+    `${dominantResponse.response}判断が多く、${dominantResponse.response === '拾う' ? '予定外を熱に変えて評判が伸びた。' : dominantResponse.response === '待つ' ? '余韻を残す判断が信頼を支えた。' : dominantResponse.response === '整える' ? '乱れを舞台の呼吸へ戻す判断が流れを守った。' : '崩れを閉じて進行を守る判断が目立った。'}`,
     earlyFray
       ? `${earlyFray.act}日目${PERFORMANCE_SLOT_LABELS[earlyFray.turnInAct === 1 ? 'matinee' : 'soiree'].label}でほころびが出たため、以降は負荷管理が課題になった。`
       : `初日から2日目まで大きなほころびを抑え、判断の余裕を残せた。`,

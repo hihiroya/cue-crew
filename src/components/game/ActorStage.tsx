@@ -15,6 +15,7 @@ type Props = {
 export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLoad, event }: Props) {
   const focusActor = actors.find((actor) => actor.id === focusActorId) ?? actors[0];
   const supportingActors = actors.filter((actor) => actor.id !== focusActor.id);
+  const focusPassive = actorPassiveLabel(focusActor);
 
   if (event) {
     return (
@@ -50,7 +51,9 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
           <span>状態</span>
           <strong>{STATE_LABELS[focusActor.state]}</strong>
           <em>{STATE_HINTS[focusActor.state]}</em>
-          <small className={`actor-trust-pill trust-${trustLevel(focusActor)}`}>{trustHint(focusActor)}</small>
+          {focusPassive ? (
+            <small className={`actor-trust-pill trust-${trustLevel(focusActor)}`}>{focusPassive}</small>
+          ) : null}
         </div>
         <OmenList actor={focusActor} />
       </article>
@@ -114,17 +117,19 @@ function nextPressure(actor: Actor, isNext: boolean, backstageLoad: number) {
 }
 
 function supportActorSummary(actor: Actor, isNext: boolean, backstageLoad: number) {
-  if (!isNext) return `${STATE_LABELS[actor.state]} / ${trustHint(actor)}`;
+  const passive = actorPassiveLabel(actor);
+  if (!isNext) return passive ? `${STATE_LABELS[actor.state]} / ${passive}` : STATE_LABELS[actor.state];
   if (backstageLoad >= 3) return `${STATE_LABELS[actor.state]} / 次は負荷注意`;
   if (actor.state === 'fatigued') return `${STATE_LABELS[actor.state]} / 守りたい`;
   if (actor.state === 'anxious') return `${STATE_LABELS[actor.state]} / 整えたい`;
+  if (passive) return `${STATE_LABELS[actor.state]} / ${passive}`;
   return `${STATE_LABELS[actor.state]} / ${nextPressure(actor, true, backstageLoad).replace('かも', '')}`;
 }
 
-function trustHint(actor: Actor) {
-  if (actor.trust >= 5) return '呼吸が強い';
-  if (actor.trust >= 3) return '呼吸あり';
-  return '呼吸これから';
+function actorPassiveLabel(actor: Actor) {
+  if (actor.trust >= 5) return '以心伝心';
+  if (actor.trust >= 3) return '阿吽の呼吸';
+  return null;
 }
 
 function trustLevel(actor: Actor) {

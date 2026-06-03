@@ -107,7 +107,7 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
       ) : null}
       <div className="delta-table" aria-label="結果差分">
         <span className="delta-table-title">結果差分</span>
-        <Delta kind="scene" label="場面" value={preview.deltaScene} />
+        <Delta kind="scene" label="評判" value={preview.deltaScene} />
         <Delta kind="flow" label="流れ" value={preview.deltaFlow} />
         <Delta kind="trust" label="信頼" value={preview.deltaTrust} />
         <Delta kind="load" label="負荷" value={preview.deltaLoad} />
@@ -135,8 +135,8 @@ function deltaImpact(kind: DeltaKind, value: number, maxLevel = 4): { label: str
   const level = Math.min(maxLevel, Math.abs(value));
   if (kind === 'scene') {
     if (value >= 4) return { label: '見せ場級', level: 4, tone: 'positive' };
-    if (value >= 3) return { label: '場面が伸びた', level: 3, tone: 'positive' };
-    if (value > 0) return { label: '少し残った', level: value, tone: 'positive' };
+    if (value >= 3) return { label: '評判が伸びた', level: 3, tone: 'positive' };
+    if (value > 0) return { label: '少し伸びた', level: value, tone: 'positive' };
     if (value === 0) return { label: '伸びは控えめ', level: 0, tone: 'neutral' };
     return { label: '沈んだ', level, tone: 'negative' };
   }

@@ -68,7 +68,7 @@ export function evaluationSign(item: EffectItem) {
 }
 
 export function effectTargetLabel(icon: EffectIcon) {
-  if (icon === 'scene') return '場面';
+  if (icon === 'scene') return '評判';
   if (icon === 'load') return '負荷';
   if (icon === 'trust') return '信頼';
   return '流れ';
@@ -105,9 +105,9 @@ export function effectPhrase(item: EffectItem) {
     return '信頼は変わらない';
   }
   if (item.icon === 'scene') {
-    if (item.value > 0) return `${item.repeat ? '連続使用で' : ''}場面が伸びる`;
-    if (item.value < 0) return `${item.repeat ? '連続使用で' : ''}場面が伸びにくい`;
-    return '場面は変わらない';
+    if (item.value > 0) return `${item.repeat ? '連続使用で' : ''}評判が伸びる`;
+    if (item.value < 0) return `${item.repeat ? '連続使用で' : ''}評判が伸びにくい`;
+    return '評判は変わらない';
   }
   if (item.value > 0) return `${item.repeat ? '連続使用で' : ''}流れが整う`;
   if (item.value < 0) return `${item.repeat ? '連続使用で' : ''}流れが乱れる`;

@@ -170,5 +170,14 @@ test('individual actor trust supports matching responses', () => {
   }), 'wait');
 
   assert.equal(insight.scoreBreakdown.some((item) => item.id === 'actor-trust' && item.value === 1), true);
-  assert.equal(Boolean(insight.actorTrustLabel), true);
+  assert.equal(insight.actorTrustLabel?.includes('阿吽の呼吸'), true);
+
+  const strongActors = assignActorRoles(INITIAL_ACTORS.map((actor) => (
+    actor.id === 'lead' ? { ...actor, trust: 5 } : actor
+  )), 'lead');
+  const strongInsight = responseInsight(gameState({
+    actors: strongActors,
+    selectedResponse: null,
+  }), 'wait');
+  assert.equal(strongInsight.actorTrustLabel?.includes('以心伝心'), true);
 });

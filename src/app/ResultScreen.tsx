@@ -164,7 +164,7 @@ function SurveyMeter({ label, value }: { label: string; value: number }) {
 function scoreNote(kind: 'scene' | 'flow' | 'trust', value: number) {
   if (kind === 'scene') {
     if (value >= 18) return '見せ場豊作';
-    if (value >= 10) return '場面が残った';
+    if (value >= 10) return '評判が残った';
     if (value >= 4) return '手応えあり';
     return '伸びしろ';
   }
