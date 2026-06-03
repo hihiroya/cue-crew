@@ -1475,7 +1475,7 @@ button:disabled {
 
 .outlook-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 4px 6px;
   align-items: center;
 }
@@ -1499,29 +1499,18 @@ button:disabled {
   color: var(--gold);
 }
 
-.outlook-head > strong,
-.response-range-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 22px;
-  padding: 3px 7px;
-  border-radius: 999px;
-  color: #f5ead0;
-  background: rgba(255, 255, 255, 0.08);
-  font-size: 0.62rem;
-  font-weight: 900;
-  line-height: 1;
-  white-space: nowrap;
+.outlook-head > strong {
+  display: none;
 }
 
 .outlook-summary .response-prep-mark {
-  grid-column: 3 / 4;
+  grid-column: 2 / 3;
   grid-row: 1 / 2;
   align-self: start;
   justify-self: end;
-  padding: 2px 5px;
-  font-size: 0.56rem;
+  max-width: 100%;
+  padding: 3px 6px;
+  font-size: 0.58rem;
   line-height: 1.05;
   opacity: 0.92;
 }
@@ -1587,9 +1576,9 @@ button:disabled {
   align-items: center;
   justify-content: center;
   gap: 2px;
-  min-width: 43px;
+  min-width: 48px;
   min-height: 22px;
-  padding: 3px 4px;
+  padding: 3px 5px;
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(0, 0, 0, 0.18);
@@ -1613,7 +1602,7 @@ button:disabled {
 
 .response-effect-mini strong {
   color: currentColor;
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   line-height: 1;
 }
 

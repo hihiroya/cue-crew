@@ -83,8 +83,7 @@ function ResponseChoiceCard({
       </div>
       <div className="outlook-summary" aria-label={`成立見込み: ${insight.successRangeLabel}`}>
         <div className="outlook-head">
-          <span><Icon name="scene" />成立見込み</span>
-          <strong className="response-range-badge">{insight.successRangeLabel}</strong>
+          <span><Icon name="scene" />{rangeShortLabel(insight.resultTier)}</span>
           <em className={`response-prep-mark mark-${insight.prepRelationTone}`} aria-label={`準備との関係: ${insight.prepRelationLabel}`}>
             {prepConnectionShortLabel(insight.prepRelationTone)}
           </em>
@@ -111,13 +110,20 @@ function ResponseEffectSummary({ insight }: { insight: ResponseInsight }) {
           <em key={item.key} className={`response-effect-mini effect-${item.tone}`} title={item.title} aria-label={item.title}>
             {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
             <Icon name={item.icon} />
-            <strong>{effectTargetLabel(item.icon)}</strong>
+            <strong>{effectTargetShortLabel(item.icon)}</strong>
             <b>{evaluationSign(item)}</b>
           </em>
         ))}
       </div>
     </div>
   );
+}
+
+function effectTargetShortLabel(target: Parameters<typeof effectTargetLabel>[0]) {
+  if (target === 'scene') return '場';
+  if (target === 'flow') return '流';
+  if (target === 'trust') return '信';
+  return '負';
 }
 
 function ResponseSendBar({
@@ -217,6 +223,14 @@ function prepConnectionShortLabel(tone: ResponseInsight['prepRelationTone']) {
   if (tone === 'primary') return '準備活きる';
   if (tone === 'alternate') return '準備外で効く';
   return '準備合わず';
+}
+
+function rangeShortLabel(tier: ResultTier) {
+  if (tier === 'masterpiece') return '名場面狙い';
+  if (tier === 'scene') return '場面化狙い';
+  if (tier === 'smallSuccess') return '小さく成功';
+  if (tier === 'fray') return '崩れ抑え';
+  return '事故注意';
 }
 
 function resultRange(insight: ResponseInsight) {
