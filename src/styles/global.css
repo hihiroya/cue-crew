@@ -3700,11 +3700,12 @@ button:disabled {
 
 .title-lockup {
   align-self: end;
-  justify-self: start;
+  justify-self: center;
   display: grid;
   gap: clamp(8px, 1.8vw, 14px);
   width: min(100%, 35rem);
   padding-bottom: clamp(20px, 4.6svh, 42px);
+  text-align: center;
   transform: translateY(clamp(10px, 2.2svh, 22px));
 }
 
@@ -3721,6 +3722,7 @@ button:disabled {
 .title-panel .title-logo {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   gap: 0.04em 0.18em;
   max-width: 100%;
@@ -3763,6 +3765,7 @@ button:disabled {
 }
 
 .title-panel .title-series {
+  justify-self: center;
   width: fit-content;
   padding-bottom: 5px;
   border-bottom: 1px solid rgba(255, 217, 138, 0.32);
@@ -3772,6 +3775,7 @@ button:disabled {
 
 .title-panel .title-copy {
   max-width: 24rem;
+  margin-inline: auto;
   color: #f3e6c9;
   font-size: clamp(0.92rem, 3.3vw, 1.08rem);
   line-height: 1.55;
@@ -3811,6 +3815,7 @@ button:disabled {
 }
 
 .title-panel .title-actions {
+  justify-self: center;
   width: min(100%, 260px);
   grid-template-columns: 1fr;
   gap: 7px;
@@ -3856,9 +3861,10 @@ button:disabled {
 .title-panel .howto-panel {
   position: absolute;
   top: clamp(78px, 12vw, 96px);
-  left: clamp(20px, 4vw, 34px);
+  left: 50%;
   z-index: 3;
   width: min(calc(100% - clamp(40px, 8vw, 68px)), 24rem);
+  transform: translateX(-50%);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.18)),
     rgba(7, 8, 13, 0.78);
