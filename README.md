@@ -36,6 +36,24 @@ npm run test:logic
 - Pull request では GitHub Actions が `npm ci --ignore-scripts`、`npm audit signatures`、`npm run build` を実行します。
 - 依存関係を変更する場合は [CONTRIBUTING.md](CONTRIBUTING.md) の確認項目に従ってください。
 
+## UI確認
+
+通常のUI変更では、スクリーンショットを撮らずに固定シナリオのDOMレイアウト検査を実行します。Browserプラグインが使えない環境では、このCDPベースの確認を標準の代替導線にします。
+
+```bash
+npm run check:ui
+```
+
+対象を絞る場合は以下を使います。
+
+```bash
+npm run check:ui:prep
+npm run check:ui:response
+npm run check:ui:result
+```
+
+これらのコマンドは順番に固定シナリオを開き、横スクロール、Runtime/console error、ボタン内テキストのはみ出し、カード重なり、主要UI要素の極端な縮小、準備/本番の選択マーカー混入などを検出します。PNGは生成しません。
+
 ## スクリーンショット確認
 
 Chrome DevTools Protocol を使い、指定viewportでPNGを保存できます。外部依存はありません。
@@ -57,10 +75,10 @@ npm run screenshot -- --scenario=preview --out=tmp/preview.png
 npm run screenshot -- --scenario=result --out=tmp/result.png
 ```
 
-UI変更の確認では、固定シナリオをまとめ撮りできます。Browserプラグインが使えない環境では、このCDPベースの確認を標準の代替導線にします。
+大きなレイアウト変更やPR前の追加確認で必要な場合だけ、固定シナリオをまとめ撮りできます。
 
 ```bash
-npm run verify:ui
+npm run verify:ui:full
 ```
 
 対象を絞る場合は以下を使います。
@@ -71,7 +89,7 @@ npm run screenshot:response
 npm run screenshot:result
 ```
 
-これらのコマンドは順番にスクリーンショットを撮り、横スクロール、ボタン内テキストのはみ出し、カード重なり、準備/本番の選択マーカー混入などを検出します。出力先は `tmp/screenshots/` 配下です。
+これらのコマンドは順番にスクリーンショットを撮ります。出力先は `tmp/screenshots/` 配下です。
 
 詳細な運用、固定シナリオの追加方針、スクショ成果物の扱いは [UI検証ワークフロー](docs/ui-verification-workflow.md) を参照してください。
 
