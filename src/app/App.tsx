@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
 import { PrepPanel, ResponsePanel } from '../components/game/ActionPanel';
 import { ActorStage } from '../components/game/ActorStage';
 import { ResultPreviewCard } from '../components/game/ResultPreviewCard';
@@ -6,12 +6,13 @@ import { ScoreBar } from '../components/game/ScoreBar';
 import { GameHeader } from '../components/layout/GameHeader';
 import { ResultScreen } from './ResultScreen';
 import { TitleScreen } from './TitleScreen';
+import { usePerformanceHistory } from './usePerformanceHistory';
 import { pickFocusActor, topOmenEvents } from '../game/actorLogic';
 import { TOTAL_TURNS } from '../game/constants';
-import { finishPerformance, gameReducer, readPerformanceHistory, savePerformanceResult, titleState } from '../game/gameReducer';
+import { finishPerformance, gameReducer, titleState } from '../game/gameReducer';
 import { makeSeed } from '../game/rng';
-import { previewResult } from '../game/scoring';
-import type { GameState, GameStatus, PrepAction } from '../game/types';
+import { previewResult } from '../game/resultPreview';
+import type { GameStatus, PrepAction } from '../game/types';
 import { getUiScenarioStateFromLocation } from '../game/uiScenarios';
 
 type PendingPrepCue = {
@@ -23,14 +24,9 @@ export function App() {
   const uiScenarioState = useMemo(() => getUiScenarioStateFromLocation(), []);
   const displayState = uiScenarioState ?? state;
   const isUiScenario = Boolean(uiScenarioState);
-  const [historyVersion, setHistoryVersion] = useState(0);
   const [pendingPrepCue, setPendingPrepCue] = useState<PendingPrepCue | null>(null);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
-  const savedFinishedStateRef = useRef<GameState | null>(null);
-  const history = useMemo(() => {
-    historyVersion;
-    return readPerformanceHistory();
-  }, [historyVersion]);
+  const { history, finishedResult, refreshHistory } = usePerformanceHistory(displayState, isUiScenario);
 
   const resultPreview = useMemo(() => {
     if (displayState.status !== 'result') return null;
@@ -40,9 +36,6 @@ export function App() {
       return null;
     }
   }, [displayState]);
-  const finishedResult = useMemo(() => (
-    displayState.status === 'finished' ? finishPerformance(displayState) : null
-  ), [displayState]);
   const focusActor = displayState.actors.find((actor) => actor.id === displayState.currentFocusActorId) ?? displayState.actors[0];
   const visibleOmenEvents = topOmenEvents(focusActor).map((omen) => omen.event);
   const nextFocusActorId = displayState.totalTurn < TOTAL_TURNS ? pickFocusActor(displayState.seed, displayState.totalTurn + 1) : null;
@@ -78,14 +71,6 @@ export function App() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [showExitConfirm]);
 
-  useEffect(() => {
-    if (isUiScenario || displayState.status !== 'finished' || !finishedResult) return;
-    if (savedFinishedStateRef.current === displayState) return;
-    savePerformanceResult(finishedResult);
-    savedFinishedStateRef.current = displayState;
-    setHistoryVersion((version) => version + 1);
-  }, [displayState, finishedResult, isUiScenario]);
-
   const beginPrepCue = (prep: PrepAction) => {
     if (pendingPrepCue) return;
     setPendingPrepCue({ prep });
@@ -106,7 +91,7 @@ export function App() {
       <ResultScreen
         result={finishedResult ?? finishPerformance(displayState)}
         onTitle={() => {
-          setHistoryVersion((version) => version + 1);
+          refreshHistory();
           dispatch({ type: 'RESET_TO_TITLE' });
         }}
         onReplaySame={() => dispatch({ type: 'START', seed: state.seed })}

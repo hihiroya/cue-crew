@@ -792,8 +792,10 @@ trustBonus = clamp(floor(trustScore / 3), -2, 2)
 - バックエンド、外部API、ランタイム画像生成は使っていない。
 - 依存はReact、React DOM、Vite、TypeScript系のみ。
 - ロジックテストは `tests/` 配下にあり、`npm run test:logic` で Node.js 標準テストランナーにより実行する。
-- 結果スコア、対応見込み、結果プレビューは主に `src/game/scoring.ts` が担う。
+- 結果スコアのルール本体は `src/game/scoreRules.ts` が担う。互換用の公開口として `src/game/scoring.ts` を残している。
+- 対応見込みの入口は `src/game/responseInsight.ts`、結果プレビューの入口は `src/game/resultPreview.ts` に分離している。
 - 日程計算は `src/game/turnCalendar.ts`、終演後のレビュー・観客アンケート・メディア評は `src/game/performanceReport.ts` に分離している。
-- ターン確定処理は `src/game/gameReducer.ts` の `commitResult` に集約し、履歴保存の副作用は UI 側で行う。
+- ドメイン型、表示派生型、終演レポート型は `src/game/domainTypes.ts`、`src/game/viewTypes.ts`、`src/game/reportTypes.ts` に分離し、`src/game/types.ts` から再エクスポートしている。
+- ターン確定処理は `src/game/gameReducer.ts` の `commitResult` に集約し、履歴保存の副作用は `src/app/usePerformanceHistory.ts` で行う。
 - `props` 系統のほころびは、`cut` を選んだ結果として通常の対応から直接発生しうる。
 - 役者ごとの個別信頼は蓄積されるが、現時点では結果スコアやUI表示に直接使われない。

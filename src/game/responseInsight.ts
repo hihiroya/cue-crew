@@ -1,0 +1,1 @@
+export { responseInsight } from './scoreRules';

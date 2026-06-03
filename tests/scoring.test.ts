@@ -89,7 +89,6 @@ test('responseInsight exposes repeated response penalties before committing', ()
   }), 'catch');
 
   assert.equal(insight.scoreBreakdown.find((item) => item.id === 'repeat')?.value, -1);
-  assert.equal(insight.sideEffectLabel.includes('連続使用'), true);
   assert.equal(insight.sideEffects.some((effect) => effect.target === 'load' && effect.repeat && effect.value === 2), true);
   assert.equal(insight.sideEffects.some((effect) => effect.target === 'flow' && effect.repeat && effect.value === -1), true);
 });

@@ -3,7 +3,8 @@ import { advanceActorStates, assignActorRoles, pickFocusActor, resolveActorEvent
 import { nextLoadStrain, resolvePendingFray } from './fray';
 import { createAudienceSurvey, createMediaReview, createPerformanceInsight, createPerformanceReview } from './performanceReport';
 import { makeSeed } from './rng';
-import { clampLoad, determinePerformanceStyle, previewResult, toTurnLog } from './scoring';
+import { previewResult } from './resultPreview';
+import { clampLoad, determinePerformanceStyle, toTurnLog } from './scoring';
 import { actForTurn } from './turnCalendar';
 import type { GameState, MainResponse, PerformanceResult, PrepAction } from './types';
 

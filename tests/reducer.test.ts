@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { assignActorRoles } from '../src/game/actorLogic';
 import { INITIAL_ACTORS, INITIAL_LOAD_STRAIN } from '../src/game/constants';
 import { gameReducer } from '../src/game/gameReducer';
-import type { GameState } from '../src/game/types';
+import type { GameState, MainResponse, PrepAction } from '../src/game/types';
 
 function resultState(overrides: Partial<GameState> = {}): GameState {
   const focus = overrides.currentFocusActorId ?? 'lead';
@@ -54,4 +54,42 @@ test('COMMIT_RESULT applies preview deltas and advances to the next performance 
   assert.equal(next.currentActorEvent, null);
   assert.equal(next.selectedPrep, null);
   assert.equal(next.selectedResponse, null);
+});
+
+test('a full performance is deterministic for the same seed and choices', () => {
+  const choices: Array<{ prep: PrepAction; response: MainResponse }> = [
+    { prep: 'watch', response: 'catch' },
+    { prep: 'makeSpace', response: 'wait' },
+    { prep: 'tightenFlow', response: 'arrange' },
+    { prep: 'prepareTransition', response: 'cut' },
+    { prep: 'watch', response: 'catch' },
+    { prep: 'makeSpace', response: 'wait' },
+  ];
+  const finalState = choices.reduce(
+    (state, choice) => {
+      const responseState = gameReducer(state, { type: 'SELECT_PREP', prep: choice.prep });
+      const resultState = gameReducer(responseState, { type: 'SELECT_RESPONSE', response: choice.response });
+      return gameReducer(resultState, { type: 'COMMIT_RESULT' });
+    },
+    gameReducer(resultState({ status: 'title' }), { type: 'START', seed: 'golden-performance-seed' }),
+  );
+
+  assert.equal(finalState.status, 'finished');
+  assert.deepEqual({
+    sceneScore: finalState.sceneScore,
+    flowScore: finalState.flowScore,
+    trustScore: finalState.trustScore,
+    backstageLoad: finalState.backstageLoad,
+    performanceStyle: finalState.performanceStyle,
+    tiers: finalState.logs.map((log) => log.resultTier),
+    titles: finalState.logs.map((log) => log.sceneTitle),
+  }, {
+    sceneScore: 11,
+    flowScore: 5,
+    trustScore: 2,
+    backstageLoad: 3,
+    performanceStyle: 'heat',
+    tiers: ['smallSuccess', 'masterpiece', 'smallSuccess', 'scene', 'smallSuccess', 'fray'],
+    titles: ['沈黙をすくった光', '余韻を残す退場', '静けさに置いた照明', '鮮やかな暗転', '遅れた背中の見せ場', 'ほどけかけた場面'],
+  });
 });

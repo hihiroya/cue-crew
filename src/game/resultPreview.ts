@@ -1,0 +1,1 @@
+export { previewResult } from './scoreRules';
