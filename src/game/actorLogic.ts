@@ -58,7 +58,7 @@ export function topOmenEvents(actor: Actor, limit = 3): Array<{ event: ActorEven
 export function resolveActorEvent(state: GameState): ActorEvent {
   const focus = state.actors.find((actor) => actor.id === state.currentFocusActorId) ?? state.actors[0];
   const rng = createRng(`${state.seed}:event:${state.totalTurn}:${focus.id}`);
-  const volatility = 0.1 + state.backstageLoad * 0.03;
+  const volatility = 0.14 + state.backstageLoad * 0.04;
   const eventType = pickWeighted(rng, rng() < volatility ? volatileEventWeightsFor(focus) : eventWeightsFor(focus));
   return {
     type: eventType,

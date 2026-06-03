@@ -26,6 +26,7 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
     miss: { className: 'is-miss', label: '別の備えだった', detail: '上限が下がった' },
   }[preview.prepQuality];
   const isFinale = preview.resultMode === 'finale';
+  const recoveredFray = preview.scoreBreakdown.some((item) => item.id === 'fray-reward' || item.id === 'fray');
   const reasonItems = [...preview.scoreBreakdown]
     .filter((item) => item.value !== 0)
     .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
@@ -53,6 +54,12 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
         <span>{prepBanner.label}</span>
         <strong>{PREP_LABELS[preview.prepAction]} / {prepBanner.detail}</strong>
       </div>
+      {recoveredFray ? (
+        <div className="fray-recovery-stamp">
+          <span>ほころび回収</span>
+          <strong>失敗の余白が場面の材料になった</strong>
+        </div>
+      ) : null}
       <div className="next-note result-lesson-note">
         <span>次回改善メモ</span>
         <p>{preview.cueSummary.lesson}</p>
@@ -66,14 +73,10 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
           <span>代償</span>
           <p>{preview.cueSummary.cost}</p>
         </article>
-        <article className="cue-summary-card">
-          <span>{isFinale ? '公演報告へ' : '申し送り'}</span>
-          <p>{preview.cueSummary.handoff}</p>
-        </article>
-        <article className="cue-summary-card is-audience">
-          <span>客席</span>
-          <p>{preview.cueSummary.audienceReaction.replace(/^客席反応: /, '')}</p>
-        </article>
+      </div>
+      <div className="cue-subnote-line">
+        <span>{isFinale ? '公演報告へ' : '申し送り'}: {preview.cueSummary.handoff}</span>
+        <span>客席: {preview.cueSummary.audienceReaction.replace(/^客席反応: /, '')}</span>
       </div>
       {reasonItems.length > 0 ? (
         <div className="cue-reason-list">

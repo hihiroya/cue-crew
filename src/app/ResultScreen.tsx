@@ -187,6 +187,10 @@ function loadNote(value: number) {
 }
 
 function nextChallenge(result: PerformanceResult) {
+  const swingTurn = mostImproveableTurn(result);
+  if (swingTurn && result.insight.pointsToNextRank !== null && result.insight.pointsToNextRank <= 10) {
+    return `${swingTurn.act}日目${PERFORMANCE_SLOT_LABELS[swingTurn.turnInAct === 1 ? 'matinee' : 'soiree'].label}を場面化`;
+  }
   if (result.insight.pointsToNextRank !== null && result.insight.pointsToNextRank <= 8) {
     return `同じseedで${result.insight.nextRank}到達`;
   }
@@ -199,10 +203,32 @@ function nextChallenge(result: PerformanceResult) {
 
 function sameSeedHint(result: PerformanceResult) {
   if (result.insight.pointsToNextRank === null) return '最高ランク到達。同じ公演で別の型を狙える。';
+  const swingTurn = mostImproveableTurn(result);
+  if (swingTurn) {
+    return `${swingTurn.act}日目${PERFORMANCE_SLOT_LABELS[swingTurn.turnInAct === 1 ? 'matinee' : 'soiree'].label}の「${swingTurn.sceneTitle}」が詰めどころ。あと${result.insight.pointsToNextRank}点を狙う。`;
+  }
   if (result.insight.bestCue) {
     return `${result.insight.bestCue.act}日目${PERFORMANCE_SLOT_LABELS[result.insight.bestCue.turnInAct === 1 ? 'matinee' : 'soiree'].label}を基準に、あと${result.insight.pointsToNextRank}点を詰めたい。`;
   }
   return `あと${result.insight.pointsToNextRank}点。準備と負荷管理を詰める。`;
+}
+
+function mostImproveableTurn(result: PerformanceResult) {
+  return [...result.logs]
+    .filter((log) => log.resultTier === 'fray' || log.resultTier === 'accident' || log.prepQuality === 'miss' || log.deltaLoad >= 2)
+    .sort((a, b) => (
+      (tierRisk(b.resultTier) - tierRisk(a.resultTier))
+      || b.deltaLoad - a.deltaLoad
+      || Number(b.prepQuality === 'miss') - Number(a.prepQuality === 'miss')
+    ))[0] ?? null;
+}
+
+function tierRisk(tier: PerformanceResult['logs'][number]['resultTier']) {
+  if (tier === 'accident') return 4;
+  if (tier === 'fray') return 3;
+  if (tier === 'smallSuccess') return 2;
+  if (tier === 'scene') return 1;
+  return 0;
 }
 
 function rankClass(rank: PerformanceResult['insight']['rank']) {

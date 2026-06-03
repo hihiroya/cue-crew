@@ -1013,6 +1013,28 @@ button:disabled {
   line-height: 1.35;
 }
 
+.actor-trust-pill {
+  grid-column: 2 / 3;
+  width: fit-content;
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: #d9d1bf;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.66rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.actor-trust-pill.trust-good {
+  color: #a9dce5;
+  background: rgba(139, 201, 213, 0.13);
+}
+
+.actor-trust-pill.trust-strong {
+  color: #151017;
+  background: var(--gold);
+}
+
 .state-badge {
   flex: 0 0 auto;
   padding: 5px 8px;
@@ -2080,6 +2102,37 @@ button:disabled {
 
 .cue-read strong {
   color: #51251f;
+}
+
+.prep-intent-line {
+  display: grid;
+  gap: 3px;
+  padding: 8px 9px;
+  border-radius: 6px;
+  border: 1px solid rgba(128, 37, 48, 0.22);
+  background: rgba(255, 250, 231, 0.56);
+}
+
+.prep-intent-line span {
+  color: #8f2834;
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.prep-intent-line strong {
+  color: #51251f;
+  font-size: 0.82rem;
+}
+
+.prep-intent-line em {
+  width: fit-content;
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: #7f211c;
+  background: rgba(255, 119, 111, 0.13);
+  font-size: 0.66rem;
+  font-style: normal;
+  font-weight: 900;
 }
 
 .cue-note-branches {
@@ -4418,6 +4471,43 @@ button:disabled {
 .cue-result-ticket .cue-stamp span,
 .cue-result-ticket .cue-stamp strong {
   color: #7f211c;
+}
+
+.cue-subnote-line {
+  display: grid;
+  gap: 5px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(66, 31, 35, 0.18);
+  background: rgba(255, 250, 231, 0.38);
+}
+
+.cue-subnote-line span {
+  color: #4c352d;
+  font-size: 0.72rem;
+  line-height: 1.42;
+}
+
+.fray-recovery-stamp {
+  display: grid;
+  gap: 3px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 2px solid rgba(46, 94, 88, 0.52);
+  background: rgba(193, 232, 218, 0.45);
+}
+
+.fray-recovery-stamp span {
+  color: #275b55;
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.fray-recovery-stamp strong {
+  color: #213c39;
+  font-size: 0.78rem;
 }
 
 .cue-result-ticket .cue-summary-card span,

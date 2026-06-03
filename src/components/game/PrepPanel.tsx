@@ -44,7 +44,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
                 <Icon name={prep} />
                 <span className="prep-title">
                   <strong>{PREP_LABELS[prep]}</strong>
-                  <em>本番で{RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}と活きる</em>
+                  <em>{prepShortAim(prep)}</em>
                 </span>
               </div>
               <div className="cue-cover">
@@ -90,6 +90,11 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
             ) : null}
           </div>
           <div className="cue-read">
+            <div className="prep-intent-line">
+              <span>今回の狙い</span>
+              <strong>{prepIntent(inspected)}</strong>
+              {inspectedTone === 'danger' ? <em>見えている兆候とは少し外れる</em> : null}
+            </div>
             <p>{prepReadMemo(inspected, inspectedCoveredOmens.length, visibleOmens.length)}</p>
             <div className="cue-note-branches">
               <section>
@@ -154,4 +159,18 @@ function prepReadMemo(prep: PrepAction, covered: number, _total: number) {
     return '今見えている兆候とは別筋だが、崩れを小さく閉じるための準備。高負荷になる前に退路を残す。';
   }
   return '今見えている兆候とは別筋。役者の出来事が違う方向へ動いた時に備える準備。';
+}
+
+function prepShortAim(prep: PrepAction) {
+  if (prep === 'watch') return '熱を拾う';
+  if (prep === 'makeSpace') return '間を残す';
+  if (prep === 'tightenFlow') return '乱れを戻す';
+  return '次へ渡す';
+}
+
+function prepIntent(prep: PrepAction) {
+  if (prep === 'watch') return '予定外の熱を見せ場に変える';
+  if (prep === 'makeSpace') return '沈黙や退場を急かさず残す';
+  if (prep === 'tightenFlow') return 'ズレを舞台全体の呼吸へ戻す';
+  return '崩れを小さく閉じ、次公演を楽にする';
 }

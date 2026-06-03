@@ -11,6 +11,7 @@ type Props = {
 
 export function TitleScreen({ history, onStart, onReplay }: Props) {
   const [showHowTo, setShowHowTo] = useState(false);
+  const bests = historyBests(history);
   return (
     <main className="title-screen">
       <section className="title-panel">
@@ -47,11 +48,11 @@ export function TitleScreen({ history, onStart, onReplay }: Props) {
           <p className="muted">まだ記録はない。初日のマチネを開けよう。</p>
         ) : (
           <div className="history-list">
-            {history.map((item) => (
+            {history.map((item, index) => (
               <button key={`${item.seed}-${item.finishedAt}`} onClick={() => onReplay(item.seed)}>
                 <strong>{item.title}</strong>
                 <span>ランク {item.insight.rank} / 評判 {item.sceneScore} / 段取り {item.flowScore} / 座組信頼 {item.trustScore}</span>
-                <small>準備 {item.insight.prepHits}/6 / 名場面 {item.insight.masterpieceCount} / 同じ公演をやり直す</small>
+                <small>{historyMeta(item, history.slice(index + 1), bests)}</small>
               </button>
             ))}
           </div>
@@ -59,4 +60,34 @@ export function TitleScreen({ history, onStart, onReplay }: Props) {
       </section>
     </main>
   );
+}
+
+function historyBests(history: PerformanceResult[]) {
+  const total = (item: PerformanceResult) => item.insight.totalScore;
+  return {
+    rank: history.reduce<PerformanceResult | null>((best, item) => (!best || total(item) > total(best) ? item : best), null),
+    scene: history.reduce<PerformanceResult | null>((best, item) => (!best || item.sceneScore > best.sceneScore ? item : best), null),
+    load: history.reduce<PerformanceResult | null>((best, item) => (!best || item.backstageLoad < best.backstageLoad ? item : best), null),
+  };
+}
+
+function historyMeta(item: PerformanceResult, olderHistory: PerformanceResult[], bests: ReturnType<typeof historyBests>) {
+  const previousSameSeed = olderHistory.find((entry) => entry.seed === item.seed);
+  const deltas = previousSameSeed ? [
+    deltaLabel('評判', item.sceneScore - previousSameSeed.sceneScore),
+    deltaLabel('準備', item.insight.prepHits - previousSameSeed.insight.prepHits),
+    deltaLabel('名場面', item.insight.masterpieceCount - previousSameSeed.insight.masterpieceCount),
+  ].filter(Boolean).join(' / ') : '';
+  const badges = [
+    bests.rank === item ? '最高評価' : '',
+    bests.scene === item ? '最高評判' : '',
+    bests.load === item ? '最少負荷' : '',
+  ].filter(Boolean).join(' / ');
+  if (deltas) return `前回比 ${deltas}${badges ? ` / ${badges}` : ''}`;
+  return `準備 ${item.insight.prepHits}/6 / 名場面 ${item.insight.masterpieceCount}${badges ? ` / ${badges}` : ''} / 同じ公演をやり直す`;
+}
+
+function deltaLabel(label: string, value: number) {
+  if (value === 0) return '';
+  return `${label}${value > 0 ? '+' : ''}${value}`;
 }

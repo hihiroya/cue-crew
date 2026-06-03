@@ -49,7 +49,8 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
         <div className="actor-state-card">
           <span>状態</span>
           <strong>{STATE_LABELS[focusActor.state]}</strong>
-          <em>{STATE_HINTS[focusActor.state]} / {trustHint(focusActor)}</em>
+          <em>{STATE_HINTS[focusActor.state]}</em>
+          <small className={`actor-trust-pill trust-${trustLevel(focusActor)}`}>{trustHint(focusActor)}</small>
         </div>
         <OmenList actor={focusActor} />
       </article>
@@ -124,4 +125,10 @@ function trustHint(actor: Actor) {
   if (actor.trust >= 5) return '呼吸が強い';
   if (actor.trust >= 3) return '呼吸あり';
   return '呼吸これから';
+}
+
+function trustLevel(actor: Actor) {
+  if (actor.trust >= 5) return 'strong';
+  if (actor.trust >= 3) return 'good';
+  return 'thin';
 }
