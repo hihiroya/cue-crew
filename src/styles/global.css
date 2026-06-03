@@ -751,6 +751,8 @@ button:disabled {
 .event-reveal-figure .silhouette {
   width: 88px;
   height: 138px;
+  transform: translateY(-10px);
+  z-index: 1;
 }
 
 .event-actor-tag {
@@ -758,6 +760,7 @@ button:disabled {
   right: 7px;
   bottom: 7px;
   left: 7px;
+  z-index: 2;
   display: block;
   padding: 5px 6px;
   border-radius: 5px;
