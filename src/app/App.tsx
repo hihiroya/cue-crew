@@ -219,16 +219,18 @@ function TitleScreen({ history, onStart, onReplay }: { history: PerformanceResul
           <img src={titlePosterImage} alt="" draggable={false} />
         </div>
         <div className="stage-mark"><Icon name="spark" /></div>
-        <p className="title-series">1人用舞台裏マネジメント</p>
-        <h1 className="title-logo" aria-label="本番中 x 舞台裏">
-          <span>本番中</span>
-          <span className="title-cross" aria-hidden="true" />
-          <span>舞台裏</span>
-        </h1>
-        <p className="title-copy">兆候を読み 予定外を名場面へ</p>
-        <div className="title-actions">
-          <button className="primary-action" onClick={onStart}>はじめる</button>
-          <button className="secondary-action" onClick={() => setShowHowTo((value) => !value)}>遊び方</button>
+        <div className="title-lockup">
+          <p className="title-series">1人用舞台裏マネジメント</p>
+          <h1 className="title-logo" aria-label="本番中 x 舞台裏">
+            <span>本番中</span>
+            <span className="title-cross" aria-hidden="true" />
+            <span>舞台裏</span>
+          </h1>
+          <p className="title-copy">兆候を読み 予定外を名場面へ</p>
+          <div className="title-actions">
+            <button className="primary-action" onClick={onStart}>はじめる</button>
+            <button className="secondary-action" onClick={() => setShowHowTo((value) => !value)}>遊び方</button>
+          </div>
         </div>
         {showHowTo ? (
           <div className="howto-panel">
