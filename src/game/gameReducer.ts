@@ -1,8 +1,10 @@
 import { ACTS, INITIAL_ACTORS, INITIAL_LOAD_STRAIN, TURNS_PER_ACT, TOTAL_TURNS } from './constants';
 import { advanceActorStates, assignActorRoles, pickFocusActor, resolveActorEvent } from './actorLogic';
 import { nextLoadStrain, resolvePendingFray } from './fray';
+import { createAudienceSurvey, createMediaReview, createPerformanceInsight, createPerformanceReview } from './performanceReport';
 import { makeSeed } from './rng';
-import { actForTurn, clampLoad, createAudienceSurvey, createMediaReview, createPerformanceInsight, createPerformanceReview, determinePerformanceStyle, previewResult, toTurnLog } from './scoring';
+import { clampLoad, determinePerformanceStyle, previewResult, toTurnLog } from './scoring';
+import { actForTurn } from './turnCalendar';
 import type { GameState, MainResponse, PerformanceResult, PrepAction } from './types';
 
 export type GameAction =
@@ -93,6 +95,49 @@ export function readPerformanceHistory(): PerformanceResult[] {
   }
 }
 
+export function commitResult(state: GameState): GameState {
+  if (state.status !== 'result') return state;
+  const preview = previewResult(state);
+  const log = toTurnLog(state, preview);
+  const logs = [...state.logs, log];
+  const performanceStyle = state.performanceStyle ?? (state.totalTurn === TURNS_PER_ACT ? determinePerformanceStyle(logs) : null);
+  const loadAfterResult = clampLoad(state.backstageLoad + preview.deltaLoad);
+  const actBreakRelief = state.turnInAct === TURNS_PER_ACT ? -1 : 0;
+  const backstageLoad = clampLoad(loadAfterResult + actBreakRelief);
+  const loadStrain = nextLoadStrain(state, preview, actBreakRelief);
+  const nextBase = {
+    ...state,
+    logs,
+    sceneScore: state.sceneScore + preview.deltaScene,
+    flowScore: state.flowScore + preview.deltaFlow,
+    trustScore: state.trustScore + preview.deltaTrust,
+    performanceStyle,
+    backstageLoad,
+    loadBias: preview.loadBias,
+    loadStrain,
+    lastResponses: [...state.lastResponses, preview.mainResponse].slice(-4),
+    pendingFrayEvent: resolvePendingFray(state, preview, loadStrain),
+  };
+  const withActors = { ...nextBase, actors: advanceActorStates(nextBase) };
+  if (state.totalTurn >= TOTAL_TURNS) {
+    return { ...withActors, status: 'finished' as const };
+  }
+  const totalTurn = state.totalTurn + 1;
+  const focus = pickFocusActor(state.seed, totalTurn);
+  return {
+    ...withActors,
+    ...actForTurn(totalTurn),
+    totalTurn,
+    theme: ACTS[Math.ceil(totalTurn / TURNS_PER_ACT) - 1]?.name ?? '千秋楽',
+    actors: assignActorRoles(withActors.actors, focus),
+    currentFocusActorId: focus,
+    currentActorEvent: null,
+    selectedPrep: null,
+    selectedResponse: null,
+    status: 'prep',
+  };
+}
+
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'START':
@@ -117,48 +162,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
     case 'COMMIT_RESULT': {
-      if (state.status !== 'result') return state;
-      const preview = previewResult(state);
-      const log = toTurnLog(state, preview);
-      const logs = [...state.logs, log];
-      const performanceStyle = state.performanceStyle ?? (state.totalTurn === TURNS_PER_ACT ? determinePerformanceStyle(logs) : null);
-      const loadAfterResult = clampLoad(state.backstageLoad + preview.deltaLoad);
-      const actBreakRelief = state.turnInAct === TURNS_PER_ACT ? -1 : 0;
-      const backstageLoad = clampLoad(loadAfterResult + actBreakRelief);
-      const loadStrain = nextLoadStrain(state, preview, actBreakRelief);
-      const nextBase = {
-        ...state,
-        logs,
-        sceneScore: state.sceneScore + preview.deltaScene,
-        flowScore: state.flowScore + preview.deltaFlow,
-        trustScore: state.trustScore + preview.deltaTrust,
-        performanceStyle,
-        backstageLoad,
-        loadBias: preview.loadBias,
-        loadStrain,
-        lastResponses: [...state.lastResponses, preview.mainResponse].slice(-4),
-        pendingFrayEvent: resolvePendingFray(state, preview, loadStrain),
-      };
-      const withActors = { ...nextBase, actors: advanceActorStates(nextBase) };
-      if (state.totalTurn >= TOTAL_TURNS) {
-        const finished = { ...withActors, status: 'finished' as const };
-        savePerformanceResult(finishPerformance(finished));
-        return finished;
-      }
-      const totalTurn = state.totalTurn + 1;
-      const focus = pickFocusActor(state.seed, totalTurn);
-      return {
-        ...withActors,
-        ...actForTurn(totalTurn),
-        totalTurn,
-        theme: ACTS[Math.ceil(totalTurn / TURNS_PER_ACT) - 1]?.name ?? '千秋楽',
-        actors: assignActorRoles(withActors.actors, focus),
-        currentFocusActorId: focus,
-        currentActorEvent: null,
-        selectedPrep: null,
-        selectedResponse: null,
-        status: 'prep',
-      };
+      return commitResult(state);
     }
     default:
       return state;

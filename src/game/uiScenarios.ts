@@ -1,7 +1,7 @@
 import { assignActorRoles } from './actorLogic';
 import { EVENT_DESCRIPTIONS, EVENT_LABELS, INITIAL_ACTORS } from './constants';
 import { createInitialGame } from './gameReducer';
-import { actForTurn } from './scoring';
+import { actForTurn } from './turnCalendar';
 import type { ActorEvent, ActorEventType, ActorState, ActorType, FrayEvent, GameState, LoadBias, LoadStrain, MainResponse, PerformanceStyle, PrepAction, PrepPredictionQuality, ResultTier, TurnLog } from './types';
 
 export const UI_SCENARIO_QUERY_KEY = 'uiScenario';

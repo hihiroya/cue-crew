@@ -66,6 +66,15 @@ export type ScoreBreakdownItem = {
   detail?: string;
 };
 
+export type ResponseEffectTarget = 'scene' | 'flow' | 'trust' | 'load';
+
+export type ResponseEffect = {
+  target: ResponseEffectTarget;
+  value: number;
+  repeat: boolean;
+  label: string;
+};
+
 export type CueResultSummary = {
   keyPoint: string;
   cost: string;
@@ -124,6 +133,7 @@ export type ResponseInsight = {
   actorAffinityLabel: string;
   actInfluenceLabel: string;
   sideEffectLabel: string;
+  sideEffects: ResponseEffect[];
   frayRelationLabel?: string;
   frayRelationTone?: 'recover' | 'miss';
   dangerWarning?: string;

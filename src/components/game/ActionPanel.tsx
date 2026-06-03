@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { EVENT_LABELS, PERFORMANCE_SLOT_LABELS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../game/constants';
 import { responseInsight } from '../../game/scoring';
-import type { ActorEventType, GameState, MainResponse, PrepAction, ResponseInsight, ResultTier } from '../../game/types';
+import type { ActorEventType, GameState, MainResponse, PrepAction, ResponseEffect, ResponseInsight, ResultTier } from '../../game/types';
 import { Icon } from '../ui/Icon';
 
 type PrepProps = {
@@ -483,16 +483,11 @@ function toneForValue(value: number) {
 }
 
 function effectItems(insight: ResponseInsight) {
-  const repeatIndex = insight.sideEffectLabel.indexOf('連続使用:');
-  const normalText = repeatIndex >= 0 ? insight.sideEffectLabel.slice(0, repeatIndex).replace(/\/\s*$/, '').trim() : insight.sideEffectLabel;
-  const repeatText = repeatIndex >= 0 ? insight.sideEffectLabel.slice(repeatIndex).replace('連続使用:', '').trim() : '';
-  const normal = normalText.split(' / ').filter(Boolean).flatMap((part) => parseEffect(part, false));
-  const repeated = repeatText.split(' / ').filter(Boolean).flatMap((part) => parseEffect(part, true));
-  const parsed = [...normal, ...repeated];
+  const parsed = insight.sideEffects.map(makeEffect);
   return parsed.length ? parsed : [makeEffect('負荷維持', 'load', 0, false)];
 }
 
-type EffectIcon = 'load' | 'trust' | 'flow';
+type EffectIcon = ResponseEffect['target'];
 type EffectTone = 'good' | 'watch' | 'bad' | 'neutral';
 type EffectItem = {
   key: string;
@@ -504,26 +499,24 @@ type EffectItem = {
   repeat: boolean;
 };
 
-function parseEffect(part: string, repeat: boolean): EffectItem[] {
-  const trimmed = part.trim();
-  if (!trimmed) return [];
-  const icon: EffectIcon = trimmed.startsWith('信頼') ? 'trust' : trimmed.startsWith('流れ') ? 'flow' : 'load';
-  const numeric = Number(trimmed.match(/[+-]\d+/)?.[0] ?? 0);
-  return [makeEffect(trimmed, icon, numeric, repeat)];
-}
-
-function makeEffect(raw: string, icon: EffectIcon, value: number, repeat: boolean): EffectItem {
-  const tone = effectTone(icon, value);
-  const changeLabel = effectChangeLabel(value);
-  const title = `${repeat ? '連続使用: ' : ''}${effectTargetLabel(icon)} ${changeLabel}`;
+function makeEffect(effect: ResponseEffect): EffectItem;
+function makeEffect(raw: string, icon: EffectIcon, value: number, repeat: boolean): EffectItem;
+function makeEffect(rawOrEffect: string | ResponseEffect, icon?: EffectIcon, value?: number, repeat?: boolean): EffectItem {
+  const raw = typeof rawOrEffect === 'string' ? rawOrEffect : rawOrEffect.label;
+  const effectIcon = typeof rawOrEffect === 'string' ? icon ?? 'load' : rawOrEffect.target;
+  const effectValue = typeof rawOrEffect === 'string' ? value ?? 0 : rawOrEffect.value;
+  const isRepeat = typeof rawOrEffect === 'string' ? repeat ?? false : rawOrEffect.repeat;
+  const tone = effectTone(effectIcon, effectValue);
+  const changeLabel = effectChangeLabel(effectValue);
+  const title = `${isRepeat ? '連続使用: ' : ''}${effectTargetLabel(effectIcon)} ${changeLabel}`;
   return {
-    key: `${repeat ? 'repeat-' : ''}${raw}`,
-    icon,
+    key: `${isRepeat ? 'repeat-' : ''}${raw}`,
+    icon: effectIcon,
     raw,
     title,
     tone,
-    value,
-    repeat,
+    value: effectValue,
+    repeat: isRepeat,
   };
 }
 
@@ -557,6 +550,7 @@ function evaluationSign(item: EffectItem) {
 }
 
 function effectTargetLabel(icon: EffectIcon) {
+  if (icon === 'scene') return '場面';
   if (icon === 'load') return '負荷';
   if (icon === 'trust') return '信頼';
   return '流れ';
@@ -592,6 +586,11 @@ function effectPhrase(item: EffectItem) {
     if (item.value < 0) return `${item.repeat ? '連続使用で' : ''}信頼が減る`;
     return '信頼は変わらない';
   }
+  if (item.icon === 'scene') {
+    if (item.value > 0) return `${item.repeat ? '連続使用で' : ''}場面が伸びる`;
+    if (item.value < 0) return `${item.repeat ? '連続使用で' : ''}場面が伸びにくい`;
+    return '場面は変わらない';
+  }
   if (item.value > 0) return `${item.repeat ? '連続使用で' : ''}流れが整う`;
   if (item.value < 0) return `${item.repeat ? '連続使用で' : ''}流れが乱れる`;
   return '流れは変わらない';
@@ -599,12 +598,6 @@ function effectPhrase(item: EffectItem) {
 
 function effectSummary(insight: ResponseInsight) {
   return effectItems(insight).map(effectPhrase).join('、');
-}
-
-function signedEffectValue(item: EffectItem) {
-  if (item.value > 0) return `+${item.value}`;
-  if (item.value < 0) return String(item.value);
-  return '±0';
 }
 
 function decisionMemo(insight: ResponseInsight) {

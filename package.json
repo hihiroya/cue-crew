@@ -36,7 +36,7 @@
     "images:actors": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/process-actor-images.ps1",
     "verify:ui": "npm run check:ui",
     "verify:ui:full": "npm run build && npm run screenshot:ui",
-    "test:logic": "tsc -p tsconfig.test.json && node scripts/fix-test-imports.mjs tmp/test-build && node --test tmp/test-build/tests/fray.test.js",
+    "test:logic": "tsc -p tsconfig.test.json && node scripts/fix-test-imports.mjs tmp/test-build && node --test \"tmp/test-build/tests/*.test.js\"",
     "verify": "npm audit signatures && npm run build",
     "cf:preview": "npm run build && wrangler pages dev dist --compatibility-date=2026-05-30",
     "cf:deploy": "npm run build && wrangler pages deploy dist --project-name=cue-crew"
