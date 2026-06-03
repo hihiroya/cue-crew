@@ -71,6 +71,10 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
           <p>{preview.cueSummary.audienceReaction.replace(/^客席反応: /, '')}</p>
         </article>
       </div>
+      <div className="next-note result-lesson-note">
+        <span>次回改善メモ</span>
+        <p>{preview.cueSummary.lesson}</p>
+      </div>
       {reasonItems.length > 0 ? (
         <div className="cue-reason-list">
           <span>主な理由</span>

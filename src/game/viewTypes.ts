@@ -24,6 +24,7 @@ export type CueResultSummary = {
   cost: string;
   handoff: string;
   audienceReaction: string;
+  lesson: string;
 };
 
 export type ResponseInsight = {
@@ -31,6 +32,7 @@ export type ResponseInsight = {
   score: number;
   resultTier: ResultTier;
   deltaLoad: number;
+  tacticalSummary: string;
   successRangeLabel: string;
   upsideLabel: string;
   downsideLabel: string;
@@ -43,6 +45,7 @@ export type ResponseInsight = {
   sideEffects: ResponseEffect[];
   frayRelationLabel?: string;
   frayRelationTone?: 'recover' | 'miss';
+  actorTrustLabel?: string;
   dangerWarning?: string;
   rangeTone: 'best' | 'good' | 'thin' | 'danger';
   scoreBreakdown: ScoreBreakdownItem[];

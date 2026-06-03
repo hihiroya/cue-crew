@@ -68,6 +68,7 @@ function resultPreview(overrides: Partial<ResultPreview> = {}): ResultPreview {
       cost: 'テスト',
       handoff: 'テスト',
       audienceReaction: 'テスト',
+      lesson: 'テスト',
     },
     ...overrides,
   };

@@ -50,8 +50,8 @@ export function TitleScreen({ history, onStart, onReplay }: Props) {
             {history.map((item) => (
               <button key={`${item.seed}-${item.finishedAt}`} onClick={() => onReplay(item.seed)}>
                 <strong>{item.title}</strong>
-                <span>評判 {item.sceneScore} / 段取り {item.flowScore} / 座組信頼 {item.trustScore}</span>
-                <small>同じ公演をやり直す</small>
+                <span>ランク {item.insight.rank} / 評判 {item.sceneScore} / 段取り {item.flowScore} / 座組信頼 {item.trustScore}</span>
+                <small>準備 {item.insight.prepHits}/6 / 名場面 {item.insight.masterpieceCount} / 同じ公演をやり直す</small>
               </button>
             ))}
           </div>

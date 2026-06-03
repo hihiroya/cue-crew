@@ -49,7 +49,7 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
         <div className="actor-state-card">
           <span>状態</span>
           <strong>{STATE_LABELS[focusActor.state]}</strong>
-          <em>{STATE_HINTS[focusActor.state]}</em>
+          <em>{STATE_HINTS[focusActor.state]} / {trustHint(focusActor)}</em>
         </div>
         <OmenList actor={focusActor} />
       </article>
@@ -60,7 +60,7 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
               {actor.id === nextFocusActorId ? '次に来そう' : '控え'}
             </span>
             <strong>{actor.name}</strong>
-            <em>{STATE_LABELS[actor.state]} / {nextPressure(actor, actor.id === nextFocusActorId, backstageLoad)}</em>
+            <em>{STATE_LABELS[actor.state]} / {trustHint(actor)} / {nextPressure(actor, actor.id === nextFocusActorId, backstageLoad)}</em>
           </div>
         ))}
       </div>
@@ -110,4 +110,10 @@ function nextPressure(actor: Actor, isNext: boolean, backstageLoad: number) {
   if (actor.type === 'junior') return '拾うが活きやすいかも';
   if (actor.type === 'lead') return '待つが活きやすいかも';
   return '整えるが活きやすいかも';
+}
+
+function trustHint(actor: Actor) {
+  if (actor.trust >= 5) return '呼吸が強い';
+  if (actor.trust >= 3) return '呼吸あり';
+  return '呼吸これから';
 }

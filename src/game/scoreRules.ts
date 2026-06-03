@@ -42,6 +42,15 @@ function stateResponseBonus(actor: Actor, response: MainResponse): number {
   return 0;
 }
 
+function actorTrustScoreItem(actor: Actor, response: MainResponse): ScoreBreakdownItem | undefined {
+  if (actor.trust < 3) return undefined;
+  const fitsActor = (actor.type === 'lead' && ['wait', 'catch'].includes(response))
+    || (actor.type === 'junior' && ['catch', 'arrange'].includes(response))
+    || (actor.type === 'skilled' && ['arrange', 'wait'].includes(response));
+  if (!fitsActor) return undefined;
+  return scoreItem('actor-trust', `${ACTOR_LABELS[actor.type]}との呼吸が残っている`, 1, `${RESPONSE_LABELS[response]}の下振れを支える個別信頼。`);
+}
+
 function actBonus(state: GameState, response: MainResponse): number {
   const slot = slotForTurnInAct(state.turnInAct);
   if (state.act === 1 && ['wait', 'arrange'].includes(response)) return 1;
@@ -51,6 +60,20 @@ function actBonus(state: GameState, response: MainResponse): number {
   if (state.act === 3 && ['wait', 'arrange'].includes(response) && state.trustScore >= 2) return 2;
   if (state.act === 3 && response === 'cut' && state.backstageLoad >= 3) return 1;
   return 0;
+}
+
+function finaleScoreItem(state: GameState, response: MainResponse): ScoreBreakdownItem | undefined {
+  if (state.act !== 3 || slotForTurnInAct(state.turnInAct) !== 'soiree') return undefined;
+  if (state.backstageLoad >= 3 && ['arrange', 'cut'].includes(response)) {
+    return scoreItem('finale', '千秋楽で崩れを閉じる判断', 1, '最終公演では、重い負荷を残さない判断が客席の余韻を守る。');
+  }
+  if (state.trustScore >= 4 && response === 'wait') {
+    return scoreItem('finale', '千秋楽で信頼を待つ判断', 1, '積み上げた信頼が、待つ間を支える。');
+  }
+  if (state.backstageLoad <= 1 && response === 'catch') {
+    return scoreItem('finale', '千秋楽で攻め切る判断', 1, '低負荷で迎えた最終公演では、予定外を評判に変えやすい。');
+  }
+  return undefined;
 }
 
 function performanceStyleScoreItem(state: GameState, response: MainResponse): ScoreBreakdownItem | undefined {
@@ -86,6 +109,11 @@ function frayRelationLabel(state: GameState, response: MainResponse): Pick<Respo
   if (fit.status === 'none') return {};
   if (fit.status === 'miss') return { frayRelationLabel: '舞台裏のほころびは残りそう', frayRelationTone: 'miss' };
   return { frayRelationLabel: fit.status === 'strong' ? '舞台裏のほころびを拾える' : '舞台裏のほころびを整えられる', frayRelationTone: 'recover' };
+}
+
+function actorTrustLabel(actor: Actor, response: MainResponse): Pick<ResponseInsight, 'actorTrustLabel'> {
+  const item = actorTrustScoreItem(actor, response);
+  return item ? { actorTrustLabel: item.detail ?? item.label } : {};
 }
 
 type PrepResponseRelation = {
@@ -191,11 +219,40 @@ function cutContainmentBonus(state: GameState, response: MainResponse): ScoreBre
   return undefined;
 }
 
+function frayRecoveryReward(state: GameState, response: MainResponse): ScoreBreakdownItem | undefined {
+  const fit = frayFitFor(state, response);
+  const isRepeatedResponse = state.lastResponses[state.lastResponses.length - 1] === response;
+  if (isRepeatedResponse) return undefined;
+  if (fit.status !== 'strong') return undefined;
+  return scoreItem('fray-reward', 'ほころびを場面の材料に変えた', 1, '舞台裏の揺れを、次の場面の意味として回収した。');
+}
+
 function guardTierForTransitionCut(tier: ResultTier, state: GameState, response: MainResponse, prepQuality: PrepPredictionQuality): ResultTier {
   if (!transitionCutGuardActive(state, response) || prepQuality === 'miss') return tier;
   if (tier === 'accident') return 'fray';
   if (tier === 'fray' && prepQuality === 'hit') return 'smallSuccess';
   return tier;
+}
+
+function raiseTier(tier: ResultTier): ResultTier {
+  if (tier === 'accident') return 'fray';
+  if (tier === 'fray') return 'smallSuccess';
+  if (tier === 'smallSuccess') return 'scene';
+  if (tier === 'scene') return 'masterpiece';
+  return 'masterpiece';
+}
+
+function guardTierForActorTrust(tier: ResultTier, actor: Actor, response: MainResponse): ResultTier {
+  if (!actorTrustScoreItem(actor, response) || tier !== 'accident') return tier;
+  return 'fray';
+}
+
+function guardTierForStrongFrayRecovery(tier: ResultTier, state: GameState, response: MainResponse): ResultTier {
+  const fit = frayFitFor(state, response);
+  const isRepeatedResponse = state.lastResponses[state.lastResponses.length - 1] === response;
+  if (isRepeatedResponse) return tier;
+  if (fit.status !== 'strong') return tier;
+  return raiseTier(tier);
 }
 
 function consecutiveUseCount(state: GameState, response: MainResponse): number {
@@ -349,10 +406,14 @@ function deltasFor(tier: ResultTier, response: MainResponse, state: GameState, p
   const styleTrustBonus = state.performanceStyle === 'breath' && response === 'wait' && success ? 1 : 0;
   const cutTrustPenalty = response === 'cut' && success && state.backstageLoad < 3 && !transitionCutGuardActive(state, response) ? -1 : 0;
   const styleSceneBonus = state.performanceStyle === 'heat' && response === 'catch' && success ? 1 : 0;
+  const repeatedFrayResponse = frayFit.status === 'strong' && state.lastResponses[state.lastResponses.length - 1] === response;
+  const strongFraySceneBonus = frayFit.status === 'strong' && !repeatedFrayResponse && success ? 1 : 0;
+  const strongFrayTrustBonus = frayFit.status === 'strong' && !repeatedFrayResponse && success ? 1 : 0;
+  const strongFrayFlowBonus = frayFit.status === 'strong' && !repeatedFrayResponse && success ? 1 : 0;
   return {
-    deltaScene: base.scene + repeat.deltaScene + styleSceneBonus,
-    deltaFlow: base.flow + loadPenalty + repeat.deltaFlow + frayFit.deltaFlow,
-    deltaTrust: base.trust + waitTrustBonus + styleTrustBonus + cutTrustPenalty + repeat.deltaTrust,
+    deltaScene: base.scene + repeat.deltaScene + styleSceneBonus + strongFraySceneBonus,
+    deltaFlow: base.flow + loadPenalty + repeat.deltaFlow + frayFit.deltaFlow + strongFrayFlowBonus,
+    deltaTrust: base.trust + waitTrustBonus + styleTrustBonus + cutTrustPenalty + repeat.deltaTrust + strongFrayTrustBonus,
     deltaLoad: deltaLoad + repeat.deltaLoad + frayFit.deltaLoad,
     repeat,
     frayFit,
@@ -444,6 +505,9 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
   const styleItem = performanceStyleScoreItem(state, response);
   const frayItem = frayScoreItem(state, response);
   const cutItem = cutContainmentBonus(state, response);
+  const actorTrustItem = actorTrustScoreItem(actor, response);
+  const finaleItem = finaleScoreItem(state, response);
+  const frayRewardItem = frayRecoveryReward(state, response);
   const items = [
     scoreItem(
       'event',
@@ -456,12 +520,15 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
     prepScoreItem(prepQuality),
     prepResponseItem,
     scoreItem('act', actLabel(state, response, actValue), actValue),
+    finaleItem,
     styleItem,
     cutItem,
+    actorTrustItem,
     scoreItem('trust', '公演全体の信頼補正', trustValue),
     scoreItem('load', '裏方負荷の重さ', loadValue),
     scoreItem('repeat', repeat.label ?? '同じ対応の連続使用', repeatedValue, repeat.detail),
     frayItem,
+    frayRewardItem,
   ].filter((item): item is ScoreBreakdownItem => Boolean(item));
   const rawScore = sumBreakdown(items);
   const prepCap = capForPrepQuality(prepQuality, state);
@@ -506,8 +573,8 @@ function guardedRangeForScore(score: number, quality: PrepPredictionQuality, sta
   const prepCap = capForPrepQuality(quality, state);
   const arrangeCap = actor ? arrangeMasterpieceCap(state, actor, response, quality)?.value ?? Number.POSITIVE_INFINITY : Number.POSITIVE_INFINITY;
   const range = rangeForScore(score, quality, Math.min(prepCap, arrangeCap));
-  const lowTier = guardTierForTransitionCut(range.lowTier, state, response, quality);
-  const highTier = guardTierForTransitionCut(range.highTier, state, response, quality);
+  const lowTier = guardTierForStrongFrayRecovery(guardTierForActorTrust(guardTierForTransitionCut(range.lowTier, state, response, quality), actor, response), state, response);
+  const highTier = guardTierForStrongFrayRecovery(guardTierForActorTrust(guardTierForTransitionCut(range.highTier, state, response, quality), actor, response), state, response);
   const dangerWarning = lowTier === 'accident' ? range.dangerWarning : undefined;
   const visibleLow = lowTier === 'accident' ? 'ほころび' : RESULT_TIER_LABELS[lowTier];
   const label = `${visibleLow}〜${RESULT_TIER_LABELS[highTier]}`;
@@ -613,6 +680,17 @@ function cueHandoff(state: GameState, preview: Pick<ResultPreview, 'resultMode' 
   return '崩れは閉じた。次は信頼を戻す判断を置きたい。';
 }
 
+function tacticalSummary(state: GameState, response: MainResponse, insight: Pick<ResponseInsight, 'resultTier' | 'deltaLoad' | 'prepRelationTone' | 'frayRelationTone'>) {
+  if (insight.frayRelationTone === 'recover') return 'ほころび回収';
+  if (transitionCutGuardActive(state, response)) return '次へ渡す';
+  if (response === 'cut') return state.backstageLoad >= 3 ? '崩れを閉じる' : '早めに閉じる';
+  if (response === 'arrange') return insight.resultTier === 'masterpiece' ? '乱れを意味にする' : '安定させる';
+  if (response === 'wait') return state.trustScore >= 4 || state.act === 3 ? '余韻を伸ばす' : '信頼を残す';
+  if (insight.deltaLoad >= 2) return '負荷覚悟で伸ばす';
+  if (insight.prepRelationTone === 'primary') return '準備から攻める';
+  return '見せ場を狙う';
+}
+
 function audienceReaction(preview: Pick<ResultPreview, 'resultTier' | 'actorEventType' | 'mainResponse' | 'deltaScene'>) {
   if (preview.resultTier === 'masterpiece') {
     if (preview.mainResponse === 'catch') return '客席反応: 予定外の一言に、拍手が少し長く残った。';
@@ -626,12 +704,27 @@ function audienceReaction(preview: Pick<ResultPreview, 'resultTier' | 'actorEven
   return '客席反応: 一拍の乱れが見えたが、熱は消えなかった。';
 }
 
+function cueLesson(preview: Pick<ResultPreview, 'prepQuality' | 'deltaLoad' | 'deltaFlow' | 'deltaTrust' | 'mainResponse' | 'scoreBreakdown' | 'resultTier'>) {
+  const byId = (id: string) => preview.scoreBreakdown.find((item) => item.id === id);
+  if (byId('fray-reward')) return '次回メモ: ほころびは失敗の残骸ではなく、合う対応で拾うと場面の材料になる。';
+  if (byId('actor-trust')) return '次回メモ: 呼吸ができている役者は、得意な受け方を選ぶと下振れを支えられる。';
+  if (byId('arrange-cap')) return '次回メモ: 整えるは安定手。名場面を狙うなら、技巧派・不安/疲労・ほころび回収などの理由がほしい。';
+  if (byId('cut-containment')) return '次回メモ: 転換の備えから切ると、崩れを閉じて次の場面へ渡しやすい。';
+  if (preview.deltaLoad >= 2) return '次回メモ: 攻めた代償が重い。次公演は待つ・整える・切るで負荷を戻したい。';
+  if (preview.prepQuality === 'miss') return '次回メモ: 準備が外れると上限が下がる。焦点役者の兆候と準備範囲をもう一度合わせたい。';
+  if (preview.deltaFlow < 0) return '次回メモ: 場面の揺れが流れに残った。次は進行か負荷を整える判断を挟みたい。';
+  if (preview.deltaTrust < 0) return '次回メモ: 閉じる判断は効くが、続けると信頼が削れる。次は呼吸を戻す手を置きたい。';
+  if (preview.resultTier === 'masterpiece') return '次回メモ: 準備・出来事・対応が噛み合った形。似た兆候では同じ筋を再現できる。';
+  return '次回メモ: 大崩れは防げた。次は準備が活きた局面で、評判を伸ばす手も狙える。';
+}
+
 function cueResultSummary(state: GameState, preview: ResultPreview): CueResultSummary {
   return {
     keyPoint: cueKeyPoint(preview),
     cost: cueCost(preview),
     handoff: cueHandoff(state, preview),
     audienceReaction: audienceReaction(preview),
+    lesson: cueLesson(preview),
   };
 }
 
@@ -672,18 +765,28 @@ export function responseInsight(state: GameState, response: MainResponse): Respo
   const scoreBreakdown = buildScoreBreakdown(state, actor, response);
   const score = sumBreakdown(scoreBreakdown);
   const rawResultTier = tierFromScore(score);
-  const resultTier = guardTierForFrayRecovery(guardTierForTransitionCut(rawResultTier, state, response, prepQuality), state, response);
+  const resultTier = guardTierForStrongFrayRecovery(
+    guardTierForActorTrust(
+      guardTierForFrayRecovery(guardTierForTransitionCut(rawResultTier, state, response, prepQuality), state, response),
+      actor,
+      response,
+    ),
+    state,
+    response,
+  );
   const deltas = deltasFor(resultTier, response, state, prepQuality);
   const deltaLoad = deltas.deltaLoad;
   const eventValue = EVENT_COMPATIBILITY[state.currentActorEvent.type][response];
   const actorValue = actorResponseBonus(actor, response) + stateResponseBonus(actor, response);
   const range = guardedRangeForScore(score, prepQuality, state, response);
   const relation = prepResponseRelation(state, response);
-  return {
+  const frayRelation = frayRelationLabel(state, response);
+  const insightBase = {
     response,
     score,
     resultTier,
     deltaLoad,
+    tacticalSummary: '',
     successRangeLabel: range.label,
     upsideLabel: upsideLabel(response, range.highTier),
     downsideLabel: downsideLabel(response, range.lowTier, deltaLoad),
@@ -694,10 +797,15 @@ export function responseInsight(state: GameState, response: MainResponse): Respo
     actorAffinityLabel: `${ACTOR_LABELS[actor.type]}${symbolFor(actorValue)} / ${STATE_LABELS[actor.state]}${symbolFor(stateResponseBonus(actor, response))}`,
     actInfluenceLabel: ACT_RESPONSE_GUIDES[state.act]?.[response] ?? `${state.theme}の判断。`,
     sideEffects: sideEffects(deltas),
-    ...frayRelationLabel(state, response),
+    ...frayRelation,
+    ...actorTrustLabel(actor, response),
     dangerWarning: range.dangerWarning,
     rangeTone: range.tone,
     scoreBreakdown,
+  };
+  return {
+    ...insightBase,
+    tacticalSummary: tacticalSummary(state, response, insightBase),
   };
 }
 
@@ -789,6 +897,7 @@ export function previewResult(state: GameState): ResultPreview {
       cost: '',
       handoff: '',
       audienceReaction: '',
+      lesson: '',
     },
     scoreBreakdown,
     loadBias: RESPONSE_BIAS[response],

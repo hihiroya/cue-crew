@@ -143,3 +143,32 @@ test('prepared transition makes cut a strong single-use closure', () => {
   assert.equal(repeated.scoreBreakdown.find((item) => item.id === 'repeat')?.value, -1);
   assert.equal(repeated.sideEffects.some((effect) => effect.target === 'trust' && effect.repeat && effect.value === -2), true);
 });
+
+test('strong fray recovery adds a reward only when it changes the response rhythm', () => {
+  const recovery = responseInsight(gameState({
+    pendingFrayEvent: { bias: 'sound', title: '残響が少し長く残った' },
+    selectedResponse: null,
+    lastResponses: ['catch'],
+  }), 'wait');
+  const repeated = responseInsight(gameState({
+    pendingFrayEvent: { bias: 'sound', title: '残響が少し長く残った' },
+    selectedResponse: null,
+    lastResponses: ['wait'],
+  }), 'wait');
+
+  assert.equal(recovery.scoreBreakdown.some((item) => item.id === 'fray-reward' && item.value === 1), true);
+  assert.equal(repeated.scoreBreakdown.some((item) => item.id === 'fray-reward'), false);
+});
+
+test('individual actor trust supports matching responses', () => {
+  const actors = assignActorRoles(INITIAL_ACTORS.map((actor) => (
+    actor.id === 'lead' ? { ...actor, trust: 3 } : actor
+  )), 'lead');
+  const insight = responseInsight(gameState({
+    actors,
+    selectedResponse: null,
+  }), 'wait');
+
+  assert.equal(insight.scoreBreakdown.some((item) => item.id === 'actor-trust' && item.value === 1), true);
+  assert.equal(Boolean(insight.actorTrustLabel), true);
+});

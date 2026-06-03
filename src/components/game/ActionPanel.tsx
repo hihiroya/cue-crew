@@ -82,7 +82,7 @@ function ResponseChoiceCard({
       </div>
       <div className="outlook-summary" aria-label={`成立見込み: ${insight.successRangeLabel}`}>
         <div className="outlook-head">
-          <span><Icon name="scene" />{compactAim(insight)}</span>
+          <span><Icon name="scene" />{insight.tacticalSummary}</span>
           <strong>{insight.successRangeLabel}</strong>
           <em className={`response-prep-mark mark-${insight.prepRelationTone}`} aria-label={`準備との関係: ${insight.prepRelationLabel}`}>
             {prepConnectionShortLabel(insight.prepRelationTone)}
@@ -174,6 +174,12 @@ function ResponseConsole({ insight, state }: { insight: ResponseInsight; state: 
           <strong>{insight.frayRelationLabel}</strong>
         </div>
       ) : null}
+      {insight.actorTrustLabel ? (
+        <div className="console-fray relation-recover">
+          <span>役者との呼吸</span>
+          <strong>{insight.actorTrustLabel}</strong>
+        </div>
+      ) : null}
     </aside>
   );
 }
@@ -207,14 +213,6 @@ function prepConnectionShortLabel(tone: ResponseInsight['prepRelationTone']) {
   if (tone === 'primary') return '準備活きる';
   if (tone === 'alternate') return '準備外で効く';
   return '準備合わず';
-}
-
-function compactAim(insight: ResponseInsight) {
-  if (insight.resultTier === 'masterpiece') return '名場面';
-  if (insight.resultTier === 'scene') return '場面化';
-  if (insight.resultTier === 'smallSuccess') return '小成功';
-  if (insight.resultTier === 'fray') return '崩れ抑え';
-  return '事故回避';
 }
 
 function resultRange(insight: ResponseInsight) {
@@ -340,5 +338,6 @@ function decisionMemo(insight: ResponseInsight) {
       ? '準備の想定外でも効く'
       : '準備とは噛み合いにくい';
   const danger = insight.dangerWarning ? ` ${insight.downsideLabel}。` : '';
-  return `${prep}手。${insight.responseAimLabel}。見込みは${insight.successRangeLabel}。影響は${effectSummary(insight)}。${danger}`;
+  const trust = insight.actorTrustLabel ? ` ${insight.actorTrustLabel}` : '';
+  return `${prep}手。${insight.tacticalSummary}。${insight.responseAimLabel}。見込みは${insight.successRangeLabel}。影響は${effectSummary(insight)}。${trust}${danger}`;
 }

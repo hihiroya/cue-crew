@@ -85,11 +85,11 @@ test('a full performance is deterministic for the same seed and choices', () => 
     titles: finalState.logs.map((log) => log.sceneTitle),
   }, {
     sceneScore: 15,
-    flowScore: 8,
-    trustScore: 7,
+    flowScore: 5,
+    trustScore: 6,
     backstageLoad: 0,
     performanceStyle: 'heat',
-    tiers: ['smallSuccess', 'masterpiece', 'smallSuccess', 'masterpiece', 'scene', 'smallSuccess'],
-    titles: ['沈黙をすくった光', '余韻を残す退場', '静けさに置いた照明', '鮮やかな暗転', '遅れた背中の見せ場', '小さく整った呼吸'],
+    tiers: ['smallSuccess', 'scene', 'fray', 'masterpiece', 'scene', 'scene'],
+    titles: ['小さく整った呼吸', '言葉を泳がせた一瞬', '揺れたまま進んだ拍', '静かに閉じた場面', '遅れた背中の見せ場', '裏方がつないだ一幕'],
   });
 });

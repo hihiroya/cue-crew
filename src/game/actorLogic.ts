@@ -32,6 +32,16 @@ export function eventWeightsFor(actor: Actor): Record<ActorEventType, number> {
   ) as Record<ActorEventType, number>;
 }
 
+function volatileEventWeightsFor(actor: Actor): Record<ActorEventType, number> {
+  const weights = eventWeightsFor(actor);
+  return Object.fromEntries(
+    Object.entries(weights).map(([event, weight]) => [
+      event,
+      Math.max(4, Math.round(Math.sqrt(weight) * 3)),
+    ]),
+  ) as Record<ActorEventType, number>;
+}
+
 export function topOmenEvents(actor: Actor, limit = 3): Array<{ event: ActorEventType; weight: number; intensity: '高' | '中' | '低' }> {
   const weights = eventWeightsFor(actor);
   const sorted = (Object.entries(weights) as Array<[ActorEventType, number]>)
@@ -48,7 +58,8 @@ export function topOmenEvents(actor: Actor, limit = 3): Array<{ event: ActorEven
 export function resolveActorEvent(state: GameState): ActorEvent {
   const focus = state.actors.find((actor) => actor.id === state.currentFocusActorId) ?? state.actors[0];
   const rng = createRng(`${state.seed}:event:${state.totalTurn}:${focus.id}`);
-  const eventType = pickWeighted(rng, eventWeightsFor(focus));
+  const volatility = 0.1 + state.backstageLoad * 0.03;
+  const eventType = pickWeighted(rng, rng() < volatility ? volatileEventWeightsFor(focus) : eventWeightsFor(focus));
   return {
     type: eventType,
     actorId: focus.id,
@@ -60,9 +71,19 @@ export function resolveActorEvent(state: GameState): ActorEvent {
 export function advanceActorStates(state: GameState): Actor[] {
   const rng = createRng(`${state.seed}:state:${state.totalTurn}:${state.logs.length}`);
   const focus = state.currentFocusActorId;
+  const latestLog = state.logs[state.logs.length - 1];
   return state.actors.map((actor) => {
     const fatigue = Math.max(0, Math.min(3, actor.fatigue + (rng() < 0.26 ? -1 : 0)));
-    const trust = actor.trust + (actor.id === focus && state.trustScore > 0 ? 1 : 0);
+    const focusTrustDelta = actor.id === focus && latestLog
+      ? latestLog.deltaTrust >= 2
+        ? 2
+        : latestLog.deltaTrust > 0
+          ? 1
+          : latestLog.deltaTrust < 0
+            ? -1
+            : 0
+      : 0;
+    const trust = Math.max(0, actor.trust + focusTrustDelta);
     const shouldChange = actor.id === focus ? rng() < 0.72 : rng() < 0.34;
     if (!shouldChange) return { ...actor, fatigue, trust };
     const nextState = stateCycle[Math.floor(rng() * stateCycle.length)];
