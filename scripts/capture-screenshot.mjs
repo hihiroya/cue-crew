@@ -1,4 +1,4 @@
-import { spawn, spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
@@ -7,7 +7,6 @@ import { connect } from 'node:net';
 import { tmpdir } from 'node:os';
 import { dirname, extname, join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
-import { fileURLToPath } from 'node:url';
 
 const args = new Map(
   process.argv.slice(2).map((arg) => {
@@ -16,17 +15,16 @@ const args = new Map(
   }),
 );
 
-let url = args.get('url');
-const out = resolve(args.get('out') ?? 'tmp/screenshot.png');
-const width = Number(args.get('width') ?? 440);
-const height = Number(args.get('height') ?? 956);
+const defaultOut = resolve(args.get('out') ?? 'tmp/screenshot.png');
+const defaultWidth = Number(args.get('width') ?? 440);
+const defaultHeight = Number(args.get('height') ?? 956);
 const fullPage = args.get('fullPage') === 'true';
 const port = Number(args.get('port') ?? 9223);
 const servePort = Number(args.get('servePort') ?? 4174);
 const scenario = args.get('scenario') ?? 'title';
 const preset = args.get('preset');
-const uiScenario = scenario.startsWith('ui:') ? scenario.slice('ui:'.length) : null;
 const checkPage = args.get('check') !== 'false';
+let captureIndex = 0;
 
 const presetJobs = {
   'prep-panel': [
@@ -66,43 +64,216 @@ presetJobs['ui-critical'] = [
   ...presetJobs['result-panel'],
 ];
 
-function withSearchParam(targetUrl, key, value) {
-  const next = new URL(targetUrl);
-  next.searchParams.set(key, value);
-  return next.toString();
+await main();
+
+async function main() {
+  if (preset) {
+    await runPreset(preset);
+    return;
+  }
+
+  const env = await createCaptureEnvironment({
+    baseUrl: args.get('url'),
+    initialWidth: defaultWidth,
+    initialHeight: defaultHeight,
+    port,
+    servePort,
+  });
+  try {
+    await captureInEnvironment(env, {
+      scenario,
+      width: defaultWidth,
+      height: defaultHeight,
+      outPath: defaultOut,
+      fullPage,
+      checkPage,
+    });
+  } finally {
+    await env.close();
+  }
 }
 
-function runPreset(name) {
+async function runPreset(name) {
   const jobs = presetJobs[name];
   if (!jobs) {
     throw new Error(`Unknown screenshot preset: ${name}. Known presets: ${Object.keys(presetJobs).join(', ')}`);
   }
-  const scriptPath = fileURLToPath(import.meta.url);
+
   const outDir = resolve(args.get('outDir') ?? join('tmp', 'screenshots', name));
-  const baseArgs = [];
-  if (args.has('url')) baseArgs.push(`--url=${args.get('url')}`);
-  if (args.has('check')) baseArgs.push(`--check=${args.get('check')}`);
-  jobs.forEach(([jobScenario, jobWidth, jobHeight], index) => {
-    const childArgs = [
-      scriptPath,
-      ...baseArgs,
-      `--scenario=ui:${jobScenario}`,
-      `--width=${jobWidth}`,
-      `--height=${jobHeight}`,
-      `--port=${port + index}`,
-      `--servePort=${servePort + index}`,
-      `--out=${join(outDir, `${jobScenario}-${jobWidth}.png`)}`,
-    ];
-    const result = spawnSync(process.execPath, childArgs, { stdio: 'inherit' });
-    if (result.status !== 0) {
-      process.exit(result.status ?? 1);
-    }
+  const env = await createCaptureEnvironment({
+    baseUrl: args.get('url'),
+    initialWidth: jobs[0][1],
+    initialHeight: jobs[0][2],
+    port,
+    servePort,
   });
+
+  try {
+    for (const [jobScenario, jobWidth, jobHeight] of jobs) {
+      await captureInEnvironment(env, {
+        scenario: `ui:${jobScenario}`,
+        width: jobWidth,
+        height: jobHeight,
+        outPath: resolve(join(outDir, `${jobScenario}-${jobWidth}.png`)),
+        fullPage,
+        checkPage,
+      });
+    }
+  } finally {
+    await env.close();
+  }
 }
 
-if (preset) {
-  runPreset(preset);
-  process.exit(0);
+async function createCaptureEnvironment({ baseUrl, initialWidth, initialHeight, port: chromePort, servePort: staticPort }) {
+  let staticServer;
+  let url = baseUrl;
+
+  if (!url) {
+    staticServer = await startStaticServer(staticPort);
+    url = staticServer.url;
+  }
+
+  const profileDir = resolve(tmpdir(), 'cue-crew-chrome-cdp-profile', `${Date.now()}-${process.pid}`);
+  await rm(profileDir, { recursive: true, force: true });
+  await mkdir(profileDir, { recursive: true });
+
+  const chrome = spawn(findChrome(), [
+    '--headless=new',
+    '--disable-gpu',
+    '--hide-scrollbars',
+    '--no-first-run',
+    '--no-default-browser-check',
+    '--remote-allow-origins=*',
+    `--remote-debugging-port=${chromePort}`,
+    `--user-data-dir=${profileDir}`,
+    `--window-size=${initialWidth},${initialHeight}`,
+    'about:blank',
+  ], { stdio: 'ignore' });
+
+  const targets = await waitForJson(`http://127.0.0.1:${chromePort}/json`);
+  const pageTarget = targets.find((target) => target.type === 'page' && target.webSocketDebuggerUrl);
+  if (!pageTarget) throw new Error('Chrome page target was not found.');
+
+  const client = createCdpClient(pageTarget.webSocketDebuggerUrl);
+  await client.ready;
+  await client.send('Page.enable');
+  await client.send('Runtime.enable');
+
+  return {
+    baseUrl: url,
+    client,
+    async close() {
+      client.close();
+      await stopChrome(chrome);
+      if (staticServer) await staticServer.close();
+      await rm(profileDir, { recursive: true, force: true }).catch(() => {});
+    },
+  };
+}
+
+async function stopChrome(chrome) {
+  if (chrome.exitCode !== null) return;
+  const exited = new Promise((resolveExit) => chrome.once('exit', resolveExit));
+  chrome.kill();
+  await Promise.race([exited, delay(1500)]);
+}
+
+async function startStaticServer(staticPort) {
+  const distRoot = resolve('dist');
+  if (!existsSync(join(distRoot, 'index.html'))) {
+    throw new Error('dist/index.html was not found. Run npm run build first, or pass --url=http://...');
+  }
+
+  const types = {
+    '.html': 'text/html; charset=utf-8',
+    '.js': 'text/javascript; charset=utf-8',
+    '.css': 'text/css; charset=utf-8',
+    '.svg': 'image/svg+xml',
+    '.png': 'image/png',
+    '.webp': 'image/webp',
+  };
+
+  const server = createServer(async (request, response) => {
+    try {
+      const requestUrl = new URL(request.url ?? '/', `http://127.0.0.1:${staticPort}`);
+      const relativePath = requestUrl.pathname === '/' ? '/index.html' : requestUrl.pathname;
+      const filePath = join(distRoot, relativePath);
+      const file = await import('node:fs/promises').then((fs) => fs.readFile(filePath));
+      response.writeHead(200, { 'content-type': types[extname(filePath)] ?? 'application/octet-stream' });
+      response.end(file);
+    } catch {
+      const file = await import('node:fs/promises').then((fs) => fs.readFile(join(distRoot, 'index.html')));
+      response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+      response.end(file);
+    }
+  });
+
+  await new Promise((resolveListen) => server.listen(staticPort, '127.0.0.1', resolveListen));
+
+  return {
+    url: `http://127.0.0.1:${staticPort}`,
+    close: () => new Promise((resolveClose) => server.close(resolveClose)),
+  };
+}
+
+async function captureInEnvironment(env, options) {
+  const uiScenario = options.scenario.startsWith('ui:') ? options.scenario.slice('ui:'.length) : null;
+  let targetUrl = env.baseUrl;
+  if (uiScenario) targetUrl = withSearchParam(targetUrl, 'uiScenario', uiScenario);
+  targetUrl = withSearchParam(targetUrl, '_shot', String(captureIndex));
+  captureIndex += 1;
+
+  await env.client.send('Emulation.setDeviceMetricsOverride', {
+    width: options.width,
+    height: options.height,
+    deviceScaleFactor: 1,
+    mobile: options.width < 700,
+    screenWidth: options.width,
+    screenHeight: options.height,
+  });
+
+  const loaded = env.client.once('Page.loadEventFired');
+  await env.client.send('Page.navigate', { url: targetUrl });
+  await loaded;
+  await env.client.send('Runtime.evaluate', {
+    expression: 'document.fonts ? document.fonts.ready.then(() => true) : true',
+    awaitPromise: true,
+  });
+
+  if (options.scenario !== 'title' && !uiScenario) {
+    await runScenario(env.client, undefined, options.scenario);
+  }
+
+  await env.client.send('Runtime.evaluate', {
+    expression: 'window.scrollTo(0, 0)',
+  });
+  await delay(250);
+
+  if (options.checkPage) {
+    await assertPageHealth(env.client, undefined, uiScenario ?? options.scenario);
+  }
+
+  let captureParams = { format: 'png', fromSurface: true };
+  if (options.fullPage) {
+    const metrics = await env.client.send('Page.getLayoutMetrics');
+    const size = metrics.cssContentSize;
+    captureParams = {
+      ...captureParams,
+      captureBeyondViewport: true,
+      clip: { x: 0, y: 0, width: size.width, height: size.height, scale: 1 },
+    };
+  }
+
+  const { data } = await env.client.send('Page.captureScreenshot', captureParams);
+  await mkdir(dirname(options.outPath), { recursive: true });
+  await writeFile(options.outPath, Buffer.from(data, 'base64'));
+  console.log(options.outPath);
+}
+
+function withSearchParam(targetUrl, key, value) {
+  const next = new URL(targetUrl);
+  next.searchParams.set(key, value);
+  return next.toString();
 }
 
 function findChrome() {
@@ -221,9 +392,7 @@ function createCdpClient(wsUrl) {
         rejectPending(new Error(`CDP socket closed: ${wsUrl}`));
         return;
       }
-      if (opcode === 0x9) {
-        continue;
-      }
+      if (opcode === 0x9) continue;
       if (opcode === 0x1 || opcode === 0x0) {
         messageParts.push(payload);
         if (finalFrame) {
@@ -302,7 +471,7 @@ function createCdpClient(wsUrl) {
         const callback = (params, sessionId) => {
           if (!predicate(params, sessionId)) return;
           const callbacks = listeners.get(method);
-          callbacks.delete(callback);
+          if (callbacks) callbacks.delete(callback);
           resolveEvent({ params, sessionId });
         };
         if (!listeners.has(method)) listeners.set(method, new Set());
@@ -313,119 +482,6 @@ function createCdpClient(wsUrl) {
       socket.end();
     },
   };
-}
-
-const profileDir = resolve(tmpdir(), 'cue-crew-chrome-cdp-profile', `${Date.now()}-${process.pid}`);
-await rm(profileDir, { recursive: true, force: true });
-await mkdir(profileDir, { recursive: true });
-
-let staticServer;
-if (!url) {
-  const distRoot = resolve('dist');
-  if (!existsSync(join(distRoot, 'index.html'))) {
-    throw new Error('dist/index.html was not found. Run npm run build first, or pass --url=http://...');
-  }
-  const types = {
-    '.html': 'text/html; charset=utf-8',
-    '.js': 'text/javascript; charset=utf-8',
-    '.css': 'text/css; charset=utf-8',
-    '.svg': 'image/svg+xml',
-    '.png': 'image/png',
-    '.webp': 'image/webp',
-  };
-  staticServer = createServer(async (request, response) => {
-    try {
-      const requestUrl = new URL(request.url ?? '/', `http://127.0.0.1:${servePort}`);
-      const relativePath = requestUrl.pathname === '/' ? '/index.html' : requestUrl.pathname;
-      const filePath = join(distRoot, relativePath);
-      const file = await import('node:fs/promises').then((fs) => fs.readFile(filePath));
-      response.writeHead(200, { 'content-type': types[extname(filePath)] ?? 'application/octet-stream' });
-      response.end(file);
-    } catch {
-      const file = await import('node:fs/promises').then((fs) => fs.readFile(join(distRoot, 'index.html')));
-      response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
-      response.end(file);
-    }
-  });
-  await new Promise((resolveListen) => staticServer.listen(servePort, '127.0.0.1', resolveListen));
-  url = `http://127.0.0.1:${servePort}`;
-}
-
-const chrome = spawn(findChrome(), [
-  '--headless=new',
-  '--disable-gpu',
-  '--hide-scrollbars',
-  '--no-first-run',
-  '--no-default-browser-check',
-  '--remote-allow-origins=*',
-  `--remote-debugging-port=${port}`,
-  `--user-data-dir=${profileDir}`,
-  `--window-size=${width},${height}`,
-  'about:blank',
-], { stdio: 'ignore' });
-
-let client;
-try {
-  const targets = await waitForJson(`http://127.0.0.1:${port}/json`);
-  const pageTarget = targets.find((target) => target.type === 'page' && target.webSocketDebuggerUrl);
-  if (!pageTarget) throw new Error('Chrome page target was not found.');
-  client = createCdpClient(pageTarget.webSocketDebuggerUrl);
-  await client.ready;
-
-  const sessionId = undefined;
-  await client.send('Page.enable', {}, sessionId);
-  await client.send('Runtime.enable', {}, sessionId);
-  await client.send('Emulation.setDeviceMetricsOverride', {
-    width,
-    height,
-    deviceScaleFactor: 1,
-    mobile: width < 700,
-    screenWidth: width,
-    screenHeight: height,
-  }, sessionId);
-
-  if (uiScenario) {
-    url = withSearchParam(url, 'uiScenario', uiScenario);
-  }
-  const loaded = client.once('Page.loadEventFired', (_params, eventSessionId) => eventSessionId === sessionId);
-  await client.send('Page.navigate', { url }, sessionId);
-  await loaded;
-  await client.send('Runtime.evaluate', {
-    expression: 'document.fonts ? document.fonts.ready.then(() => true) : true',
-    awaitPromise: true,
-  }, sessionId);
-
-  if (scenario !== 'title' && !uiScenario) {
-    await runScenario(client, sessionId, scenario);
-  }
-  await client.send('Runtime.evaluate', {
-    expression: 'window.scrollTo(0, 0)',
-  }, sessionId);
-  await delay(250);
-  if (checkPage) {
-    await assertPageHealth(client, sessionId, uiScenario ?? scenario);
-  }
-
-  let captureParams = { format: 'png', fromSurface: true };
-  if (fullPage) {
-    const metrics = await client.send('Page.getLayoutMetrics', {}, sessionId);
-    const size = metrics.cssContentSize;
-    captureParams = {
-      ...captureParams,
-      captureBeyondViewport: true,
-      clip: { x: 0, y: 0, width: size.width, height: size.height, scale: 1 },
-    };
-  }
-  const { data } = await client.send('Page.captureScreenshot', captureParams, sessionId);
-  await mkdir(dirname(out), { recursive: true });
-  await writeFile(out, Buffer.from(data, 'base64'));
-  console.log(out);
-} finally {
-  if (client) client.close();
-  chrome.kill();
-  if (staticServer) {
-    await new Promise((resolveClose) => staticServer.close(resolveClose));
-  }
 }
 
 async function runScenario(client, sessionId, name) {

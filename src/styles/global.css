@@ -633,11 +633,6 @@ button:disabled {
   min-height: 124px;
 }
 
-.has-event-stage .silhouette {
-  width: 84px;
-  height: 120px;
-}
-
 .actor-figure-wrap::before {
   content: "";
   position: absolute;
@@ -874,129 +869,51 @@ button:disabled {
 }
 
 .silhouette {
-  width: 92px;
-  height: 132px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
   filter:
+    brightness(1.1)
+    contrast(1.08)
+    saturate(1.04)
     drop-shadow(0 10px 18px rgba(0, 0, 0, 0.44))
     drop-shadow(0 0 10px rgba(139, 201, 213, 0.16));
   position: relative;
   z-index: 1;
+  user-select: none;
 }
 
-.silhouette path {
-  fill: #05070c;
-  stroke: rgba(255, 217, 138, 0.34);
-  stroke-width: 1.4;
-}
-
-.silhouette .aura {
-  fill: currentColor;
-  stroke: none;
-  opacity: 0.16;
-}
-
-.silhouette .rim {
-  fill: none;
-  stroke: var(--cyan);
-  stroke-linecap: round;
-  stroke-width: 3.4;
-  opacity: 0.96;
-}
-
-.silhouette .cloth {
-  fill: #10131c;
-}
-
-.silhouette .hair {
-  fill: #03050a;
-  stroke: rgba(255, 217, 138, 0.22);
-  stroke-width: 1.1;
-}
-
-.silhouette .collar {
-  fill: #05070c;
-  stroke: rgba(255, 217, 138, 0.42);
-  stroke-width: 1.2;
-}
-
-.silhouette .arm,
-.silhouette .chest-hand {
-  fill: #070911;
-}
-
-.silhouette .book {
-  fill: rgba(229, 189, 104, 0.18);
-  stroke: rgba(229, 189, 104, 0.72);
-  stroke-width: 1.2;
-}
-
-.silhouette .prop {
-  fill: none;
-  stroke: rgba(229, 189, 104, 0.36);
-  stroke-linecap: round;
-  stroke-width: 2;
-}
-
-.silhouette .accent,
-.silhouette .glasses,
-.silhouette .paper-cut,
-.silhouette .ribbon {
-  fill: none;
-  stroke: rgba(255, 217, 138, 0.58);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2.2;
-}
-
-.silhouette .paper-cut {
-  opacity: 0.46;
-  stroke-width: 1.2;
-}
-
-.silhouette .glasses {
-  stroke-width: 1.5;
+.actor-figure-wrap .silhouette {
+  width: 92%;
+  height: 100%;
 }
 
 .silhouette-lead {
-  color: #f0c86c;
   filter:
+    brightness(1.12)
+    contrast(1.1)
+    saturate(1.05)
     drop-shadow(0 10px 18px rgba(0, 0, 0, 0.46))
-    drop-shadow(0 0 12px rgba(255, 217, 138, 0.18));
-}
-
-.silhouette-lead .rim,
-.silhouette-lead .accent {
-  stroke: #f0c86c;
+    drop-shadow(0 0 14px rgba(255, 217, 138, 0.22));
 }
 
 .silhouette-junior {
-  color: #ffa65e;
   filter:
+    brightness(1.12)
+    contrast(1.1)
+    saturate(1.08)
     drop-shadow(0 10px 18px rgba(0, 0, 0, 0.46))
-    drop-shadow(0 0 12px rgba(255, 166, 94, 0.2));
-}
-
-.silhouette-junior .rim,
-.silhouette-junior .ribbon,
-.silhouette-junior .accent {
-  stroke: #ffa65e;
+    drop-shadow(0 0 14px rgba(255, 64, 122, 0.22));
 }
 
 .silhouette-skilled {
-  color: #8bc9d5;
   filter:
+    brightness(1.12)
+    contrast(1.1)
+    saturate(1.06)
     drop-shadow(0 10px 18px rgba(0, 0, 0, 0.46))
-    drop-shadow(0 0 12px rgba(139, 201, 213, 0.2));
-}
-
-.silhouette-skilled .rim,
-.silhouette-skilled .accent,
-.silhouette-skilled .glasses {
-  stroke: #8bc9d5;
-}
-
-.silhouette-skilled .book {
-  stroke: rgba(139, 201, 213, 0.82);
+    drop-shadow(0 0 14px rgba(56, 201, 255, 0.24));
 }
 
 .actor-card-head {
@@ -3731,11 +3648,11 @@ button:disabled {
 
 .title-ghost-stage {
   position: absolute;
-  inset: auto -24px -2px auto;
+  inset: auto -38px -10px auto;
   width: min(70%, 320px);
   height: 88%;
   pointer-events: none;
-  opacity: 0.34;
+  opacity: 0.3;
   z-index: 0;
 }
 
@@ -3750,37 +3667,25 @@ button:disabled {
 
 .title-ghost-stage .silhouette {
   position: absolute;
-  width: 112px;
-  height: 160px;
-  bottom: 2px;
+  width: 118px;
+  height: 176px;
+  bottom: -2px;
+  opacity: 0.88;
 }
 
 .title-ghost-stage .silhouette-lead {
-  right: 118px;
-  transform: scale(1.1);
+  right: 128px;
+  transform: scale(1.16);
 }
 
 .title-ghost-stage .silhouette-junior {
-  right: 56px;
-  transform: scale(1.02);
-}
-
-.title-ghost-stage .silhouette-skilled {
-  right: -8px;
+  right: 54px;
   transform: scale(1.08);
 }
 
-.title-ghost-stage .silhouette path {
-  fill: #03050a;
-  stroke: rgba(255, 217, 138, 0.18);
-}
-
-.title-ghost-stage .silhouette .rim {
-  stroke: rgba(139, 201, 213, 0.72);
-}
-
-.title-ghost-stage .silhouette .aura {
-  opacity: 0.08;
+.title-ghost-stage .silhouette-skilled {
+  right: -18px;
+  transform: scale(1.1);
 }
 
 .stage-mark {
