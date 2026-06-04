@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import { RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../game/constants';
 import { responseInsight } from '../../game/responseInsight';
-import type { GameState, MainResponse, ResponseInsight, ResultTier } from '../../game/types';
+import type { GameState, MainResponse, ResponseInsight, ResultTier, TurnLog } from '../../game/types';
 import { Icon } from '../ui/Icon';
 import { effectDirection, effectIntensity, effectItems, effectLedSlots, effectSummary, effectTargetLabel, evaluationSign } from './responseEffectsView';
-import { buildStyleSummary, responseBuildCue } from '../../game/rogueliteProgress';
+import { buildStyleSummary, replayDeltaForResponse, responseBuildCue } from '../../game/rogueliteProgress';
 import {
   affinityLabels,
   decisionMemo,
@@ -28,11 +28,11 @@ type ResponseProps = {
   selected: MainResponse | null;
   disabled: boolean;
   state: GameState;
-  previousResponse?: MainResponse | null;
+  previousTurnLog?: TurnLog | null;
   onSelect: (response: MainResponse) => void;
 };
 
-export function ResponsePanel({ selected, disabled, state, previousResponse = null, onSelect }: ResponseProps) {
+export function ResponsePanel({ selected, disabled, state, previousTurnLog = null, onSelect }: ResponseProps) {
   const insights = useMemo(
     () => responses.map((response) => responseInsight(state, response)),
     [state],
@@ -52,7 +52,8 @@ export function ResponsePanel({ selected, disabled, state, previousResponse = nu
             disabled={disabled}
             insight={insight}
             buildCue={responseBuildCue(insight.response, buildStyle)}
-            wasPrevious={previousResponse === insight.response}
+            wasPrevious={previousTurnLog?.mainResponse === insight.response}
+            replayDelta={replayDeltaForResponse({ currentTier: insight.resultTier, currentLoad: insight.deltaLoad, previous: previousTurnLog })}
             isInspected={inspected.response === insight.response}
             onInspect={setInspectedResponse}
           />
@@ -77,6 +78,7 @@ function ResponseChoiceCard({
   insight,
   buildCue,
   wasPrevious,
+  replayDelta,
   isInspected,
   onInspect,
 }: {
@@ -84,6 +86,7 @@ function ResponseChoiceCard({
   insight: ResponseInsight;
   buildCue: string;
   wasPrevious: boolean;
+  replayDelta: ReturnType<typeof replayDeltaForResponse>;
   isInspected: boolean;
   onInspect: (response: MainResponse) => void;
 }) {
@@ -118,7 +121,10 @@ function ResponseChoiceCard({
         <span>{responsePanelCopy.buildCue}</span>
         <strong>{buildCue}</strong>
       </div>
-      {wasPrevious ? <em className="replay-ghost-mark">{responsePanelCopy.previousCue}</em> : null}
+      <div className="replay-delta-row">
+        {wasPrevious ? <em className="replay-ghost-mark">{responsePanelCopy.previousCue}</em> : null}
+        {replayDelta ? <em className={`replay-delta-mark delta-${replayDelta.tone}`}>{replayDelta.label}</em> : null}
+      </div>
       {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
       <ResponseSelectionMarker visible={isInspected} />
     </button>
@@ -168,6 +174,7 @@ function ResponseSendBar({
 }
 
 function ResponseConsole({ insight, state, buildCue }: { insight: ResponseInsight; state: GameState; buildCue: string }) {
+  const buildLevelItem = insight.scoreBreakdown.find((item) => item.id === 'build-level');
   return (
     <aside className={`decision-note response-console relation-${insight.prepRelationTone}`}>
       <div className="console-head">
@@ -203,6 +210,12 @@ function ResponseConsole({ insight, state, buildCue }: { insight: ResponseInsigh
         <span>{responsePanelCopy.buildCue}</span>
         <strong>{buildCue}</strong>
       </div>
+      {buildLevelItem ? (
+        <div className="console-fray relation-recover">
+          <span>{responsePanelCopy.buildLevel}</span>
+          <strong>{buildLevelItem.label} {buildLevelItem.value > 0 ? `+${buildLevelItem.value}` : buildLevelItem.value}</strong>
+        </div>
+      ) : null}
       {insight.frayRelationLabel ? (
         <div className={`console-fray relation-${insight.frayRelationTone}`}>
           <span>{responsePanelCopy.frayTitle}</span>

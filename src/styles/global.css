@@ -175,6 +175,13 @@
   line-height: 1.55;
 }
 
+.collection-replay-button {
+  justify-self: start;
+  min-height: 36px;
+  padding: 6px 10px;
+  font-size: 0.76rem;
+}
+
 .collection-toggle {
   margin-top: 10px;
   min-height: 38px;
@@ -265,6 +272,60 @@
   font-size: 0.66rem;
   font-style: normal;
   font-weight: 900;
+}
+
+.replay-delta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 22px;
+}
+
+.replay-delta-mark {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 3px 7px;
+  font-size: 0.66rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.replay-delta-mark.delta-up {
+  color: #bff0c9;
+  background: rgba(119, 211, 154, 0.12);
+  border: 1px solid rgba(119, 211, 154, 0.28);
+}
+
+.replay-delta-mark.delta-same {
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.replay-delta-mark.delta-down {
+  color: #ffc0b9;
+  background: rgba(255, 119, 111, 0.1);
+  border: 1px solid rgba(255, 119, 111, 0.24);
+}
+
+.collection-preview-stamp {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(139, 201, 213, 0.34);
+  background: rgba(139, 201, 213, 0.1);
+}
+
+.collection-preview-stamp span {
+  color: #a9dce5;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.collection-preview-stamp strong {
+  color: var(--text);
+  font-size: 0.86rem;
 }
 
 .performance-poster-card {

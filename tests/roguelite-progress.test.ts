@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { applyDailyEventWeights, dailyRunForSeed } from '../src/game/dailyRun';
 import { eventWeightsFor } from '../src/game/actorLogic';
 import { INITIAL_ACTORS } from '../src/game/constants';
-import { mergeCollectionResult } from '../src/game/rogueliteProgress';
-import type { PerformanceResult } from '../src/game/types';
+import { mergeCollectionResult, replayDeltaForResponse, readDailyBestResults, saveDailyBestForResult } from '../src/game/rogueliteProgress';
+import type { PerformanceResult, TurnLog } from '../src/game/types';
 
 test('daily modifier affects only daily seeds', () => {
   const actor = INITIAL_ACTORS[0];
@@ -61,3 +61,84 @@ test('collection merge records scenes and first-time achievements', () => {
   assert.equal(Object.keys(collection.achievements).length, 1);
   assert.equal(collection.achievements['read-the-room'].firstSeed, 'collection-seed');
 });
+
+test('replay delta compares current preview against previous turn', () => {
+  const previous = {
+    resultTier: 'smallSuccess',
+    deltaLoad: 2,
+  } as TurnLog;
+
+  assert.deepEqual(replayDeltaForResponse({ currentTier: 'scene', currentLoad: 1, previous }), {
+    tone: 'up',
+    label: '前回より上',
+  });
+  assert.deepEqual(replayDeltaForResponse({ currentTier: 'smallSuccess', currentLoad: 3, previous }), {
+    tone: 'down',
+    label: '負荷重い',
+  });
+});
+
+test('daily best storage keeps the best daily score only', () => {
+  const originalStorage = globalThis.localStorage;
+  const store = new Map<string, string>();
+  Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    value: {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => store.set(key, value),
+    },
+  });
+  const low = dailyResult('honban-daily-test', 10);
+  const high = dailyResult('honban-daily-test', 18);
+
+  try {
+    saveDailyBestForResult(low);
+    saveDailyBestForResult(high);
+    saveDailyBestForResult(low);
+    assert.equal(readDailyBestResults()['honban-daily-test'].insight.totalScore, 18);
+  } finally {
+    Object.defineProperty(globalThis, 'localStorage', {
+      configurable: true,
+      value: originalStorage,
+    });
+  }
+});
+
+function dailyResult(seed: string, totalScore: number): PerformanceResult {
+  return {
+    seed,
+    finishedAt: '2026-06-04T00:00:00.000Z',
+    sceneScore: 0,
+    flowScore: 0,
+    trustScore: 0,
+    backstageLoad: 0,
+    performanceStyle: null,
+    title: 'daily',
+    review: '',
+    reviewNotes: [],
+    insight: {
+      totalScore,
+      rank: 'C',
+      nextRank: 'B',
+      pointsToNextRank: 1,
+      scoreNote: '',
+      prepHits: 0,
+      prepHitRate: 0,
+      masterpieceCount: 0,
+      sceneOrBetterCount: 0,
+      frayOrAccidentCount: 0,
+      dominantResponse: 'catch',
+      decisionDistribution: [],
+      bestCue: null,
+      nextNote: '',
+      buildStyle: { style: null, label: '未確立', level: 0, progress: 0, next: 2, note: '' },
+      discoveryScore: 0,
+      unlockedAchievements: [],
+      sceneCollectionCount: 0,
+    },
+    audienceSurvey: { encoreInterest: 50, lingeringAfterglow: 50, sceneHeat: 50, stability: 50 },
+    mediaReview: { outlet: '', stars: 3, headline: '', quote: '' },
+    logs: [],
+    highlights: [],
+  };
+}

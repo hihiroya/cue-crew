@@ -1,15 +1,17 @@
 import { ACTOR_LABELS, EVENT_LABELS, PREP_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS, RESULT_TIER_STARS } from '../../game/constants';
 import type { ResultPreview } from '../../game/types';
+import type { CollectionState } from '../../game/rogueliteProgress';
 import { Icon } from '../ui/Icon';
 import { appCopy, deltaImpact, prepQualityBanner, stripAudienceReactionPrefix, type DeltaKind } from '../../content/ja/appCopy';
 
 type Props = {
   preview: ResultPreview | null;
+  collection?: CollectionState;
   onCommit: () => void;
   canCommit: boolean;
 };
 
-export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
+export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: Props) {
   if (!preview) {
     return (
       <section className="result-preview empty-preview">
@@ -24,6 +26,8 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
   const prepBanner = prepQualityBanner[preview.prepQuality];
   const isFinale = preview.resultMode === 'finale';
   const recoveredFray = preview.scoreBreakdown.some((item) => item.id === 'fray-reward' || item.id === 'fray');
+  const sceneId = `${preview.focusActorType}:${preview.actorEventType}:${preview.mainResponse}:${preview.sceneTitle}`;
+  const isNewScene = collection ? !collection.scenes[sceneId] : false;
   const reasonItems = [...preview.scoreBreakdown]
     .filter((item) => item.value !== 0)
     .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
@@ -55,6 +59,12 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
         <div className="fray-recovery-stamp">
           <span>{appCopy.resultPreview.frayRecovery}</span>
           <strong>{appCopy.resultPreview.frayRecoveryBody}</strong>
+        </div>
+      ) : null}
+      {isNewScene ? (
+        <div className="collection-preview-stamp">
+          <span>{appCopy.resultPreview.newScene}</span>
+          <strong>{appCopy.resultPreview.newSceneBody}</strong>
         </div>
       ) : null}
       <div className="next-note result-lesson-note">

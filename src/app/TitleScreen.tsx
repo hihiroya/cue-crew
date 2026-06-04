@@ -9,17 +9,18 @@ import { appCopy, titleHistoryMeta } from '../content/ja/appCopy';
 type Props = {
   history: PerformanceResult[];
   collection: CollectionState;
+  dailyBests: Record<string, PerformanceResult>;
   onStart: () => void;
   onStartDaily: (seed: string) => void;
   onReplay: (seed: string) => void;
 };
 
-export function TitleScreen({ history, collection, onStart, onStartDaily, onReplay }: Props) {
+export function TitleScreen({ history, collection, dailyBests, onStart, onStartDaily, onReplay }: Props) {
   const [showHowTo, setShowHowTo] = useState(false);
-  const [showCollection, setShowCollection] = useState(false);
+  const [showCollection, setShowCollection] = useState(() => new URLSearchParams(globalThis.location?.search ?? '').get('uiScenario') === 'title-collection');
   const bests = historyBests(history);
   const dailyRun = dailyRunFor();
-  const dailyBest = history.find((item) => item.seed === dailyRun.seed);
+  const dailyBest = dailyBests[dailyRun.seed];
   return (
     <main className="title-screen">
       <section className="title-panel">
@@ -77,7 +78,7 @@ export function TitleScreen({ history, collection, onStart, onStartDaily, onRepl
         <button type="button" className="secondary-action collection-toggle" onClick={() => setShowCollection((value) => !value)}>
           {showCollection ? appCopy.title.collectionClose : appCopy.title.collectionOpen}
         </button>
-        {showCollection ? <CollectionDetails collection={collection} /> : null}
+        {showCollection ? <CollectionDetails collection={collection} onReplay={onReplay} /> : null}
       </section>
       <section className="history-panel">
         <div className="section-heading">
@@ -108,7 +109,7 @@ function latestAchievementNote(collection: CollectionState) {
   return latest ? `${latest.label}: ${latest.detail}` : appCopy.title.collectionEmpty;
 }
 
-function CollectionDetails({ collection }: { collection: CollectionState }) {
+function CollectionDetails({ collection, onReplay }: { collection: CollectionState; onReplay: (seed: string) => void }) {
   const scenes = Object.values(collection.scenes)
     .sort((a, b) => b.firstSeenAt.localeCompare(a.firstSeenAt))
     .slice(0, 8);
@@ -122,7 +123,8 @@ function CollectionDetails({ collection }: { collection: CollectionState }) {
               <article key={scene.id}>
                 <span>{labelFor(ACTOR_LABELS, scene.actor)} / {labelFor(EVENT_LABELS, scene.event)} / {labelFor(RESPONSE_LABELS, scene.response)}</span>
                 <strong>{scene.title}</strong>
-                <small>{resultTierShort(scene.bestTier)}</small>
+                <small>{resultTierShort(scene.bestTier)} / {scene.firstSeed}</small>
+                <button type="button" className="ghost-button collection-replay-button" onClick={() => onReplay(scene.firstSeed)}>{appCopy.title.collectionReplay}</button>
               </article>
             ))}
           </div>

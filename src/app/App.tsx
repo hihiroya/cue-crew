@@ -28,7 +28,7 @@ export function App() {
   const isUiScenario = Boolean(uiScenarioState);
   const [pendingPrepCue, setPendingPrepCue] = useState<PendingPrepCue | null>(null);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
-  const { history, collection, finishedResult, refreshHistory } = usePerformanceHistory(displayState, isUiScenario);
+  const { history, collection, dailyBests, finishedResult, refreshHistory } = usePerformanceHistory(displayState, isUiScenario);
 
   const resultPreview = useMemo(() => {
     if (displayState.status !== 'result') return null;
@@ -88,6 +88,7 @@ export function App() {
       <TitleScreen
         history={history}
         collection={collection}
+        dailyBests={dailyBests}
         onStart={() => dispatch({ type: 'START' })}
         onStartDaily={(seed) => dispatch({ type: 'START', seed })}
         onReplay={(seed) => dispatch({ type: 'START', seed })}
@@ -151,7 +152,7 @@ export function App() {
             selected={displayState.selectedResponse}
             disabled={false}
             state={displayState}
-            previousResponse={previousTurnLog?.mainResponse ?? null}
+            previousTurnLog={previousTurnLog}
             onSelect={(response) => {
               if (!isUiScenario) dispatch({ type: 'SELECT_RESPONSE', response });
             }}
@@ -160,6 +161,7 @@ export function App() {
         {displayState.status === 'result' ? (
           <ResultPreviewCard
             preview={resultPreview}
+            collection={collection}
             canCommit
             onCommit={() => {
               if (!isUiScenario) dispatch({ type: 'COMMIT_RESULT' });

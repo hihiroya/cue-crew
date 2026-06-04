@@ -51,6 +51,7 @@ export const appCopy = {
     collectionAchievementList: '称号一覧',
     collectionUnlocked: '解放済み',
     collectionLocked: '未解放',
+    collectionReplay: 'このseedで再演',
     bestBadges: {
       rank: '最高評価',
       scene: '評判最高',
@@ -148,6 +149,8 @@ export const appCopy = {
     ratingAria: (tierLabel: string) => `仕上がり ${tierLabel}`,
     frayRecovery: 'ほころび回収',
     frayRecoveryBody: '失敗の余白が場面の材料になった',
+    newScene: '新場面候補',
+    newSceneBody: '終演まで通すと場面図鑑に記録される',
     lesson: '次の判断メモ',
     key: '決め手',
     cost: '代償',

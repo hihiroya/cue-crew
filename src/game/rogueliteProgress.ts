@@ -42,8 +42,15 @@ export type SeedComparison = {
   bestTurn: TurnLog | null;
 };
 
+export type ResponseReplayDelta = {
+  tone: 'up' | 'same' | 'down';
+  label: string;
+};
+
 const STYLE_THRESHOLDS = [2, 5, 9];
 const COLLECTION_KEY = 'honban.collection.v1';
+const DAILY_BEST_KEY = 'honban.daily.best.v1';
+const TIER_ORDER: TurnLog['resultTier'][] = ['accident', 'fray', 'smallSuccess', 'scene', 'masterpiece'];
 
 export function buildStyleSummary(logs: TurnLog[], explicitStyle: PerformanceStyle | null): BuildStyleSummary {
   if (logs.length < 2 && !explicitStyle) {
@@ -162,6 +169,23 @@ function rankDeltaLabel(current: PerformanceResult['insight']['rank'], previous:
   return 'ランク維持';
 }
 
+export function replayDeltaForResponse(args: {
+  currentTier: TurnLog['resultTier'];
+  currentLoad: number;
+  previous?: TurnLog | null;
+}): ResponseReplayDelta | null {
+  const { currentTier, currentLoad, previous } = args;
+  if (!previous) return null;
+  const tierDelta = TIER_ORDER.indexOf(currentTier) - TIER_ORDER.indexOf(previous.resultTier);
+  const loadDelta = currentLoad - previous.deltaLoad;
+  if (tierDelta > 0 && loadDelta <= 0) return { tone: 'up', label: '前回より上' };
+  if (tierDelta > 0) return { tone: 'up', label: 'ランク上' };
+  if (tierDelta === 0 && loadDelta < 0) return { tone: 'up', label: '負荷軽い' };
+  if (tierDelta === 0 && loadDelta === 0) return { tone: 'same', label: '前回同等' };
+  if (tierDelta < 0 && loadDelta <= 0) return { tone: 'down', label: 'ランク下' };
+  return { tone: 'down', label: '負荷重い' };
+}
+
 export function mostImproveableTurn(result: PerformanceResult) {
   return [...result.logs]
     .filter((log) => log.resultTier === 'fray' || log.resultTier === 'accident' || log.prepQuality === 'miss' || log.deltaLoad >= 2)
@@ -205,6 +229,28 @@ export function achievementListLabel(items: AchievementUnlock[]) {
 
 export function resultTierShort(tier: TurnLog['resultTier']) {
   return RESULT_TIER_LABELS[tier];
+}
+
+export function readDailyBestResults(): Record<string, PerformanceResult> {
+  try {
+    const raw = localStorage.getItem(DAILY_BEST_KEY);
+    if (!raw) return {};
+    return JSON.parse(raw) as Record<string, PerformanceResult>;
+  } catch {
+    return {};
+  }
+}
+
+export function saveDailyBestForResult(result: PerformanceResult) {
+  if (!result.seed.startsWith('honban-daily-')) return readDailyBestResults();
+  const current = readDailyBestResults();
+  const previous = current[result.seed];
+  if (!previous || result.insight.totalScore > previous.insight.totalScore) {
+    const next = { ...current, [result.seed]: result };
+    localStorage.setItem(DAILY_BEST_KEY, JSON.stringify(next));
+    return next;
+  }
+  return current;
 }
 
 export function emptyCollectionState(): CollectionState {

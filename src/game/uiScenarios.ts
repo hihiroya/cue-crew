@@ -37,6 +37,7 @@ export function getUiScenarioStateFromLocation(search = globalThis.location?.sea
 export function uiScenarioState(name: string): GameState | null {
   if (name === 'title-default') return { ...createInitialGame('ui-title-default'), currentFocusActorId: null, status: 'title' };
   if (name === 'title-history-legacy') return { ...createInitialGame('ui-title-history-legacy'), currentFocusActorId: null, status: 'title' };
+  if (name === 'title-collection') return { ...createInitialGame('ui-title-collection'), currentFocusActorId: null, status: 'title' };
   if (name === 'prep-default') return prepScenario('watch');
   if (name === 'prep-selected-space') return prepScenario('makeSpace');
   if (name === 'response-primary') {
@@ -164,18 +165,59 @@ export function uiScenarioState(name: string): GameState | null {
 }
 
 function seedUiScenarioStorage(name: string) {
-  if (name !== 'title-history-legacy') return;
+  if (name !== 'title-history-legacy' && name !== 'title-collection') return;
   try {
+    if (name === 'title-history-legacy') {
+      globalThis.localStorage?.setItem('honban.performance.history.v1', JSON.stringify([
+        {
+          seed: 'legacy-history-seed',
+          finishedAt: '2026-01-01T00:00:00.000Z',
+          sceneScore: 8,
+          flowScore: -2,
+          trustScore: 1,
+          backstageLoad: 4,
+          performanceStyle: 'heat',
+          title: uiScenarioCopy.legacyTitle,
+          review: uiScenarioCopy.legacyReview,
+          highlights: [],
+          logs: [],
+        },
+      ]));
+      return;
+    }
+    globalThis.localStorage?.setItem('honban.collection.v1', JSON.stringify({
+      scenes: {
+        'junior:adlib:catch:拾われたアドリブ': {
+          id: 'junior:adlib:catch:拾われたアドリブ',
+          title: '拾われたアドリブ',
+          actor: 'junior',
+          event: 'adlib',
+          response: 'catch',
+          bestTier: 'scene',
+          firstSeed: 'ui-collection-seed',
+          firstSeenAt: '2026-06-04T00:00:00.000Z',
+        },
+      },
+      achievements: {
+        'read-the-room': {
+          id: 'read-the-room',
+          label: '兆候読みの達人',
+          detail: '準備を5回以上活かす',
+          firstSeed: 'ui-collection-seed',
+          firstSeenAt: '2026-06-04T00:00:00.000Z',
+        },
+      },
+    }));
     globalThis.localStorage?.setItem('honban.performance.history.v1', JSON.stringify([
       {
-        seed: 'legacy-history-seed',
-        finishedAt: '2026-01-01T00:00:00.000Z',
-        sceneScore: 8,
-        flowScore: -2,
-        trustScore: 1,
-        backstageLoad: 4,
-        performanceStyle: 'heat',
-        title: uiScenarioCopy.legacyTitle,
+        seed: 'ui-collection-seed',
+        finishedAt: '2026-06-04T00:00:00.000Z',
+        sceneScore: 12,
+        flowScore: 4,
+        trustScore: 5,
+        backstageLoad: 1,
+        performanceStyle: 'control',
+        title: '図鑑確認用の公演',
         review: uiScenarioCopy.legacyReview,
         highlights: [],
         logs: [],

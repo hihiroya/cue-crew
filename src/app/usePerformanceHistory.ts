@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { finishPerformance, readPerformanceHistory, savePerformanceResult } from '../game/gameReducer';
-import { readCollectionState, saveCollectionForResult } from '../game/rogueliteProgress';
+import { readCollectionState, readDailyBestResults, saveCollectionForResult, saveDailyBestForResult } from '../game/rogueliteProgress';
 import type { GameState } from '../game/types';
 
 export function usePerformanceHistory(displayState: GameState, disabled = false) {
@@ -14,6 +14,10 @@ export function usePerformanceHistory(displayState: GameState, disabled = false)
     historyVersion;
     return readCollectionState();
   }, [historyVersion]);
+  const dailyBests = useMemo(() => {
+    historyVersion;
+    return readDailyBestResults();
+  }, [historyVersion]);
   const finishedResult = useMemo(() => (
     displayState.status === 'finished' ? finishPerformance(displayState) : null
   ), [displayState]);
@@ -23,11 +27,12 @@ export function usePerformanceHistory(displayState: GameState, disabled = false)
     if (savedFinishedStateRef.current === displayState) return;
     savePerformanceResult(finishedResult);
     saveCollectionForResult(finishedResult);
+    saveDailyBestForResult(finishedResult);
     savedFinishedStateRef.current = displayState;
     setHistoryVersion((version) => version + 1);
   }, [disabled, displayState, finishedResult]);
 
   const refreshHistory = () => setHistoryVersion((version) => version + 1);
 
-  return { history, collection, finishedResult, refreshHistory };
+  return { history, collection, dailyBests, finishedResult, refreshHistory };
 }
