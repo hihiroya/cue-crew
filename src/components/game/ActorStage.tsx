@@ -79,25 +79,14 @@ function SupportActors({
   nextFocusActorId?: ActorType | null;
   backstageLoad: number;
 }) {
-  if (!actors.length) return null;
+  if (!actors.length || !nextFocusActorId) return null;
   const nextActor = actors.find((actor) => actor.id === nextFocusActorId) ?? actors[0];
   return (
-    <section className="support-actors-panel" aria-label={actorStageCopy.supportAria}>
-      <div className="support-actors-head">
-        <span>{nextActor.id === nextFocusActorId ? actorStageCopy.nextRole : actorStageCopy.supportAria}</span>
+    <section className="support-actors-panel" aria-label={actorStageCopy.nextRole}>
+      <div className="support-actor-chip support-next-card is-next">
+        <span className="actor-role-badge next-role">{actorStageCopy.nextRole}</span>
         <strong>{nextActor.name}</strong>
-        <em>{supportActorSummary(nextActor, nextActor.id === nextFocusActorId, backstageLoad, actorPassiveLabel(nextActor))}</em>
-      </div>
-      <div className="support-actors" aria-label={actorStageCopy.supportAria}>
-        {actors.map((actor) => (
-          <div key={actor.id} className={`support-actor-chip ${actor.id === nextFocusActorId ? 'is-next' : ''}`}>
-            <span className={`actor-role-badge ${actor.id === nextFocusActorId ? 'next-role' : 'reserve-role'}`}>
-              {actor.id === nextFocusActorId ? actorStageCopy.nextRole : actorStageCopy.reserveRole}
-            </span>
-            <strong>{actor.name}</strong>
-            <em>{supportActorSummary(actor, actor.id === nextFocusActorId, backstageLoad, actorPassiveLabel(actor))}</em>
-          </div>
-        ))}
+        <em>{supportActorSummary(nextActor, true, backstageLoad, actorPassiveLabel(nextActor))}</em>
       </div>
     </section>
   );

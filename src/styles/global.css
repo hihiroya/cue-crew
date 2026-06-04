@@ -961,15 +961,14 @@ button:disabled {
 
 .performance-status {
   min-width: 0;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 2px 8px;
-  align-items: baseline;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow: hidden;
 }
 
 .performance-status span {
-  grid-row: 1 / span 3;
-  align-self: center;
+  flex: 0 0 auto;
   min-width: 2.75rem;
   padding: 5px 7px;
   border-radius: 7px;
@@ -981,21 +980,26 @@ button:disabled {
 }
 
 .performance-status strong {
+  flex: 0 1 auto;
   min-width: 0;
   color: var(--gold-strong);
-  font-size: 1.05rem;
+  font-size: 1rem;
   line-height: 1.12;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .performance-status small {
+  flex: 0 0 auto;
   color: var(--muted);
   font-size: 0.74rem;
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .performance-style-inline {
-  grid-column: 2 / 3;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -1139,11 +1143,11 @@ button:disabled {
 
 .score-rail-item {
   min-width: 0;
-  min-height: 48px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 7px;
+  padding: 7px;
   border-radius: var(--radius);
   border: 1px solid rgba(230, 190, 108, 0.2);
   background: rgba(12, 13, 20, 0.76);
@@ -1232,7 +1236,7 @@ button:disabled {
 }
 
 .load-light-row span:nth-child(4) {
-  box-shadow: inset 0 0 0 1px rgba(255, 119, 111, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .load-light-row .is-lit {
@@ -1811,6 +1815,20 @@ button:disabled {
   background: rgba(229, 189, 104, 0.1);
 }
 
+.support-next-card {
+  grid-template-columns: auto minmax(0, auto) minmax(0, 1fr);
+  min-height: 46px;
+  align-items: center;
+}
+
+.support-next-card em {
+  grid-column: auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .silhouette {
   width: 100%;
   height: 100%;
@@ -2250,7 +2268,7 @@ button:disabled {
 .cue-cover {
   grid-column: 1 / -1;
   display: grid;
-  gap: 4px;
+  gap: 5px;
   padding: 7px 8px;
   border-radius: 7px;
   background: rgba(0, 0, 0, 0.2);
@@ -2263,7 +2281,11 @@ button:disabled {
 }
 
 .cue-cover strong {
+  width: fit-content;
+  padding: 3px 7px;
+  border-radius: 999px;
   color: var(--gold-strong);
+  background: rgba(229, 189, 104, 0.1);
   font-size: 0.82rem;
   line-height: 1.25;
 }
@@ -2289,6 +2311,24 @@ button:disabled {
   width: fit-content;
   padding: 3px 7px;
   border-radius: 999px;
+}
+
+.prep-response-hint {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: fit-content;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.prep-response-hint .icon {
+  width: 0.92rem;
+  height: 0.92rem;
+  color: var(--gold);
 }
 
 .response-card-top {
@@ -5913,7 +5953,7 @@ button:disabled {
   }
 
   .performance-status {
-    gap: 0 7px;
+    gap: 5px;
   }
 
   .performance-status span {
@@ -5924,20 +5964,21 @@ button:disabled {
   }
 
   .performance-status strong {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
   }
 
   .performance-status small {
-    font-size: 0.68rem;
+    font-size: 0.66rem;
   }
 
   .performance-style-inline {
-    padding: 3px 6px;
-    font-size: 0.64rem;
+    gap: 4px;
+    padding: 3px 5px;
+    font-size: 0.6rem;
   }
 
   .performance-style-inline b {
-    font-size: 0.68rem;
+    font-size: 0.64rem;
   }
 
   .performance-color-chip {
@@ -6090,7 +6131,7 @@ button:disabled {
   .focus-actor-card {
     grid-template-columns: 70px minmax(0, 1fr);
     min-height: 0;
-    padding: 22px 8px 8px;
+    padding: 21px 8px 8px;
   }
 
   .focus-actor-card .actor-figure-wrap {
@@ -6180,6 +6221,22 @@ button:disabled {
     min-height: 40px;
   }
 
+  .support-next-card {
+    grid-template-columns: auto auto minmax(0, 1fr);
+    min-height: 38px;
+    gap: 4px 7px;
+    padding: 7px 8px;
+  }
+
+  .support-next-card .actor-role-badge {
+    padding: 3px 7px;
+    font-size: 0.62rem;
+  }
+
+  .support-next-card strong {
+    font-size: 0.82rem;
+  }
+
   .support-actor-chip em {
     display: -webkit-box;
     overflow: hidden;
@@ -6247,6 +6304,10 @@ button:disabled {
   .cue-cover {
     padding: 6px;
     gap: 4px;
+  }
+
+  .prep-response-hint {
+    font-size: 0.64rem;
   }
 
   .response-effect-summary {

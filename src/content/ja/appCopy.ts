@@ -167,6 +167,7 @@ export const appCopy = {
     onExpected: '備えどおりに来たら',
     onMissed: '外れたら',
     receiveWith: (responseLabel: string, aim: string) => `${responseLabel}で受ける。${aim}。`,
+    responseHint: (responseLabel: string) => `本番で${responseLabel}`,
     approvalLabel: '承認欄',
     approved: '承認済',
     pending: '未承認',

@@ -46,14 +46,17 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, pre
                 <Icon name={prep} />
                 <span className="prep-title">
                   <strong>{PREP_LABELS[prep]}</strong>
-                  <em>{prepShortAim(prep)}</em>
+                  <em>{prepToneLabel(tone)}</em>
                 </span>
               </div>
               <div className="cue-cover">
                 <span>{appCopy.prep.coverage(coveredOmens.length, visibleOmens.length)}</span>
-                <strong><Icon name={PREP_PRIMARY_RESPONSE[prep]} />{RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}</strong>
+                <strong>{prepShortAim(prep)}</strong>
               </div>
-              <small className={`prep-tone-dot tone-${tone}`}>{prepToneLabel(tone)}</small>
+              <small className="prep-response-hint">
+                <Icon name={PREP_PRIMARY_RESPONSE[prep]} />
+                {appCopy.prep.responseHint(RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]])}
+              </small>
               {previousPrep === prep ? <em className="replay-ghost-mark">{appCopy.replayGhost.previous}</em> : null}
               <PrepSelectionMarker visible={isInspected} />
             </button>
