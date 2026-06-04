@@ -193,6 +193,15 @@ function RecordsView({
           <p className="muted">{appCopy.title.emptyHistory}</p>
         ) : (
           <>
+            <div className="recent-replay-list">
+              <span>{appCopy.title.recentReplayTitle}</span>
+              {history.slice(0, 3).map((item) => (
+                <button key={`recent-${item.seed}-${item.finishedAt}`} type="button" onClick={() => onReplay(item.seed)}>
+                  <strong>{item.insight.rank}</strong>
+                  <small>{item.title}</small>
+                </button>
+              ))}
+            </div>
             {badgeOptions.length ? (
               <div className="history-badge-filter" aria-label={appCopy.title.historyBadgeFilter}>
                 <button type="button" className={selectedBadgeId === null ? 'is-active' : ''} onClick={() => onSelectBadge(null)}>{appCopy.title.historyBadgeAll}</button>
@@ -251,6 +260,15 @@ function HowToView({ onStart }: { onStart: () => void }) {
         <h2>{appCopy.title.catchphrase}</h2>
       </div>
       <div className="howto-panel">
+        <div className="howto-step-grid">
+          {appCopy.title.howToSteps.map((step, index) => (
+            <article key={step.title}>
+              <span>{index + 1}</span>
+              <strong>{step.title}</strong>
+              <p>{step.body}</p>
+            </article>
+          ))}
+        </div>
         {appCopy.title.howToLines.map((line) => <p key={line}>{line}</p>)}
       </div>
       <button type="button" className="primary-action" onClick={onStart}>{appCopy.title.start}</button>
@@ -295,6 +313,18 @@ function CollectionDetails({ collection, onReplay }: { collection: CollectionSta
   return (
     <div className="collection-details">
       <section>
+        <h3>{appCopy.title.collectionLockedScenes}</h3>
+        <div className="collection-scene-list">
+          {lockedHints.map((hint) => (
+            <article key={hint.id} className="is-locked">
+              <span>{hint.actor === 'any' ? '？？？' : labelFor(ACTOR_LABELS, hint.actor)} / {labelFor(EVENT_LABELS, hint.event)} / {hint.response ? labelFor(RESPONSE_LABELS, hint.response) : '？？？'}</span>
+              <strong>{appCopy.title.collectionLockedSceneTitle}</strong>
+              <small>{hint.hint}</small>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section>
         <h3>{appCopy.title.collectionRecentScenes}</h3>
         {scenes.length ? (
           <div className="collection-scene-list">
@@ -308,18 +338,6 @@ function CollectionDetails({ collection, onReplay }: { collection: CollectionSta
             ))}
           </div>
         ) : <p>{appCopy.title.collectionNoScenes}</p>}
-      </section>
-      <section>
-        <h3>{appCopy.title.collectionLockedScenes}</h3>
-        <div className="collection-scene-list">
-          {lockedHints.map((hint) => (
-            <article key={hint.id} className="is-locked">
-              <span>{hint.actor === 'any' ? '？？？' : labelFor(ACTOR_LABELS, hint.actor)} / {labelFor(EVENT_LABELS, hint.event)} / {hint.response ? labelFor(RESPONSE_LABELS, hint.response) : '？？？'}</span>
-              <strong>{appCopy.title.collectionLockedSceneTitle}</strong>
-              <small>{hint.hint}</small>
-            </article>
-          ))}
-        </div>
       </section>
       <section>
         <h3>{appCopy.title.collectionAchievementList}</h3>
