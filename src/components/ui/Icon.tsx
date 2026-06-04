@@ -1,8 +1,8 @@
-import type { MainResponse, PrepAction } from '../../game/types';
+import type { ActorEventType, MainResponse, PrepAction } from '../../game/types';
 import type { ReactNode } from 'react';
 
 type IconProps = {
-  name: PrepAction | MainResponse | 'scene' | 'flow' | 'trust' | 'load' | 'spark' | 'history' | 'event' | 'actor' | 'state' | 'act' | 'repeat';
+  name: PrepAction | MainResponse | ActorEventType | 'scene' | 'flow' | 'trust' | 'load' | 'spark' | 'history' | 'event' | 'actor' | 'state' | 'act' | 'repeat';
   className?: string;
 };
 
@@ -118,6 +118,55 @@ export function Icon({ name, className }: IconProps) {
         <path d="M17 3l3 3-3 3" fill="none" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
         <path d="M4 11V9a3 3 0 0 1 3-3h13M7 21l-3-3 3-3" fill="none" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
         <path d="M20 13v2a3 3 0 0 1-3 3H4" fill="none" stroke={stroke} strokeLinecap="round" strokeWidth="1.8" />
+      </svg>
+    ),
+    stepForward: (
+      <svg {...common}>
+        <path d="M6 19c4-1 7-4 9-9" fill="none" stroke={stroke} strokeLinecap="round" strokeWidth="1.8" />
+        <path d="M12 6h6v6M7 11h4M5 15h5" fill="none" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+      </svg>
+    ),
+    adlib: (
+      <svg {...common}>
+        <path d="M5 7h14v8H9l-4 4V7Z" fill="none" stroke={stroke} strokeLinejoin="round" strokeWidth="1.8" />
+        <path d="M9 11h.01M12 11h.01M15 11h.01" fill="none" stroke={stroke} strokeLinecap="round" strokeWidth="2.4" />
+      </svg>
+    ),
+    heatUp: (
+      <svg {...common}>
+        <path d="M12 21c-4-2-6-5-5-8 1-3 4-4 4-9 4 3 7 7 5 12 1-1 2-3 2-5 2 3 1 7-6 10Z" fill="none" stroke={stroke} strokeLinejoin="round" strokeWidth="1.8" />
+      </svg>
+    ),
+    silence: (
+      <svg {...common}>
+        <path d="M5 12h14" fill="none" stroke={stroke} strokeLinecap="round" strokeWidth="1.8" />
+        <path d="M9 8v8M15 8v8" fill="none" stroke={stroke} strokeLinecap="round" strokeWidth="1.8" opacity=".65" />
+      </svg>
+    ),
+    positionShift: (
+      <svg {...common}>
+        <path d="M6 6h6v6H6zM12 12h6v6h-6z" fill="none" stroke={stroke} strokeLinejoin="round" strokeWidth="1.8" />
+        <path d="m13 5 3 3-3 3" fill="none" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+      </svg>
+    ),
+    tempoRush: (
+      <svg {...common}>
+        <path d="M4 13h5l2-6 3 10 2-4h4" fill="none" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+        <path d="M15 5h5v5" fill="none" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+      </svg>
+    ),
+    delayedExit: (
+      <svg {...common}>
+        <path d="M6 5h10v14H6z" fill="none" stroke={stroke} strokeLinejoin="round" strokeWidth="1.8" />
+        <path d="M16 12h4M18 10l2 2-2 2M10 9v6" fill="none" stroke={stroke} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+      </svg>
+    ),
+    ensembleWaver: (
+      <svg {...common}>
+        <circle cx="7" cy="8" r="2" fill="none" stroke={stroke} strokeWidth="1.6" />
+        <circle cx="17" cy="8" r="2" fill="none" stroke={stroke} strokeWidth="1.6" />
+        <circle cx="12" cy="15" r="2" fill="none" stroke={stroke} strokeWidth="1.6" />
+        <path d="M5 18c2-2 4-2 6 0M13 18c2-2 4-2 6 0" fill="none" stroke={stroke} strokeLinecap="round" strokeWidth="1.6" />
       </svg>
     ),
   };

@@ -60,7 +60,12 @@ export function ResponsePanel({ selected, disabled, state, previousTurnLog = nul
         ))}
       </div>
       <ResponseSendBar disabled={disabled} response={inspected.response} onSelect={onSelect} />
-      <ResponseConsole insight={inspected} state={state} buildCue={responseBuildCue(inspected.response, buildStyle)} />
+      <ResponseConsole
+        insight={inspected}
+        state={state}
+        buildCue={responseBuildCue(inspected.response, buildStyle)}
+        replayDelta={replayDeltaForResponse({ currentTier: inspected.resultTier, currentLoad: inspected.deltaLoad, previous: previousTurnLog })}
+      />
     </section>
   );
 }
@@ -173,7 +178,17 @@ function ResponseSendBar({
   );
 }
 
-function ResponseConsole({ insight, state, buildCue }: { insight: ResponseInsight; state: GameState; buildCue: string }) {
+function ResponseConsole({
+  insight,
+  state,
+  buildCue,
+  replayDelta,
+}: {
+  insight: ResponseInsight;
+  state: GameState;
+  buildCue: string;
+  replayDelta: ReturnType<typeof replayDeltaForResponse>;
+}) {
   const buildLevelItem = insight.scoreBreakdown.find((item) => item.id === 'build-level');
   return (
     <aside className={`decision-note response-console relation-${insight.prepRelationTone}`}>
@@ -214,6 +229,12 @@ function ResponseConsole({ insight, state, buildCue }: { insight: ResponseInsigh
         <div className="console-fray relation-recover">
           <span>{responsePanelCopy.buildLevel}</span>
           <strong>{buildLevelItem.label} {buildLevelItem.value > 0 ? `+${buildLevelItem.value}` : buildLevelItem.value}</strong>
+        </div>
+      ) : null}
+      {replayDelta ? (
+        <div className={`console-fray replay-console-delta delta-${replayDelta.tone}`}>
+          <span>{responsePanelCopy.replayDelta}</span>
+          <strong>{replayDelta.label}</strong>
         </div>
       ) : null}
       {insight.frayRelationLabel ? (

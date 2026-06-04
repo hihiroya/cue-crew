@@ -2,6 +2,7 @@ import { ACTOR_TRAITS, EVENT_LABELS, STATE_LABELS } from '../../game/constants';
 import { topOmenEvents } from '../../game/actorLogic';
 import type { Actor, ActorEvent, ActorType, PrepAction } from '../../game/types';
 import { ActorSilhouette } from '../actors/ActorSilhouette';
+import { Icon } from '../ui/Icon';
 import { STATE_HINTS, actorPassiveLabel, actorStageCopy, supportActorSummary } from '../../content/ja/actorStageCopy';
 
 type Props = {
@@ -89,6 +90,7 @@ function OmenList({ actor, seed, totalTurn }: { actor: Actor; seed: string; tota
       <div className="omen-chip-list">
         {sorted.map(({ event, intensity }) => (
           <em key={event} className={`omen-chip omen-${intensity}`}>
+            <Icon name={event} />
             <b>{EVENT_LABELS[event]}</b>
             <small>{intensity}</small>
           </em>

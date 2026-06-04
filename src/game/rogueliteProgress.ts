@@ -33,6 +33,14 @@ export type CollectionState = {
   achievements: Record<string, AchievementEntry>;
 };
 
+export type SceneHint = {
+  id: string;
+  actor: string;
+  event: string;
+  response?: string;
+  hint: string;
+};
+
 export type SeedComparison = {
   totalScoreDelta: number;
   rankDeltaLabel: string;
@@ -106,6 +114,21 @@ export const ACHIEVEMENT_CATALOG: AchievementUnlock[] = [
   { id: 'light-backstage', label: '三日間を軽く渡した', detail: '最終負荷を低く抑える' },
   { id: 'read-the-room', label: '兆候読みの達人', detail: '準備を5回以上活かす' },
   { id: 'all-cue-run', label: '四つのキューを使い切った', detail: '全対応を使って場面を作る' },
+  { id: 'heat-finale', label: '熱量の千秋楽', detail: '熱量型Lv.3で千秋楽に場面以上を作る' },
+  { id: 'breath-finale', label: '余韻の千秋楽', detail: '余韻型Lv.3で千秋楽に場面以上を作る' },
+  { id: 'control-finale', label: '精度の千秋楽', detail: '精度型Lv.3で千秋楽に場面以上を作る' },
+  { id: 'closure-finale', label: '収束の千秋楽', detail: '収束型Lv.3で千秋楽に場面以上を作る' },
+];
+
+export const SCENE_HINT_CATALOG: SceneHint[] = [
+  { id: 'junior:adlib:catch', actor: 'junior', event: 'adlib', response: 'catch', hint: '予定外の一言を客席へ渡す' },
+  { id: 'junior:heatUp:catch', actor: 'junior', event: 'heatUp', response: 'catch', hint: '熱を止めずに見せ場へ伸ばす' },
+  { id: 'lead:silence:wait', actor: 'lead', event: 'silence', response: 'wait', hint: '沈黙の間を信じる' },
+  { id: 'lead:delayedExit:wait', actor: 'lead', event: 'delayedExit', response: 'wait', hint: '遅れた退場を余韻にする' },
+  { id: 'skilled:positionShift:arrange', actor: 'skilled', event: 'positionShift', response: 'arrange', hint: 'ズレた位置へ意味を与える' },
+  { id: 'skilled:ensembleWaver:arrange', actor: 'skilled', event: 'ensembleWaver', response: 'arrange', hint: '揺れた群像を包む' },
+  { id: 'any:tempoRush:cut', actor: 'any', event: 'tempoRush', response: 'cut', hint: '走った拍を暗転で閉じる' },
+  { id: 'any:silence:wait', actor: 'any', event: 'silence', response: 'wait', hint: '客席まで届く間を作る' },
 ];
 
 export function discoverySummary(logs: TurnLog[], backstageLoad: number): DiscoverySummary {
@@ -128,6 +151,9 @@ function achievementUnlocks(logs: TurnLog[], backstageLoad: number): Achievement
   const sceneOrBetter = logs.filter((log) => log.resultTier === 'masterpiece' || log.resultTier === 'scene').length;
   const prepHits = logs.filter((log) => log.prepMatched).length;
   const usedAllResponses = (['catch', 'arrange', 'wait', 'cut'] as MainResponse[]).every((response) => responseCount(response) > 0);
+  const style = logs.find((log) => log.performanceStyle)?.performanceStyle ?? (logs.length >= 2 ? determinePerformanceStyle(logs) : null);
+  const buildStyle = buildStyleSummary(logs, style);
+  const finaleSceneOrBetter = logs.some((log) => log.act === 3 && log.turnInAct === 2 && ['masterpiece', 'scene'].includes(log.resultTier));
   return [
     masterpieceBy('catch') >= 2 ? achievementById('heat-catcher') : null,
     logs.some((log) => log.act === 3 && log.mainResponse === 'wait' && ['masterpiece', 'scene'].includes(log.resultTier))
@@ -142,6 +168,10 @@ function achievementUnlocks(logs: TurnLog[], backstageLoad: number): Achievement
     backstageLoad <= 1 ? achievementById('light-backstage') : null,
     prepHits >= 5 ? achievementById('read-the-room') : null,
     usedAllResponses && sceneOrBetter >= 3 ? achievementById('all-cue-run') : null,
+    buildStyle.style === 'heat' && buildStyle.level >= 3 && finaleSceneOrBetter ? achievementById('heat-finale') : null,
+    buildStyle.style === 'breath' && buildStyle.level >= 3 && finaleSceneOrBetter ? achievementById('breath-finale') : null,
+    buildStyle.style === 'control' && buildStyle.level >= 3 && finaleSceneOrBetter ? achievementById('control-finale') : null,
+    buildStyle.style === 'closure' && buildStyle.level >= 3 && finaleSceneOrBetter ? achievementById('closure-finale') : null,
   ].filter((item): item is AchievementUnlock => Boolean(item));
 }
 
@@ -229,6 +259,14 @@ export function achievementListLabel(items: AchievementUnlock[]) {
 
 export function resultTierShort(tier: TurnLog['resultTier']) {
   return RESULT_TIER_LABELS[tier];
+}
+
+export function lockedSceneHints(collection: CollectionState, limit = 4): SceneHint[] {
+  return SCENE_HINT_CATALOG.filter((hint) => !Object.values(collection.scenes).some((scene) => (
+    (hint.actor === 'any' || scene.actor === hint.actor)
+    && scene.event === hint.event
+    && (!hint.response || scene.response === hint.response)
+  ))).slice(0, limit);
 }
 
 export function readDailyBestResults(): Record<string, PerformanceResult> {

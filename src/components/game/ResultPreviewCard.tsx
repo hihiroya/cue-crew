@@ -48,7 +48,7 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
       </div>
       <div className="cue-route">
         <span><Icon name="actor" />{ACTOR_LABELS[preview.focusActorType]}</span>
-        <span><Icon name="event" />{EVENT_LABELS[preview.actorEventType]}</span>
+        <span><Icon name={preview.actorEventType} />{EVENT_LABELS[preview.actorEventType]}</span>
         <span><Icon name={preview.mainResponse} />{RESPONSE_LABELS[preview.mainResponse]}</span>
       </div>
       <div className={`prep-hit-banner cue-stamp ${prepBanner.className}`}>

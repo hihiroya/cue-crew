@@ -18,6 +18,7 @@ export const responsePanelCopy = {
   buildCue: 'ビルド',
   buildLevel: '型Lv補正',
   previousCue: '前回',
+  replayDelta: '前回比',
   unknownEvent: '未定',
   runSheetAria: '進行表',
   resultRailAria: '結果レンジ',

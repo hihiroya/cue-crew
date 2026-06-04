@@ -34,6 +34,7 @@
     "check:ui:prep": "npm run build && node scripts/check-ui-layout.mjs --preset=prep-panel",
     "check:ui:response": "npm run build && node scripts/check-ui-layout.mjs --preset=response-panel",
     "check:ui:result": "npm run build && node scripts/check-ui-layout.mjs --preset=result-panel",
+    "balance:report": "node scripts/balance-report.mjs",
     "images:actors": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/process-actor-images.ps1",
     "verify:ui": "npm run check:ui",
     "verify:ui:full": "npm run build && npm run screenshot:ui",

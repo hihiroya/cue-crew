@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import titlePosterImage from '../assets/title/title-poster.webp';
 import type { PerformanceResult } from '../game/types';
-import { ACHIEVEMENT_CATALOG, dailyRunFor, resultTierShort, type CollectionState } from '../game/rogueliteProgress';
+import { ACHIEVEMENT_CATALOG, dailyRunFor, lockedSceneHints, resultTierShort, type CollectionState } from '../game/rogueliteProgress';
 import { Icon } from '../components/ui/Icon';
 import { ACTOR_LABELS, EVENT_LABELS, RESPONSE_LABELS } from '../game/constants';
 import { appCopy, titleHistoryMeta } from '../content/ja/appCopy';
@@ -113,6 +113,7 @@ function CollectionDetails({ collection, onReplay }: { collection: CollectionSta
   const scenes = Object.values(collection.scenes)
     .sort((a, b) => b.firstSeenAt.localeCompare(a.firstSeenAt))
     .slice(0, 8);
+  const lockedHints = lockedSceneHints(collection);
   return (
     <div className="collection-details">
       <section>
@@ -129,6 +130,18 @@ function CollectionDetails({ collection, onReplay }: { collection: CollectionSta
             ))}
           </div>
         ) : <p>{appCopy.title.collectionNoScenes}</p>}
+      </section>
+      <section>
+        <h3>{appCopy.title.collectionLockedScenes}</h3>
+        <div className="collection-scene-list">
+          {lockedHints.map((hint) => (
+            <article key={hint.id} className="is-locked">
+              <span>{hint.actor === 'any' ? '？？？' : labelFor(ACTOR_LABELS, hint.actor)} / {labelFor(EVENT_LABELS, hint.event)} / {hint.response ? labelFor(RESPONSE_LABELS, hint.response) : '？？？'}</span>
+              <strong>未開放の場面</strong>
+              <small>{hint.hint}</small>
+            </article>
+          ))}
+        </div>
       </section>
       <section>
         <h3>{appCopy.title.collectionAchievementList}</h3>

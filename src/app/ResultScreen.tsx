@@ -180,7 +180,8 @@ function PerformancePoster({ result, styleLabel }: { result: PerformanceResult; 
         <em>{styleLabel}</em>
       </div>
       <p>{bestCue ? bestCue.sceneTitle : result.reviewNotes[0] ?? result.review}</p>
-      <small>{result.seed}</small>
+      <small>{appCopy.result.posterSeed}</small>
+      <code>{result.seed}</code>
     </article>
   );
 }
