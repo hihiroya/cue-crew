@@ -1,5 +1,5 @@
 import { EVENT_LABELS, PERFORMANCE_SLOT_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS } from './gameLabels';
-import type { GameState, MainResponse, ResponseEffectTarget, ResponseInsight, ResultTier } from '../../game/types';
+import type { GameState, MainResponse, ResponseInsight, ResultTier } from '../../game/types';
 
 export const responsePanelCopy = {
   heading: '対応を決める',
@@ -33,22 +33,15 @@ export function responseSendAria(response: MainResponse) {
   return `${RESPONSE_LABELS[response]}のキューを出す`;
 }
 
-export function effectTargetShortLabel(target: ResponseEffectTarget) {
-  if (target === 'scene') return '評';
-  if (target === 'flow') return '流';
-  if (target === 'trust') return '信';
-  return '負';
-}
-
 export function prepConnectionLabel(tone: ResponseInsight['prepRelationTone']) {
   if (tone === 'primary') return '準備が活きる';
-  if (tone === 'alternate') return '準備外でも効く';
+  if (tone === 'alternate') return '備え外で効く';
   return '準備と合わない';
 }
 
 export function prepConnectionShortLabel(tone: ResponseInsight['prepRelationTone']) {
   if (tone === 'primary') return '準備活きる';
-  if (tone === 'alternate') return '準備外で効く';
+  if (tone === 'alternate') return '備え外';
   return '準備合わず';
 }
 
@@ -89,7 +82,7 @@ export function decisionMemo(insight: ResponseInsight, effectSummaryText: string
   const prep = insight.prepRelationTone === 'primary'
     ? '準備と正面から噛み合う'
     : insight.prepRelationTone === 'alternate'
-      ? '準備の想定外でも効く'
+      ? '備えとは別筋で効く'
       : '準備とは噛み合いにくい';
   const danger = insight.dangerWarning ? ` ${insight.downsideLabel}。` : '';
   const trust = insight.actorTrustLabel ? ` ${insight.actorTrustLabel}` : '';
