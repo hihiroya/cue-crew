@@ -1,8 +1,34 @@
-# 舞台裏ローグライト・スコアアタック詳細仕様案
+# 舞台裏ローグライト・スコアアタック現行仕様
 
-この文書は、現行の `本番中 x 舞台裏` を「何度でもプレイしたくなる舞台裏ローグライト・スコアアタック」へ発展させるための詳細仕様案です。
+この文書は、`本番中 x 舞台裏` のローグライト・スコアアタック要素について、現行実装と今後の拡張方針をまとめた保守用仕様です。
 
 既存のゲームシステム仕様、準備フェーズ UI ガイド、スコアアタック向け相性設計メモを前提に、反復プレイ、情報量整理、アイコン化、長期目標、同 seed 詰めの体験を統合する上位方針として扱います。
+
+## 現行実装サマリー
+
+実装済みの体験は、短い6ターン公演を何度も回し、`別seedで発見する`、`同seedで詰める`、`今日の巡り合わせを更新する` の3導線へ自然に戻す構造です。
+
+| 領域 | 現行仕様 |
+| --- | --- |
+| 公演ビルド | 選択傾向から `heat`、`breath`、`control`、`closure` の型を集計し、型レベルと型ボーナスを終演評価へ反映する。 |
+| 同seed再演 | 履歴内の同seed結果を参照し、準備/対応の前回マーカー、前回比、履歴からの再演導線を表示する。 |
+| 日替わり挑戦 | ローカル日付から `honban-daily-YYYY-MM-DD` seed を生成し、日替わり修飾子と自己ベストを表示する。 |
+| 図鑑/称号 | 場面図鑑、代表未解放ヒント、称号を `localStorage` に保存し、タイトルと終演で進捗を見せる。 |
+| 情報量整理 | 出来事/状態/対応/型/日替わりをアイコンと短いチップで提示し、詳細文は選択中パネルや結果画面に寄せる。 |
+| バランス確認 | `npm run balance:report -- --samples=48` で主要戦略のスコア、負荷、型、イベント分布を確認する。 |
+
+主要な実装場所は以下です。
+
+| ファイル | 役割 |
+| --- | --- |
+| `src/game/rogueliteProgress.ts` | 図鑑、称号、発見点、型集計、日替わり自己ベスト、再演前回比の中核。 |
+| `src/game/dailyRun.ts` | 日替わりseed、修飾子、イベント重み補正、負荷揺れ補正。 |
+| `src/game/scoreRules.ts` | 対応採点、型レベルボーナス、日替わり負荷補正、文脈化された兆候。 |
+| `src/game/actorLogic.ts` | 役者イベント重みと日替わり修飾子の適用。 |
+| `src/app/usePerformanceHistory.ts` | 公演履歴、図鑑、日替わり自己ベストの保存副作用。 |
+| `src/app/TitleScreen.tsx` | 日替わり挑戦、履歴再演、図鑑/称号/ヒントの入口。 |
+| `src/app/ResultScreen.tsx` | 終演時の型、発見、前回比、日替わり自己ベスト、ポスター表示。 |
+| `scripts/balance-report.mjs` | 依存追加なしのバランス集計レポート。 |
 
 ## 目標
 
@@ -420,27 +446,34 @@ HUDは以下のモジュールを持つ。
 - 観客アンケート
 - ポスター
 
-## データモデル案
+## 現行データモデル
 
-### 履歴拡張
+### 履歴と終演結果
 
-`PerformanceResult` に以下を追加する。
+`PerformanceResult` は公演点だけでなく、ローグライト表示に必要な派生情報を持つ。終演時に `src/game/rogueliteProgress.ts` で算出し、`src/app/usePerformanceHistory.ts` で履歴と図鑑へ保存する。
 
 ```ts
 type PerformanceResult = {
-  discoveryScore: number;
-  buildStyleLevel: number;
-  buildStyleProgress: number;
-  unlockedSceneIds: string[];
-  unlockedAchievementIds: string[];
-  runModifiers: RunModifier[];
-  previousSeedBest?: {
+  seed: string;
+  finishedAt: string;
+  sceneScore: number;
+  flowScore: number;
+  trustScore: number;
+  backstageLoad: number;
+  insight: {
     totalScore: number;
-    rank: string;
-    turnSummaries: TurnComparisonSummary[];
+    rank: 'S+' | 'S' | 'A' | 'B' | 'C' | 'D';
+    discoveryScore: number;
+    buildStyle: BuildStyleSummary;
+    unlockedAchievements: AchievementUnlock[];
+    sceneCollectionCount: number;
   };
+  logs: TurnLog[];
+  highlights: TurnLog[];
 };
 ```
+
+`discoveryScore` は初回解放や称号などの発見報酬であり、同seed再演の純粋な比較には使わない。スコアアタックの公平性を守るため、今後も `totalScore` と `discoveryScore` は分離する。
 
 ### 図鑑保存
 
@@ -454,9 +487,16 @@ honban.collection.v1
 type CollectionState = {
   scenes: Record<string, SceneCollectionEntry>;
   achievements: Record<string, AchievementEntry>;
-  dailySeeds: Record<string, DailySeedResult>;
 };
 ```
+
+日替わり自己ベストは図鑑とは別キーで保存する。
+
+```txt
+honban.daily.best.v1
+```
+
+履歴、図鑑、日替わり自己ベストはいずれもローカル保存であり、読み込み失敗時は空の状態として扱う。保存形式を変更する場合は、旧JSONの読み込み失敗でゲーム開始不能にならないようにする。
 
 ### 今日の巡り合わせ
 
@@ -468,41 +508,76 @@ dailySeed = honban-daily-YYYY-MM-DD
 
 タイムゾーンは端末ローカルでよい。オンラインランキングを導入するまではサーバー時刻を使わない。
 
+現行の日替わり修飾子は `src/game/dailyRun.ts` の `DailyModifierId` で管理する。追加時は以下を同時に更新する。
+
+- `DAILY_MODIFIERS`
+- `modifierForSeed`
+- `applyDailyEventWeights`
+- `dailyVolatilityBonus`
+- タイトル画面の短縮表示
+- `tests/roguelite-progress.test.ts`
+
 ## 実装フェーズ
 
 ### Phase 1: 情報量整理
 
-- 兆候/出来事/状態/型/ほころびのアイコン体系を追加する。
-- 準備カードの文字量を減らす。
-- 対応カードを `結果レンジ + 準備関係 + 主要影響2件` に整理する。
-- 進行卓HUDに型影響と前回比の枠を追加できる構造にする。
+状態: 実装済み。
+
+- 兆候/出来事/状態/型/ほころびのアイコン体系を追加済み。
+- 準備カードと対応カードは短いチップ、アイコン、差分中心に整理済み。
+- 対応カードは `結果レンジ + 準備関係 + 主要影響 + 前回比` を常時表示する。
+- 詳細は進行卓、結果プレビュー、終演分析へ逃がす。
 
 ### Phase 2: 再演スコアアタック
 
-- 同 seed の前回ログを参照できるようにする。
-- 準備/対応カードに前回ゴーストを表示する。
-- 結果/終演で前回比を出す。
-- 最大改善ターンをより明確にする。
+状態: 実装済み。改善余地あり。
+
+- 同seedの履歴を参照し、履歴から同じ巡り合わせを再演できる。
+- 準備/対応カードに前回マーカーを表示する。
+- 対応見込みと終演画面で前回比を表示する。
+- 最大改善ターンは終演画面の再演チャレンジとして提示する。今後は `どの選択を変えると伸びるか` の提案精度を上げる。
 
 ### Phase 3: 型ビルド強化
 
-- 型ゲージ、型レベル、型専用ボーナスを追加する。
-- 結果画面で型ゲージ変化を表示する。
-- 終演タイトル/レビュー/称号へ型レベルを反映する。
+状態: 実装済み。演出強化余地あり。
+
+- 型ゲージ、型レベル、型専用ボーナスを追加済み。
+- 結果画面と終演画面で型を表示する。
+- 型レベル2以上は採点に加点する。
+- 終演タイトル/レビュー/称号に型達成を反映する。今後はターン中の型ゲージ変化演出をさらに強める。
 
 ### Phase 4: 図鑑と称号
 
-- 場面図鑑を追加する。
-- 称号を追加する。
-- 終演時に解放演出を出す。
-- タイトル画面から図鑑へ入れるようにする。
+状態: 実装済み。拡張継続。
+
+- 場面図鑑、代表未解放ヒント、称号を追加済み。
+- タイトル画面から図鑑へ入り、進捗、最新解放、ヒントを見られる。
+- 終演時に新規場面、称号、発見点を表示する。
+- 新しい役者イベントや場面タイトルを追加した場合は、図鑑条件とヒントも同時に増やす。
 
 ### Phase 5: 今日の巡り合わせ
 
-- daily seed を追加する。
-- 巡り合わせ修飾子を導入する。
-- タイトル画面に今日の挑戦を表示する。
-- 今日の自己ベストを保存する。
+状態: 実装済み。
+
+- daily seed を追加済み。
+- 巡り合わせ修飾子をイベント重みと負荷揺れへ反映する。
+- タイトル画面に今日の挑戦、特徴、自己ベストを表示する。
+- 今日の自己ベストを `honban.daily.best.v1` に保存する。
+
+## 保守チェックリスト
+
+ローグライト/スコアアタック関連を変更した場合は、変更範囲に応じて以下を確認する。
+
+```bash
+npm run test:logic
+npm run balance:report -- --samples=48
+npm run check:ui
+```
+
+- 採点、イベント重み、日替わり補正、型ボーナスを変えたら `balance:report` で主要戦略の平均点、負荷、型分布が極端に偏っていないかを見る。
+- UI文言、カード密度、図鑑/履歴表示を変えたら `check:ui` を使う。通常はPNGを作らない。
+- 保存キーや保存形式を変える場合は、旧データ読み込み失敗時のフォールバックを維持し、ゲーム開始不能にしない。
+- 永続解放は見た目、記録、ヒントに留める。プレイヤー性能を上げる永続強化はスコアアタックの公平性を壊すため追加しない。
 
 ## 非目標
 

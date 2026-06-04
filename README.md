@@ -30,11 +30,22 @@ npm run test:logic
 
 ほころびなどのゲームロジックを、依存追加なしで Node.js の標準テストランナーにより確認します。テスト用の一時ビルドは `tmp/test-build/` に出力されます。
 
+## バランス確認
+
+採点、イベント重み、日替わり補正、型ボーナスを変更した場合は、主要戦略の偏りを確認します。
+
+```bash
+npm run balance:report -- --samples=48
+```
+
+レポートは平均スコア、負荷、準備ヒット率、ランク分布、型分布、イベント分布を出力します。詳細は [舞台裏ローグライト・スコアアタック現行仕様](docs/roguelite-score-attack-design.md) と [ゲームシステム仕様](docs/game-system-spec.md) を参照してください。
+
 ## リポジトリ運用
 
 - 生成物の `dist/`、一時ファイルの `tmp/`、依存ディレクトリの `node_modules/` は Git 管理対象外です。
 - Pull request では GitHub Actions が `npm ci --ignore-scripts`、`npm audit signatures`、`npm run build` を実行します。
 - 依存関係を変更する場合は [CONTRIBUTING.md](CONTRIBUTING.md) の確認項目に従ってください。
+- 変更範囲ごとの担当ファイルと確認コマンドは [開発・保守メモ](docs/development-maintenance.md) を参照してください。
 
 ## UI確認
 
@@ -141,6 +152,8 @@ npm run cf:deploy -- --branch main
 管理するスコアは `評判`、`段取り`、`座組信頼`、`裏方負荷` です。裏方負荷が高まるとほころびが起き、次のターン以降にうまく拾うと場面名へ影響します。
 
 詳細な現行仕様は [ゲームシステム仕様](docs/game-system-spec.md) を参照してください。
+
+反復プレイ、同seed再演、日替わり挑戦、場面図鑑、称号、公演ビルドの仕様は [舞台裏ローグライト・スコアアタック現行仕様](docs/roguelite-score-attack-design.md) を参照してください。
 
 将来的なスコアアタック対人戦を見据えた相性4軸の拡張案は [スコアアタック向け相性設計メモ](docs/score-attack-affinity-design.md) にまとめています。
 

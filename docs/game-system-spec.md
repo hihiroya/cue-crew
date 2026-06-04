@@ -668,6 +668,11 @@ trustBonus = clamp(floor(trustScore / 4), -2, 2)
 | `title` | 公演タイトル |
 | `review` | 公演レビュー |
 | `highlights` | 最大5件のハイライト |
+| `insight.totalScore` | 公演点。通常の終演ランク、履歴、同seed比較に使う |
+| `insight.discoveryScore` | 発見点。図鑑/称号などの初回解放報酬で、同seed比較には使わない |
+| `insight.buildStyle` | 選択傾向から集計した公演ビルド、型レベル、進捗 |
+| `insight.unlockedAchievements` | この公演で新たに解放された称号 |
+| `insight.sceneCollectionCount` | この公演ログから図鑑対象になる場面数 |
 
 ### 公演ランク
 
@@ -721,6 +726,35 @@ highLoadPenalty = backstageLoad >= 4 ? 3 : 0
 
 タイトル画面では履歴を表示し、履歴項目を押すと同じ巡り合わせで再演できる。履歴には公演ランク、評判、段取り、座組信頼、準備ヒット数、名場面数を表示する。同じ巡り合わせの古い履歴がある場合は前回比を表示し、履歴内の最高評価、評判最高、最少負荷も短く示す。内部的には同じseedの履歴として照合する。
 
+## ローグライト進捗保存
+
+公演履歴とは別に、場面図鑑、称号、日替わり自己ベストを `localStorage` に保存する。いずれもゲーム進行を有利にする永続強化ではなく、発見、記録、再挑戦動機を作るための保存である。
+
+| キー | 内容 | 実装 |
+| --- | --- | --- |
+| `honban.collection.v1` | 解放済み場面、最高ランク、初回seed、称号 | `src/game/rogueliteProgress.ts` |
+| `honban.daily.best.v1` | 日付ごとの日替わり挑戦自己ベスト | `src/game/rogueliteProgress.ts` |
+
+読み込み失敗時は空の状態として扱う。今後保存形式を拡張する場合も、壊れたJSONや古いJSONでタイトル画面が落ちないようにする。
+
+### 場面図鑑
+
+場面図鑑は `sceneTitle` を中心に収集する。解放済み場面は最高結果ランク、初回seed、最後に出したseedを持つ。未解放の代表場面はタイトル画面にヒントとして表示する。
+
+新しい場面タイトル、役者イベント、対応を追加した場合は、必要に応じて `SCENE_HINT_CATALOG` と解放条件を同時に更新する。
+
+### 称号
+
+称号はプレイヤーの達成や選択傾向を記録する。例として、拾う成功の累積、待つ千秋楽、低負荷終演、全対応使用、型レベル達成などを扱う。
+
+称号はスコアや選択肢性能に影響しない。スコアアタック公平性を守るため、今後も性能上昇型の永続解放は追加しない。
+
+### 公演ビルド
+
+対応選択から `heat`、`breath`、`control`、`closure` の型を集計する。型の進捗は結果画面と終演画面に表示し、一定レベル以上では公演点にボーナスを加える。
+
+現行の型レベルは `src/game/rogueliteProgress.ts` のしきい値で決まる。採点への反映は `src/game/scoreRules.ts` が担当する。しきい値やボーナスを変更した場合は、`npm run balance:report -- --samples=48` で主要戦略の偏りを確認する。
+
 ## seedと乱数
 
 乱数は文字列seedから決定的に生成される。
@@ -738,6 +772,27 @@ highLoadPenalty = backstageLoad >= 4 ? 3 : 0
 | 場面タイトル | `seed:title:totalTurn:score` |
 | ほころび | `seed:fray:totalTurn:nextLoad` |
 | 役者状態更新 | `seed:state:totalTurn:logs.length` |
+
+### 今日の巡り合わせ
+
+日替わり挑戦は端末ローカル日付から次のseedを生成する。
+
+```txt
+honban-daily-YYYY-MM-DD
+```
+
+日替わりseedでは `src/game/dailyRun.ts` の修飾子が1つ選ばれ、役者イベント重みと負荷揺れに軽い偏りを与える。通常seedにはこの補正を適用しない。
+
+現行の修飾子は以下。
+
+| 修飾子 | 主な影響 |
+| --- | --- |
+| `roughOpening` | 序盤の揺れを強める |
+| `juniorHeat` | 若手の熱/前進/アドリブを出やすくする |
+| `leadSilence` | 主役の沈黙/退場遅れを出やすくする |
+| `skilledDrift` | 技巧派の位置/群像の揺れを出やすくする |
+| `heavyTransition` | 道具/進行系の負荷を重くする |
+| `hotAudience` | 評判上昇と負荷上昇を強める |
 
 ## 画面仕様
 

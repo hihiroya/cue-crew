@@ -47,8 +47,11 @@ node scripts/check-ui-layout.mjs --scenario=ui:response-primary --width=440 --he
 - `result-fray`
 - `finished-heat`
 - `finished-rough`
+- `title-collection`
 
 新しいUI分岐を追加した場合は、クリック進行のE2Eシナリオを増やす前に固定シナリオを増やしてください。
+
+`title-collection` は履歴、日替わり挑戦、場面図鑑、称号、未解放ヒントが同時に出るタイトル画面を確認するためのシナリオです。図鑑や称号の表示を変更した場合は、少なくともこのシナリオを含む `npm run check:ui` を実行してください。
 
 ## 機械チェック
 
