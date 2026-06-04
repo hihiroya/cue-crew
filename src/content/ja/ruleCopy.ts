@@ -32,7 +32,7 @@ export const ruleCopy = {
   repeatedResponse: '同じ対応の連続使用',
   trustScore: '公演全体の信頼補正',
   loadScore: '裏方負荷の重さ',
-  dangerWarning: '危険: 事故圏内',
+  dangerWarning: '危険: 事故の恐れ',
   accidentVisibleLow: 'ほころび',
   repeatPrefix: '連続使用:',
   actFallback: (theme: string) => `${theme}の判断。`,
@@ -257,7 +257,7 @@ export function upsideLabel(response: MainResponse, highTier: ResultTier) {
 }
 
 export function downsideLabel(response: MainResponse, lowTier: ResultTier, deltaLoad: number) {
-  if (lowTier === 'accident') return '下振れると事故圏内';
+  if (lowTier === 'accident') return '下振れると事故の恐れ';
   if (response === 'catch' && deltaLoad > 0) return '下振れると負荷が残る';
   if (response === 'cut') return '場面は閉じるが信頼を削りやすい';
   if (lowTier === 'fray') return '下振れるとほころびが残る';
@@ -373,7 +373,7 @@ export function cueLesson(preview: Pick<ResultPreview, 'prepQuality' | 'deltaLoa
   if (byId('arrange-cap')) return '整えるは安定手。名場面を狙うなら、技巧派・不安/疲労・ほころび回収などの理由がほしい。';
   if (byId('cut-containment')) return '転換の備えから切ると、崩れを閉じて次の場面へ渡しやすい。';
   if (preview.deltaLoad >= 2) return '攻めた代償が重い。次の回は待つ・整える・切るで負荷を戻したい。';
-  if (preview.prepQuality === 'miss') return '準備が外れると上限が下がる。焦点役者の兆候と準備範囲をもう一度合わせたい。';
+  if (preview.prepQuality === 'miss') return '準備が外れると上限が下がる。注目役者の兆候と準備範囲をもう一度合わせたい。';
   if (preview.deltaFlow < 0) return '場面の揺れが流れに残った。次は進行か負荷を整える判断を挟みたい。';
   if (preview.deltaTrust < 0) return '閉じる判断は効くが、続けると信頼が削れる。次は信頼を戻す手を置きたい。';
   if (preview.resultTier === 'masterpiece') return '準備・出来事・対応が噛み合った形。似た兆候では同じ筋を再現できる。';

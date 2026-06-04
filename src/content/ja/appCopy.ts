@@ -34,7 +34,7 @@ export const appCopy = {
     historyReplaySuffix: '同じ巡り合わせでやり直す',
     bestBadges: {
       rank: '最高評価',
-      scene: '最高評判',
+      scene: '評判最高',
       load: '最少負荷',
     },
   },
@@ -107,7 +107,7 @@ export const appCopy = {
     approved: '承認済',
     pending: '未承認',
     commit: 'この準備で本番へ',
-    marker: 'メモ反映中',
+    marker: 'メモに反映',
   },
   resultPreview: {
     emptyKicker: '場面の見通し',

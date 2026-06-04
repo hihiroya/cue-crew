@@ -2,7 +2,7 @@ import { ACTOR_LABELS, PREP_LABELS } from './gameLabels';
 import type { ActorEvent, GameState } from '../../game/types';
 
 export const eventPanelCopy = {
-  fallbackActor: '焦点役者',
+  fallbackActor: '今回の注目役者',
   heading: '本番の出来事',
   pendingTitle: 'まだ起きていない',
   prepLead: '役者の兆候を見て、本番中の想定外に備える準備を選ぶ。',
