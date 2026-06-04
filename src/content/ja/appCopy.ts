@@ -36,6 +36,11 @@ export const appCopy = {
     dailyStart: '今日の巡り合わせへ',
     dailyFresh: '本日未記録',
     dailyBest: (rank: string, score: number) => `本日ベスト ${rank} / ${score}点`,
+    collectionKicker: '図鑑',
+    collectionTitle: '場面図鑑と称号',
+    collectionScenes: '場面',
+    collectionAchievements: '称号',
+    collectionEmpty: 'まだ称号はない。終演まで通すと記録が増える。',
     bestBadges: {
       rank: '最高評価',
       scene: '評判最高',

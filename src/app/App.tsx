@@ -28,7 +28,7 @@ export function App() {
   const isUiScenario = Boolean(uiScenarioState);
   const [pendingPrepCue, setPendingPrepCue] = useState<PendingPrepCue | null>(null);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
-  const { history, finishedResult, refreshHistory } = usePerformanceHistory(displayState, isUiScenario);
+  const { history, collection, finishedResult, refreshHistory } = usePerformanceHistory(displayState, isUiScenario);
 
   const resultPreview = useMemo(() => {
     if (displayState.status !== 'result') return null;
@@ -39,7 +39,7 @@ export function App() {
     }
   }, [displayState]);
   const focusActor = displayState.actors.find((actor) => actor.id === displayState.currentFocusActorId) ?? displayState.actors[0];
-  const visibleOmenEvents = topOmenEvents(focusActor).map((omen) => omen.event);
+  const visibleOmenEvents = topOmenEvents(focusActor, 3, { seed: displayState.seed, totalTurn: displayState.totalTurn }).map((omen) => omen.event);
   const nextFocusActorId = displayState.totalTurn < TOTAL_TURNS ? pickFocusActor(displayState.seed, displayState.totalTurn + 1) : null;
 
   useEffect(() => {
@@ -82,6 +82,7 @@ export function App() {
     return (
       <TitleScreen
         history={history}
+        collection={collection}
         onStart={() => dispatch({ type: 'START' })}
         onStartDaily={(seed) => dispatch({ type: 'START', seed })}
         onReplay={(seed) => dispatch({ type: 'START', seed })}
@@ -123,6 +124,8 @@ export function App() {
           backstageLoad={displayState.backstageLoad}
           event={displayState.currentActorEvent}
           selectedPrep={displayState.selectedPrep}
+          seed={displayState.seed}
+          totalTurn={displayState.totalTurn}
         />
       ) : null}
       <div className="action-slot">

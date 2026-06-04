@@ -1,18 +1,20 @@
 import { useState } from 'react';
 import titlePosterImage from '../assets/title/title-poster.webp';
 import type { PerformanceResult } from '../game/types';
+import type { CollectionState } from '../game/rogueliteProgress';
 import { Icon } from '../components/ui/Icon';
 import { dailyRunFor } from '../game/rogueliteProgress';
 import { appCopy, titleHistoryMeta } from '../content/ja/appCopy';
 
 type Props = {
   history: PerformanceResult[];
+  collection: CollectionState;
   onStart: () => void;
   onStartDaily: (seed: string) => void;
   onReplay: (seed: string) => void;
 };
 
-export function TitleScreen({ history, onStart, onStartDaily, onReplay }: Props) {
+export function TitleScreen({ history, collection, onStart, onStartDaily, onReplay }: Props) {
   const [showHowTo, setShowHowTo] = useState(false);
   const bests = historyBests(history);
   const dailyRun = dailyRunFor();
@@ -55,6 +57,23 @@ export function TitleScreen({ history, onStart, onStartDaily, onReplay }: Props)
           <button type="button" className="secondary-action" onClick={() => onStartDaily(dailyRun.seed)}>{appCopy.title.dailyStart}</button>
         </div>
       </section>
+      <section className="collection-panel">
+        <div className="section-heading">
+          <p><Icon name="history" /> {appCopy.title.collectionKicker}</p>
+          <h2>{appCopy.title.collectionTitle}</h2>
+        </div>
+        <div className="collection-summary-grid">
+          <span>
+            {appCopy.title.collectionScenes}
+            <strong>{Object.keys(collection.scenes).length}</strong>
+          </span>
+          <span>
+            {appCopy.title.collectionAchievements}
+            <strong>{Object.keys(collection.achievements).length}</strong>
+          </span>
+        </div>
+        <p className="collection-note">{latestAchievementNote(collection)}</p>
+      </section>
       <section className="history-panel">
         <div className="section-heading">
           <p><Icon name="history" /> {appCopy.title.historyKicker}</p>
@@ -76,6 +95,12 @@ export function TitleScreen({ history, onStart, onStartDaily, onReplay }: Props)
       </section>
     </main>
   );
+}
+
+function latestAchievementNote(collection: CollectionState) {
+  const latest = Object.values(collection.achievements)
+    .sort((a, b) => b.firstSeenAt.localeCompare(a.firstSeenAt))[0];
+  return latest ? `${latest.label}: ${latest.detail}` : appCopy.title.collectionEmpty;
 }
 
 function historyBests(history: PerformanceResult[]) {

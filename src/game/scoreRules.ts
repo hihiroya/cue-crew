@@ -473,7 +473,7 @@ function prepPredictionQuality(state: GameState, actor: Actor): PrepPredictionQu
     throw new Error('Cannot inspect prep before event and prep are selected.');
   }
   if (PREP_MATCHES[state.selectedPrep].includes(state.currentActorEvent.type)) return 'hit';
-  const visibleOmens = topOmenEvents(actor).map((omen) => omen.event);
+  const visibleOmens = topOmenEvents(actor, 3, { seed: state.seed, totalTurn: state.totalTurn }).map((omen) => omen.event);
   return visibleOmens.some((event) => PREP_MATCHES[state.selectedPrep as keyof typeof PREP_MATCHES].includes(event)) ? 'partial' : 'miss';
 }
 

@@ -1,21 +1,10 @@
 import { PERFORMANCE_STYLE_DETAILS, RESPONSE_LABELS, RESULT_TIER_LABELS } from './constants';
+import { dailyRunFor } from './dailyRun';
 import { determinePerformanceStyle } from './scoring';
-import type { MainResponse, PerformanceResult, PerformanceStyle, TurnLog } from './types';
-
-export type BuildStyleSummary = {
-  style: PerformanceStyle | null;
-  label: string;
-  level: number;
-  progress: number;
-  next: number | null;
-  note: string;
-};
-
-export type AchievementUnlock = {
-  id: string;
-  label: string;
-  detail: string;
-};
+import type { MainResponse, PerformanceStyle, TurnLog } from './domainTypes';
+import type { AchievementUnlock, BuildStyleSummary, PerformanceResult } from './reportTypes';
+export { dailyRunFor };
+export type { DailyRun } from './dailyRun';
 
 export type DiscoverySummary = {
   score: number;
@@ -23,11 +12,25 @@ export type DiscoverySummary = {
   achievements: AchievementUnlock[];
 };
 
-export type DailyRun = {
-  seed: string;
+export type SceneCollectionEntry = {
+  id: string;
   title: string;
-  modifier: string;
-  detail: string;
+  actor: string;
+  event: string;
+  response: string;
+  bestTier: TurnLog['resultTier'];
+  firstSeed: string;
+  firstSeenAt: string;
+};
+
+export type AchievementEntry = AchievementUnlock & {
+  firstSeed: string;
+  firstSeenAt: string;
+};
+
+export type CollectionState = {
+  scenes: Record<string, SceneCollectionEntry>;
+  achievements: Record<string, AchievementEntry>;
 };
 
 export type SeedComparison = {
@@ -40,6 +43,7 @@ export type SeedComparison = {
 };
 
 const STYLE_THRESHOLDS = [2, 5, 9];
+const COLLECTION_KEY = 'honban.collection.v1';
 
 export function buildStyleSummary(logs: TurnLog[], explicitStyle: PerformanceStyle | null): BuildStyleSummary {
   if (logs.length < 2 && !explicitStyle) {
@@ -97,7 +101,7 @@ export function discoverySummary(logs: TurnLog[], backstageLoad: number): Discov
   };
 }
 
-function sceneCollectionId(log: TurnLog) {
+export function sceneCollectionId(log: TurnLog) {
   return `${log.focusActorType}:${log.actorEventType}:${log.mainResponse}:${log.sceneTitle}`;
 }
 
@@ -126,40 +130,6 @@ function achievementUnlocks(logs: TurnLog[], backstageLoad: number): Achievement
 
 function achievement(id: string, label: string, detail: string): AchievementUnlock {
   return { id, label, detail };
-}
-
-export function dailyRunFor(date = new Date()): DailyRun {
-  const day = [
-    date.getFullYear(),
-    String(date.getMonth() + 1).padStart(2, '0'),
-    String(date.getDate()).padStart(2, '0'),
-  ].join('-');
-  const seed = `honban-daily-${day}`;
-  const variants = [
-    ['初日は荒れやすい', '守りの価値が少し上がる'],
-    ['若手が乗りやすい', '拾う判断が評判へつながりやすい'],
-    ['主役が沈黙を抱える', '待つ判断の読みどころが増える'],
-    ['技巧派の軸が揺れる', '整える判断が光りやすい'],
-    ['転換が重い', '切る・整えるの負荷管理が大事'],
-    ['客席が熱い', '評判は伸びるが負荷も残りやすい'],
-  ] as const;
-  const index = hashString(seed) % variants.length;
-  const [modifier, detail] = variants[index];
-  return {
-    seed,
-    title: '今日の巡り合わせ',
-    modifier,
-    detail,
-  };
-}
-
-function hashString(value: string) {
-  let hash = 2166136261;
-  for (let index = 0; index < value.length; index += 1) {
-    hash ^= value.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-  return Math.abs(hash);
 }
 
 export function compareWithPrevious(result: PerformanceResult, previous: PerformanceResult | null): SeedComparison | null {
@@ -225,4 +195,71 @@ export function achievementListLabel(items: AchievementUnlock[]) {
 
 export function resultTierShort(tier: TurnLog['resultTier']) {
   return RESULT_TIER_LABELS[tier];
+}
+
+export function emptyCollectionState(): CollectionState {
+  return { scenes: {}, achievements: {} };
+}
+
+export function readCollectionState(): CollectionState {
+  try {
+    const raw = localStorage.getItem(COLLECTION_KEY);
+    if (!raw) return emptyCollectionState();
+    const parsed = JSON.parse(raw) as Partial<CollectionState>;
+    return {
+      scenes: parsed.scenes ?? {},
+      achievements: parsed.achievements ?? {},
+    };
+  } catch {
+    return emptyCollectionState();
+  }
+}
+
+export function saveCollectionForResult(result: PerformanceResult) {
+  const current = readCollectionState();
+  const next = mergeCollectionResult(current, result);
+  localStorage.setItem(COLLECTION_KEY, JSON.stringify(next));
+  return next;
+}
+
+export function mergeCollectionResult(collection: CollectionState, result: PerformanceResult): CollectionState {
+  const next: CollectionState = {
+    scenes: { ...collection.scenes },
+    achievements: { ...collection.achievements },
+  };
+  result.logs.forEach((log) => {
+    const id = sceneCollectionId(log);
+    const current = next.scenes[id];
+    const entry = sceneEntryFromLog(log, result);
+    next.scenes[id] = current
+      ? { ...current, bestTier: betterTier(current.bestTier, entry.bestTier) }
+      : entry;
+  });
+  result.insight.unlockedAchievements.forEach((item) => {
+    if (next.achievements[item.id]) return;
+    next.achievements[item.id] = {
+      ...item,
+      firstSeed: result.seed,
+      firstSeenAt: result.finishedAt,
+    };
+  });
+  return next;
+}
+
+function sceneEntryFromLog(log: TurnLog, result: PerformanceResult): SceneCollectionEntry {
+  return {
+    id: sceneCollectionId(log),
+    title: log.sceneTitle,
+    actor: log.focusActorType,
+    event: log.actorEventType,
+    response: log.mainResponse,
+    bestTier: log.resultTier,
+    firstSeed: result.seed,
+    firstSeenAt: result.finishedAt,
+  };
+}
+
+function betterTier(a: TurnLog['resultTier'], b: TurnLog['resultTier']) {
+  const order: TurnLog['resultTier'][] = ['accident', 'fray', 'smallSuccess', 'scene', 'masterpiece'];
+  return order.indexOf(b) > order.indexOf(a) ? b : a;
 }

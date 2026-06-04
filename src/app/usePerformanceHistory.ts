@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { finishPerformance, readPerformanceHistory, savePerformanceResult } from '../game/gameReducer';
+import { readCollectionState, saveCollectionForResult } from '../game/rogueliteProgress';
 import type { GameState } from '../game/types';
 
 export function usePerformanceHistory(displayState: GameState, disabled = false) {
@@ -9,6 +10,10 @@ export function usePerformanceHistory(displayState: GameState, disabled = false)
     historyVersion;
     return readPerformanceHistory();
   }, [historyVersion]);
+  const collection = useMemo(() => {
+    historyVersion;
+    return readCollectionState();
+  }, [historyVersion]);
   const finishedResult = useMemo(() => (
     displayState.status === 'finished' ? finishPerformance(displayState) : null
   ), [displayState]);
@@ -17,11 +22,12 @@ export function usePerformanceHistory(displayState: GameState, disabled = false)
     if (disabled || displayState.status !== 'finished' || !finishedResult) return;
     if (savedFinishedStateRef.current === displayState) return;
     savePerformanceResult(finishedResult);
+    saveCollectionForResult(finishedResult);
     savedFinishedStateRef.current = displayState;
     setHistoryVersion((version) => version + 1);
   }, [disabled, displayState, finishedResult]);
 
   const refreshHistory = () => setHistoryVersion((version) => version + 1);
 
-  return { history, finishedResult, refreshHistory };
+  return { history, collection, finishedResult, refreshHistory };
 }

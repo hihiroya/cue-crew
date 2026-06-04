@@ -11,9 +11,11 @@ type Props = {
   backstageLoad: number;
   event?: ActorEvent | null;
   selectedPrep?: PrepAction | null;
+  seed: string;
+  totalTurn: number;
 };
 
-export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLoad, event }: Props) {
+export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLoad, event, seed, totalTurn }: Props) {
   const focusActor = actors.find((actor) => actor.id === focusActorId) ?? actors[0];
   const supportingActors = actors.filter((actor) => actor.id !== focusActor.id);
   const focusPassive = actorPassiveLabel(focusActor);
@@ -56,7 +58,7 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
             <small className={`actor-trust-pill trust-${trustLevel(focusActor)}`}>{focusPassive}</small>
           ) : null}
         </div>
-        <OmenList actor={focusActor} />
+        <OmenList actor={focusActor} seed={seed} totalTurn={totalTurn} />
       </article>
       <div className="support-actors" aria-label={actorStageCopy.supportAria}>
         {supportingActors.map((actor) => (
@@ -79,8 +81,8 @@ function eventTitleSize(title: string) {
   return 'compact';
 }
 
-function OmenList({ actor }: { actor: Actor }) {
-  const sorted = topOmenEvents(actor);
+function OmenList({ actor, seed, totalTurn }: { actor: Actor; seed: string; totalTurn: number }) {
+  const sorted = topOmenEvents(actor, 3, { seed, totalTurn });
   return (
     <div className="omen-chip-panel" aria-label={actorStageCopy.visibleOmens}>
       <span>{actorStageCopy.visibleOmens}</span>

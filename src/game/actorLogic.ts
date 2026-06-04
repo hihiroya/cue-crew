@@ -1,10 +1,12 @@
 import { ACTOR_WEIGHTS, EVENT_DESCRIPTIONS, EVENT_LABELS, STATE_WEIGHTS } from './constants';
 import { OMEN_INTENSITY_LABELS } from '../content/ja/gameLabels';
+import { applyDailyEventWeights, dailyVolatilityBonus } from './dailyRun';
 import { createRng, pickWeighted } from './rng';
 import type { Actor, ActorEvent, ActorEventType, ActorState, ActorType, GameState } from './types';
 
 const stateCycle: ActorState[] = ['elated', 'contemplative', 'anxious', 'immersed', 'fatigued'];
 const focusOrder: ActorType[] = ['junior', 'lead', 'skilled', 'junior', 'lead', 'skilled', 'junior', 'skilled', 'lead', 'junior'];
+type EventWeightContext = { seed: string; totalTurn: number };
 
 export function pickFocusActor(seed: string, totalTurn: number): ActorType {
   const rng = createRng(`${seed}:focus:${totalTurn}`);
@@ -21,30 +23,32 @@ export function assignActorRoles(actors: Actor[], focus: ActorType): Actor[] {
   });
 }
 
-export function eventWeightsFor(actor: Actor): Record<ActorEventType, number> {
+export function eventWeightsFor(actor: Actor, context?: EventWeightContext): Record<ActorEventType, number> {
   const actorWeights = ACTOR_WEIGHTS[actor.type];
   const stateWeights = STATE_WEIGHTS[actor.state];
-  return Object.fromEntries(
+  const weights = Object.fromEntries(
     Object.keys(actorWeights).map((key) => {
       const event = key as ActorEventType;
       const fatigueBoost = actor.fatigue > 1 && ['positionShift', 'tempoRush', 'ensembleWaver'].includes(event) ? 3 : 0;
       return [event, actorWeights[event] + stateWeights[event] + fatigueBoost];
     }),
   ) as Record<ActorEventType, number>;
+  return context ? applyDailyEventWeights(context.seed, context.totalTurn, actor, weights) : weights;
 }
 
-function volatileEventWeightsFor(actor: Actor): Record<ActorEventType, number> {
+function volatileEventWeightsFor(actor: Actor, context?: EventWeightContext): Record<ActorEventType, number> {
   const weights = eventWeightsFor(actor);
-  return Object.fromEntries(
+  const volatileWeights = Object.fromEntries(
     Object.entries(weights).map(([event, weight]) => [
       event,
       Math.max(4, Math.round(Math.sqrt(weight) * 3)),
     ]),
   ) as Record<ActorEventType, number>;
+  return context ? applyDailyEventWeights(context.seed, context.totalTurn, actor, volatileWeights) : volatileWeights;
 }
 
-export function topOmenEvents(actor: Actor, limit = 3): Array<{ event: ActorEventType; weight: number; intensity: typeof OMEN_INTENSITY_LABELS[keyof typeof OMEN_INTENSITY_LABELS] }> {
-  const weights = eventWeightsFor(actor);
+export function topOmenEvents(actor: Actor, limit = 3, context?: EventWeightContext): Array<{ event: ActorEventType; weight: number; intensity: typeof OMEN_INTENSITY_LABELS[keyof typeof OMEN_INTENSITY_LABELS] }> {
+  const weights = eventWeightsFor(actor, context);
   const sorted = (Object.entries(weights) as Array<[ActorEventType, number]>)
     .sort((a, b) => b[1] - a[1])
     .slice(0, limit);
@@ -59,8 +63,9 @@ export function topOmenEvents(actor: Actor, limit = 3): Array<{ event: ActorEven
 export function resolveActorEvent(state: GameState): ActorEvent {
   const focus = state.actors.find((actor) => actor.id === state.currentFocusActorId) ?? state.actors[0];
   const rng = createRng(`${state.seed}:event:${state.totalTurn}:${focus.id}`);
-  const volatility = 0.14 + state.backstageLoad * 0.04;
-  const eventType = pickWeighted(rng, rng() < volatility ? volatileEventWeightsFor(focus) : eventWeightsFor(focus));
+  const volatility = 0.14 + state.backstageLoad * 0.04 + dailyVolatilityBonus(state.seed, state.totalTurn);
+  const context = { seed: state.seed, totalTurn: state.totalTurn };
+  const eventType = pickWeighted(rng, rng() < volatility ? volatileEventWeightsFor(focus, context) : eventWeightsFor(focus, context));
   return {
     type: eventType,
     actorId: focus.id,

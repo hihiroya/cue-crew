@@ -1,5 +1,19 @@
 import type { MainResponse, PerformanceStyle, TurnLog } from './domainTypes';
-import type { AchievementUnlock, BuildStyleSummary } from './rogueliteProgress';
+
+export type BuildStyleSummary = {
+  style: PerformanceStyle | null;
+  label: string;
+  level: number;
+  progress: number;
+  next: number | null;
+  note: string;
+};
+
+export type AchievementUnlock = {
+  id: string;
+  label: string;
+  detail: string;
+};
 
 export type AudienceSurvey = {
   encoreInterest: number;
