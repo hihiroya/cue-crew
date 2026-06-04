@@ -48,8 +48,8 @@ export const appCopy = {
     totalScore: (score: number) => `総合評価点 ${score}`,
     maxRank: '最高ランク到達',
     pointsToNext: (points: number, rank: string | null) => `あと${points}点で ${rank ?? ''}`,
-    scoreNote: '次回改善メモ',
-    challenge: '次回チャレンジ',
+    scoreNote: '再演メモ',
+    challenge: '再演チャレンジ',
     metrics: '公演指標',
     aggregate: '集計',
     prepMetric: '準備',
@@ -71,7 +71,7 @@ export const appCopy = {
       if (!cue) return '';
       return `${cue.act}日目 ${PERFORMANCE_SLOT_LABELS[cue.turnInAct === 1 ? 'matinee' : 'soiree'].label} / ${cue.resultTier}`;
     },
-    nextHandoff: '次回への申し送り',
+    nextHandoff: '再演への申し送り',
     surveyKicker: '観客アンケート',
     surveyTitle: '客席に届いたもの',
     surveyLabels: {
@@ -119,7 +119,7 @@ export const appCopy = {
     ratingAria: (tierLabel: string) => `仕上がり ${tierLabel}`,
     frayRecovery: 'ほころび回収',
     frayRecoveryBody: '失敗の余白が場面の材料になった',
-    lesson: '次回改善メモ',
+    lesson: '次の判断メモ',
     key: '決め手',
     cost: '代償',
     handoff: '申し送り',
@@ -188,7 +188,7 @@ export function resultScoreNote(kind: 'scene' | 'flow' | 'trust', value: number)
 }
 
 export function resultLoadNote(value: number) {
-  if (value >= 4) return '次回注意';
+  if (value >= 4) return '負荷注意';
   if (value >= 2) return '余熱あり';
   return '軽い';
 }

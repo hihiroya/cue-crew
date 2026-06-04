@@ -45,8 +45,8 @@ export function reviewNotes(args: {
     args.lateRecovery
       ? `${args.lateRecovery.act}日目${PERFORMANCE_SLOT_LABELS[args.lateRecovery.turnInAct === 1 ? 'matinee' : 'soiree'].label}で整えた判断により、千秋楽の流れは持ち直した。`
       : args.backstageLoad >= 3
-        ? '次回は2日目マチネか3日目マチネで一度待つか整えると、ソワレへ負荷を残しにくい。'
-        : '次回は高負荷を恐れすぎず、噛み合った準備から強い本対応を狙うと名場面を増やせる。',
+        ? '再演では2日目マチネか3日目マチネで一度待つか整えると、ソワレへ負荷を残しにくい。'
+        : '再演では高負荷を恐れすぎず、噛み合った準備から強い本対応を狙うと名場面を増やせる。',
   ];
 }
 
@@ -59,18 +59,18 @@ export function nextNote(args: {
   sceneOrBetterCount: number;
 }) {
   if (args.frayOrAccidentCount >= 3) {
-    return 'ほころびが多い公演だった。次回は同じ対応を続けすぎず、負荷4に入る前に整える判断を挟みたい。';
+    return 'ほころびが多い公演だった。再演では同じ対応を続けすぎず、負荷4に入る前に整える判断を挟みたい。';
   }
   if (args.backstageLoad >= 3) {
-    return '裏方負荷が高く残った。次回は2日目マチネか3日目マチネで待つか整えると、ソワレへ負荷を残しにくい。';
+    return '裏方負荷が高く残った。再演では2日目マチネか3日目マチネで待つか整えると、ソワレへ負荷を残しにくい。';
   }
   if (args.prepHitRate < 50) {
     return '準備の読みが外れやすかった。焦点役者の兆候上位と準備カードの対応範囲を合わせると安定する。';
   }
   if (args.sceneOrBetterCount <= 1) {
-    return '舞台は支えられた。次回は噛み合った準備から、評判を伸ばす対応を一度強く狙いたい。';
+    return '舞台は支えられた。再演では噛み合った準備から、評判を伸ばす対応を一度強く狙いたい。';
   }
-  return '次回は高負荷を恐れすぎず、噛み合った準備から強い本対応を狙うと名場面を増やせる。';
+  return '再演では高負荷を恐れすぎず、噛み合った準備から強い本対応を狙うと名場面を増やせる。';
 }
 
 export function scoreNote(args: {
@@ -80,7 +80,7 @@ export function scoreNote(args: {
   backstageLoad: number;
   prepHitRate: number;
 }) {
-  if (args.pointsToNextRank === null) return '最高ランク。次は同じ巡り合わせで安定再現を狙える。';
+  if (args.pointsToNextRank === null) return '最高ランク。同じ巡り合わせで安定再現を狙える。';
   if (args.masterpieceCount === 0) return `${args.nextRank}まであと${args.pointsToNextRank}点。名場面を1回作ると大きく伸びる。`;
   if (args.backstageLoad >= 4) return `${args.nextRank}まであと${args.pointsToNextRank}点。終盤の負荷を抑えると届きやすい。`;
   if (args.prepHitRate < 67) return `${args.nextRank}まであと${args.pointsToNextRank}点。準備の噛み合いを増やすと底上げできる。`;

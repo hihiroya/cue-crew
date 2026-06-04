@@ -368,14 +368,14 @@ export function audienceReaction(preview: Pick<ResultPreview, 'resultTier' | 'ma
 
 export function cueLesson(preview: Pick<ResultPreview, 'prepQuality' | 'deltaLoad' | 'deltaFlow' | 'deltaTrust' | 'scoreBreakdown' | 'resultTier'>) {
   const byId = (id: string) => preview.scoreBreakdown.find((item: ScoreBreakdownItem) => item.id === id);
-  if (byId('fray-reward')) return '次回メモ: ほころびは失敗の残骸ではなく、合う対応で拾うと場面の材料になる。';
-  if (byId('actor-trust')) return '次回メモ: 阿吽の呼吸や以心伝心が出ている役者は、得意対応を選ぶと下振れを支えられる。';
-  if (byId('arrange-cap')) return '次回メモ: 整えるは安定手。名場面を狙うなら、技巧派・不安/疲労・ほころび回収などの理由がほしい。';
-  if (byId('cut-containment')) return '次回メモ: 転換の備えから切ると、崩れを閉じて次の場面へ渡しやすい。';
-  if (preview.deltaLoad >= 2) return '次回メモ: 攻めた代償が重い。次の回は待つ・整える・切るで負荷を戻したい。';
-  if (preview.prepQuality === 'miss') return '次回メモ: 準備が外れると上限が下がる。焦点役者の兆候と準備範囲をもう一度合わせたい。';
-  if (preview.deltaFlow < 0) return '次回メモ: 場面の揺れが流れに残った。次は進行か負荷を整える判断を挟みたい。';
-  if (preview.deltaTrust < 0) return '次回メモ: 閉じる判断は効くが、続けると信頼が削れる。次は信頼を戻す手を置きたい。';
-  if (preview.resultTier === 'masterpiece') return '次回メモ: 準備・出来事・対応が噛み合った形。似た兆候では同じ筋を再現できる。';
-  return '次回メモ: 大崩れは防げた。次は準備が活きた局面で、評判を伸ばす手も狙える。';
+  if (byId('fray-reward')) return 'ほころびは失敗の残骸ではなく、合う対応で拾うと場面の材料になる。';
+  if (byId('actor-trust')) return '阿吽の呼吸や以心伝心が出ている役者は、得意対応を選ぶと下振れを支えられる。';
+  if (byId('arrange-cap')) return '整えるは安定手。名場面を狙うなら、技巧派・不安/疲労・ほころび回収などの理由がほしい。';
+  if (byId('cut-containment')) return '転換の備えから切ると、崩れを閉じて次の場面へ渡しやすい。';
+  if (preview.deltaLoad >= 2) return '攻めた代償が重い。次の回は待つ・整える・切るで負荷を戻したい。';
+  if (preview.prepQuality === 'miss') return '準備が外れると上限が下がる。焦点役者の兆候と準備範囲をもう一度合わせたい。';
+  if (preview.deltaFlow < 0) return '場面の揺れが流れに残った。次は進行か負荷を整える判断を挟みたい。';
+  if (preview.deltaTrust < 0) return '閉じる判断は効くが、続けると信頼が削れる。次は信頼を戻す手を置きたい。';
+  if (preview.resultTier === 'masterpiece') return '準備・出来事・対応が噛み合った形。似た兆候では同じ筋を再現できる。';
+  return '大崩れは防げた。次は準備が活きた局面で、評判を伸ばす手も狙える。';
 }
