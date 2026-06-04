@@ -19,7 +19,7 @@ export const appCopy = {
     confirm: '終了してタイトルへ',
   },
   title: {
-    series: '1人用舞台裏マネジメント',
+    series: '舞台裏マネジメント',
     logoLabel: '本番中 x 舞台裏',
     logoFirst: '本番中',
     logoSecond: '舞台裏',

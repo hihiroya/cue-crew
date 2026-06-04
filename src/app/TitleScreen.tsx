@@ -133,13 +133,12 @@ function HomeView({
 }) {
   const hasDistinctRecommendation = recommendation.kind !== 'newSeed';
   return (
-    <section className="home-start-panel" aria-label={appCopy.title.nav.home}>
-      <div className="home-start-copy">
-        <span>{recommendation.kicker}</span>
-        <h2>{recommendation.title}</h2>
-        <p>{recommendation.body}</p>
-      </div>
-      <div className="home-start-actions">
+    <>
+      <section className="home-action-panel" aria-label={appCopy.title.nav.home}>
+        <div className="home-action-copy">
+          <span>{appCopy.title.start}</span>
+          <h2>{appCopy.title.startNew}</h2>
+        </div>
         <button type="button" className="primary-action" onClick={onStart}>{appCopy.title.startNew}</button>
         {hasDistinctRecommendation ? (
           <button type="button" className="secondary-action" onClick={onStartRecommendation}>
@@ -151,8 +150,13 @@ function HomeView({
           <strong>{dailyRun.modifier}</strong>
           <small>{dailyBest ? appCopy.title.homeDailyBest(dailyBest.insight.rank, dailyBest.insight.totalScore) : appCopy.title.homeDailyFresh}</small>
         </button>
-      </div>
-    </section>
+      </section>
+      <section className="home-goal-panel" aria-label={recommendation.kicker}>
+        <span>{recommendation.kicker}</span>
+        <h2>{recommendation.title}</h2>
+        <p>{recommendation.body}</p>
+      </section>
+    </>
   );
 }
 
