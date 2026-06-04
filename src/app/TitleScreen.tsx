@@ -54,11 +54,8 @@ export function TitleScreen({ history, collection, dailyBests, onStart, onStartD
       {titleView === 'home' ? (
         <HomeView
           recommendation={recommendation}
-          dailyRun={dailyRun}
-          dailyBest={dailyBest}
           onStart={onStart}
           onStartRecommendation={startRecommendation}
-          onStartDaily={onStartDaily}
         />
       ) : null}
       {titleView === 'records' ? (
@@ -118,38 +115,23 @@ function TitleNav({ activeView, onSelect }: { activeView: TitleView; onSelect: (
 
 function HomeView({
   recommendation,
-  dailyRun,
-  dailyBest,
   onStart,
   onStartRecommendation,
-  onStartDaily,
 }: {
   recommendation: NextChallengeRecommendation;
-  dailyRun: ReturnType<typeof dailyRunFor>;
-  dailyBest?: PerformanceResult;
   onStart: () => void;
   onStartRecommendation: () => void;
-  onStartDaily: (seed: string) => void;
 }) {
   const hasDistinctRecommendation = recommendation.kind !== 'newSeed';
   return (
     <>
       <section className="home-action-panel" aria-label={appCopy.title.nav.home}>
-        <div className="home-action-copy">
-          <span>{appCopy.title.start}</span>
-          <h2>{appCopy.title.startNew}</h2>
-        </div>
         <button type="button" className="primary-action" onClick={onStart}>{appCopy.title.startNew}</button>
         {hasDistinctRecommendation ? (
           <button type="button" className="secondary-action" onClick={onStartRecommendation}>
             {recommendation.kind === 'daily' ? recommendation.cta : appCopy.title.replayRecommended}
           </button>
         ) : null}
-        <button type="button" className="ghost-button home-daily-action" onClick={() => onStartDaily(dailyRun.seed)}>
-          <span>{appCopy.title.quickActions.daily}</span>
-          <strong>{dailyRun.modifier}</strong>
-          <small>{dailyBest ? appCopy.title.homeDailyBest(dailyBest.insight.rank, dailyBest.insight.totalScore) : appCopy.title.homeDailyFresh}</small>
-        </button>
       </section>
       <section className="home-goal-panel" aria-label={recommendation.kicker}>
         <span>{recommendation.kicker}</span>
