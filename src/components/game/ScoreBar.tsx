@@ -10,14 +10,8 @@ type Props = {
 export function ScoreBar({ state }: Props) {
   const loadRisk = loadRiskLabel(state.backstageLoad);
   const likelyBias = !state.pendingFrayEvent && state.backstageLoad >= 3 ? likelyFrayBias(state) : null;
-  const totalScore = state.sceneScore + state.flowScore + state.trustScore;
   return (
     <section className="score-rail" aria-label={scoreBarCopy.aria}>
-      <div className={`mobile-score-snapshot load-${loadRisk.tone}`}>
-        <span>{scoreBarCopy.aria}</span>
-        <strong>{totalScore}</strong>
-        <em>{scoreBarCopy.load}: {loadRisk.label}</em>
-      </div>
       <div className="score-trio">
         <ScoreChip icon="scene" label={scoreBarCopy.scene} value={state.sceneScore} />
         <ScoreChip icon="flow" label={scoreBarCopy.flow} value={state.flowScore} />

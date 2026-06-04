@@ -25,6 +25,8 @@ export const appCopy = {
     logoSecond: '舞台裏',
     catchphrase: '兆候を読み 予定外を名場面へ',
     start: 'はじめる',
+    startNew: '新しい公演を始める',
+    replayRecommended: '同じ巡り合わせで再演',
     howTo: '遊び方',
     nav: {
       home: 'ホーム',
@@ -42,7 +44,7 @@ export const appCopy = {
     homeDailyFresh: '本日未挑戦',
     homeDailyBest: (rank: string, score: number) => `本日ベスト ${rank} / ${score}点`,
     homeCollectionSummary: (scenes: number, achievements: number) => `図鑑 ${scenes}場面 / 称号 ${achievements}`,
-    recordsLead: '再演したいseedや、公演バッジから過去の公演を選ぶ。',
+    recordsLead: '再演したい公演や、公演バッジから過去の公演を選ぶ。',
     collectionLead: '未開放の場面と称号から、次に狙う公演を探す。',
     howToLines: [
       '全3日、マチネとソワレの全6回。マチネは次のソワレへ向けた調整、ソワレはその日の評判と公演全体への影響が大きい。',
@@ -80,7 +82,7 @@ export const appCopy = {
     collectionAchievementList: '称号一覧',
     collectionUnlocked: '解放済み',
     collectionLocked: '未解放',
-    collectionReplay: 'このseedで再演',
+    collectionReplay: '同じ巡り合わせで再演',
     bestBadges: {
       rank: '最高評価',
       scene: '評判最高',
@@ -109,7 +111,7 @@ export const appCopy = {
     noAchievements: '新規称号なし',
     previousSeed: '前回比',
     poster: '終演ポスター',
-    posterSeed: '再演 seed',
+    posterSeed: '再演の巡り合わせ',
     metrics: '公演指標',
     aggregate: '集計',
     prepMetric: '準備',

@@ -56,10 +56,9 @@ export function TitleScreen({ history, collection, dailyBests, onStart, onStartD
           recommendation={recommendation}
           dailyRun={dailyRun}
           dailyBest={dailyBest}
-          collection={collection}
+          onStart={onStart}
           onStartRecommendation={startRecommendation}
           onStartDaily={onStartDaily}
-          onSelectView={showView}
         />
       ) : null}
       {titleView === 'records' ? (
@@ -121,47 +120,39 @@ function HomeView({
   recommendation,
   dailyRun,
   dailyBest,
-  collection,
+  onStart,
   onStartRecommendation,
   onStartDaily,
-  onSelectView,
 }: {
   recommendation: NextChallengeRecommendation;
   dailyRun: ReturnType<typeof dailyRunFor>;
   dailyBest?: PerformanceResult;
-  collection: CollectionState;
+  onStart: () => void;
   onStartRecommendation: () => void;
   onStartDaily: (seed: string) => void;
-  onSelectView: (view: TitleView) => void;
 }) {
-  const sceneCount = Object.keys(collection.scenes).length;
-  const achievementCount = Object.keys(collection.achievements).length;
+  const hasDistinctRecommendation = recommendation.kind !== 'newSeed';
   return (
-    <>
-      <NextPerformancePanel recommendation={recommendation} onStart={onStartRecommendation} />
-      <section className="home-quick-actions" aria-label={appCopy.title.nav.home}>
-        <button type="button" onClick={() => onStartDaily(dailyRun.seed)}>
+    <section className="home-start-panel" aria-label={appCopy.title.nav.home}>
+      <div className="home-start-copy">
+        <span>{recommendation.kicker}</span>
+        <h2>{recommendation.title}</h2>
+        <p>{recommendation.body}</p>
+      </div>
+      <div className="home-start-actions">
+        <button type="button" className="primary-action" onClick={onStart}>{appCopy.title.startNew}</button>
+        {hasDistinctRecommendation ? (
+          <button type="button" className="secondary-action" onClick={onStartRecommendation}>
+            {recommendation.kind === 'daily' ? recommendation.cta : appCopy.title.replayRecommended}
+          </button>
+        ) : null}
+        <button type="button" className="ghost-button home-daily-action" onClick={() => onStartDaily(dailyRun.seed)}>
           <span>{appCopy.title.quickActions.daily}</span>
           <strong>{dailyRun.modifier}</strong>
           <small>{dailyBest ? appCopy.title.homeDailyBest(dailyBest.insight.rank, dailyBest.insight.totalScore) : appCopy.title.homeDailyFresh}</small>
         </button>
-        <button type="button" onClick={() => onSelectView('records')}>
-          <span>{appCopy.title.quickActions.records}</span>
-          <strong>{appCopy.title.historyTitle}</strong>
-          <small>{appCopy.title.historyKicker}</small>
-        </button>
-        <button type="button" onClick={() => onSelectView('collection')}>
-          <span>{appCopy.title.quickActions.collection}</span>
-          <strong>{appCopy.title.homeCollectionSummary(sceneCount, achievementCount)}</strong>
-          <small>{latestAchievementNote(collection)}</small>
-        </button>
-        <button type="button" onClick={() => onSelectView('howTo')}>
-          <span>{appCopy.title.quickActions.howTo}</span>
-          <strong>{appCopy.title.howTo}</strong>
-          <small>{appCopy.title.catchphrase}</small>
-        </button>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
 
@@ -276,19 +267,6 @@ function HowToView({ onStart }: { onStart: () => void }) {
   );
 }
 
-function NextPerformancePanel({ recommendation, onStart }: { recommendation: NextChallengeRecommendation; onStart: () => void }) {
-  return (
-    <section className={`next-performance-panel next-${recommendation.kind}`}>
-      <div>
-        <span>{recommendation.kicker}</span>
-        <h2>{recommendation.title}</h2>
-        <p>{recommendation.body}</p>
-      </div>
-      <button type="button" className="primary-action" onClick={onStart}>{recommendation.cta}</button>
-    </section>
-  );
-}
-
 function BadgeStrip({ badges }: { badges: NonNullable<PerformanceResult['insight']['performanceBadges']> }) {
   return (
     <div className="performance-badge-strip" aria-label={appCopy.title.historyBadges}>
@@ -332,7 +310,7 @@ function CollectionDetails({ collection, onReplay }: { collection: CollectionSta
               <article key={scene.id}>
                 <span>{labelFor(ACTOR_LABELS, scene.actor)} / {labelFor(EVENT_LABELS, scene.event)} / {labelFor(RESPONSE_LABELS, scene.response)}</span>
                 <strong>{scene.title}</strong>
-                <small>{resultTierShort(scene.bestTier)} / {scene.firstSeed}</small>
+                <small>{resultTierShort(scene.bestTier)}</small>
                 <button type="button" className="ghost-button collection-replay-button" onClick={() => onReplay(scene.firstSeed)}>{appCopy.title.collectionReplay}</button>
               </article>
             ))}

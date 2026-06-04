@@ -69,8 +69,8 @@ export const rogueliteProgressCopy = {
 export const nextChallengeCopy = {
   kicker: '次の公演目標',
   sameSeedCta: '同じ巡り合わせで再演',
-  retrySeedCta: 'このseedをもう一度',
-  replaySeedCta: 'このseedで再演',
+  retrySeedCta: '同じ巡り合わせで再演',
+  replaySeedCta: '同じ巡り合わせで再演',
   newSeedCta: '別の公演を開ける',
   startCta: 'はじめる',
   dailyCta: '今日の巡り合わせへ',
@@ -87,7 +87,7 @@ export const nextChallengeCopy = {
   lockedSceneTitle: '未開放の場面を探す',
   lockedSceneBody: (hint: string) => `狙い目: ${hint}。別の巡り合わせで図鑑の空白を開ける。`,
   dominantStyleTitle: (response: MainResponse) => `${RESPONSE_LABELS[response]}型を更新する`,
-  dominantStyleBody: '同じ癖に寄せず、次のseedで別の型や名場面を拾いにいく。',
+  dominantStyleBody: '同じ癖に寄せず、次の巡り合わせで別の型や名場面を拾いにいく。',
   firstRunTitle: '初日のマチネを開ける',
   firstRunBody: 'まずは6ターンを通して、準備と対応がどう公演の色になるかを見る。',
   replaySuggestionBody: (suggestion: { prep: PrepAction; response: MainResponse; totalScoreDelta: number }) => (
@@ -97,12 +97,12 @@ export const nextChallengeCopy = {
   replayFallbackTitle: '同じ巡り合わせを詰める',
   replayTurnBody: (log: TurnLog) => `直近の「${log.sceneTitle}」が改善候補。前回と違う準備か対応を試す。`,
   replayFallbackBody: '履歴に伸びしろが残っている。',
-  historyNearRankBody: '届きかけのseedがある。最終負荷と準備ヒットを詰めると更新しやすい。',
+  historyNearRankBody: '届きかけの公演がある。最終負荷と準備ヒットを詰めると更新しやすい。',
   collectionTitle: '図鑑の空白を開ける',
   collectionBody: (hint: string) => `狙い目: ${hint}。新しい巡り合わせでまだ見ていない場面を探す。`,
   newStyleTitle: '新しい型を探す',
-  newStyleBody: '履歴とは違うseedで、別の役者・出来事・公演の色を拾いにいく。',
-  dailyBody: (modifier: string, detail: string) => `${modifier}。${detail}。今日の固定seedで自己ベストを作る。`,
+  newStyleBody: '履歴とは違う巡り合わせで、別の役者・出来事・公演の色を拾いにいく。',
+  dailyBody: (modifier: string, detail: string) => `${modifier}。${detail}。今日の固定公演で自己ベストを作る。`,
 } as const;
 
 export const achievementCatalogCopy = [
