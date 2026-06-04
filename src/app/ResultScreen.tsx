@@ -1,25 +1,42 @@
+import { useMemo } from 'react';
 import { PERFORMANCE_STYLE_DETAILS, RESPONSE_LABELS } from '../game/constants';
 import type { PerformanceResult } from '../game/types';
 import { Icon } from '../components/ui/Icon';
-import { achievementListLabel, compareWithPrevious, comparisonLabel, mostImproveableTurn, type DailyRun } from '../game/rogueliteProgress';
-import { appCopy, bestCueBody, bestCueMeta, nextChallengeCopy, resultLoadNote, resultScoreNote, sameSeedHintCopy, timelineBody, timelineMeta } from '../content/ja/appCopy';
+import { achievementListLabel, compareWithPrevious, comparisonLabel, nextChallengeRecommendation, type CollectionState, type DailyRun, type NextChallengeRecommendation } from '../game/rogueliteProgress';
+import { analyzeReplayImprovement } from '../game/replayAnalysis';
+import { appCopy, bestCueBody, bestCueMeta, resultLoadNote, resultScoreNote, timelineBody, timelineMeta } from '../content/ja/appCopy';
 
 type Props = {
   result: PerformanceResult;
   previousSameSeed: PerformanceResult | null;
+  collection: CollectionState;
   dailyRun: DailyRun;
+  dailyBest: PerformanceResult | null;
   onTitle: () => void;
   onReplaySame: () => void;
   onReplayNew: () => void;
   onReplayDaily: (seed: string) => void;
 };
 
-export function ResultScreen({ result, previousSameSeed, dailyRun, onTitle, onReplaySame, onReplayNew, onReplayDaily }: Props) {
+export function ResultScreen({ result, previousSameSeed, collection, dailyRun, dailyBest, onTitle, onReplaySame, onReplayNew, onReplayDaily }: Props) {
   const styleLabel = result.performanceStyle ? PERFORMANCE_STYLE_DETAILS[result.performanceStyle].label : appCopy.result.unsetStyle;
   const timelineLogs = result.logs?.length ? result.logs : result.highlights;
   const maxDecisionCount = Math.max(1, ...result.insight.decisionDistribution.map((item) => item.count));
   const comparison = compareWithPrevious(result, previousSameSeed);
   const buildMeterMax = result.insight.buildStyle.next ?? Math.max(1, result.insight.buildStyle.progress);
+  const replaySuggestions = useMemo(() => ({ [result.seed]: analyzeReplayImprovement(result) }), [result]);
+  const recommendation = nextChallengeRecommendation({ result, collection, dailyRun, dailyBest, replaySuggestions });
+  const startRecommendation = () => {
+    if (recommendation.kind === 'daily' && recommendation.seed) {
+      onReplayDaily(recommendation.seed);
+      return;
+    }
+    if (recommendation.kind === 'newSeed') {
+      onReplayNew();
+      return;
+    }
+    onReplaySame();
+  };
   return (
     <main className="result-screen">
       <section className="result-hero">
@@ -47,6 +64,13 @@ export function ResultScreen({ result, previousSameSeed, dailyRun, onTitle, onRe
           <span>{appCopy.result.scoreNote}</span>
           <p>{result.insight.scoreNote}</p>
         </div>
+        {result.insight.performanceBadges?.length ? (
+          <div className="performance-badge-strip result-badge-strip" aria-label={appCopy.result.performanceBadges}>
+            {result.insight.performanceBadges.map((badge) => (
+              <em key={badge.id} className={`performance-badge badge-${badge.tone}`} title={badge.detail}>{badge.label}</em>
+            ))}
+          </div>
+        ) : null}
         <div className="roguelite-summary-grid">
           <div className="build-style-card">
             <span>{appCopy.result.buildStyle}</span>
@@ -66,11 +90,7 @@ export function ResultScreen({ result, previousSameSeed, dailyRun, onTitle, onRe
             <p>{comparisonLabel(comparison)}</p>
           </div>
         ) : null}
-        <div className="replay-challenge-note">
-          <span>{appCopy.result.challenge}</span>
-          <strong>{nextChallenge(result)}</strong>
-          <p>{sameSeedHint(result)}</p>
-        </div>
+        <NextPerformancePanel recommendation={recommendation} onStart={startRecommendation} />
         <div className="report-section-label">
           <span>{appCopy.result.metrics}</span>
           <small>{appCopy.result.aggregate}</small>
@@ -106,59 +126,64 @@ export function ResultScreen({ result, previousSameSeed, dailyRun, onTitle, onRe
           <p>{result.insight.nextNote}</p>
         </div>
       </section>
-      <section className="packet-panel survey-panel">
-        <div className="section-heading">
-          <p>{appCopy.result.surveyKicker}</p>
-          <h2>{appCopy.result.surveyTitle}</h2>
-        </div>
-        <div className="survey-grid">
-          <SurveyMeter label={appCopy.result.surveyLabels.encore} value={result.audienceSurvey.encoreInterest} />
-          <SurveyMeter label={appCopy.result.surveyLabels.afterglow} value={result.audienceSurvey.lingeringAfterglow} />
-          <SurveyMeter label={appCopy.result.surveyLabels.heat} value={result.audienceSurvey.sceneHeat} />
-          <SurveyMeter label={appCopy.result.surveyLabels.stability} value={result.audienceSurvey.stability} />
-        </div>
-      </section>
-      <section className="packet-panel media-review-panel">
-        <div className="section-heading">
-          <p>{appCopy.result.mediaReview}</p>
-          <h2>{result.mediaReview.outlet}</h2>
-        </div>
-        <div className="media-review">
-          <span>{'★'.repeat(result.mediaReview.stars)}{'☆'.repeat(5 - result.mediaReview.stars)}</span>
-          <strong>{result.mediaReview.headline}</strong>
-          <p>{result.mediaReview.quote}</p>
-        </div>
-      </section>
-      <section className="packet-panel decision-report-panel">
-        <div className="section-heading">
-          <p>{appCopy.result.record}</p>
-          <h2>{appCopy.result.decisionTrend}</h2>
-        </div>
-        <div className="decision-bars">
-          {result.insight.decisionDistribution.map((item) => (
-            <div key={item.response} className="decision-bar">
-              <span><Icon name={item.response} />{RESPONSE_LABELS[item.response]}</span>
-              <meter min={0} max={maxDecisionCount} value={item.count} />
-              <strong>{appCopy.result.decisionCount(item.count)}</strong>
+      <details className="result-record-details">
+        <summary>{appCopy.result.recordDetails}</summary>
+        <div className="result-record-stack">
+          <section className="packet-panel survey-panel">
+            <div className="section-heading">
+              <p>{appCopy.result.surveyKicker}</p>
+              <h2>{appCopy.result.surveyTitle}</h2>
             </div>
-          ))}
+            <div className="survey-grid">
+              <SurveyMeter label={appCopy.result.surveyLabels.encore} value={result.audienceSurvey.encoreInterest} />
+              <SurveyMeter label={appCopy.result.surveyLabels.afterglow} value={result.audienceSurvey.lingeringAfterglow} />
+              <SurveyMeter label={appCopy.result.surveyLabels.heat} value={result.audienceSurvey.sceneHeat} />
+              <SurveyMeter label={appCopy.result.surveyLabels.stability} value={result.audienceSurvey.stability} />
+            </div>
+          </section>
+          <section className="packet-panel media-review-panel">
+            <div className="section-heading">
+              <p>{appCopy.result.mediaReview}</p>
+              <h2>{result.mediaReview.outlet}</h2>
+            </div>
+            <div className="media-review">
+              <span>{'★'.repeat(result.mediaReview.stars)}{'☆'.repeat(5 - result.mediaReview.stars)}</span>
+              <strong>{result.mediaReview.headline}</strong>
+              <p>{result.mediaReview.quote}</p>
+            </div>
+          </section>
+          <section className="packet-panel decision-report-panel">
+            <div className="section-heading">
+              <p>{appCopy.result.record}</p>
+              <h2>{appCopy.result.decisionTrend}</h2>
+            </div>
+            <div className="decision-bars">
+              {result.insight.decisionDistribution.map((item) => (
+                <div key={item.response} className="decision-bar">
+                  <span><Icon name={item.response} />{RESPONSE_LABELS[item.response]}</span>
+                  <meter min={0} max={maxDecisionCount} value={item.count} />
+                  <strong>{appCopy.result.decisionCount(item.count)}</strong>
+                </div>
+              ))}
+            </div>
+          </section>
+          <section className="highlight-panel packet-panel timeline-report-panel">
+            <div className="section-heading">
+              <p>{appCopy.result.record}</p>
+              <h2>{appCopy.result.timeline}</h2>
+            </div>
+            <div className="performance-timeline">
+              {timelineLogs.map((log) => (
+                <article key={`${log.totalTurn}-${log.sceneTitle}`} className={`timeline-tier-${log.resultTier}`}>
+                  <span>{timelineMeta(log)}</span>
+                  <h3>{log.sceneTitle}</h3>
+                  <p>{timelineBody(log)}</p>
+                </article>
+              ))}
+            </div>
+          </section>
         </div>
-      </section>
-      <section className="highlight-panel packet-panel timeline-report-panel">
-        <div className="section-heading">
-          <p>{appCopy.result.record}</p>
-          <h2>{appCopy.result.timeline}</h2>
-        </div>
-        <div className="performance-timeline">
-          {timelineLogs.map((log) => (
-            <article key={`${log.totalTurn}-${log.sceneTitle}`} className={`timeline-tier-${log.resultTier}`}>
-              <span>{timelineMeta(log)}</span>
-              <h3>{log.sceneTitle}</h3>
-              <p>{timelineBody(log)}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      </details>
       <div className="result-actions">
         <button className="primary-action" onClick={onReplayNew}>{appCopy.result.replayNew}</button>
         <button className="secondary-action" onClick={onReplaySame}>{appCopy.result.replaySame}</button>
@@ -166,6 +191,19 @@ export function ResultScreen({ result, previousSameSeed, dailyRun, onTitle, onRe
         <button className="ghost-button" onClick={onTitle}>{appCopy.result.title}</button>
       </div>
     </main>
+  );
+}
+
+function NextPerformancePanel({ recommendation, onStart }: { recommendation: NextChallengeRecommendation; onStart: () => void }) {
+  return (
+    <section className={`next-performance-panel next-${recommendation.kind}`}>
+      <div>
+        <span>{recommendation.kicker}</span>
+        <h2>{recommendation.title}</h2>
+        <p>{recommendation.body}</p>
+      </div>
+      <button type="button" className="primary-action" onClick={onStart}>{recommendation.cta}</button>
+    </section>
   );
 }
 
@@ -204,16 +242,6 @@ function SurveyMeter({ label, value }: { label: string; value: number }) {
       <meter min={0} max={100} value={value} />
     </div>
   );
-}
-
-function nextChallenge(result: PerformanceResult) {
-  const swingTurn = mostImproveableTurn(result);
-  return nextChallengeCopy(result, swingTurn);
-}
-
-function sameSeedHint(result: PerformanceResult) {
-  const swingTurn = mostImproveableTurn(result);
-  return sameSeedHintCopy(result, swingTurn);
 }
 
 function rankClass(rank: PerformanceResult['insight']['rank']) {

@@ -35,6 +35,9 @@ export const appCopy = {
     emptyHistory: 'まだ記録はない。初日のマチネを開けよう。',
     historyStats: (item: PerformanceResult) => `ランク ${item.insight.rank} / 評判 ${item.sceneScore} / 段取り ${item.flowScore} / 座組信頼 ${item.trustScore}`,
     historyReplaySuffix: '同じ巡り合わせでやり直す',
+    historyBadges: '公演バッジ',
+    historyBadgeFilter: '公演バッジで履歴を絞り込む',
+    historyBadgeAll: 'すべて',
     dailyKicker: '日替わり挑戦',
     dailyStart: '今日の巡り合わせへ',
     dailyFresh: '本日未記録',
@@ -71,6 +74,7 @@ export const appCopy = {
     pointsToNext: (points: number, rank: string | null) => `あと${points}点で ${rank ?? ''}`,
     scoreNote: '再演メモ',
     challenge: '再演チャレンジ',
+    performanceBadges: '今回の公演バッジ',
     buildStyle: '今回のビルド',
     buildLevel: (level: number) => `Lv.${level}`,
     discovery: '発見',
@@ -96,6 +100,7 @@ export const appCopy = {
       load: '裏方負荷',
     },
     record: '進行記録',
+    recordDetails: '公演記録を見る',
     bestCue: '代表的な一手',
     bestCueBody: (result: PerformanceResult) => {
       const cue = result.insight.bestCue;

@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { applyDailyEventWeights, dailyRunForSeed } from '../src/game/dailyRun';
 import { eventWeightsFor } from '../src/game/actorLogic';
 import { INITIAL_ACTORS } from '../src/game/constants';
-import { mergeCollectionResult, replayDeltaForResponse, readDailyBestResults, saveDailyBestForResult } from '../src/game/rogueliteProgress';
+import { mergeCollectionResult, nextChallengeRecommendation, replayDeltaForResponse, readDailyBestResults, saveDailyBestForResult } from '../src/game/rogueliteProgress';
+import { analyzeReplayImprovement } from '../src/game/replayAnalysis';
 import type { PerformanceResult, TurnLog } from '../src/game/types';
 
 test('daily modifier affects only daily seeds', () => {
@@ -104,6 +105,56 @@ test('daily best storage keeps the best daily score only', () => {
   }
 });
 
+test('next challenge recommendation points replay at improveable turns', () => {
+  const result = dailyResult('replay-seed', 20);
+  result.logs = [{
+    act: 2,
+    turnInAct: 2,
+    totalTurn: 4,
+    focusActorType: 'lead',
+    actorState: 'anxious',
+    actorEventType: 'silence',
+    prepAction: 'watch',
+    mainResponse: 'catch',
+    resultTier: 'fray',
+    score: 1,
+    performanceStyle: 'heat',
+    prepMatched: false,
+    prepQuality: 'miss',
+    sceneTitle: 'ほどけかけた場面',
+    flavorText: '',
+    deltaScene: 0,
+    deltaFlow: -1,
+    deltaTrust: -1,
+    deltaLoad: 2,
+    loadBias: 'light',
+  }];
+
+  const recommendation = nextChallengeRecommendation({ result, collection: { scenes: {}, achievements: {} } });
+
+  assert.equal(recommendation.kind, 'sameSeed');
+  assert.equal(recommendation.seed, 'replay-seed');
+});
+
+test('replay analysis suggests a concrete alternate cue when it improves a run', () => {
+  const result = dailyResult('analysis-seed', 10);
+  result.logs = [
+    logFor(1, 'watch', 'catch', 'scene', '拾われたアドリブ', 3, 1, 1, 1, 'hit'),
+    logFor(2, 'watch', 'cut', 'accident', '閉じ損ねた余韻', -1, -2, -2, 2, 'miss'),
+    logFor(3, 'tightenFlow', 'arrange', 'smallSuccess', '小さく整った呼吸', 1, 1, 0, -1, 'hit'),
+    logFor(4, 'watch', 'catch', 'fray', '熱だけが残った一瞬', 0, -1, -1, 2, 'miss'),
+    logFor(5, 'makeSpace', 'wait', 'scene', '客席まで届いた間', 3, 1, 1, -1, 'hit'),
+    logFor(6, 'prepareTransition', 'cut', 'smallSuccess', '次へ渡した一手', 1, 1, 0, 0, 'hit'),
+  ];
+
+  const suggestion = analyzeReplayImprovement(result);
+
+  assert.equal(Boolean(suggestion), true);
+  if (!suggestion) return;
+  assert.equal(typeof suggestion.prep, 'string');
+  assert.equal(typeof suggestion.response, 'string');
+});
+
 function dailyResult(seed: string, totalScore: number): PerformanceResult {
   return {
     seed,
@@ -135,10 +186,47 @@ function dailyResult(seed: string, totalScore: number): PerformanceResult {
       discoveryScore: 0,
       unlockedAchievements: [],
       sceneCollectionCount: 0,
+      performanceBadges: [],
     },
     audienceSurvey: { encoreInterest: 50, lingeringAfterglow: 50, sceneHeat: 50, stability: 50 },
     mediaReview: { outlet: '', stars: 3, headline: '', quote: '' },
     logs: [],
     highlights: [],
+  };
+}
+
+function logFor(
+  totalTurn: number,
+  prepAction: TurnLog['prepAction'],
+  mainResponse: TurnLog['mainResponse'],
+  resultTier: TurnLog['resultTier'],
+  sceneTitle: string,
+  deltaScene: number,
+  deltaFlow: number,
+  deltaTrust: number,
+  deltaLoad: number,
+  prepQuality: TurnLog['prepQuality'],
+): TurnLog {
+  return {
+    act: Math.ceil(totalTurn / 2),
+    turnInAct: totalTurn % 2 === 1 ? 1 : 2,
+    totalTurn,
+    focusActorType: 'junior',
+    actorState: 'elated',
+    actorEventType: 'adlib',
+    prepAction,
+    mainResponse,
+    resultTier,
+    score: 0,
+    performanceStyle: totalTurn >= 2 ? 'heat' : null,
+    prepMatched: prepQuality === 'hit',
+    prepQuality,
+    sceneTitle,
+    flavorText: '',
+    deltaScene,
+    deltaFlow,
+    deltaTrust,
+    deltaLoad,
+    loadBias: 'light',
   };
 }

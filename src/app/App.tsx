@@ -46,6 +46,7 @@ export function App() {
     [history, displayState.seed],
   );
   const previousTurnLog = previousSameSeedRun?.logs.find((log) => log.totalTurn === displayState.totalTurn) ?? null;
+  const dailyRun = useMemo(() => dailyRunFor(), []);
 
   useEffect(() => {
     if (!pendingPrepCue) return;
@@ -54,13 +55,13 @@ export function App() {
       return;
     }
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const delay = prefersReducedMotion ? 120 : 1200;
+    const delay = prefersReducedMotion ? 120 : previousSameSeedRun ? 260 : 1200;
     const timer = window.setTimeout(() => {
       dispatch({ type: 'SELECT_PREP', prep: pendingPrepCue.prep });
       setPendingPrepCue(null);
     }, delay);
     return () => window.clearTimeout(timer);
-  }, [pendingPrepCue, state.status]);
+  }, [pendingPrepCue, previousSameSeedRun, state.status]);
 
   useEffect(() => {
     if (isUiScenario) return;
@@ -101,7 +102,9 @@ export function App() {
       <ResultScreen
         result={finishedResult ?? finishPerformance(displayState)}
         previousSameSeed={previousSameSeedRun}
-        dailyRun={dailyRunFor()}
+        collection={collection}
+        dailyRun={dailyRun}
+        dailyBest={dailyBests[dailyRun.seed] ?? null}
         onTitle={() => {
           refreshHistory();
           dispatch({ type: 'RESET_TO_TITLE' });

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import titlePosterImage from '../assets/title/title-poster.webp';
 import type { PerformanceResult } from '../game/types';
-import { ACHIEVEMENT_CATALOG, dailyRunFor, lockedSceneHints, resultTierShort, type CollectionState } from '../game/rogueliteProgress';
+import { ACHIEVEMENT_CATALOG, dailyRunFor, lockedSceneHints, nextChallengeRecommendation, resultTierShort, type CollectionState, type NextChallengeRecommendation } from '../game/rogueliteProgress';
+import { analyzeReplayImprovement } from '../game/replayAnalysis';
 import { Icon } from '../components/ui/Icon';
 import { ACTOR_LABELS, EVENT_LABELS, RESPONSE_LABELS } from '../game/constants';
 import { appCopy, titleHistoryMeta } from '../content/ja/appCopy';
@@ -18,9 +19,29 @@ type Props = {
 export function TitleScreen({ history, collection, dailyBests, onStart, onStartDaily, onReplay }: Props) {
   const [showHowTo, setShowHowTo] = useState(false);
   const [showCollection, setShowCollection] = useState(() => new URLSearchParams(globalThis.location?.search ?? '').get('uiScenario') === 'title-collection');
+  const [selectedBadgeId, setSelectedBadgeId] = useState<string | null>(null);
   const bests = historyBests(history);
+  const badgeOptions = historyBadgeOptions(history);
+  const displayHistory = selectedBadgeId
+    ? history.filter((item) => item.insight.performanceBadges?.some((badge) => badge.id === selectedBadgeId))
+    : history;
   const dailyRun = dailyRunFor();
   const dailyBest = dailyBests[dailyRun.seed];
+  const replaySuggestions = useMemo(() => Object.fromEntries(
+    history.map((item) => [item.seed, analyzeReplayImprovement(item)]),
+  ), [history]);
+  const recommendation = nextChallengeRecommendation({ history, collection, dailyRun, dailyBest, replaySuggestions });
+  const startRecommendation = () => {
+    if (recommendation.kind === 'daily' && recommendation.seed) {
+      onStartDaily(recommendation.seed);
+      return;
+    }
+    if (recommendation.kind === 'replaySeed' && recommendation.seed) {
+      onReplay(recommendation.seed);
+      return;
+    }
+    onStart();
+  };
   return (
     <main className="title-screen">
       <section className="title-panel">
@@ -47,6 +68,7 @@ export function TitleScreen({ history, collection, dailyBests, onStart, onStartD
           </div>
         ) : null}
       </section>
+      <NextPerformancePanel recommendation={recommendation} onStart={startRecommendation} />
       <section className="daily-run-panel">
         <div className="section-heading">
           <p><Icon name="spark" /> {appCopy.title.dailyKicker}</p>
@@ -88,18 +110,54 @@ export function TitleScreen({ history, collection, dailyBests, onStart, onStartD
         {history.length === 0 ? (
           <p className="muted">{appCopy.title.emptyHistory}</p>
         ) : (
-          <div className="history-list">
-            {history.map((item, index) => (
-              <button key={`${item.seed}-${item.finishedAt}`} onClick={() => onReplay(item.seed)}>
-                <strong>{item.title}</strong>
-                <span>{appCopy.title.historyStats(item)}</span>
-                <small>{historyMeta(item, history.slice(index + 1), bests)}</small>
-              </button>
-            ))}
-          </div>
+          <>
+            {badgeOptions.length ? (
+              <div className="history-badge-filter" aria-label={appCopy.title.historyBadgeFilter}>
+                <button type="button" className={selectedBadgeId === null ? 'is-active' : ''} onClick={() => setSelectedBadgeId(null)}>{appCopy.title.historyBadgeAll}</button>
+                {badgeOptions.map((badge) => (
+                  <button key={badge.id} type="button" className={selectedBadgeId === badge.id ? 'is-active' : ''} onClick={() => setSelectedBadgeId(badge.id)}>
+                    {badge.label}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            <div className="history-list">
+              {displayHistory.map((item) => (
+                <button key={`${item.seed}-${item.finishedAt}`} onClick={() => onReplay(item.seed)}>
+                  <strong>{item.title}</strong>
+                  <span>{appCopy.title.historyStats(item)}</span>
+                  {item.insight.performanceBadges?.length ? <BadgeStrip badges={item.insight.performanceBadges.slice(0, 2)} /> : null}
+                  <small>{historyMeta(item, history.slice(history.indexOf(item) + 1), bests)}</small>
+                </button>
+              ))}
+            </div>
+          </>
         )}
       </section>
     </main>
+  );
+}
+
+function NextPerformancePanel({ recommendation, onStart }: { recommendation: NextChallengeRecommendation; onStart: () => void }) {
+  return (
+    <section className={`next-performance-panel next-${recommendation.kind}`}>
+      <div>
+        <span>{recommendation.kicker}</span>
+        <h2>{recommendation.title}</h2>
+        <p>{recommendation.body}</p>
+      </div>
+      <button type="button" className="primary-action" onClick={onStart}>{recommendation.cta}</button>
+    </section>
+  );
+}
+
+function BadgeStrip({ badges }: { badges: NonNullable<PerformanceResult['insight']['performanceBadges']> }) {
+  return (
+    <div className="performance-badge-strip" aria-label={appCopy.title.historyBadges}>
+      {badges.map((badge) => (
+        <em key={badge.id} className={`performance-badge badge-${badge.tone}`} title={badge.detail}>{badge.label}</em>
+      ))}
+    </div>
   );
 }
 
@@ -173,6 +231,19 @@ function historyBests(history: PerformanceResult[]) {
     scene: history.reduce<PerformanceResult | null>((best, item) => (!best || item.sceneScore > best.sceneScore ? item : best), null),
     load: history.reduce<PerformanceResult | null>((best, item) => (!best || item.backstageLoad < best.backstageLoad ? item : best), null),
   };
+}
+
+function historyBadgeOptions(history: PerformanceResult[]) {
+  const badges = new Map<string, { id: string; label: string; count: number }>();
+  history.forEach((item) => {
+    item.insight.performanceBadges?.forEach((badge) => {
+      const current = badges.get(badge.id);
+      badges.set(badge.id, { id: badge.id, label: badge.label, count: (current?.count ?? 0) + 1 });
+    });
+  });
+  return [...badges.values()]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
 }
 
 function historyMeta(item: PerformanceResult, olderHistory: PerformanceResult[], bests: ReturnType<typeof historyBests>) {

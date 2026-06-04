@@ -51,9 +51,6 @@ export function ResponsePanel({ selected, disabled, state, previousTurnLog = nul
             key={insight.response}
             disabled={disabled}
             insight={insight}
-            buildCue={responseBuildCue(insight.response, buildStyle)}
-            wasPrevious={previousTurnLog?.mainResponse === insight.response}
-            replayDelta={replayDeltaForResponse({ currentTier: insight.resultTier, currentLoad: insight.deltaLoad, previous: previousTurnLog })}
             isInspected={inspected.response === insight.response}
             onInspect={setInspectedResponse}
           />
@@ -81,17 +78,11 @@ function ResponseSelectionMarker({ visible }: { visible: boolean }) {
 function ResponseChoiceCard({
   disabled,
   insight,
-  buildCue,
-  wasPrevious,
-  replayDelta,
   isInspected,
   onInspect,
 }: {
   disabled: boolean;
   insight: ResponseInsight;
-  buildCue: string;
-  wasPrevious: boolean;
-  replayDelta: ReturnType<typeof replayDeltaForResponse>;
   isInspected: boolean;
   onInspect: (response: MainResponse) => void;
 }) {
@@ -122,14 +113,6 @@ function ResponseChoiceCard({
         <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
       </div>
       <ResponseEffectSummary insight={insight} />
-      <div className="response-build-cue">
-        <span>{responsePanelCopy.buildCue}</span>
-        <strong>{buildCue}</strong>
-      </div>
-      <div className="replay-delta-row">
-        {wasPrevious ? <em className="replay-ghost-mark">{responsePanelCopy.previousCue}</em> : null}
-        {replayDelta ? <em className={`replay-delta-mark delta-${replayDelta.tone}`}>{replayDelta.label}</em> : null}
-      </div>
       {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
       <ResponseSelectionMarker visible={isInspected} />
     </button>

@@ -34,6 +34,13 @@ export type DecisionDistributionItem = {
   count: number;
 };
 
+export type PerformanceBadge = {
+  id: string;
+  label: string;
+  detail: string;
+  tone: 'gold' | 'good' | 'cool' | 'risk';
+};
+
 export type PerformanceInsight = {
   totalScore: number;
   rank: 'S+' | 'S' | 'A' | 'B' | 'C' | 'D';
@@ -53,6 +60,7 @@ export type PerformanceInsight = {
   discoveryScore: number;
   unlockedAchievements: AchievementUnlock[];
   sceneCollectionCount: number;
+  performanceBadges: PerformanceBadge[];
 };
 
 export type PerformanceResult = {

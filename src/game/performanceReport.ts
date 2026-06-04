@@ -2,7 +2,7 @@ import { PERFORMANCE_STYLE_DETAILS } from './constants';
 import * as reportCopy from '../content/ja/reportCopy';
 import { determinePerformanceStyle } from './scoring';
 import { buildStyleSummary, discoverySummary } from './rogueliteProgress';
-import type { AudienceSurvey, MainResponse, MediaReview, PerformanceInsight, ResultTier, TurnLog } from './types';
+import type { AudienceSurvey, MainResponse, MediaReview, PerformanceBadge, PerformanceInsight, ResultTier, TurnLog } from './types';
 
 export function createPerformanceReview(logs: TurnLog[], sceneScore: number, flowScore: number, trustScore: number, backstageLoad = 0): { title: string; review: string; reviewNotes: string[] } {
   const catchCount = logs.filter((log) => log.mainResponse === 'catch').length;
@@ -81,6 +81,7 @@ export function createPerformanceInsight(logs: TurnLog[], sceneScore = 0, flowSc
   const discovery = discoverySummary(logs, backstageLoad);
   const nextNote = reportCopy.nextNote({ frayOrAccidentCount, backstageLoad, prepHitRate, sceneOrBetterCount });
   const scoreNote = reportCopy.scoreNote({ pointsToNextRank, nextRank, masterpieceCount, backstageLoad, prepHitRate });
+  const performanceBadges = createPerformanceBadges({ logs, backstageLoad, prepHits, masterpieceCount, sceneOrBetterCount, frayOrAccidentCount, buildLevel: buildStyle.level, discoveryScore: discovery.score });
   return {
     totalScore,
     rank,
@@ -100,7 +101,37 @@ export function createPerformanceInsight(logs: TurnLog[], sceneScore = 0, flowSc
     discoveryScore: discovery.score,
     unlockedAchievements: discovery.achievements,
     sceneCollectionCount: discovery.sceneIds.length,
+    performanceBadges,
   };
+}
+
+function createPerformanceBadges(args: {
+  logs: TurnLog[];
+  backstageLoad: number;
+  prepHits: number;
+  masterpieceCount: number;
+  sceneOrBetterCount: number;
+  frayOrAccidentCount: number;
+  buildLevel: number;
+  discoveryScore: number;
+}): PerformanceBadge[] {
+  const { logs, backstageLoad, prepHits, masterpieceCount, sceneOrBetterCount, frayOrAccidentCount, buildLevel, discoveryScore } = args;
+  const badges: PerformanceBadge[] = [];
+  const finale = logs.find((log) => log.act === 3 && log.turnInAct === 2);
+  const usedAllResponses = (['catch', 'arrange', 'wait', 'cut'] as MainResponse[]).every((response) => logs.some((log) => log.mainResponse === response));
+
+  if (prepHits >= 5) badges.push({ id: 'sharp-read', label: `準備${prepHits}/6的中`, detail: '兆候読みが公演全体を支えた', tone: 'good' });
+  if (masterpieceCount >= 2) badges.push({ id: 'double-masterpiece', label: `名場面${masterpieceCount}回`, detail: '強い場面が複数残った', tone: 'gold' });
+  if (backstageLoad <= 1) badges.push({ id: 'light-load', label: '負荷軽く終演', detail: '舞台裏を崩さず渡した', tone: 'cool' });
+  if (frayOrAccidentCount === 0 && logs.length >= 6) badges.push({ id: 'clean-run', label: 'ほころびなし', detail: '三日間を安定して閉じた', tone: 'good' });
+  if (finale && ['masterpiece', 'scene'].includes(finale.resultTier)) badges.push({ id: 'finale-scene', label: '千秋楽で場面化', detail: '最後の一手が客席へ届いた', tone: 'gold' });
+  if (buildLevel >= 3) badges.push({ id: 'style-max', label: '型Lv.3到達', detail: '今回の公演の色を伸ばし切った', tone: 'gold' });
+  if (discoveryScore >= 10) badges.push({ id: 'many-discoveries', label: '発見多め', detail: '図鑑と称号が大きく進んだ', tone: 'cool' });
+  if (usedAllResponses && sceneOrBetterCount >= 3) badges.push({ id: 'all-cues', label: '四つのキュー完走', detail: '全対応を使って場面を作った', tone: 'cool' });
+  if (backstageLoad >= 4) badges.push({ id: 'hot-backstage', label: '負荷注意', detail: '再演では終盤の整えどころ', tone: 'risk' });
+  if (!badges.length && sceneOrBetterCount >= 2) badges.push({ id: 'steady-scenes', label: '場面以上2回', detail: '次は名場面まで伸ばせる', tone: 'good' });
+
+  return badges.slice(0, 4);
 }
 
 export function createAudienceSurvey(logs: TurnLog[], sceneScore: number, flowScore: number, trustScore: number, backstageLoad = 0): AudienceSurvey {

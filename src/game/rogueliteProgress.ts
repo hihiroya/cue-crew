@@ -1,5 +1,5 @@
 import { PERFORMANCE_STYLE_DETAILS, RESPONSE_LABELS, RESULT_TIER_LABELS } from './constants';
-import { dailyRunFor } from './dailyRun';
+import { dailyRunFor, type DailyRun } from './dailyRun';
 import { determinePerformanceStyle } from './scoring';
 import type { MainResponse, PerformanceStyle, TurnLog } from './domainTypes';
 import type { AchievementUnlock, BuildStyleSummary, PerformanceResult } from './reportTypes';
@@ -53,6 +53,25 @@ export type SeedComparison = {
 export type ResponseReplayDelta = {
   tone: 'up' | 'same' | 'down';
   label: string;
+};
+
+export type NextChallengeRecommendation = {
+  kind: 'sameSeed' | 'replaySeed' | 'daily' | 'newSeed';
+  kicker: string;
+  title: string;
+  body: string;
+  cta: string;
+  seed?: string;
+};
+
+export type ReplayImprovementSuggestion = {
+  totalTurn: number;
+  prep: TurnLog['prepAction'];
+  response: MainResponse;
+  resultTier: TurnLog['resultTier'];
+  sceneTitle: string;
+  totalScoreDelta: number;
+  loadDelta: number;
 };
 
 const STYLE_THRESHOLDS = [2, 5, 9];
@@ -224,6 +243,174 @@ export function mostImproveableTurn(result: PerformanceResult) {
       || b.deltaLoad - a.deltaLoad
       || Number(b.prepQuality === 'miss') - Number(a.prepQuality === 'miss')
     ))[0] ?? null;
+}
+
+export function nextChallengeRecommendation(args: {
+  result?: PerformanceResult | null;
+  history?: PerformanceResult[];
+  collection?: CollectionState;
+  dailyRun?: DailyRun;
+  dailyBest?: PerformanceResult | null;
+  replaySuggestions?: Record<string, ReplayImprovementSuggestion | null>;
+}): NextChallengeRecommendation {
+  const history = args.history ?? [];
+  const collection = args.collection ?? emptyCollectionState();
+  const dailyRun = args.dailyRun;
+  const dailyBest = args.dailyBest ?? null;
+  if (args.result) return recommendationAfterResult(args.result, collection, dailyRun, dailyBest, args.replaySuggestions?.[args.result.seed] ?? null);
+  return recommendationForTitle(history, collection, dailyRun, dailyBest, args.replaySuggestions ?? {});
+}
+
+function recommendationAfterResult(
+  result: PerformanceResult,
+  collection: CollectionState,
+  dailyRun?: DailyRun,
+  dailyBest?: PerformanceResult | null,
+  replaySuggestion?: ReplayImprovementSuggestion | null,
+): NextChallengeRecommendation {
+  const swingTurn = mostImproveableTurn(result);
+  if (swingTurn || replaySuggestion) {
+    const targetTurn = replaySuggestion ? result.logs.find((log) => log.totalTurn === replaySuggestion.totalTurn) ?? swingTurn : swingTurn;
+    return {
+      kind: 'sameSeed',
+      kicker: '次の公演目標',
+      title: replaySuggestion ? `${turnLabelByNumber(replaySuggestion.totalTurn)}で${RESPONSE_LABELS[replaySuggestion.response]}を試す` : `${turnLabel(targetTurn as TurnLog)}を詰める`,
+      body: replaySuggestion
+        ? `候補: ${prepLabel(replaySuggestion.prep)} -> ${RESPONSE_LABELS[replaySuggestion.response]}。${RESULT_TIER_LABELS[replaySuggestion.resultTier]}見込みで総合${signed(replaySuggestion.totalScoreDelta)}、負荷${signed(replaySuggestion.loadDelta)}。`
+        : `「${targetTurn?.sceneTitle ?? '詰めどころ'}」が伸びしろ。${targetTurn ? improvementReason(targetTurn) : ''}同じ巡り合わせで差分を取りにいく。`,
+      cta: '同じ巡り合わせで再演',
+      seed: result.seed,
+    };
+  }
+  if (dailyRun && result.seed !== dailyRun.seed && !dailyBest) {
+    return dailyRecommendation(dailyRun);
+  }
+  if (result.insight.pointsToNextRank !== null && result.insight.pointsToNextRank <= 8) {
+    return {
+      kind: 'sameSeed',
+      kicker: '次の公演目標',
+      title: `${result.insight.nextRank}まであと${result.insight.pointsToNextRank}点`,
+      body: '今回の読み筋は届きかけている。準備ヒットと最終負荷を少し詰めるだけで更新圏。',
+      cta: 'このseedをもう一度',
+      seed: result.seed,
+    };
+  }
+  const hint = lockedSceneHints(collection, 1)[0];
+  if (hint) {
+    return {
+      kind: 'newSeed',
+      kicker: '次の公演目標',
+      title: '未開放の場面を探す',
+      body: `狙い目: ${hint.hint}。別の巡り合わせで図鑑の空白を開ける。`,
+      cta: '別の公演を開ける',
+    };
+  }
+  return {
+    kind: 'newSeed',
+    kicker: '次の公演目標',
+    title: `${RESPONSE_LABELS[result.insight.dominantResponse]}型を更新する`,
+    body: '同じ癖に寄せず、次のseedで別の型や名場面を拾いにいく。',
+    cta: '別の公演を開ける',
+  };
+}
+
+function recommendationForTitle(
+  history: PerformanceResult[],
+  collection: CollectionState,
+  dailyRun?: DailyRun,
+  dailyBest?: PerformanceResult | null,
+  replaySuggestions: Record<string, ReplayImprovementSuggestion | null> = {},
+): NextChallengeRecommendation {
+  if (!history.length) {
+    return {
+      kind: 'newSeed',
+      kicker: '次の公演目標',
+      title: '初日のマチネを開ける',
+      body: 'まずは6ターンを通して、準備と対応がどう公演の色になるかを見る。',
+      cta: 'はじめる',
+    };
+  }
+  const replayTarget = history.find((item) => mostImproveableTurn(item));
+  if (replayTarget) {
+    const suggestion = replaySuggestions[replayTarget.seed] ?? null;
+    const swingTurn = mostImproveableTurn(replayTarget);
+    return {
+      kind: 'replaySeed',
+      kicker: '次の公演目標',
+      title: suggestion ? `${turnLabelByNumber(suggestion.totalTurn)}で${RESPONSE_LABELS[suggestion.response]}を試す` : swingTurn ? `${turnLabel(swingTurn)}を再演で詰める` : '同じ巡り合わせを詰める',
+      body: suggestion
+        ? `候補: ${prepLabel(suggestion.prep)} -> ${RESPONSE_LABELS[suggestion.response]}。総合${signed(suggestion.totalScoreDelta)}を狙える。`
+        : swingTurn ? `直近の「${swingTurn.sceneTitle}」が改善候補。前回と違う準備か対応を試す。` : '履歴に伸びしろが残っている。',
+      cta: 'このseedで再演',
+      seed: replayTarget.seed,
+    };
+  }
+  if (dailyRun && !dailyBest) {
+    return dailyRecommendation(dailyRun);
+  }
+  const nearRank = history.find((item) => item.insight.pointsToNextRank !== null && item.insight.pointsToNextRank <= 8);
+  if (nearRank) {
+    return {
+      kind: 'replaySeed',
+      kicker: '次の公演目標',
+      title: `${nearRank.insight.nextRank}まであと${nearRank.insight.pointsToNextRank}点`,
+      body: '届きかけのseedがある。最終負荷と準備ヒットを詰めると更新しやすい。',
+      cta: 'このseedで再演',
+      seed: nearRank.seed,
+    };
+  }
+  const hint = lockedSceneHints(collection, 1)[0];
+  if (hint) {
+    return {
+      kind: 'newSeed',
+      kicker: '次の公演目標',
+      title: '図鑑の空白を開ける',
+      body: `狙い目: ${hint.hint}。新しい巡り合わせでまだ見ていない場面を探す。`,
+      cta: '別の公演を開ける',
+    };
+  }
+  return {
+    kind: 'newSeed',
+    kicker: '次の公演目標',
+    title: '新しい型を探す',
+    body: '履歴とは違うseedで、別の役者・出来事・公演の色を拾いにいく。',
+    cta: '別の公演を開ける',
+  };
+}
+
+function dailyRecommendation(dailyRun: DailyRun): NextChallengeRecommendation {
+  return {
+    kind: 'daily',
+    kicker: '次の公演目標',
+    title: dailyRun.title,
+    body: `${dailyRun.modifier}。${dailyRun.detail}。今日の固定seedで自己ベストを作る。`,
+    cta: '今日の巡り合わせへ',
+    seed: dailyRun.seed,
+  };
+}
+
+function turnLabel(log: TurnLog) {
+  return `${log.act}日目${log.turnInAct === 1 ? 'マチネ' : 'ソワレ'}`;
+}
+
+function turnLabelByNumber(totalTurn: number) {
+  const act = Math.ceil(totalTurn / 2);
+  return `${act}日目${totalTurn % 2 === 1 ? 'マチネ' : 'ソワレ'}`;
+}
+
+function prepLabel(prep: TurnLog['prepAction']) {
+  if (prep === 'watch') return '注視';
+  if (prep === 'makeSpace') return '余白';
+  if (prep === 'tightenFlow') return '締め';
+  return '転換';
+}
+
+function improvementReason(log: TurnLog) {
+  if (log.prepQuality === 'miss') return '準備が外れた回。';
+  if (log.deltaLoad >= 2) return '負荷が重く残った回。';
+  if (log.resultTier === 'accident') return '事故相当まで崩れた回。';
+  if (log.resultTier === 'fray') return 'ほころびが残った回。';
+  return 'もう一段伸ばせる回。';
 }
 
 function tierRisk(tier: TurnLog['resultTier']) {
