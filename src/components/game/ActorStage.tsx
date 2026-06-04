@@ -3,7 +3,6 @@ import { topOmenEvents } from '../../game/actorLogic';
 import type { Actor, ActorEvent, ActorType, PrepAction } from '../../game/types';
 import { ActorSilhouette } from '../actors/ActorSilhouette';
 import { Icon } from '../ui/Icon';
-import { useCompactViewport } from '../ui/useCompactViewport';
 import { STATE_HINTS, actorPassiveLabel, actorStageCopy, supportActorSummary } from '../../content/ja/actorStageCopy';
 
 type Props = {
@@ -18,7 +17,6 @@ type Props = {
 };
 
 export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLoad, event, seed, totalTurn }: Props) {
-  const isCompactViewport = useCompactViewport();
   const focusActor = actors.find((actor) => actor.id === focusActorId) ?? actors[0];
   const supportingActors = actors.filter((actor) => actor.id !== focusActor.id);
   const focusPassive = actorPassiveLabel(focusActor);
@@ -67,7 +65,6 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
         actors={supportingActors}
         nextFocusActorId={nextFocusActorId}
         backstageLoad={backstageLoad}
-        compact={isCompactViewport}
       />
     </section>
   );
@@ -77,22 +74,20 @@ function SupportActors({
   actors,
   nextFocusActorId,
   backstageLoad,
-  compact,
 }: {
   actors: Actor[];
   nextFocusActorId?: ActorType | null;
   backstageLoad: number;
-  compact: boolean;
 }) {
   if (!actors.length) return null;
   const nextActor = actors.find((actor) => actor.id === nextFocusActorId) ?? actors[0];
   return (
-    <details className="support-actors-details" open={!compact}>
-      <summary>
+    <section className="support-actors-panel" aria-label={actorStageCopy.supportAria}>
+      <div className="support-actors-head">
         <span>{nextActor.id === nextFocusActorId ? actorStageCopy.nextRole : actorStageCopy.supportAria}</span>
         <strong>{nextActor.name}</strong>
         <em>{supportActorSummary(nextActor, nextActor.id === nextFocusActorId, backstageLoad, actorPassiveLabel(nextActor))}</em>
-      </summary>
+      </div>
       <div className="support-actors" aria-label={actorStageCopy.supportAria}>
         {actors.map((actor) => (
           <div key={actor.id} className={`support-actor-chip ${actor.id === nextFocusActorId ? 'is-next' : ''}`}>
@@ -104,7 +99,7 @@ function SupportActors({
           </div>
         ))}
       </div>
-    </details>
+    </section>
   );
 }
 

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { EVENT_LABELS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, RESPONSE_LABELS } from '../../game/constants';
 import type { ActorEventType, PrepAction } from '../../game/types';
 import { Icon } from '../ui/Icon';
-import { useCompactViewport } from '../ui/useCompactViewport';
 import { appCopy, prepIntent, prepReadMemo, prepShortAim, prepToneLabel } from '../../content/ja/appCopy';
 
 type PrepProps = {
@@ -19,7 +18,6 @@ type PrepTone = 'strong' | 'good' | 'thin' | 'danger';
 
 export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, previousPrep = null, onSelect }: PrepProps) {
   const [inspectedPrep, setInspectedPrep] = useState<PrepAction>(selected ?? 'watch');
-  const isCompactViewport = useCompactViewport();
   const inspected = inspectedPrep;
   const isApproving = approvingPrep === inspected;
   const inspectedCoveredOmens = visibleOmens.filter((event) => PREP_MATCHES[inspected].includes(event));
@@ -62,75 +60,68 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, pre
           );
         })}
       </div>
-      <details className={`cue-sheet-details cue-${inspectedTone}`} open={!isCompactViewport || isApproving}>
-        <summary>
-          <span>{appCopy.prep.memo}</span>
-          <strong>{PREP_LABELS[inspected]}</strong>
-          <em>{appCopy.prep.coverage(inspectedCoveredOmens.length, visibleOmens.length)}</em>
-        </summary>
-        <aside className={`cue-sheet cue-${inspectedTone} ${isApproving ? 'is-approving' : ''}`}>
-          <div className="cue-paper">
-            <div className="cue-sheet-head">
-              <span>{appCopy.prep.memo}</span>
-              <strong>{appCopy.prep.prepTitle(PREP_LABELS[inspected])}</strong>
-            </div>
-            <div className="cue-sheet-grid cue-sheet-focus">
-              <section>
-                <span>{appCopy.prep.visibleOmens}</span>
-                <div className="cue-readiness-list">
-                  {visibleOmens.map((event) => {
-                    const isCovered = PREP_MATCHES[inspected].includes(event);
-                    return (
-                      <em key={event} className={isCovered ? 'is-covered' : 'is-missed'}>
-                        <span className="cue-check" aria-hidden="true">{isCovered ? '✓' : ''}</span>
-                        <span>{EVENT_LABELS[event]}</span>
-                        <b>{isCovered ? appCopy.prep.covered : appCopy.prep.missed}</b>
-                      </em>
-                    );
-                  })}
-                </div>
-              </section>
-              {prepExtraEvents(inspected, visibleOmens).length ? (
-                <section>
-                  <span>{appCopy.prep.extraEvents}</span>
-                  <div className="cue-tags">
-                    {prepExtraEvents(inspected, visibleOmens).map((event) => (
-                      <em key={event}>{EVENT_LABELS[event]}</em>
-                    ))}
-                  </div>
-                </section>
-              ) : null}
-            </div>
-            <div className="cue-read">
-              <div className="prep-intent-line">
-                <span>{appCopy.prep.intent}</span>
-                <strong>{prepIntent(inspected)}</strong>
-                {inspectedTone === 'danger' ? <em>{appCopy.prep.danger}</em> : null}
-              </div>
-              <p>{prepReadMemo(inspected, inspectedCoveredOmens.length)}</p>
-              <div className="cue-note-branches">
-                <section>
-                  <span>{appCopy.prep.onExpected}</span>
-                  <p>{appCopy.prep.receiveWith(RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[inspected]], PREP_RESPONSE_HINTS[inspected].aim)}</p>
-                </section>
-                <section>
-                  <span>{appCopy.prep.onMissed}</span>
-                  <p>{PREP_RESPONSE_HINTS[inspected].alternate}。</p>
-                </section>
-              </div>
-            </div>
-            <div className={`cue-approval-slot ${isApproving ? 'is-approved' : ''}`} aria-label={appCopy.prep.approvalLabel} aria-live="polite">
-              <span>{appCopy.prep.approvalLabel}</span>
-              <strong>{isApproving ? appCopy.prep.approved : appCopy.prep.pending}</strong>
-            </div>
-          </div>
-        </aside>
-      </details>
       <div className="prep-commit-bar">
         <button className="primary-action prep-commit-action" disabled={disabled} onClick={() => onSelect(inspected)}>
           {appCopy.prep.commit}
         </button>
       </div>
+      <aside className={`cue-sheet cue-${inspectedTone} ${isApproving ? 'is-approving' : ''}`}>
+        <div className="cue-paper">
+          <div className="cue-sheet-head">
+            <span>{appCopy.prep.memo}</span>
+            <strong>{appCopy.prep.prepTitle(PREP_LABELS[inspected])}</strong>
+          </div>
+          <div className="cue-sheet-grid cue-sheet-focus">
+            <section>
+              <span>{appCopy.prep.visibleOmens}</span>
+              <div className="cue-readiness-list">
+                {visibleOmens.map((event) => {
+                  const isCovered = PREP_MATCHES[inspected].includes(event);
+                  return (
+                    <em key={event} className={isCovered ? 'is-covered' : 'is-missed'}>
+                      <span className="cue-check" aria-hidden="true">{isCovered ? '✓' : ''}</span>
+                      <span>{EVENT_LABELS[event]}</span>
+                      <b>{isCovered ? appCopy.prep.covered : appCopy.prep.missed}</b>
+                    </em>
+                  );
+                })}
+              </div>
+            </section>
+            {prepExtraEvents(inspected, visibleOmens).length ? (
+              <section>
+                <span>{appCopy.prep.extraEvents}</span>
+                <div className="cue-tags">
+                  {prepExtraEvents(inspected, visibleOmens).map((event) => (
+                    <em key={event}>{EVENT_LABELS[event]}</em>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+          </div>
+          <div className="cue-read">
+            <div className="prep-intent-line">
+              <span>{appCopy.prep.intent}</span>
+              <strong>{prepIntent(inspected)}</strong>
+              {inspectedTone === 'danger' ? <em>{appCopy.prep.danger}</em> : null}
+            </div>
+            <p>{prepReadMemo(inspected, inspectedCoveredOmens.length)}</p>
+            <div className="cue-note-branches">
+              <section>
+                <span>{appCopy.prep.onExpected}</span>
+                <p>{appCopy.prep.receiveWith(RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[inspected]], PREP_RESPONSE_HINTS[inspected].aim)}</p>
+              </section>
+              <section>
+                <span>{appCopy.prep.onMissed}</span>
+                <p>{PREP_RESPONSE_HINTS[inspected].alternate}。</p>
+              </section>
+            </div>
+          </div>
+          <div className={`cue-approval-slot ${isApproving ? 'is-approved' : ''}`} aria-label={appCopy.prep.approvalLabel} aria-live="polite">
+            <span>{appCopy.prep.approvalLabel}</span>
+            <strong>{isApproving ? appCopy.prep.approved : appCopy.prep.pending}</strong>
+          </div>
+        </div>
+      </aside>
     </section>
   );
 }

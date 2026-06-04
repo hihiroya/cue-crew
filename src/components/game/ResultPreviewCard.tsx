@@ -2,7 +2,6 @@ import { ACTOR_LABELS, EVENT_LABELS, PREP_LABELS, RESPONSE_LABELS, RESULT_TIER_L
 import type { ResultPreview } from '../../game/types';
 import type { CollectionState } from '../../game/rogueliteProgress';
 import { Icon } from '../ui/Icon';
-import { useCompactViewport } from '../ui/useCompactViewport';
 import { appCopy, deltaImpact, prepQualityBanner, stripAudienceReactionPrefix, type DeltaKind } from '../../content/ja/appCopy';
 
 type Props = {
@@ -13,7 +12,6 @@ type Props = {
 };
 
 export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: Props) {
-  const isCompactViewport = useCompactViewport();
   if (!preview) {
     return (
       <section className="result-preview empty-preview">
@@ -69,66 +67,60 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
           <strong>{appCopy.resultPreview.newSceneBody}</strong>
         </div>
       ) : null}
-      <details className="result-preview-details" open={!isCompactViewport}>
-        <summary>
+      <div className="result-preview-detail-stack">
+        <div className="next-note result-lesson-note">
           <span>{appCopy.resultPreview.lesson}</span>
-          <strong>{preview.cueSummary.keyPoint}</strong>
-        </summary>
-        <div className="result-preview-detail-stack">
-          <div className="next-note result-lesson-note">
-            <span>{appCopy.resultPreview.lesson}</span>
-            <p>{preview.cueSummary.lesson}</p>
-          </div>
-          <div className="cue-summary-grid">
-            <article className="cue-summary-card is-key">
-              <span>{appCopy.resultPreview.key}</span>
-              <p>{preview.cueSummary.keyPoint}</p>
-            </article>
-            <article className="cue-summary-card">
-              <span>{appCopy.resultPreview.cost}</span>
-              <p>{preview.cueSummary.cost}</p>
-            </article>
-          </div>
-          <div className="cue-subnote-line">
-            <span>{isFinale ? appCopy.resultPreview.finalHandoff : appCopy.resultPreview.handoff}: {preview.cueSummary.handoff}</span>
-            <span>{appCopy.resultPreview.audience}: {stripAudienceReactionPrefix(preview.cueSummary.audienceReaction)}</span>
-          </div>
-          {reasonItems.length > 0 ? (
-            <div className="cue-reason-list">
-              <span>{appCopy.resultPreview.reasons}</span>
-              <ul>
-                {reasonItems.map((item) => (
-                  <li key={item.id} className={`breakdown-${item.tone}`}>
-                    <strong>{item.value > 0 ? `+${item.value}` : item.value}</strong>
-                    <p>{item.label}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-          <div className={`prep-recovery recovery-${preview.prepRecoveryTone}`}>
-            <div>
-              <span>{preview.prepRecoveryLabel}</span>
-              <strong>{preview.prepRecoveryTitle}</strong>
-            </div>
-            <p>{preview.prepRecoveryText}</p>
-          </div>
-          {preview.styleLabel ? (
-            <div className={`performance-style-note ${preview.styleIsNew ? 'is-new' : ''}`}>
-              <span>{preview.styleIsNew ? appCopy.resultPreview.styleNew : appCopy.resultPreview.style}</span>
-              <strong>{preview.styleLabel}</strong>
-              {preview.styleText ? <p>{preview.styleText}</p> : null}
-            </div>
-          ) : null}
-          <div className="delta-table" aria-label={appCopy.resultPreview.deltaAria}>
-            <span className="delta-table-title">{appCopy.resultPreview.deltaTitle}</span>
-            <Delta kind="scene" label={appCopy.result.finalScoreLabels.scene} value={preview.deltaScene} />
-            <Delta kind="flow" label={appCopy.resultPreview.deltaLabels.flow} value={preview.deltaFlow} />
-            <Delta kind="trust" label={appCopy.resultPreview.deltaLabels.trust} value={preview.deltaTrust} />
-            <Delta kind="load" label={appCopy.resultPreview.deltaLabels.load} value={preview.deltaLoad} />
-          </div>
+          <p>{preview.cueSummary.lesson}</p>
         </div>
-      </details>
+        <div className="cue-summary-grid">
+          <article className="cue-summary-card is-key">
+            <span>{appCopy.resultPreview.key}</span>
+            <p>{preview.cueSummary.keyPoint}</p>
+          </article>
+          <article className="cue-summary-card">
+            <span>{appCopy.resultPreview.cost}</span>
+            <p>{preview.cueSummary.cost}</p>
+          </article>
+        </div>
+        <div className="cue-subnote-line">
+          <span>{isFinale ? appCopy.resultPreview.finalHandoff : appCopy.resultPreview.handoff}: {preview.cueSummary.handoff}</span>
+          <span>{appCopy.resultPreview.audience}: {stripAudienceReactionPrefix(preview.cueSummary.audienceReaction)}</span>
+        </div>
+        {reasonItems.length > 0 ? (
+          <div className="cue-reason-list">
+            <span>{appCopy.resultPreview.reasons}</span>
+            <ul>
+              {reasonItems.map((item) => (
+                <li key={item.id} className={`breakdown-${item.tone}`}>
+                  <strong>{item.value > 0 ? `+${item.value}` : item.value}</strong>
+                  <p>{item.label}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+        <div className={`prep-recovery recovery-${preview.prepRecoveryTone}`}>
+          <div>
+            <span>{preview.prepRecoveryLabel}</span>
+            <strong>{preview.prepRecoveryTitle}</strong>
+          </div>
+          <p>{preview.prepRecoveryText}</p>
+        </div>
+        {preview.styleLabel ? (
+          <div className={`performance-style-note ${preview.styleIsNew ? 'is-new' : ''}`}>
+            <span>{preview.styleIsNew ? appCopy.resultPreview.styleNew : appCopy.resultPreview.style}</span>
+            <strong>{preview.styleLabel}</strong>
+            {preview.styleText ? <p>{preview.styleText}</p> : null}
+          </div>
+        ) : null}
+        <div className="delta-table" aria-label={appCopy.resultPreview.deltaAria}>
+          <span className="delta-table-title">{appCopy.resultPreview.deltaTitle}</span>
+          <Delta kind="scene" label={appCopy.result.finalScoreLabels.scene} value={preview.deltaScene} />
+          <Delta kind="flow" label={appCopy.resultPreview.deltaLabels.flow} value={preview.deltaFlow} />
+          <Delta kind="trust" label={appCopy.resultPreview.deltaLabels.trust} value={preview.deltaTrust} />
+          <Delta kind="load" label={appCopy.resultPreview.deltaLabels.load} value={preview.deltaLoad} />
+        </div>
+      </div>
       <button className="primary-action result-preview-commit" disabled={!canCommit} onClick={onCommit}>{isFinale ? appCopy.resultPreview.commitFinale : appCopy.resultPreview.commitNext}</button>
     </section>
   );

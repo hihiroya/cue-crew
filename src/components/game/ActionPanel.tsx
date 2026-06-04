@@ -3,7 +3,6 @@ import { RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../game/constants';
 import { responseInsight } from '../../game/responseInsight';
 import type { GameState, MainResponse, ResponseInsight, ResultTier, TurnLog } from '../../game/types';
 import { Icon } from '../ui/Icon';
-import { useCompactViewport } from '../ui/useCompactViewport';
 import { effectDirection, effectIntensity, effectItems, effectLedSlots, effectSummary, effectTargetLabel, evaluationSign } from './responseEffectsView';
 import { buildStyleSummary, replayDeltaForResponse, responseBuildCue } from '../../game/rogueliteProgress';
 import {
@@ -39,7 +38,6 @@ export function ResponsePanel({ selected, disabled, state, previousTurnLog = nul
     [state],
   );
   const buildStyle = useMemo(() => buildStyleSummary(state.logs, state.performanceStyle), [state.logs, state.performanceStyle]);
-  const isCompactViewport = useCompactViewport();
   const [inspectedResponse, setInspectedResponse] = useState<MainResponse>(selected ?? 'catch');
   const inspected = insights.find((insight) => insight.response === inspectedResponse) ?? insights[0];
   return (
@@ -59,19 +57,12 @@ export function ResponsePanel({ selected, disabled, state, previousTurnLog = nul
         ))}
       </div>
       <ResponseSendBar disabled={disabled} response={inspected.response} onSelect={onSelect} />
-      <details className="response-console-details" open={!isCompactViewport}>
-        <summary>
-          <span>{responsePanelCopy.consoleTitle}</span>
-          <strong>{RESPONSE_LABELS[inspected.response]}</strong>
-          <em>{inspected.successRangeLabel}</em>
-        </summary>
-        <ResponseConsole
-          insight={inspected}
-          state={state}
-          buildCue={responseBuildCue(inspected.response, buildStyle)}
-          replayDelta={replayDeltaForResponse({ currentTier: inspected.resultTier, currentLoad: inspected.deltaLoad, previous: previousTurnLog })}
-        />
-      </details>
+      <ResponseConsole
+        insight={inspected}
+        state={state}
+        buildCue={responseBuildCue(inspected.response, buildStyle)}
+        replayDelta={replayDeltaForResponse({ currentTier: inspected.resultTier, currentLoad: inspected.deltaLoad, previous: previousTurnLog })}
+      />
     </section>
   );
 }

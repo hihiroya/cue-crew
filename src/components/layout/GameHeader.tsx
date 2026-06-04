@@ -16,11 +16,9 @@ export function GameHeader({ state }: Props) {
         <span>{state.totalTurn}/{TOTAL_TURNS}</span>
         <strong>{performanceLabel(state)}</strong>
         <small>{slotDetail(state.turnInAct)}</small>
-      </div>
-      <div className={`performance-color-chip ${color ? `color-${color.tone}` : 'color-pending'}`}>
-        <span>{gameHeaderCopy.styleLabel}</span>
-        <strong>{color ? color.label : gameHeaderCopy.pendingStyle}</strong>
-        <small>{color ? color.hint : gameHeaderCopy.pendingHint}</small>
+        <em className={`performance-style-inline ${color ? `color-${color.tone}` : 'color-pending'}`}>
+          {gameHeaderCopy.styleLabel} <b>{color ? color.label : gameHeaderCopy.pendingStyle}</b>
+        </em>
       </div>
       {dailyRun ? (
         <div className="daily-run-chip">

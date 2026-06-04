@@ -963,12 +963,12 @@ button:disabled {
   min-width: 0;
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 1px 8px;
+  gap: 2px 8px;
   align-items: baseline;
 }
 
 .performance-status span {
-  grid-row: 1 / span 2;
+  grid-row: 1 / span 3;
   align-self: center;
   min-width: 2.75rem;
   padding: 5px 7px;
@@ -992,6 +992,29 @@ button:disabled {
   color: var(--muted);
   font-size: 0.74rem;
   line-height: 1.2;
+}
+
+.performance-style-inline {
+  grid-column: 2 / 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: fit-content;
+  min-width: 0;
+  padding: 3px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 217, 138, 0.16);
+  color: var(--muted);
+  background: rgba(7, 9, 15, 0.5);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.performance-style-inline b {
+  color: var(--gold-strong);
+  font-size: 0.72rem;
 }
 
 .performance-color-chip {
@@ -1471,10 +1494,10 @@ button:disabled {
 }
 
 .focus-actor-card {
-  min-height: 178px;
-  grid-template-columns: 96px 1fr;
+  min-height: 156px;
+  grid-template-columns: 86px 1fr;
   align-items: stretch;
-  padding-top: 28px;
+  padding: 24px 8px 8px;
 }
 
 .actor-card.is-focus {
@@ -1501,7 +1524,7 @@ button:disabled {
 }
 
 .focus-actor-card .actor-figure-wrap {
-  min-height: 150px;
+  min-height: 126px;
 }
 
 .has-event-stage .focus-actor-card {
@@ -1721,13 +1744,41 @@ button:disabled {
   gap: 8px;
 }
 
-.support-actors-details {
+.support-actors-panel {
   display: grid;
   gap: 8px;
 }
 
-.support-actors-details > summary {
-  display: none;
+.support-actors-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 3px 8px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 217, 138, 0.18);
+  background:
+    linear-gradient(90deg, rgba(229, 189, 104, 0.08), transparent 48%),
+    rgba(13, 15, 23, 0.76);
+}
+
+.support-actors-head span {
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.support-actors-head strong {
+  color: var(--gold-strong);
+  font-size: 0.92rem;
+}
+
+.support-actors-head em {
+  grid-column: 1 / -1;
+  color: #d9d1bf;
+  font-size: 0.76rem;
+  font-style: normal;
+  line-height: 1.35;
 }
 
 .support-actor-chip {
@@ -5880,6 +5931,15 @@ button:disabled {
     font-size: 0.68rem;
   }
 
+  .performance-style-inline {
+    padding: 3px 6px;
+    font-size: 0.64rem;
+  }
+
+  .performance-style-inline b {
+    font-size: 0.68rem;
+  }
+
   .performance-color-chip {
     min-height: 30px;
     padding: 6px 8px;
@@ -6028,27 +6088,34 @@ button:disabled {
   }
 
   .focus-actor-card {
-    grid-template-columns: 74px minmax(0, 1fr);
+    grid-template-columns: 70px minmax(0, 1fr);
     min-height: 0;
-    padding: 24px 8px 8px;
+    padding: 22px 8px 8px;
   }
 
   .focus-actor-card .actor-figure-wrap {
-    min-height: 112px;
+    min-height: 96px;
   }
 
   .actor-card h3 {
     font-size: 1.02rem;
   }
 
-  .actor-card .actor-trait,
-  .actor-state-card em {
-    display: none;
+  .actor-card .actor-trait {
+    padding: 5px 7px;
+    font-size: 0.68rem;
+    line-height: 1.35;
   }
 
   .actor-state-card {
     gap: 2px 6px;
-    padding: 6px 7px;
+    padding: 5px 7px;
+  }
+
+  .actor-state-card em {
+    display: block;
+    font-size: 0.66rem;
+    line-height: 1.25;
   }
 
   .omen-chip-list {
@@ -6057,25 +6124,25 @@ button:disabled {
   }
 
   .omen-chip {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) auto;
     min-height: 26px;
     padding: 4px 5px;
   }
 
   .omen-chip small {
-    display: none;
+    display: inline-block;
+    padding: 2px 4px;
   }
 
-  .support-actors-details {
+  .support-actors-panel {
     gap: 6px;
   }
 
-  .support-actors-details > summary {
+  .support-actors-head {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 3px 8px;
     align-items: center;
-    min-height: 40px;
     padding: 6px 8px;
     border-radius: 8px;
     border: 1px solid rgba(255, 217, 138, 0.22);
@@ -6083,43 +6150,25 @@ button:disabled {
     background:
       linear-gradient(90deg, rgba(229, 189, 104, 0.08), transparent 52%),
       rgba(13, 15, 23, 0.78);
-    cursor: pointer;
-    list-style: none;
   }
 
-  .support-actors-details > summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .support-actors-details > summary span {
+  .support-actors-head span {
     color: var(--gold);
     font-size: 0.66rem;
     font-weight: 900;
   }
 
-  .support-actors-details > summary strong {
+  .support-actors-head strong {
     color: var(--gold-strong);
     font-size: 0.88rem;
   }
 
-  .support-actors-details > summary em {
-    display: none;
-  }
-
-  .support-actors-details > summary::after {
-    content: "詳細";
-    grid-row: auto;
-    grid-column: 2 / 3;
-    padding: 3px 6px;
-    border-radius: 999px;
-    color: #151017;
-    background: var(--gold);
-    font-size: 0.62rem;
-    font-weight: 900;
-  }
-
-  .support-actors-details[open] > summary::after {
-    content: "閉じる";
+  .support-actors-head em {
+    grid-column: 1 / -1;
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-style: normal;
+    line-height: 1.25;
   }
 
   .support-actors {
@@ -6183,14 +6232,21 @@ button:disabled {
   }
 
   .prep-title em,
-  .response-title em,
+  .response-title em {
+    display: block;
+    font-size: 0.66rem;
+    line-height: 1.2;
+  }
+
   .cue-cover span,
   .response-effect-summary > span {
-    display: none;
+    display: inline;
+    font-size: 0.64rem;
   }
 
   .cue-cover {
     padding: 6px;
+    gap: 4px;
   }
 
   .response-effect-summary {
