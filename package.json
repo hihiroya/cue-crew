@@ -34,6 +34,11 @@
     "check:ui:prep": "npm run build && node scripts/check-ui-layout.mjs --preset=prep-panel",
     "check:ui:response": "npm run build && node scripts/check-ui-layout.mjs --preset=response-panel",
     "check:ui:result": "npm run build && node scripts/check-ui-layout.mjs --preset=result-panel",
+    "pretest:e2e": "npm run build",
+    "test:e2e": "playwright test",
+    "pretest:e2e:ui": "npm run build",
+    "test:e2e:ui": "playwright test --ui",
+    "playwright:install": "playwright install chromium",
     "balance:report": "node scripts/balance-report.mjs",
     "images:actors": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/process-actor-images.ps1",
     "verify:ui": "npm run check:ui",
@@ -48,6 +53,7 @@
     "react-dom": "19.2.6"
   },
   "devDependencies": {
+    "@playwright/test": "1.60.0",
     "@types/react": "19.2.15",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.2",

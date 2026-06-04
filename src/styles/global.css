@@ -4575,7 +4575,7 @@ button:disabled {
   height: 100%;
   display: block;
   object-fit: cover;
-  object-position: 50% 52%;
+  object-position: 50% 20%;
   filter: saturate(1.05) contrast(1.06);
 }
 
