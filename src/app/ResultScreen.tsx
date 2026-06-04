@@ -60,6 +60,7 @@ export function ResultScreen({ result, previousSameSeed, collection, dailyRun, d
           <p>{appCopy.result.totalScore(result.insight.totalScore)}</p>
           <em>{result.insight.pointsToNextRank === null ? appCopy.result.maxRank : appCopy.result.pointsToNext(result.insight.pointsToNextRank, result.insight.nextRank)}</em>
         </div>
+        <NextPerformancePanel recommendation={recommendation} onStart={startRecommendation} />
         <div className="score-attack-note">
           <span>{appCopy.result.scoreNote}</span>
           <p>{result.insight.scoreNote}</p>
@@ -90,7 +91,6 @@ export function ResultScreen({ result, previousSameSeed, collection, dailyRun, d
             <p>{comparisonLabel(comparison)}</p>
           </div>
         ) : null}
-        <NextPerformancePanel recommendation={recommendation} onStart={startRecommendation} />
         <div className="report-section-label">
           <span>{appCopy.result.metrics}</span>
           <small>{appCopy.result.aggregate}</small>
