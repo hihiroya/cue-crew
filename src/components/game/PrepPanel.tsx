@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { EVENT_LABELS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, RESPONSE_LABELS } from '../../game/constants';
-import type { ActorEventType, PrepAction } from '../../game/types';
+import { EVENT_LABELS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, RESPONSE_LABELS, STATE_LABELS } from '../../game/constants';
+import type { ActorEventType, ActorState, PrepAction } from '../../game/types';
 import { Icon } from '../ui/Icon';
 import { appCopy, prepIntent, prepReadMemo, prepShortAim, prepToneLabel } from '../../content/ja/appCopy';
+import { STATE_HINTS } from '../../content/ja/actorStageCopy';
 
 type PrepProps = {
   selected: PrepAction | null;
   disabled: boolean;
   approvingPrep: PrepAction | null;
+  focusActorState: ActorState;
   visibleOmens: ActorEventType[];
   previousPrep?: PrepAction | null;
   onSelect: (prep: PrepAction) => void;
@@ -16,7 +18,7 @@ type PrepProps = {
 const prepActions: PrepAction[] = ['watch', 'makeSpace', 'tightenFlow', 'prepareTransition'];
 type PrepTone = 'strong' | 'good' | 'thin' | 'danger';
 
-export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, previousPrep = null, onSelect }: PrepProps) {
+export function PrepPanel({ selected, disabled, approvingPrep, focusActorState, visibleOmens, previousPrep = null, onSelect }: PrepProps) {
   const [inspectedPrep, setInspectedPrep] = useState<PrepAction>(selected ?? 'watch');
   const inspected = inspectedPrep;
   const isApproving = approvingPrep === inspected;
@@ -102,6 +104,10 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, pre
             ) : null}
           </div>
           <div className="cue-read">
+            <div className="prep-state-line">
+              <span>{appCopy.prep.stateRead}</span>
+              <p><strong>{STATE_LABELS[focusActorState]}</strong>: {STATE_HINTS[focusActorState]}</p>
+            </div>
             <div className="prep-intent-line">
               <span>{appCopy.prep.intent}</span>
               <strong>{prepIntent(inspected)}</strong>

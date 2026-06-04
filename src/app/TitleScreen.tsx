@@ -133,11 +133,13 @@ function HomeView({
           </button>
         ) : null}
       </section>
-      <section className="home-goal-panel" aria-label={recommendation.kicker}>
-        <span>{recommendation.kicker}</span>
-        <h2>{recommendation.title}</h2>
-        <p>{recommendation.body}</p>
-      </section>
+      {hasDistinctRecommendation ? (
+        <section className="home-goal-panel" aria-label={recommendation.kicker}>
+          <span>{recommendation.kicker}</span>
+          <h2>{recommendation.title}</h2>
+          <p>{recommendation.body}</p>
+        </section>
+      ) : null}
     </>
   );
 }

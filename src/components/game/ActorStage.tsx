@@ -3,7 +3,7 @@ import { topOmenEvents } from '../../game/actorLogic';
 import type { Actor, ActorEvent, ActorType, PrepAction } from '../../game/types';
 import { ActorSilhouette } from '../actors/ActorSilhouette';
 import { Icon } from '../ui/Icon';
-import { STATE_HINTS, actorPassiveLabel, actorStageCopy, supportActorSummary } from '../../content/ja/actorStageCopy';
+import { actorPassiveLabel, actorStageCopy, supportActorSummary } from '../../content/ja/actorStageCopy';
 
 type Props = {
   actors: Actor[];
@@ -54,7 +54,7 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
         <div className="actor-state-card">
           <span>{actorStageCopy.stateLabel}</span>
           <strong>{STATE_LABELS[focusActor.state]}</strong>
-          <em>{STATE_HINTS[focusActor.state]}</em>
+          <ActorTrustMeter actor={focusActor} passive={focusPassive} />
           {focusPassive ? (
             <small className={`actor-trust-pill trust-${trustLevel(focusActor)}`}>{focusPassive}</small>
           ) : null}
@@ -113,6 +113,20 @@ function OmenList({ actor, seed, totalTurn }: { actor: Actor; seed: string; tota
         ))}
       </div>
     </div>
+  );
+}
+
+function ActorTrustMeter({ actor, passive }: { actor: Actor; passive: string | null }) {
+  const trust = Math.min(5, Math.max(0, actor.trust));
+  return (
+    <em className="actor-trust-meter" aria-label={`${actorStageCopy.actorTrust} ${trust}/5${passive ? ` ${passive}` : ''}`}>
+      <small>{actorStageCopy.actorTrust}</small>
+      <span aria-hidden="true">
+        {Array.from({ length: 5 }, (_, index) => (
+          <i key={index} className={index < trust ? 'is-lit' : ''} />
+        ))}
+      </span>
+    </em>
   );
 }
 

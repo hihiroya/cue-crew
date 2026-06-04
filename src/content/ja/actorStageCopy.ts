@@ -7,6 +7,7 @@ export const actorStageCopy = {
   stageAria: '役者の兆候',
   focusRole: '今回の注目役者',
   stateLabel: '状態',
+  actorTrust: '役者信頼',
   supportAria: '他の役者',
   nextRole: '次に来そう',
   reserveRole: '控え',

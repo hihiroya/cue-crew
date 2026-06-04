@@ -51,6 +51,7 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
         <span><Icon name={preview.actorEventType} />{EVENT_LABELS[preview.actorEventType]}</span>
         <span><Icon name={preview.mainResponse} />{RESPONSE_LABELS[preview.mainResponse]}</span>
       </div>
+      <DeltaTable preview={preview} />
       <div className={`prep-hit-banner cue-stamp ${prepBanner.className}`}>
         <span>{prepBanner.label}</span>
         <strong>{PREP_LABELS[preview.prepAction]} / {prepBanner.detail}</strong>
@@ -113,16 +114,21 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
             {preview.styleText ? <p>{preview.styleText}</p> : null}
           </div>
         ) : null}
-        <div className="delta-table" aria-label={appCopy.resultPreview.deltaAria}>
-          <span className="delta-table-title">{appCopy.resultPreview.deltaTitle}</span>
-          <Delta kind="scene" label={appCopy.result.finalScoreLabels.scene} value={preview.deltaScene} />
-          <Delta kind="flow" label={appCopy.resultPreview.deltaLabels.flow} value={preview.deltaFlow} />
-          <Delta kind="trust" label={appCopy.resultPreview.deltaLabels.trust} value={preview.deltaTrust} />
-          <Delta kind="load" label={appCopy.resultPreview.deltaLabels.load} value={preview.deltaLoad} />
-        </div>
       </div>
       <button className="primary-action result-preview-commit" disabled={!canCommit} onClick={onCommit}>{isFinale ? appCopy.resultPreview.commitFinale : appCopy.resultPreview.commitNext}</button>
     </section>
+  );
+}
+
+function DeltaTable({ preview }: { preview: ResultPreview }) {
+  return (
+    <div className="delta-table delta-table--summary" aria-label={appCopy.resultPreview.deltaAria}>
+      <span className="delta-table-title">{appCopy.resultPreview.deltaTitle}</span>
+      <Delta kind="scene" label={appCopy.result.finalScoreLabels.scene} value={preview.deltaScene} />
+      <Delta kind="flow" label={appCopy.resultPreview.deltaLabels.flow} value={preview.deltaFlow} />
+      <Delta kind="trust" label={appCopy.resultPreview.deltaLabels.trust} value={preview.deltaTrust} />
+      <Delta kind="load" label={appCopy.resultPreview.deltaLabels.load} value={preview.deltaLoad} />
+    </div>
   );
 }
 

@@ -99,7 +99,7 @@ export const appCopy = {
     totalScore: (score: number) => `総合評価点 ${score}`,
     maxRank: '最高ランク到達',
     pointsToNext: (points: number, rank: string | null) => `あと${points}点で ${rank ?? ''}`,
-    scoreNote: '再演メモ',
+    scoreNote: '足りない部分',
     challenge: '再演チャレンジ',
     performanceBadges: '今回の公演バッジ',
     buildStyle: '今回のビルド',
@@ -155,19 +155,20 @@ export const appCopy = {
     heading: '準備を決める',
     lead: '役者の兆候を見て、本番中の想定外に備える準備を選ぶ。',
     affinity: '兆候との相性',
-    coverage: (covered: number, total: number) => `兆候 ${covered}/${Math.max(1, total)}`,
+    coverage: (covered: number, _total: number) => `備え ${covered}灯`,
     memo: '本番前メモ',
     prepTitle: (label: string) => `${label}の準備`,
     visibleOmens: '見えている兆候',
     covered: '準備済み',
     missed: '備え外',
     extraEvents: '同じ準備で拾える出来事',
-    intent: '今回の狙い',
+    stateRead: '状態の読み',
+    intent: '今回の読み',
     danger: '見えている兆候とは少し外れる',
     onExpected: '備えどおりに来たら',
     onMissed: '外れたら',
     receiveWith: (responseLabel: string, aim: string) => `${responseLabel}で受ける。${aim}。`,
-    responseHint: (responseLabel: string) => `本番で${responseLabel}`,
+    responseHint: (responseLabel: string) => responseLabel,
     approvalLabel: '承認欄',
     approved: '承認済',
     pending: '未承認',
@@ -302,10 +303,10 @@ export function timelineBody(log: PerformanceResult['logs'][number]) {
 }
 
 export function prepToneLabel(tone: 'strong' | 'good' | 'thin' | 'danger') {
-  if (tone === 'strong') return '見えている兆候に合う';
-  if (tone === 'good') return '一部に備えあり';
+  if (tone === 'strong') return '広く備える';
+  if (tone === 'good') return '一部に備える';
   if (tone === 'thin') return '別筋に備える';
-  return '今の兆候とは遠い';
+  return '備え外';
 }
 
 export function prepReadMemo(prep: PrepAction, covered: number) {
@@ -322,10 +323,10 @@ export function prepReadMemo(prep: PrepAction, covered: number) {
 }
 
 export function prepShortAim(prep: PrepAction) {
-  if (prep === 'watch') return '熱を拾う';
-  if (prep === 'makeSpace') return '間を残す';
-  if (prep === 'tightenFlow') return '乱れを戻す';
-  return '次へ渡す';
+  if (prep === 'watch') return '熱の揺れ';
+  if (prep === 'makeSpace') return '間の揺れ';
+  if (prep === 'tightenFlow') return '進行の乱れ';
+  return '転換の崩れ';
 }
 
 export function prepIntent(prep: PrepAction) {

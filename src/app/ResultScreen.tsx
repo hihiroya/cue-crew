@@ -1,9 +1,7 @@
-import { useMemo } from 'react';
 import { PERFORMANCE_STYLE_DETAILS, RESPONSE_LABELS } from '../game/constants';
 import type { PerformanceResult } from '../game/types';
 import { Icon } from '../components/ui/Icon';
-import { achievementListLabel, compareWithPrevious, comparisonLabel, nextChallengeRecommendation, type CollectionState, type DailyRun, type NextChallengeRecommendation } from '../game/rogueliteProgress';
-import { analyzeReplayImprovement } from '../game/replayAnalysis';
+import { achievementListLabel, compareWithPrevious, comparisonLabel, type CollectionState, type DailyRun } from '../game/rogueliteProgress';
 import { appCopy, bestCueBody, bestCueMeta, resultLoadNote, resultScoreNote, timelineBody, timelineMeta } from '../content/ja/appCopy';
 
 type Props = {
@@ -18,25 +16,12 @@ type Props = {
   onReplayDaily: (seed: string) => void;
 };
 
-export function ResultScreen({ result, previousSameSeed, collection, dailyRun, dailyBest, onTitle, onReplaySame, onReplayNew, onReplayDaily }: Props) {
+export function ResultScreen({ result, previousSameSeed, dailyRun, onTitle, onReplaySame, onReplayNew, onReplayDaily }: Props) {
   const styleLabel = result.performanceStyle ? PERFORMANCE_STYLE_DETAILS[result.performanceStyle].label : appCopy.result.unsetStyle;
   const timelineLogs = result.logs?.length ? result.logs : result.highlights;
   const maxDecisionCount = Math.max(1, ...result.insight.decisionDistribution.map((item) => item.count));
   const comparison = compareWithPrevious(result, previousSameSeed);
   const buildMeterMax = result.insight.buildStyle.next ?? Math.max(1, result.insight.buildStyle.progress);
-  const replaySuggestions = useMemo(() => ({ [result.seed]: analyzeReplayImprovement(result) }), [result]);
-  const recommendation = nextChallengeRecommendation({ result, collection, dailyRun, dailyBest, replaySuggestions });
-  const startRecommendation = () => {
-    if (recommendation.kind === 'daily' && recommendation.seed) {
-      onReplayDaily(recommendation.seed);
-      return;
-    }
-    if (recommendation.kind === 'newSeed') {
-      onReplayNew();
-      return;
-    }
-    onReplaySame();
-  };
   return (
     <main className="result-screen">
       <section className="result-hero">
@@ -60,7 +45,6 @@ export function ResultScreen({ result, previousSameSeed, collection, dailyRun, d
           <p>{appCopy.result.totalScore(result.insight.totalScore)}</p>
           <em>{result.insight.pointsToNextRank === null ? appCopy.result.maxRank : appCopy.result.pointsToNext(result.insight.pointsToNextRank, result.insight.nextRank)}</em>
         </div>
-        <NextPerformancePanel recommendation={recommendation} onStart={startRecommendation} />
         <div className="score-attack-note">
           <span>{appCopy.result.scoreNote}</span>
           <p>{result.insight.scoreNote}</p>
@@ -191,19 +175,6 @@ export function ResultScreen({ result, previousSameSeed, collection, dailyRun, d
         <button className="ghost-button" onClick={onTitle}>{appCopy.result.title}</button>
       </div>
     </main>
-  );
-}
-
-function NextPerformancePanel({ recommendation, onStart }: { recommendation: NextChallengeRecommendation; onStart: () => void }) {
-  return (
-    <section className={`next-performance-panel next-${recommendation.kind}`}>
-      <div>
-        <span>{recommendation.kicker}</span>
-        <h2>{recommendation.title}</h2>
-        <p>{recommendation.body}</p>
-      </div>
-      <button type="button" className="primary-action" onClick={onStart}>{recommendation.cta}</button>
-    </section>
   );
 }
 

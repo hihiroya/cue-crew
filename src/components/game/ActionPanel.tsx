@@ -8,7 +8,6 @@ import { buildStyleSummary, replayDeltaForResponse, responseBuildCue } from '../
 import {
   affinityLabels,
   decisionMemo,
-  effectTargetShortLabel,
   prepConnectionLabel,
   prepConnectionShortLabel,
   rangeShortLabel,
@@ -132,7 +131,6 @@ function ResponseEffectSummary({ insight }: { insight: ResponseInsight }) {
           <em key={item.key} className={`response-effect-mini effect-${item.tone}`} title={item.title} aria-label={item.title}>
             {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
             <Icon name={item.icon} />
-            <strong>{effectTargetShortLabel(item.icon)}</strong>
             <b>{evaluationSign(item)}</b>
           </em>
         ))}
