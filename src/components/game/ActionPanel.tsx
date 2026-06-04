@@ -4,6 +4,7 @@ import { responseInsight } from '../../game/responseInsight';
 import type { GameState, MainResponse, ResponseInsight, ResultTier } from '../../game/types';
 import { Icon } from '../ui/Icon';
 import { effectDirection, effectIntensity, effectItems, effectLedSlots, effectSummary, effectTargetLabel, evaluationSign } from './responseEffectsView';
+import { buildStyleSummary, responseBuildCue } from '../../game/rogueliteProgress';
 import {
   affinityLabels,
   decisionMemo,
@@ -35,6 +36,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
     () => responses.map((response) => responseInsight(state, response)),
     [state],
   );
+  const buildStyle = useMemo(() => buildStyleSummary(state.logs, state.performanceStyle), [state.logs, state.performanceStyle]);
   const [inspectedResponse, setInspectedResponse] = useState<MainResponse>(selected ?? 'catch');
   const inspected = insights.find((insight) => insight.response === inspectedResponse) ?? insights[0];
   return (
@@ -48,13 +50,14 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
             key={insight.response}
             disabled={disabled}
             insight={insight}
+            buildCue={responseBuildCue(insight.response, buildStyle)}
             isInspected={inspected.response === insight.response}
             onInspect={setInspectedResponse}
           />
         ))}
       </div>
       <ResponseSendBar disabled={disabled} response={inspected.response} onSelect={onSelect} />
-      <ResponseConsole insight={inspected} state={state} />
+      <ResponseConsole insight={inspected} state={state} buildCue={responseBuildCue(inspected.response, buildStyle)} />
     </section>
   );
 }
@@ -70,11 +73,13 @@ function ResponseSelectionMarker({ visible }: { visible: boolean }) {
 function ResponseChoiceCard({
   disabled,
   insight,
+  buildCue,
   isInspected,
   onInspect,
 }: {
   disabled: boolean;
   insight: ResponseInsight;
+  buildCue: string;
   isInspected: boolean;
   onInspect: (response: MainResponse) => void;
 }) {
@@ -105,6 +110,10 @@ function ResponseChoiceCard({
         <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
       </div>
       <ResponseEffectSummary insight={insight} />
+      <div className="response-build-cue">
+        <span>{responsePanelCopy.buildCue}</span>
+        <strong>{buildCue}</strong>
+      </div>
       {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
       <ResponseSelectionMarker visible={isInspected} />
     </button>
@@ -153,7 +162,7 @@ function ResponseSendBar({
   );
 }
 
-function ResponseConsole({ insight, state }: { insight: ResponseInsight; state: GameState }) {
+function ResponseConsole({ insight, state, buildCue }: { insight: ResponseInsight; state: GameState; buildCue: string }) {
   return (
     <aside className={`decision-note response-console relation-${insight.prepRelationTone}`}>
       <div className="console-head">
@@ -184,6 +193,10 @@ function ResponseConsole({ insight, state }: { insight: ResponseInsight; state: 
       <div className="console-log">
         <span>{responsePanelCopy.logTitle}</span>
         <p>{decisionMemo(insight, effectSummary(insight))}</p>
+      </div>
+      <div className="console-fray relation-recover">
+        <span>{responsePanelCopy.buildCue}</span>
+        <strong>{buildCue}</strong>
       </div>
       {insight.frayRelationLabel ? (
         <div className={`console-fray relation-${insight.frayRelationTone}`}>

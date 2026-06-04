@@ -1,6 +1,7 @@
 import { PERFORMANCE_STYLE_DETAILS } from './constants';
 import * as reportCopy from '../content/ja/reportCopy';
 import { determinePerformanceStyle } from './scoring';
+import { buildStyleSummary, discoverySummary } from './rogueliteProgress';
 import type { AudienceSurvey, MainResponse, MediaReview, PerformanceInsight, ResultTier, TurnLog } from './types';
 
 export function createPerformanceReview(logs: TurnLog[], sceneScore: number, flowScore: number, trustScore: number, backstageLoad = 0): { title: string; review: string; reviewNotes: string[] } {
@@ -75,6 +76,9 @@ export function createPerformanceInsight(logs: TurnLog[], sceneScore = 0, flowSc
     || b.deltaScene - a.deltaScene
     || b.score - a.score
   ))[0] ?? null;
+  const style = logs.find((log) => log.performanceStyle)?.performanceStyle ?? (logs.length >= 2 ? determinePerformanceStyle(logs) : null);
+  const buildStyle = buildStyleSummary(logs, style);
+  const discovery = discoverySummary(logs, backstageLoad);
   const nextNote = reportCopy.nextNote({ frayOrAccidentCount, backstageLoad, prepHitRate, sceneOrBetterCount });
   const scoreNote = reportCopy.scoreNote({ pointsToNextRank, nextRank, masterpieceCount, backstageLoad, prepHitRate });
   return {
@@ -92,6 +96,10 @@ export function createPerformanceInsight(logs: TurnLog[], sceneScore = 0, flowSc
     decisionDistribution,
     bestCue,
     nextNote,
+    buildStyle,
+    discoveryScore: discovery.score,
+    unlockedAchievements: discovery.achievements,
+    sceneCollectionCount: discovery.sceneIds.length,
   };
 }
 

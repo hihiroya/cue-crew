@@ -10,6 +10,7 @@ import { usePerformanceHistory } from './usePerformanceHistory';
 import { pickFocusActor, topOmenEvents } from '../game/actorLogic';
 import { TOTAL_TURNS } from '../game/constants';
 import { finishPerformance, gameReducer, titleState } from '../game/gameReducer';
+import { dailyRunFor } from '../game/rogueliteProgress';
 import { makeSeed } from '../game/rng';
 import { previewResult } from '../game/resultPreview';
 import type { GameStatus, PrepAction } from '../game/types';
@@ -82,6 +83,7 @@ export function App() {
       <TitleScreen
         history={history}
         onStart={() => dispatch({ type: 'START' })}
+        onStartDaily={(seed) => dispatch({ type: 'START', seed })}
         onReplay={(seed) => dispatch({ type: 'START', seed })}
       />
     );
@@ -91,12 +93,15 @@ export function App() {
     return (
       <ResultScreen
         result={finishedResult ?? finishPerformance(displayState)}
+        previousSameSeed={history.find((entry) => entry.seed === displayState.seed) ?? null}
+        dailyRun={dailyRunFor()}
         onTitle={() => {
           refreshHistory();
           dispatch({ type: 'RESET_TO_TITLE' });
         }}
         onReplaySame={() => dispatch({ type: 'START', seed: state.seed })}
         onReplayNew={() => dispatch({ type: 'START', seed: makeSeed() })}
+        onReplayDaily={(seed) => dispatch({ type: 'START', seed })}
       />
     );
   }

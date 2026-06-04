@@ -1,4 +1,5 @@
 import type { MainResponse, PerformanceStyle, TurnLog } from './domainTypes';
+import type { AchievementUnlock, BuildStyleSummary } from './rogueliteProgress';
 
 export type AudienceSurvey = {
   encoreInterest: number;
@@ -34,6 +35,10 @@ export type PerformanceInsight = {
   decisionDistribution: DecisionDistributionItem[];
   bestCue: TurnLog | null;
   nextNote: string;
+  buildStyle: BuildStyleSummary;
+  discoveryScore: number;
+  unlockedAchievements: AchievementUnlock[];
+  sceneCollectionCount: number;
 };
 
 export type PerformanceResult = {

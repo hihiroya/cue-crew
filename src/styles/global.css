@@ -2,6 +2,151 @@
   box-sizing: border-box;
 }
 
+.daily-run-panel,
+.roguelite-summary-grid,
+.previous-seed-note {
+  width: 100%;
+}
+
+.daily-run-panel {
+  border: 1px solid rgba(236, 196, 105, 0.28);
+  background: linear-gradient(135deg, rgba(47, 21, 30, 0.92), rgba(16, 14, 21, 0.96));
+  padding: 16px;
+}
+
+.daily-run-card {
+  display: grid;
+  gap: 8px;
+}
+
+.daily-run-card > span,
+.build-style-card > span,
+.discovery-card > span,
+.previous-seed-note > span {
+  color: var(--gold);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.daily-run-card p,
+.daily-run-card small,
+.build-style-card small,
+.discovery-card small,
+.previous-seed-note p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.daily-run-card .secondary-action {
+  justify-self: start;
+  min-height: 38px;
+}
+
+.prep-tone-dot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.prep-tone-dot::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(236, 196, 105, 0.75);
+  box-shadow: 0 0 10px rgba(236, 196, 105, 0.35);
+}
+
+.prep-tone-dot.tone-danger::before {
+  background: #d56a6a;
+  box-shadow: 0 0 10px rgba(213, 106, 106, 0.35);
+}
+
+.prep-tone-dot.tone-good::before,
+.prep-tone-dot.tone-strong::before {
+  background: #77d39a;
+  box-shadow: 0 0 10px rgba(119, 211, 154, 0.35);
+}
+
+.prep-choice .cue-cover strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.prep-choice .cue-cover .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.response-build-cue {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-radius: 8px;
+  background: rgba(236, 196, 105, 0.08);
+  padding: 7px 8px;
+  font-size: 0.72rem;
+}
+
+.response-build-cue span {
+  color: var(--muted);
+}
+
+.response-build-cue strong {
+  color: var(--gold);
+  font-size: 0.76rem;
+}
+
+.roguelite-summary-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
+.build-style-card,
+.discovery-card,
+.previous-seed-note {
+  border: 1px solid rgba(236, 196, 105, 0.24);
+  border-radius: 8px;
+  background: rgba(21, 15, 22, 0.58);
+  padding: 12px;
+}
+
+.build-style-card,
+.discovery-card {
+  display: grid;
+  gap: 7px;
+}
+
+.build-style-card strong,
+.discovery-card strong {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.build-style-card meter {
+  width: 100%;
+  height: 8px;
+}
+
+.previous-seed-note {
+  display: grid;
+  gap: 5px;
+}
+
+@media (max-width: 520px) {
+  .roguelite-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 html {
   min-height: 100%;
   background: var(--bg);

@@ -49,9 +49,10 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
                 </span>
               </div>
               <div className="cue-cover">
-                <span>{appCopy.prep.affinity}</span>
-                <strong>{prepToneLabel(tone)}</strong>
+                <span>{appCopy.prep.coverage(coveredOmens.length, visibleOmens.length)}</span>
+                <strong><Icon name={PREP_PRIMARY_RESPONSE[prep]} />{RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}</strong>
               </div>
+              <small className={`prep-tone-dot tone-${tone}`}>{prepToneLabel(tone)}</small>
               <PrepSelectionMarker visible={isInspected} />
             </button>
           );

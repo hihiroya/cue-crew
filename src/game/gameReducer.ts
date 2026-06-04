@@ -109,6 +109,7 @@ function normalizePerformanceResult(result: Partial<PerformanceResult>): Perform
   const trustScore = result.trustScore ?? 0;
   const backstageLoad = result.backstageLoad ?? 0;
   const fallbackReview = createPerformanceReview(logs, sceneScore, flowScore, trustScore, backstageLoad);
+  const fallbackInsight = createPerformanceInsight(logs, sceneScore, flowScore, trustScore, backstageLoad);
   return {
     seed: result.seed ?? 'unknown-seed',
     finishedAt: result.finishedAt ?? new Date(0).toISOString(),
@@ -120,7 +121,7 @@ function normalizePerformanceResult(result: Partial<PerformanceResult>): Perform
     title: result.title ?? fallbackReview.title,
     review: result.review ?? fallbackReview.review,
     reviewNotes: result.reviewNotes ?? fallbackReview.reviewNotes,
-    insight: result.insight ?? createPerformanceInsight(logs, sceneScore, flowScore, trustScore, backstageLoad),
+    insight: { ...fallbackInsight, ...result.insight },
     audienceSurvey: result.audienceSurvey ?? createAudienceSurvey(logs, sceneScore, flowScore, trustScore, backstageLoad),
     mediaReview: result.mediaReview ?? createMediaReview(logs, sceneScore, flowScore, trustScore, backstageLoad),
     logs,

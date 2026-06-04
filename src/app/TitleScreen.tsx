@@ -2,17 +2,21 @@ import { useState } from 'react';
 import titlePosterImage from '../assets/title/title-poster.webp';
 import type { PerformanceResult } from '../game/types';
 import { Icon } from '../components/ui/Icon';
+import { dailyRunFor } from '../game/rogueliteProgress';
 import { appCopy, titleHistoryMeta } from '../content/ja/appCopy';
 
 type Props = {
   history: PerformanceResult[];
   onStart: () => void;
+  onStartDaily: (seed: string) => void;
   onReplay: (seed: string) => void;
 };
 
-export function TitleScreen({ history, onStart, onReplay }: Props) {
+export function TitleScreen({ history, onStart, onStartDaily, onReplay }: Props) {
   const [showHowTo, setShowHowTo] = useState(false);
   const bests = historyBests(history);
+  const dailyRun = dailyRunFor();
+  const dailyBest = history.find((item) => item.seed === dailyRun.seed);
   return (
     <main className="title-screen">
       <section className="title-panel">
@@ -38,6 +42,18 @@ export function TitleScreen({ history, onStart, onReplay }: Props) {
             {appCopy.title.howToLines.map((line) => <p key={line}>{line}</p>)}
           </div>
         ) : null}
+      </section>
+      <section className="daily-run-panel">
+        <div className="section-heading">
+          <p><Icon name="spark" /> {appCopy.title.dailyKicker}</p>
+          <h2>{dailyRun.title}</h2>
+        </div>
+        <div className="daily-run-card">
+          <span>{dailyRun.modifier}</span>
+          <p>{dailyRun.detail}</p>
+          <small>{dailyBest ? appCopy.title.dailyBest(dailyBest.insight.rank, dailyBest.insight.totalScore) : appCopy.title.dailyFresh}</small>
+          <button type="button" className="secondary-action" onClick={() => onStartDaily(dailyRun.seed)}>{appCopy.title.dailyStart}</button>
+        </div>
       </section>
       <section className="history-panel">
         <div className="section-heading">

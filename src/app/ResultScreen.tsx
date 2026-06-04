@@ -1,19 +1,25 @@
 import { PERFORMANCE_STYLE_DETAILS, RESPONSE_LABELS } from '../game/constants';
 import type { PerformanceResult } from '../game/types';
 import { Icon } from '../components/ui/Icon';
+import { achievementListLabel, compareWithPrevious, comparisonLabel, mostImproveableTurn, type DailyRun } from '../game/rogueliteProgress';
 import { appCopy, bestCueBody, bestCueMeta, nextChallengeCopy, resultLoadNote, resultScoreNote, sameSeedHintCopy, timelineBody, timelineMeta } from '../content/ja/appCopy';
 
 type Props = {
   result: PerformanceResult;
+  previousSameSeed: PerformanceResult | null;
+  dailyRun: DailyRun;
   onTitle: () => void;
   onReplaySame: () => void;
   onReplayNew: () => void;
+  onReplayDaily: (seed: string) => void;
 };
 
-export function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: Props) {
+export function ResultScreen({ result, previousSameSeed, dailyRun, onTitle, onReplaySame, onReplayNew, onReplayDaily }: Props) {
   const styleLabel = result.performanceStyle ? PERFORMANCE_STYLE_DETAILS[result.performanceStyle].label : appCopy.result.unsetStyle;
   const timelineLogs = result.logs?.length ? result.logs : result.highlights;
   const maxDecisionCount = Math.max(1, ...result.insight.decisionDistribution.map((item) => item.count));
+  const comparison = compareWithPrevious(result, previousSameSeed);
+  const buildMeterMax = result.insight.buildStyle.next ?? Math.max(1, result.insight.buildStyle.progress);
   return (
     <main className="result-screen">
       <section className="result-hero">
@@ -41,6 +47,25 @@ export function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: Pro
           <span>{appCopy.result.scoreNote}</span>
           <p>{result.insight.scoreNote}</p>
         </div>
+        <div className="roguelite-summary-grid">
+          <div className="build-style-card">
+            <span>{appCopy.result.buildStyle}</span>
+            <strong>{result.insight.buildStyle.label} {appCopy.result.buildLevel(result.insight.buildStyle.level)}</strong>
+            <meter min={0} max={buildMeterMax} value={result.insight.buildStyle.progress} />
+            <small>{result.insight.buildStyle.note}</small>
+          </div>
+          <div className="discovery-card">
+            <span>{appCopy.result.discovery}</span>
+            <strong>{appCopy.result.discoveryScore(result.insight.discoveryScore)}</strong>
+            <small>{appCopy.result.collectionScenes(result.insight.sceneCollectionCount)} / {achievementListLabel(result.insight.unlockedAchievements)}</small>
+          </div>
+        </div>
+        {comparison ? (
+          <div className="previous-seed-note">
+            <span>{appCopy.result.previousSeed}</span>
+            <p>{comparisonLabel(comparison)}</p>
+          </div>
+        ) : null}
         <div className="replay-challenge-note">
           <span>{appCopy.result.challenge}</span>
           <strong>{nextChallenge(result)}</strong>
@@ -136,6 +161,7 @@ export function ResultScreen({ result, onTitle, onReplaySame, onReplayNew }: Pro
       <div className="result-actions">
         <button className="primary-action" onClick={onReplayNew}>{appCopy.result.replayNew}</button>
         <button className="secondary-action" onClick={onReplaySame}>{appCopy.result.replaySame}</button>
+        <button className="secondary-action" onClick={() => onReplayDaily(dailyRun.seed)} title={`${dailyRun.title}: ${dailyRun.modifier}`}>{dailyRun.title}</button>
         <button className="ghost-button" onClick={onTitle}>{appCopy.result.title}</button>
       </div>
     </main>
@@ -170,24 +196,6 @@ function nextChallenge(result: PerformanceResult) {
 function sameSeedHint(result: PerformanceResult) {
   const swingTurn = mostImproveableTurn(result);
   return sameSeedHintCopy(result, swingTurn);
-}
-
-function mostImproveableTurn(result: PerformanceResult) {
-  return [...result.logs]
-    .filter((log) => log.resultTier === 'fray' || log.resultTier === 'accident' || log.prepQuality === 'miss' || log.deltaLoad >= 2)
-    .sort((a, b) => (
-      (tierRisk(b.resultTier) - tierRisk(a.resultTier))
-      || b.deltaLoad - a.deltaLoad
-      || Number(b.prepQuality === 'miss') - Number(a.prepQuality === 'miss')
-    ))[0] ?? null;
-}
-
-function tierRisk(tier: PerformanceResult['logs'][number]['resultTier']) {
-  if (tier === 'accident') return 4;
-  if (tier === 'fray') return 3;
-  if (tier === 'smallSuccess') return 2;
-  if (tier === 'scene') return 1;
-  return 0;
 }
 
 function rankClass(rank: PerformanceResult['insight']['rank']) {

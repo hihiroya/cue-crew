@@ -15,6 +15,7 @@ export const responsePanelCopy = {
   logTitle: '進行メモ',
   frayTitle: '舞台裏のほころび',
   passiveTitle: 'パッシブ効果',
+  buildCue: 'ビルド',
   unknownEvent: '未定',
   runSheetAria: '進行表',
   resultRailAria: '結果レンジ',
