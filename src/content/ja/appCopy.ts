@@ -8,12 +8,12 @@ export const appCopy = {
     result: '場面',
   },
   exit: {
-    action: '公演を降りる',
-    kicker: '途中退場',
-    title: '公演を降りますか？',
-    body: 'この公演の途中経過は保存されません。',
-    cancel: '続ける',
-    confirm: 'タイトルへ戻る',
+    action: '公演を終了する',
+    kicker: '公演終了',
+    title: 'この公演を終了しますか？',
+    body: '途中経過は保存されず、タイトルへ戻ります。',
+    cancel: '公演を続ける',
+    confirm: '終了してタイトルへ',
   },
   title: {
     series: '1人用舞台裏マネジメント',
@@ -24,14 +24,14 @@ export const appCopy = {
     start: 'はじめる',
     howTo: '遊び方',
     howToLines: [
-      '全6公演。マチネは次のソワレへ向けた調整、ソワレはその日の評判と公演全体への影響が大きい。',
+      '全3日、マチネとソワレの全6回。マチネは次のソワレへ向けた調整、ソワレはその日の評判と公演全体への影響が大きい。',
       '1日目ソワレ後に公演の色が決まり、2日目以降の拾う・待つ・整える・切るの意味が少し変わる。',
     ],
     historyKicker: '履歴',
     historyTitle: '最近の公演',
     emptyHistory: 'まだ記録はない。初日のマチネを開けよう。',
     historyStats: (item: PerformanceResult) => `ランク ${item.insight.rank} / 評判 ${item.sceneScore} / 段取り ${item.flowScore} / 座組信頼 ${item.trustScore}`,
-    historyReplaySuffix: '同じ公演をやり直す',
+    historyReplaySuffix: '同じ巡り合わせでやり直す',
     bestBadges: {
       rank: '最高評価',
       scene: '最高評判',
@@ -80,11 +80,11 @@ export const appCopy = {
       heat: '場面の熱量',
       stability: '進行の安定感',
     },
-    mediaReview: '外部評',
+    mediaReview: '劇評',
     decisionTrend: '判断傾向',
     timeline: '三日間の流れ',
     replayNew: '別の公演を開ける',
-    replaySame: '同じ公演をやり直す',
+    replaySame: '同じ巡り合わせでやり直す',
     title: 'タイトルへ',
     decisionCount: (count: number) => `${count}回`,
   },
@@ -96,7 +96,7 @@ export const appCopy = {
     prepTitle: (label: string) => `${label}の準備`,
     visibleOmens: '見えている兆候',
     covered: '準備済み',
-    missed: '対象外',
+    missed: '備え外',
     extraEvents: '同じ準備で拾える出来事',
     intent: '今回の狙い',
     danger: '見えている兆候とは少し外れる',
@@ -110,13 +110,13 @@ export const appCopy = {
     marker: 'メモ反映中',
   },
   resultPreview: {
-    emptyKicker: '成立場面プレビュー',
+    emptyKicker: '場面の見通し',
     emptyTitle: '対応を選ぶと、見通しが立つ',
     emptyBody: '結果は確定前に確認できる。拾うか、整えるか、待つか、切るか。',
     ticket: 'キュー結果票',
     finale: '千秋楽',
-    ratingLabel: '成立',
-    ratingAria: (tierLabel: string) => `場面成立度 ${tierLabel}`,
+    ratingLabel: '仕上がり',
+    ratingAria: (tierLabel: string) => `仕上がり ${tierLabel}`,
     frayRecovery: 'ほころび回収',
     frayRecoveryBody: '失敗の余白が場面の材料になった',
     lesson: '次回改善メモ',
@@ -135,7 +135,7 @@ export const appCopy = {
       trust: '信頼',
       load: '負荷',
     },
-    commitNext: 'この結果で次公演へ',
+    commitNext: 'この結果で次の回へ',
     commitFinale: 'この結果で公演報告へ',
   },
 } as const;
@@ -198,7 +198,7 @@ export function nextChallengeCopy(result: PerformanceResult, swingTurn: Performa
     return `${swingTurn.act}日目${PERFORMANCE_SLOT_LABELS[swingTurn.turnInAct === 1 ? 'matinee' : 'soiree'].label}を場面化`;
   }
   if (result.insight.pointsToNextRank !== null && result.insight.pointsToNextRank <= 8) {
-    return `同じseedで${result.insight.nextRank}到達`;
+    return `同じ巡り合わせで${result.insight.nextRank}到達`;
   }
   if (result.insight.prepHits < 4) return '準備ヒット4回以上';
   if (result.insight.frayOrAccidentCount >= 2) return 'ほころび1回以下で終演';
@@ -208,7 +208,7 @@ export function nextChallengeCopy(result: PerformanceResult, swingTurn: Performa
 }
 
 export function sameSeedHintCopy(result: PerformanceResult, swingTurn: PerformanceResult['logs'][number] | null) {
-  if (result.insight.pointsToNextRank === null) return '最高ランク到達。同じ公演で別の型を狙える。';
+  if (result.insight.pointsToNextRank === null) return '最高ランク到達。同じ巡り合わせで別の型を狙える。';
   if (swingTurn) {
     return `${swingTurn.act}日目${PERFORMANCE_SLOT_LABELS[swingTurn.turnInAct === 1 ? 'matinee' : 'soiree'].label}の「${swingTurn.sceneTitle}」が詰めどころ。あと${result.insight.pointsToNextRank}点を狙う。`;
   }
@@ -265,7 +265,7 @@ export function prepIntent(prep: PrepAction) {
   if (prep === 'watch') return '予定外の熱を見せ場に変える';
   if (prep === 'makeSpace') return '沈黙や退場を急かさず残す';
   if (prep === 'tightenFlow') return 'ズレを舞台全体の呼吸へ戻す';
-  return '崩れを小さく閉じ、次公演を楽にする';
+  return '崩れを小さく閉じ、次の回を楽にする';
 }
 
 export type DeltaKind = 'scene' | 'flow' | 'trust' | 'load';
@@ -306,7 +306,7 @@ export function resultRangeShortLabel(tier: ResultTier) {
 }
 
 export function responseSendLabel(response: MainResponse) {
-  return `${RESPONSE_LABELS[response]}を送出`;
+  return `${RESPONSE_LABELS[response]}のキューを出す`;
 }
 
 export function actorSilhouetteAlt(actorLabel: string) {

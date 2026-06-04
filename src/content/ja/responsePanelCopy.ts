@@ -2,16 +2,16 @@ import { EVENT_LABELS, PERFORMANCE_SLOT_LABELS, RESPONSE_LABELS, RESULT_TIER_LAB
 import type { GameState, MainResponse, ResponseEffectTarget, ResponseInsight, ResultTier } from '../../game/types';
 
 export const responsePanelCopy = {
-  heading: '行動に対応',
+  heading: '対応を決める',
   inspecting: '確認中',
   outlookAria: (label: string) => `成立見込み: ${label}`,
   prepRelationAria: (label: string) => `準備との関係: ${label}`,
   effectSummaryAria: '影響の要約',
   effectSummaryTitle: '主要影響',
-  sendButton: 'この対応を送る',
+  sendButton: 'このキューを出す',
   consoleTitle: '進行卓（コンソール）',
-  cueStripAria: '送出キュー',
-  outlookTitle: '送出見込み',
+  cueStripAria: 'キュー表示',
+  outlookTitle: '場面の見通し',
   logTitle: '進行メモ',
   frayTitle: '舞台裏のほころび',
   passiveTitle: 'パッシブ効果',
@@ -21,12 +21,12 @@ export const responsePanelCopy = {
   readoutAria: '選択中の相性と影響',
   affinityBoardTitle: '相性盤',
   affinityBoardSub: '判定ランプ',
-  effectBoardTitle: '送出後の影響',
-  effectBoardSub: '送出ゲージ',
+  effectBoardTitle: 'キュー後の影響',
+  effectBoardSub: '影響ゲージ',
 } as const;
 
 export function responseSendAria(response: MainResponse) {
-  return `${RESPONSE_LABELS[response]}を送出`;
+  return `${RESPONSE_LABELS[response]}のキューを出す`;
 }
 
 export function effectTargetShortLabel(target: ResponseEffectTarget) {

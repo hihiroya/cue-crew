@@ -80,7 +80,7 @@ export function scoreNote(args: {
   backstageLoad: number;
   prepHitRate: number;
 }) {
-  if (args.pointsToNextRank === null) return '最高ランク。次は同じseedで安定再現を狙える。';
+  if (args.pointsToNextRank === null) return '最高ランク。次は同じ巡り合わせで安定再現を狙える。';
   if (args.masterpieceCount === 0) return `${args.nextRank}まであと${args.pointsToNextRank}点。名場面を1回作ると大きく伸びる。`;
   if (args.backstageLoad >= 4) return `${args.nextRank}まであと${args.pointsToNextRank}点。終盤の負荷を抑えると届きやすい。`;
   if (args.prepHitRate < 67) return `${args.nextRank}まであと${args.pointsToNextRank}点。準備の噛み合いを増やすと底上げできる。`;

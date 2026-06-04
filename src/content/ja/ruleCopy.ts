@@ -307,7 +307,7 @@ export function cueKeyPoint(preview: Pick<ResultPreview, 'actorEventType' | 'mai
 
 export function cueCost(preview: Pick<ResultPreview, 'deltaLoad' | 'deltaFlow' | 'deltaTrust' | 'resultTier' | 'mainResponse'>) {
   if (preview.deltaLoad >= 2) return `評判は伸びたが、${RESPONSE_LABELS[preview.mainResponse]}の代償として裏方負荷が重く残った。`;
-  if (preview.deltaFlow < 0) return '場面の揺れが進行へ残り、次の公演で整える余地がある。';
+  if (preview.deltaFlow < 0) return '場面の揺れが進行へ残り、次の回で整える余地がある。';
   if (preview.deltaTrust < 0) return '進行は守ったが、役者との信頼は少し削れた。';
   if (preview.resultTier === 'masterpiece') return '負荷は残るが、客席まで届く見せ場として回収できた。';
   if (preview.resultTier === 'fray' || preview.resultTier === 'accident') return '舞台裏に揺れが残り、次の判断で拾う余白になった。';
@@ -320,7 +320,7 @@ export function cueHandoff(state: Pick<GameState, 'pendingFrayEvent' | 'backstag
     return `${LOAD_LABELS[state.pendingFrayEvent.bias as Exclude<LoadBias, null>]}のほころびが残る。次は拾える対応を優先したい。`;
   }
   if (state.backstageLoad + preview.deltaLoad >= 4) {
-    return '次公演は負荷4以上で入る。整えるか待つ判断で一度息を戻したい。';
+    return '次の回は負荷4以上で入る。整えるか待つ判断で一度息を戻したい。';
   }
   if (preview.performanceStyle) {
     const style = PERFORMANCE_STYLE_DETAILS[preview.performanceStyle];
@@ -372,7 +372,7 @@ export function cueLesson(preview: Pick<ResultPreview, 'prepQuality' | 'deltaLoa
   if (byId('actor-trust')) return '次回メモ: 阿吽の呼吸や以心伝心が出ている役者は、得意対応を選ぶと下振れを支えられる。';
   if (byId('arrange-cap')) return '次回メモ: 整えるは安定手。名場面を狙うなら、技巧派・不安/疲労・ほころび回収などの理由がほしい。';
   if (byId('cut-containment')) return '次回メモ: 転換の備えから切ると、崩れを閉じて次の場面へ渡しやすい。';
-  if (preview.deltaLoad >= 2) return '次回メモ: 攻めた代償が重い。次公演は待つ・整える・切るで負荷を戻したい。';
+  if (preview.deltaLoad >= 2) return '次回メモ: 攻めた代償が重い。次の回は待つ・整える・切るで負荷を戻したい。';
   if (preview.prepQuality === 'miss') return '次回メモ: 準備が外れると上限が下がる。焦点役者の兆候と準備範囲をもう一度合わせたい。';
   if (preview.deltaFlow < 0) return '次回メモ: 場面の揺れが流れに残った。次は進行か負荷を整える判断を挟みたい。';
   if (preview.deltaTrust < 0) return '次回メモ: 閉じる判断は効くが、続けると信頼が削れる。次は信頼を戻す手を置きたい。';
