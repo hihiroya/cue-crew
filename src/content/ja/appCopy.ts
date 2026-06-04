@@ -7,6 +7,9 @@ export const appCopy = {
     response: '対応',
     result: '場面',
   },
+  replayGhost: {
+    previous: '前回',
+  },
   exit: {
     action: '公演を終了する',
     kicker: '公演終了',
@@ -41,6 +44,13 @@ export const appCopy = {
     collectionScenes: '場面',
     collectionAchievements: '称号',
     collectionEmpty: 'まだ称号はない。終演まで通すと記録が増える。',
+    collectionOpen: '図鑑を見る',
+    collectionClose: '図鑑を閉じる',
+    collectionRecentScenes: '最近開いた場面',
+    collectionNoScenes: 'まだ場面は記録されていない。',
+    collectionAchievementList: '称号一覧',
+    collectionUnlocked: '解放済み',
+    collectionLocked: '未解放',
     bestBadges: {
       rank: '最高評価',
       scene: '評判最高',
@@ -67,6 +77,7 @@ export const appCopy = {
     achievements: '称号',
     noAchievements: '新規称号なし',
     previousSeed: '前回比',
+    poster: '終演ポスター',
     metrics: '公演指標',
     aggregate: '集計',
     prepMetric: '準備',

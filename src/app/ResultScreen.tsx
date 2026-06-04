@@ -87,6 +87,7 @@ export function ResultScreen({ result, previousSameSeed, dailyRun, onTitle, onRe
           <FinalScore label={appCopy.result.finalScoreLabels.trust} value={result.trustScore} note={resultScoreNote('trust', result.trustScore)} />
           <FinalScore label={appCopy.result.finalScoreLabels.load} value={`${result.backstageLoad}/5`} note={resultLoadNote(result.backstageLoad)} />
         </div>
+        <PerformancePoster result={result} styleLabel={styleLabel} />
       </section>
       <section className="packet-panel cue-note-panel">
         <div className="section-heading">
@@ -165,6 +166,22 @@ export function ResultScreen({ result, previousSameSeed, dailyRun, onTitle, onRe
         <button className="ghost-button" onClick={onTitle}>{appCopy.result.title}</button>
       </div>
     </main>
+  );
+}
+
+function PerformancePoster({ result, styleLabel }: { result: PerformanceResult; styleLabel: string }) {
+  const bestCue = result.insight.bestCue;
+  return (
+    <article className="performance-poster-card">
+      <span>{appCopy.result.poster}</span>
+      <h2>{result.title}</h2>
+      <div>
+        <strong>{result.insight.rank}</strong>
+        <em>{styleLabel}</em>
+      </div>
+      <p>{bestCue ? bestCue.sceneTitle : result.reviewNotes[0] ?? result.review}</p>
+      <small>{result.seed}</small>
+    </article>
   );
 }
 

@@ -1,4 +1,5 @@
 import { TOTAL_TURNS } from '../../game/constants';
+import { dailyRunForSeed } from '../../game/dailyRun';
 import type { GameState } from '../../game/types';
 import { PERFORMANCE_COLOR_HUD, gameHeaderCopy, performanceLabel, slotDetail } from '../../content/ja/gameHeaderCopy';
 
@@ -8,6 +9,7 @@ type Props = {
 
 export function GameHeader({ state }: Props) {
   const color = state.performanceStyle ? PERFORMANCE_COLOR_HUD[state.performanceStyle] : null;
+  const dailyRun = dailyRunForSeed(state.seed);
   return (
     <header className="game-header">
       <div className="performance-status">
@@ -20,6 +22,13 @@ export function GameHeader({ state }: Props) {
         <strong>{color ? color.label : gameHeaderCopy.pendingStyle}</strong>
         <small>{color ? color.hint : gameHeaderCopy.pendingHint}</small>
       </div>
+      {dailyRun ? (
+        <div className="daily-run-chip">
+          <span>{dailyRun.title}</span>
+          <strong>{dailyRun.modifier}</strong>
+          <small>{dailyRun.detail}</small>
+        </div>
+      ) : null}
     </header>
   );
 }

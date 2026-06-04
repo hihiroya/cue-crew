@@ -28,10 +28,11 @@ type ResponseProps = {
   selected: MainResponse | null;
   disabled: boolean;
   state: GameState;
+  previousResponse?: MainResponse | null;
   onSelect: (response: MainResponse) => void;
 };
 
-export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseProps) {
+export function ResponsePanel({ selected, disabled, state, previousResponse = null, onSelect }: ResponseProps) {
   const insights = useMemo(
     () => responses.map((response) => responseInsight(state, response)),
     [state],
@@ -51,6 +52,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
             disabled={disabled}
             insight={insight}
             buildCue={responseBuildCue(insight.response, buildStyle)}
+            wasPrevious={previousResponse === insight.response}
             isInspected={inspected.response === insight.response}
             onInspect={setInspectedResponse}
           />
@@ -74,12 +76,14 @@ function ResponseChoiceCard({
   disabled,
   insight,
   buildCue,
+  wasPrevious,
   isInspected,
   onInspect,
 }: {
   disabled: boolean;
   insight: ResponseInsight;
   buildCue: string;
+  wasPrevious: boolean;
   isInspected: boolean;
   onInspect: (response: MainResponse) => void;
 }) {
@@ -114,6 +118,7 @@ function ResponseChoiceCard({
         <span>{responsePanelCopy.buildCue}</span>
         <strong>{buildCue}</strong>
       </div>
+      {wasPrevious ? <em className="replay-ghost-mark">{responsePanelCopy.previousCue}</em> : null}
       {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
       <ResponseSelectionMarker visible={isInspected} />
     </button>

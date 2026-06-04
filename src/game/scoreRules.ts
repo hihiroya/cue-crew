@@ -92,6 +92,25 @@ function performanceStyleScoreItem(state: GameState, response: MainResponse): Sc
   return scoreItem('performance-style', ruleText.performanceStyleScoreLabel(style.label, response), 1, style.short);
 }
 
+function performanceBuildLevelScoreItem(state: GameState, response: MainResponse): ScoreBreakdownItem | undefined {
+  if (!state.performanceStyle) return undefined;
+  const style = PERFORMANCE_STYLE_DETAILS[state.performanceStyle];
+  if (response !== style.strength) return undefined;
+  const progress = state.logs.reduce((total, log) => {
+    let value = log.mainResponse === style.strength ? 2 : 0;
+    if (log.resultTier === 'masterpiece') value += 2;
+    if (log.resultTier === 'scene') value += 1;
+    if (state.performanceStyle === 'heat') value += Math.max(0, log.deltaScene);
+    if (state.performanceStyle === 'breath') value += Math.max(0, log.deltaTrust);
+    if (state.performanceStyle === 'control') value += Math.max(0, log.deltaFlow) + Math.max(0, -log.deltaLoad);
+    if (state.performanceStyle === 'closure') value += log.deltaLoad <= 0 ? 1 : 0;
+    return total + value;
+  }, 0);
+  if (progress >= 9) return scoreItem('build-level', `${style.label} Lv.3`, 2, '育った公演の型が千秋楽の伸びを押す');
+  if (progress >= 5) return scoreItem('build-level', `${style.label} Lv.2`, 1, '育った公演の型が得意な対応を支える');
+  return undefined;
+}
+
 function previousCutSetupActive(state: GameState): boolean {
   return state.lastResponses[state.lastResponses.length - 1] === 'cut';
 }
@@ -515,6 +534,7 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
   const repeat = repeatAdjustment(response, consecutiveUseCount(state, response), true);
   const prepResponseItem = prepResponseScoreItem(state, response, prepQuality);
   const styleItem = performanceStyleScoreItem(state, response);
+  const buildLevelItem = performanceBuildLevelScoreItem(state, response);
   const frayItem = frayScoreItem(state, response);
   const cutItem = cutContainmentBonus(state, response);
   const actorTrustItem = actorTrustScoreItem(actor, response);
@@ -535,6 +555,7 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
     scoreItem('act', ruleText.actLabel(state, response, actValue), actValue),
     finaleItem,
     styleItem,
+    buildLevelItem,
     cutItem,
     actorTrustItem,
     scoreItem('trust', ruleText.ruleCopy.trustScore, trustValue),

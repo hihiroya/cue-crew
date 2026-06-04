@@ -9,13 +9,14 @@ type PrepProps = {
   disabled: boolean;
   approvingPrep: PrepAction | null;
   visibleOmens: ActorEventType[];
+  previousPrep?: PrepAction | null;
   onSelect: (prep: PrepAction) => void;
 };
 
 const prepActions: PrepAction[] = ['watch', 'makeSpace', 'tightenFlow', 'prepareTransition'];
 type PrepTone = 'strong' | 'good' | 'thin' | 'danger';
 
-export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onSelect }: PrepProps) {
+export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, previousPrep = null, onSelect }: PrepProps) {
   const [inspectedPrep, setInspectedPrep] = useState<PrepAction>(selected ?? 'watch');
   const inspected = inspectedPrep;
   const isApproving = approvingPrep === inspected;
@@ -53,6 +54,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
                 <strong><Icon name={PREP_PRIMARY_RESPONSE[prep]} />{RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[prep]]}</strong>
               </div>
               <small className={`prep-tone-dot tone-${tone}`}>{prepToneLabel(tone)}</small>
+              {previousPrep === prep ? <em className="replay-ghost-mark">{appCopy.replayGhost.previous}</em> : null}
               <PrepSelectionMarker visible={isInspected} />
             </button>
           );

@@ -91,6 +91,16 @@ function styleNote(style: PerformanceStyle, level: number, toNext: number) {
   return `${label}の芽がある。得意な対応で育つ`;
 }
 
+export const ACHIEVEMENT_CATALOG: AchievementUnlock[] = [
+  { id: 'heat-catcher', label: '拾う手の演出助手', detail: '拾うで名場面を重ねる' },
+  { id: 'finale-breath', label: '間を信じた舞台監督', detail: '千秋楽で待つ判断を成功させる' },
+  { id: 'flow-keeper', label: '乱れを包む進行役', detail: '整える判断で負荷を抜く' },
+  { id: 'clean-blackout', label: '暗転の切れ味', detail: '切る判断で崩れを閉じる' },
+  { id: 'light-backstage', label: '三日間を軽く渡した', detail: '最終負荷を低く抑える' },
+  { id: 'read-the-room', label: '兆候読みの達人', detail: '準備を5回以上活かす' },
+  { id: 'all-cue-run', label: '四つのキューを使い切った', detail: '全対応を使って場面を作る' },
+];
+
 export function discoverySummary(logs: TurnLog[], backstageLoad: number): DiscoverySummary {
   const sceneIds = Array.from(new Set(logs.map(sceneCollectionId)));
   const achievements = achievementUnlocks(logs, backstageLoad);
@@ -112,24 +122,24 @@ function achievementUnlocks(logs: TurnLog[], backstageLoad: number): Achievement
   const prepHits = logs.filter((log) => log.prepMatched).length;
   const usedAllResponses = (['catch', 'arrange', 'wait', 'cut'] as MainResponse[]).every((response) => responseCount(response) > 0);
   return [
-    masterpieceBy('catch') >= 2 ? achievement('heat-catcher', '拾う手の演出助手', '拾うで名場面を重ねた') : null,
+    masterpieceBy('catch') >= 2 ? achievementById('heat-catcher') : null,
     logs.some((log) => log.act === 3 && log.mainResponse === 'wait' && ['masterpiece', 'scene'].includes(log.resultTier))
-      ? achievement('finale-breath', '間を信じた舞台監督', '千秋楽で待つ判断が届いた')
+      ? achievementById('finale-breath')
       : null,
     logs.some((log) => log.mainResponse === 'arrange' && ['masterpiece', 'scene'].includes(log.resultTier) && log.deltaLoad < 0)
-      ? achievement('flow-keeper', '乱れを包む進行役', '整える判断で負荷を抜いた')
+      ? achievementById('flow-keeper')
       : null,
     logs.some((log) => log.mainResponse === 'cut' && log.resultTier !== 'accident')
-      ? achievement('clean-blackout', '暗転の切れ味', '切る判断で崩れを閉じた')
+      ? achievementById('clean-blackout')
       : null,
-    backstageLoad <= 1 ? achievement('light-backstage', '三日間を軽く渡した', '最終負荷を低く抑えた') : null,
-    prepHits >= 5 ? achievement('read-the-room', '兆候読みの達人', '準備を5回以上活かした') : null,
-    usedAllResponses && sceneOrBetter >= 3 ? achievement('all-cue-run', '四つのキューを使い切った', '全対応を使って場面を作った') : null,
+    backstageLoad <= 1 ? achievementById('light-backstage') : null,
+    prepHits >= 5 ? achievementById('read-the-room') : null,
+    usedAllResponses && sceneOrBetter >= 3 ? achievementById('all-cue-run') : null,
   ].filter((item): item is AchievementUnlock => Boolean(item));
 }
 
-function achievement(id: string, label: string, detail: string): AchievementUnlock {
-  return { id, label, detail };
+function achievementById(id: string): AchievementUnlock {
+  return ACHIEVEMENT_CATALOG.find((item) => item.id === id) ?? { id, label: id, detail: '' };
 }
 
 export function compareWithPrevious(result: PerformanceResult, previous: PerformanceResult | null): SeedComparison | null {

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import titlePosterImage from '../assets/title/title-poster.webp';
 import type { PerformanceResult } from '../game/types';
-import type { CollectionState } from '../game/rogueliteProgress';
+import { ACHIEVEMENT_CATALOG, dailyRunFor, resultTierShort, type CollectionState } from '../game/rogueliteProgress';
 import { Icon } from '../components/ui/Icon';
-import { dailyRunFor } from '../game/rogueliteProgress';
+import { ACTOR_LABELS, EVENT_LABELS, RESPONSE_LABELS } from '../game/constants';
 import { appCopy, titleHistoryMeta } from '../content/ja/appCopy';
 
 type Props = {
@@ -16,6 +16,7 @@ type Props = {
 
 export function TitleScreen({ history, collection, onStart, onStartDaily, onReplay }: Props) {
   const [showHowTo, setShowHowTo] = useState(false);
+  const [showCollection, setShowCollection] = useState(false);
   const bests = historyBests(history);
   const dailyRun = dailyRunFor();
   const dailyBest = history.find((item) => item.seed === dailyRun.seed);
@@ -73,6 +74,10 @@ export function TitleScreen({ history, collection, onStart, onStartDaily, onRepl
           </span>
         </div>
         <p className="collection-note">{latestAchievementNote(collection)}</p>
+        <button type="button" className="secondary-action collection-toggle" onClick={() => setShowCollection((value) => !value)}>
+          {showCollection ? appCopy.title.collectionClose : appCopy.title.collectionOpen}
+        </button>
+        {showCollection ? <CollectionDetails collection={collection} /> : null}
       </section>
       <section className="history-panel">
         <div className="section-heading">
@@ -101,6 +106,49 @@ function latestAchievementNote(collection: CollectionState) {
   const latest = Object.values(collection.achievements)
     .sort((a, b) => b.firstSeenAt.localeCompare(a.firstSeenAt))[0];
   return latest ? `${latest.label}: ${latest.detail}` : appCopy.title.collectionEmpty;
+}
+
+function CollectionDetails({ collection }: { collection: CollectionState }) {
+  const scenes = Object.values(collection.scenes)
+    .sort((a, b) => b.firstSeenAt.localeCompare(a.firstSeenAt))
+    .slice(0, 8);
+  return (
+    <div className="collection-details">
+      <section>
+        <h3>{appCopy.title.collectionRecentScenes}</h3>
+        {scenes.length ? (
+          <div className="collection-scene-list">
+            {scenes.map((scene) => (
+              <article key={scene.id}>
+                <span>{labelFor(ACTOR_LABELS, scene.actor)} / {labelFor(EVENT_LABELS, scene.event)} / {labelFor(RESPONSE_LABELS, scene.response)}</span>
+                <strong>{scene.title}</strong>
+                <small>{resultTierShort(scene.bestTier)}</small>
+              </article>
+            ))}
+          </div>
+        ) : <p>{appCopy.title.collectionNoScenes}</p>}
+      </section>
+      <section>
+        <h3>{appCopy.title.collectionAchievementList}</h3>
+        <div className="collection-achievement-list">
+          {ACHIEVEMENT_CATALOG.map((item) => {
+            const unlocked = collection.achievements[item.id];
+            return (
+              <article key={item.id} className={unlocked ? 'is-unlocked' : 'is-locked'}>
+                <span>{unlocked ? appCopy.title.collectionUnlocked : appCopy.title.collectionLocked}</span>
+                <strong>{item.label}</strong>
+                <small>{unlocked ? unlocked.detail : item.detail}</small>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function labelFor(labels: Record<string, string>, key: string) {
+  return labels[key] ?? key;
 }
 
 function historyBests(history: PerformanceResult[]) {

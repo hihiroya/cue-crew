@@ -41,6 +41,11 @@ export function App() {
   const focusActor = displayState.actors.find((actor) => actor.id === displayState.currentFocusActorId) ?? displayState.actors[0];
   const visibleOmenEvents = topOmenEvents(focusActor, 3, { seed: displayState.seed, totalTurn: displayState.totalTurn }).map((omen) => omen.event);
   const nextFocusActorId = displayState.totalTurn < TOTAL_TURNS ? pickFocusActor(displayState.seed, displayState.totalTurn + 1) : null;
+  const previousSameSeedRun = useMemo(
+    () => history.find((entry) => entry.seed === displayState.seed) ?? null,
+    [history, displayState.seed],
+  );
+  const previousTurnLog = previousSameSeedRun?.logs.find((log) => log.totalTurn === displayState.totalTurn) ?? null;
 
   useEffect(() => {
     if (!pendingPrepCue) return;
@@ -94,7 +99,7 @@ export function App() {
     return (
       <ResultScreen
         result={finishedResult ?? finishPerformance(displayState)}
-        previousSameSeed={history.find((entry) => entry.seed === displayState.seed) ?? null}
+        previousSameSeed={previousSameSeedRun}
         dailyRun={dailyRunFor()}
         onTitle={() => {
           refreshHistory();
@@ -135,6 +140,7 @@ export function App() {
             disabled={Boolean(pendingPrepCue)}
             approvingPrep={pendingPrepCue?.prep ?? null}
             visibleOmens={visibleOmenEvents}
+            previousPrep={previousTurnLog?.prepAction ?? null}
             onSelect={(prep) => {
               if (!isUiScenario) beginPrepCue(prep);
             }}
@@ -145,6 +151,7 @@ export function App() {
             selected={displayState.selectedResponse}
             disabled={false}
             state={displayState}
+            previousResponse={previousTurnLog?.mainResponse ?? null}
             onSelect={(response) => {
               if (!isUiScenario) dispatch({ type: 'SELECT_RESPONSE', response });
             }}

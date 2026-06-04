@@ -16,6 +16,7 @@ export const responsePanelCopy = {
   frayTitle: '舞台裏のほころび',
   passiveTitle: 'パッシブ効果',
   buildCue: 'ビルド',
+  previousCue: '前回',
   unknownEvent: '未定',
   runSheetAria: '進行表',
   resultRailAria: '結果レンジ',

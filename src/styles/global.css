@@ -175,6 +175,151 @@
   line-height: 1.55;
 }
 
+.collection-toggle {
+  margin-top: 10px;
+  min-height: 38px;
+}
+
+.collection-details {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.collection-details h3 {
+  margin: 0 0 8px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.collection-scene-list,
+.collection-achievement-list {
+  display: grid;
+  gap: 8px;
+}
+
+.collection-scene-list article,
+.collection-achievement-list article {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(236, 196, 105, 0.16);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.collection-scene-list span,
+.collection-achievement-list span {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.collection-scene-list strong,
+.collection-achievement-list strong {
+  color: var(--text);
+  font-size: 0.88rem;
+}
+
+.collection-scene-list small,
+.collection-achievement-list small {
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.collection-achievement-list .is-locked {
+  opacity: 0.58;
+}
+
+.daily-run-chip {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 6px;
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(139, 201, 213, 0.22);
+  background: rgba(139, 201, 213, 0.08);
+}
+
+.daily-run-chip span,
+.daily-run-chip small {
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.daily-run-chip strong {
+  color: #a9dce5;
+  font-size: 0.82rem;
+}
+
+.replay-ghost-mark {
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid rgba(139, 201, 213, 0.28);
+  background: rgba(139, 201, 213, 0.1);
+  color: #a9dce5;
+  padding: 3px 7px;
+  font-size: 0.66rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.performance-poster-card {
+  display: grid;
+  gap: 9px;
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(236, 196, 105, 0.34);
+  background:
+    linear-gradient(135deg, rgba(236, 196, 105, 0.18), transparent 38%),
+    linear-gradient(160deg, rgba(75, 15, 28, 0.82), rgba(12, 13, 20, 0.9));
+}
+
+.performance-poster-card > span {
+  color: var(--gold);
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.performance-poster-card h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1.2rem, 5vw, 1.8rem);
+  line-height: 1.1;
+}
+
+.performance-poster-card div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.performance-poster-card strong {
+  border-radius: 7px;
+  background: var(--gold);
+  color: #151017;
+  padding: 5px 9px;
+  font-size: 1rem;
+}
+
+.performance-poster-card em {
+  color: var(--gold-strong);
+  font-style: normal;
+  font-weight: 800;
+}
+
+.performance-poster-card p,
+.performance-poster-card small {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 @media (max-width: 520px) {
   .roguelite-summary-grid {
     grid-template-columns: 1fr;
