@@ -4,6 +4,12 @@ export const uiScenarioCopy = {
   soundFrayTitle: '残響が少し長く残った',
   legacyTitle: '古い履歴の公演',
   legacyReview: '旧形式の公演記録。',
+  collectionScenarioTitle: '図鑑確認用の公演',
+  collectionSceneTitle: '拾われたアドリブ',
+  collectionAchievement: {
+    label: '兆候読みの達人',
+    detail: '準備を5回以上活かす',
+  },
   fixedFlavorText: '固定シナリオ用の場面記録。',
   finishedSceneTitles: {
     adlib: '拾われたアドリブ',

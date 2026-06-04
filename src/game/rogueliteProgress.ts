@@ -1,6 +1,7 @@
-import { PERFORMANCE_STYLE_DETAILS, RESPONSE_LABELS, RESULT_TIER_LABELS } from './constants';
+import { PERFORMANCE_STYLE_DETAILS, RESULT_TIER_LABELS } from './constants';
 import { dailyRunFor, type DailyRun } from './dailyRun';
 import { determinePerformanceStyle } from './scoring';
+import { achievementCatalogCopy, nextChallengeCopy, rogueliteProgressCopy, sceneHintCatalogCopy } from '../content/ja/rogueliteCopy';
 import type { MainResponse, PerformanceStyle, TurnLog } from './domainTypes';
 import type { AchievementUnlock, BuildStyleSummary, PerformanceResult } from './reportTypes';
 export { dailyRunFor };
@@ -83,11 +84,11 @@ export function buildStyleSummary(logs: TurnLog[], explicitStyle: PerformanceSty
   if (logs.length < 2 && !explicitStyle) {
     return {
       style: null,
-      label: '未確立',
+      label: rogueliteProgressCopy.unbuiltStyle.label,
       level: 0,
       progress: 0,
       next: STYLE_THRESHOLDS[0],
-      note: '初日ソワレ後に公演の型が決まる',
+      note: rogueliteProgressCopy.unbuiltStyle.note,
     };
   }
   const style = explicitStyle ?? determinePerformanceStyle(logs);
@@ -119,36 +120,12 @@ function styleProgressForLog(log: TurnLog, style: PerformanceStyle, strength: Ma
 
 function styleNote(style: PerformanceStyle, level: number, toNext: number) {
   const label = PERFORMANCE_STYLE_DETAILS[style].label;
-  if (level >= 3) return `${label}が千秋楽フィニッシュ圏に入った`;
-  if (level >= 2) return `${label}が強化中。あと${toNext}で最大化`;
-  if (level >= 1) return `${label}が立ち上がった。あと${toNext}で伸びる`;
-  return `${label}の芽がある。得意な対応で育つ`;
+  return rogueliteProgressCopy.styleNote(label, level, toNext);
 }
 
-export const ACHIEVEMENT_CATALOG: AchievementUnlock[] = [
-  { id: 'heat-catcher', label: '拾う手の演出助手', detail: '拾うで名場面を重ねる' },
-  { id: 'finale-breath', label: '間を信じた舞台監督', detail: '千秋楽で待つ判断を成功させる' },
-  { id: 'flow-keeper', label: '乱れを包む進行役', detail: '整える判断で負荷を抜く' },
-  { id: 'clean-blackout', label: '暗転の切れ味', detail: '切る判断で崩れを閉じる' },
-  { id: 'light-backstage', label: '三日間を軽く渡した', detail: '最終負荷を低く抑える' },
-  { id: 'read-the-room', label: '兆候読みの達人', detail: '準備を5回以上活かす' },
-  { id: 'all-cue-run', label: '四つのキューを使い切った', detail: '全対応を使って場面を作る' },
-  { id: 'heat-finale', label: '熱量の千秋楽', detail: '熱量型Lv.3で千秋楽に場面以上を作る' },
-  { id: 'breath-finale', label: '余韻の千秋楽', detail: '余韻型Lv.3で千秋楽に場面以上を作る' },
-  { id: 'control-finale', label: '精度の千秋楽', detail: '精度型Lv.3で千秋楽に場面以上を作る' },
-  { id: 'closure-finale', label: '収束の千秋楽', detail: '収束型Lv.3で千秋楽に場面以上を作る' },
-];
+export const ACHIEVEMENT_CATALOG: AchievementUnlock[] = [...achievementCatalogCopy];
 
-export const SCENE_HINT_CATALOG: SceneHint[] = [
-  { id: 'junior:adlib:catch', actor: 'junior', event: 'adlib', response: 'catch', hint: '予定外の一言を客席へ渡す' },
-  { id: 'junior:heatUp:catch', actor: 'junior', event: 'heatUp', response: 'catch', hint: '熱を止めずに見せ場へ伸ばす' },
-  { id: 'lead:silence:wait', actor: 'lead', event: 'silence', response: 'wait', hint: '沈黙の間を信じる' },
-  { id: 'lead:delayedExit:wait', actor: 'lead', event: 'delayedExit', response: 'wait', hint: '遅れた退場を余韻にする' },
-  { id: 'skilled:positionShift:arrange', actor: 'skilled', event: 'positionShift', response: 'arrange', hint: 'ズレた位置へ意味を与える' },
-  { id: 'skilled:ensembleWaver:arrange', actor: 'skilled', event: 'ensembleWaver', response: 'arrange', hint: '揺れた群像を包む' },
-  { id: 'any:tempoRush:cut', actor: 'any', event: 'tempoRush', response: 'cut', hint: '走った拍を暗転で閉じる' },
-  { id: 'any:silence:wait', actor: 'any', event: 'silence', response: 'wait', hint: '客席まで届く間を作る' },
-];
+export const SCENE_HINT_CATALOG: SceneHint[] = [...sceneHintCatalogCopy];
 
 export function discoverySummary(logs: TurnLog[], backstageLoad: number): DiscoverySummary {
   const sceneIds = Array.from(new Set(logs.map(sceneCollectionId)));
@@ -213,9 +190,7 @@ export function compareWithPrevious(result: PerformanceResult, previous: Perform
 function rankDeltaLabel(current: PerformanceResult['insight']['rank'], previous: PerformanceResult['insight']['rank']) {
   const ranks = ['D', 'C', 'B', 'A', 'S', 'S+'];
   const delta = ranks.indexOf(current) - ranks.indexOf(previous);
-  if (delta > 0) return `ランク+${delta}`;
-  if (delta < 0) return `ランク${delta}`;
-  return 'ランク維持';
+  return rogueliteProgressCopy.rankDelta(delta);
 }
 
 export function replayDeltaForResponse(args: {
@@ -227,12 +202,12 @@ export function replayDeltaForResponse(args: {
   if (!previous) return null;
   const tierDelta = TIER_ORDER.indexOf(currentTier) - TIER_ORDER.indexOf(previous.resultTier);
   const loadDelta = currentLoad - previous.deltaLoad;
-  if (tierDelta > 0 && loadDelta <= 0) return { tone: 'up', label: '前回より上' };
-  if (tierDelta > 0) return { tone: 'up', label: 'ランク上' };
-  if (tierDelta === 0 && loadDelta < 0) return { tone: 'up', label: '負荷軽い' };
-  if (tierDelta === 0 && loadDelta === 0) return { tone: 'same', label: '前回同等' };
-  if (tierDelta < 0 && loadDelta <= 0) return { tone: 'down', label: 'ランク下' };
-  return { tone: 'down', label: '負荷重い' };
+  if (tierDelta > 0 && loadDelta <= 0) return { tone: 'up', label: rogueliteProgressCopy.replayDelta.previousBetter };
+  if (tierDelta > 0) return { tone: 'up', label: rogueliteProgressCopy.replayDelta.rankUp };
+  if (tierDelta === 0 && loadDelta < 0) return { tone: 'up', label: rogueliteProgressCopy.replayDelta.lighterLoad };
+  if (tierDelta === 0 && loadDelta === 0) return { tone: 'same', label: rogueliteProgressCopy.replayDelta.same };
+  if (tierDelta < 0 && loadDelta <= 0) return { tone: 'down', label: rogueliteProgressCopy.replayDelta.rankDown };
+  return { tone: 'down', label: rogueliteProgressCopy.replayDelta.heavierLoad };
 }
 
 export function mostImproveableTurn(result: PerformanceResult) {
@@ -273,12 +248,12 @@ function recommendationAfterResult(
     const targetTurn = replaySuggestion ? result.logs.find((log) => log.totalTurn === replaySuggestion.totalTurn) ?? swingTurn : swingTurn;
     return {
       kind: 'sameSeed',
-      kicker: '次の公演目標',
-      title: replaySuggestion ? `${turnLabelByNumber(replaySuggestion.totalTurn)}で${RESPONSE_LABELS[replaySuggestion.response]}を試す` : `${turnLabel(targetTurn as TurnLog)}を詰める`,
+      kicker: nextChallengeCopy.kicker,
+      title: replaySuggestion ? nextChallengeCopy.suggestionTitle(replaySuggestion.totalTurn, replaySuggestion.response) : nextChallengeCopy.titleWithTurn(targetTurn as TurnLog),
       body: replaySuggestion
-        ? `候補: ${prepLabel(replaySuggestion.prep)} -> ${RESPONSE_LABELS[replaySuggestion.response]}。${RESULT_TIER_LABELS[replaySuggestion.resultTier]}見込みで総合${signed(replaySuggestion.totalScoreDelta)}、負荷${signed(replaySuggestion.loadDelta)}。`
-        : `「${targetTurn?.sceneTitle ?? '詰めどころ'}」が伸びしろ。${targetTurn ? improvementReason(targetTurn) : ''}同じ巡り合わせで差分を取りにいく。`,
-      cta: '同じ巡り合わせで再演',
+        ? nextChallengeCopy.suggestionBody(replaySuggestion)
+        : nextChallengeCopy.fallbackSwingBody(targetTurn ?? null),
+      cta: nextChallengeCopy.sameSeedCta,
       seed: result.seed,
     };
   }
@@ -288,10 +263,10 @@ function recommendationAfterResult(
   if (result.insight.pointsToNextRank !== null && result.insight.pointsToNextRank <= 8) {
     return {
       kind: 'sameSeed',
-      kicker: '次の公演目標',
-      title: `${result.insight.nextRank}まであと${result.insight.pointsToNextRank}点`,
-      body: '今回の読み筋は届きかけている。準備ヒットと最終負荷を少し詰めるだけで更新圏。',
-      cta: 'このseedをもう一度',
+      kicker: nextChallengeCopy.kicker,
+      title: nextChallengeCopy.nearRankTitle(result.insight.nextRank, result.insight.pointsToNextRank),
+      body: nextChallengeCopy.nearRankBody,
+      cta: nextChallengeCopy.retrySeedCta,
       seed: result.seed,
     };
   }
@@ -299,18 +274,18 @@ function recommendationAfterResult(
   if (hint) {
     return {
       kind: 'newSeed',
-      kicker: '次の公演目標',
-      title: '未開放の場面を探す',
-      body: `狙い目: ${hint.hint}。別の巡り合わせで図鑑の空白を開ける。`,
-      cta: '別の公演を開ける',
+      kicker: nextChallengeCopy.kicker,
+      title: nextChallengeCopy.lockedSceneTitle,
+      body: nextChallengeCopy.lockedSceneBody(hint.hint),
+      cta: nextChallengeCopy.newSeedCta,
     };
   }
   return {
     kind: 'newSeed',
-    kicker: '次の公演目標',
-    title: `${RESPONSE_LABELS[result.insight.dominantResponse]}型を更新する`,
-    body: '同じ癖に寄せず、次のseedで別の型や名場面を拾いにいく。',
-    cta: '別の公演を開ける',
+    kicker: nextChallengeCopy.kicker,
+    title: nextChallengeCopy.dominantStyleTitle(result.insight.dominantResponse),
+    body: nextChallengeCopy.dominantStyleBody,
+    cta: nextChallengeCopy.newSeedCta,
   };
 }
 
@@ -324,10 +299,10 @@ function recommendationForTitle(
   if (!history.length) {
     return {
       kind: 'newSeed',
-      kicker: '次の公演目標',
-      title: '初日のマチネを開ける',
-      body: 'まずは6ターンを通して、準備と対応がどう公演の色になるかを見る。',
-      cta: 'はじめる',
+      kicker: nextChallengeCopy.kicker,
+      title: nextChallengeCopy.firstRunTitle,
+      body: nextChallengeCopy.firstRunBody,
+      cta: nextChallengeCopy.startCta,
     };
   }
   const replayTarget = history.find((item) => mostImproveableTurn(item));
@@ -336,12 +311,12 @@ function recommendationForTitle(
     const swingTurn = mostImproveableTurn(replayTarget);
     return {
       kind: 'replaySeed',
-      kicker: '次の公演目標',
-      title: suggestion ? `${turnLabelByNumber(suggestion.totalTurn)}で${RESPONSE_LABELS[suggestion.response]}を試す` : swingTurn ? `${turnLabel(swingTurn)}を再演で詰める` : '同じ巡り合わせを詰める',
+      kicker: nextChallengeCopy.kicker,
+      title: suggestion ? nextChallengeCopy.suggestionTitle(suggestion.totalTurn, suggestion.response) : swingTurn ? nextChallengeCopy.replayTurnTitle(swingTurn) : nextChallengeCopy.replayFallbackTitle,
       body: suggestion
-        ? `候補: ${prepLabel(suggestion.prep)} -> ${RESPONSE_LABELS[suggestion.response]}。総合${signed(suggestion.totalScoreDelta)}を狙える。`
-        : swingTurn ? `直近の「${swingTurn.sceneTitle}」が改善候補。前回と違う準備か対応を試す。` : '履歴に伸びしろが残っている。',
-      cta: 'このseedで再演',
+        ? nextChallengeCopy.replaySuggestionBody(suggestion)
+        : swingTurn ? nextChallengeCopy.replayTurnBody(swingTurn) : nextChallengeCopy.replayFallbackBody,
+      cta: nextChallengeCopy.replaySeedCta,
       seed: replayTarget.seed,
     };
   }
@@ -350,12 +325,13 @@ function recommendationForTitle(
   }
   const nearRank = history.find((item) => item.insight.pointsToNextRank !== null && item.insight.pointsToNextRank <= 8);
   if (nearRank) {
+    const pointsToNextRank = nearRank.insight.pointsToNextRank ?? 0;
     return {
       kind: 'replaySeed',
-      kicker: '次の公演目標',
-      title: `${nearRank.insight.nextRank}まであと${nearRank.insight.pointsToNextRank}点`,
-      body: '届きかけのseedがある。最終負荷と準備ヒットを詰めると更新しやすい。',
-      cta: 'このseedで再演',
+      kicker: nextChallengeCopy.kicker,
+      title: nextChallengeCopy.nearRankTitle(nearRank.insight.nextRank, pointsToNextRank),
+      body: nextChallengeCopy.historyNearRankBody,
+      cta: nextChallengeCopy.replaySeedCta,
       seed: nearRank.seed,
     };
   }
@@ -363,54 +339,30 @@ function recommendationForTitle(
   if (hint) {
     return {
       kind: 'newSeed',
-      kicker: '次の公演目標',
-      title: '図鑑の空白を開ける',
-      body: `狙い目: ${hint.hint}。新しい巡り合わせでまだ見ていない場面を探す。`,
-      cta: '別の公演を開ける',
+      kicker: nextChallengeCopy.kicker,
+      title: nextChallengeCopy.collectionTitle,
+      body: nextChallengeCopy.collectionBody(hint.hint),
+      cta: nextChallengeCopy.newSeedCta,
     };
   }
   return {
     kind: 'newSeed',
-    kicker: '次の公演目標',
-    title: '新しい型を探す',
-    body: '履歴とは違うseedで、別の役者・出来事・公演の色を拾いにいく。',
-    cta: '別の公演を開ける',
+    kicker: nextChallengeCopy.kicker,
+    title: nextChallengeCopy.newStyleTitle,
+    body: nextChallengeCopy.newStyleBody,
+    cta: nextChallengeCopy.newSeedCta,
   };
 }
 
 function dailyRecommendation(dailyRun: DailyRun): NextChallengeRecommendation {
   return {
     kind: 'daily',
-    kicker: '次の公演目標',
+    kicker: nextChallengeCopy.kicker,
     title: dailyRun.title,
-    body: `${dailyRun.modifier}。${dailyRun.detail}。今日の固定seedで自己ベストを作る。`,
-    cta: '今日の巡り合わせへ',
+    body: nextChallengeCopy.dailyBody(dailyRun.modifier, dailyRun.detail),
+    cta: nextChallengeCopy.dailyCta,
     seed: dailyRun.seed,
   };
-}
-
-function turnLabel(log: TurnLog) {
-  return `${log.act}日目${log.turnInAct === 1 ? 'マチネ' : 'ソワレ'}`;
-}
-
-function turnLabelByNumber(totalTurn: number) {
-  const act = Math.ceil(totalTurn / 2);
-  return `${act}日目${totalTurn % 2 === 1 ? 'マチネ' : 'ソワレ'}`;
-}
-
-function prepLabel(prep: TurnLog['prepAction']) {
-  if (prep === 'watch') return '注視';
-  if (prep === 'makeSpace') return '余白';
-  if (prep === 'tightenFlow') return '締め';
-  return '転換';
-}
-
-function improvementReason(log: TurnLog) {
-  if (log.prepQuality === 'miss') return '準備が外れた回。';
-  if (log.deltaLoad >= 2) return '負荷が重く残った回。';
-  if (log.resultTier === 'accident') return '事故相当まで崩れた回。';
-  if (log.resultTier === 'fray') return 'ほころびが残った回。';
-  return 'もう一段伸ばせる回。';
 }
 
 function tierRisk(tier: TurnLog['resultTier']) {
@@ -422,25 +374,18 @@ function tierRisk(tier: TurnLog['resultTier']) {
 }
 
 export function comparisonLabel(comparison: SeedComparison) {
-  const score = comparison.totalScoreDelta === 0 ? '総合±0' : `総合${comparison.totalScoreDelta > 0 ? '+' : ''}${comparison.totalScoreDelta}`;
-  const load = comparison.loadDelta === 0 ? '負荷±0' : `負荷${comparison.loadDelta > 0 ? '+' : ''}${comparison.loadDelta}`;
-  return `${score} / ${comparison.rankDeltaLabel} / 準備${signed(comparison.prepHitsDelta)} / 名場面${signed(comparison.masterpieceDelta)} / ${load}`;
-}
-
-function signed(value: number) {
-  if (value === 0) return '±0';
-  return `${value > 0 ? '+' : ''}${value}`;
+  return rogueliteProgressCopy.comparison(comparison);
 }
 
 export function responseBuildCue(response: MainResponse, style: BuildStyleSummary) {
-  if (!style.style) return '初日ソワレで型が決まる';
+  if (!style.style) return rogueliteProgressCopy.initialBuildCue;
   const strength = PERFORMANCE_STYLE_DETAILS[style.style].strength;
   if (response === strength) return `${style.label} +`;
-  return `${RESPONSE_LABELS[response]}で別筋`;
+  return rogueliteProgressCopy.alternateBuildCue(response);
 }
 
 export function achievementListLabel(items: AchievementUnlock[]) {
-  if (!items.length) return '新規称号なし';
+  if (!items.length) return rogueliteProgressCopy.noNewAchievements;
   return items.map((item) => item.label).join(' / ');
 }
 

@@ -1,4 +1,5 @@
 import type { Actor, ActorEventType } from './types';
+import { dailyRunCopy } from '../content/ja/rogueliteCopy';
 
 export type DailyModifierId =
   | 'roughOpening'
@@ -17,12 +18,12 @@ export type DailyRun = {
 };
 
 const DAILY_VARIANTS: Array<{ id: DailyModifierId; modifier: string; detail: string }> = [
-  { id: 'roughOpening', modifier: '初日は荒れやすい', detail: '守りの価値が少し上がる' },
-  { id: 'juniorHeat', modifier: '若手が乗りやすい', detail: '拾う判断が評判へつながりやすい' },
-  { id: 'leadSilence', modifier: '主役が沈黙を抱える', detail: '待つ判断の読みどころが増える' },
-  { id: 'skilledDrift', modifier: '技巧派の軸が揺れる', detail: '整える判断が光りやすい' },
-  { id: 'heavyTransition', modifier: '転換が重い', detail: '切る・整えるの負荷管理が大事' },
-  { id: 'hotAudience', modifier: '客席が熱い', detail: '評判は伸びるが負荷も残りやすい' },
+  { id: 'roughOpening', ...dailyRunCopy.variants.roughOpening },
+  { id: 'juniorHeat', ...dailyRunCopy.variants.juniorHeat },
+  { id: 'leadSilence', ...dailyRunCopy.variants.leadSilence },
+  { id: 'skilledDrift', ...dailyRunCopy.variants.skilledDrift },
+  { id: 'heavyTransition', ...dailyRunCopy.variants.heavyTransition },
+  { id: 'hotAudience', ...dailyRunCopy.variants.hotAudience },
 ];
 
 export function dailyRunFor(date = new Date()): DailyRun {
@@ -43,7 +44,7 @@ function dailyRunFromSeed(seed: string): DailyRun {
   const variant = DAILY_VARIANTS[hashString(seed) % DAILY_VARIANTS.length];
   return {
     seed,
-    title: '今日の巡り合わせ',
+    title: dailyRunCopy.title,
     modifierId: variant.id,
     modifier: variant.modifier,
     detail: variant.detail,

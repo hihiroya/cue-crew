@@ -17,6 +17,7 @@ import {
   TURNS_PER_ACT,
 } from './constants';
 import * as ruleText from '../content/ja/ruleCopy';
+import { scoreRuleExtraCopy } from '../content/ja/rogueliteCopy';
 import { topOmenEvents } from './actorLogic';
 import { createRng } from './rng';
 import { frayFitFor, guardTierForFrayRecovery } from './fray';
@@ -106,8 +107,8 @@ function performanceBuildLevelScoreItem(state: GameState, response: MainResponse
     if (state.performanceStyle === 'closure') value += log.deltaLoad <= 0 ? 1 : 0;
     return total + value;
   }, 0);
-  if (progress >= 9) return scoreItem('build-level', `${style.label} Lv.3`, 2, '育った公演の型が千秋楽の伸びを押す');
-  if (progress >= 5) return scoreItem('build-level', `${style.label} Lv.2`, 1, '育った公演の型が得意な対応を支える');
+  if (progress >= 9) return scoreItem('build-level', `${style.label} Lv.3`, 2, scoreRuleExtraCopy.buildLevel3);
+  if (progress >= 5) return scoreItem('build-level', `${style.label} Lv.2`, 1, scoreRuleExtraCopy.buildLevel2);
   return undefined;
 }
 

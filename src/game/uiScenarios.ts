@@ -187,9 +187,9 @@ function seedUiScenarioStorage(name: string) {
     }
     globalThis.localStorage?.setItem('honban.collection.v1', JSON.stringify({
       scenes: {
-        'junior:adlib:catch:拾われたアドリブ': {
-          id: 'junior:adlib:catch:拾われたアドリブ',
-          title: '拾われたアドリブ',
+        [`junior:adlib:catch:${uiScenarioCopy.collectionSceneTitle}`]: {
+          id: `junior:adlib:catch:${uiScenarioCopy.collectionSceneTitle}`,
+          title: uiScenarioCopy.collectionSceneTitle,
           actor: 'junior',
           event: 'adlib',
           response: 'catch',
@@ -201,8 +201,8 @@ function seedUiScenarioStorage(name: string) {
       achievements: {
         'read-the-room': {
           id: 'read-the-room',
-          label: '兆候読みの達人',
-          detail: '準備を5回以上活かす',
+          label: uiScenarioCopy.collectionAchievement.label,
+          detail: uiScenarioCopy.collectionAchievement.detail,
           firstSeed: 'ui-collection-seed',
           firstSeenAt: '2026-06-04T00:00:00.000Z',
         },
@@ -217,7 +217,7 @@ function seedUiScenarioStorage(name: string) {
         trustScore: 5,
         backstageLoad: 1,
         performanceStyle: 'control',
-        title: '図鑑確認用の公演',
+        title: uiScenarioCopy.collectionScenarioTitle,
         review: uiScenarioCopy.legacyReview,
         highlights: [],
         logs: [],
