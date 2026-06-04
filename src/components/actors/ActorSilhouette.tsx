@@ -1,6 +1,8 @@
 import leadImage from '../../assets/actors/lead.webp';
 import juniorImage from '../../assets/actors/junior.webp';
 import skilledImage from '../../assets/actors/skilled.webp';
+import { ACTOR_LABELS } from '../../content/ja/gameLabels';
+import { actorSilhouetteAlt } from '../../content/ja/appCopy';
 import type { ActorType } from '../../game/types';
 
 type Props = {
@@ -13,18 +15,12 @@ const actorImages: Record<ActorType, string> = {
   skilled: skilledImage,
 };
 
-const actorLabels: Record<ActorType, string> = {
-  lead: '主役',
-  junior: '若手',
-  skilled: '技巧派',
-};
-
 export function ActorSilhouette({ type }: Props) {
   return (
     <img
       className={`silhouette silhouette-${type}`}
       src={actorImages[type]}
-      alt={`${actorLabels[type]}のシルエット`}
+      alt={actorSilhouetteAlt(ACTOR_LABELS[type])}
       draggable={false}
     />
   );

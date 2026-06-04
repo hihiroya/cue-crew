@@ -14,6 +14,7 @@ import { makeSeed } from '../game/rng';
 import { previewResult } from '../game/resultPreview';
 import type { GameStatus, PrepAction } from '../game/types';
 import { getUiScenarioStateFromLocation } from '../game/uiScenarios';
+import { appCopy } from '../content/ja/appCopy';
 
 type PendingPrepCue = {
   prep: PrepAction;
@@ -105,9 +106,9 @@ export function App() {
       <GameHeader state={displayState} />
       <ScoreBar state={displayState} />
       <div className="phase-strip">
-        <span className={phaseStepClass(displayState.status, 'prep')}><i aria-hidden="true" />準備</span>
-        <span className={phaseStepClass(displayState.status, 'response')}><i aria-hidden="true" />対応</span>
-        <span className={phaseStepClass(displayState.status, 'result')}><i aria-hidden="true" />場面</span>
+        <span className={phaseStepClass(displayState.status, 'prep')}><i aria-hidden="true" />{appCopy.phase.prep}</span>
+        <span className={phaseStepClass(displayState.status, 'response')}><i aria-hidden="true" />{appCopy.phase.response}</span>
+        <span className={phaseStepClass(displayState.status, 'result')}><i aria-hidden="true" />{appCopy.phase.result}</span>
       </div>
       {displayState.status !== 'result' ? (
         <ActorStage
@@ -178,7 +179,7 @@ function phaseStepClass(status: GameStatus, step: 'prep' | 'response' | 'result'
 function GameExitControl({ disabled, onRequestExit }: { disabled: boolean; onRequestExit: () => void }) {
   return (
     <div className="game-exit-control">
-      <button type="button" disabled={disabled} onClick={onRequestExit}>公演を降りる</button>
+      <button type="button" disabled={disabled} onClick={onRequestExit}>{appCopy.exit.action}</button>
     </div>
   );
 }
@@ -194,13 +195,13 @@ function ExitConfirmDialog({ onCancel, onConfirm }: { onCancel: () => void; onCo
         onClick={(event) => event.stopPropagation()}
       >
         <div>
-          <p>途中退場</p>
-          <h2 id="exit-dialog-title">公演を降りますか？</h2>
-          <span>この公演の途中経過は保存されません。</span>
+          <p>{appCopy.exit.kicker}</p>
+          <h2 id="exit-dialog-title">{appCopy.exit.title}</h2>
+          <span>{appCopy.exit.body}</span>
         </div>
         <div className="exit-dialog-actions">
-          <button type="button" className="primary-action" onClick={onCancel}>続ける</button>
-          <button type="button" className="danger-outline-action" onClick={onConfirm}>タイトルへ戻る</button>
+          <button type="button" className="primary-action" onClick={onCancel}>{appCopy.exit.cancel}</button>
+          <button type="button" className="danger-outline-action" onClick={onConfirm}>{appCopy.exit.confirm}</button>
         </div>
       </section>
     </div>

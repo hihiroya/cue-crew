@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { EVENT_LABELS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, RESPONSE_LABELS } from '../../game/constants';
 import type { ActorEventType, PrepAction } from '../../game/types';
 import { Icon } from '../ui/Icon';
+import { appCopy, prepIntent, prepReadMemo, prepShortAim, prepToneLabel } from '../../content/ja/appCopy';
 
 type PrepProps = {
   selected: PrepAction | null;
@@ -23,8 +24,8 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
   return (
     <section className={`choice-panel prep-panel ${isApproving ? 'is-approving' : ''}`}>
       <div className="section-heading">
-        <h2>準備を決める</h2>
-        <small>役者の兆候を見て、本番中の想定外に備える準備を選ぶ。</small>
+        <h2>{appCopy.prep.heading}</h2>
+        <small>{appCopy.prep.lead}</small>
       </div>
       <div className="choice-grid">
         {prepActions.map((prep) => {
@@ -48,7 +49,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
                 </span>
               </div>
               <div className="cue-cover">
-                <span>兆候との相性</span>
+                <span>{appCopy.prep.affinity}</span>
                 <strong>{prepToneLabel(tone)}</strong>
               </div>
               <PrepSelectionMarker visible={isInspected} />
@@ -59,12 +60,12 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
       <aside className={`cue-sheet cue-${inspectedTone} ${isApproving ? 'is-approving' : ''}`}>
         <div className="cue-paper">
           <div className="cue-sheet-head">
-            <span>本番前メモ</span>
-            <strong>{PREP_LABELS[inspected]}の準備</strong>
+            <span>{appCopy.prep.memo}</span>
+            <strong>{appCopy.prep.prepTitle(PREP_LABELS[inspected])}</strong>
           </div>
           <div className="cue-sheet-grid cue-sheet-focus">
             <section>
-              <span>見えている兆候</span>
+              <span>{appCopy.prep.visibleOmens}</span>
               <div className="cue-readiness-list">
                 {visibleOmens.map((event) => {
                   const isCovered = PREP_MATCHES[inspected].includes(event);
@@ -72,7 +73,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
                     <em key={event} className={isCovered ? 'is-covered' : 'is-missed'}>
                       <span className="cue-check" aria-hidden="true">{isCovered ? '✓' : ''}</span>
                       <span>{EVENT_LABELS[event]}</span>
-                      <b>{isCovered ? '準備済み' : '対象外'}</b>
+                      <b>{isCovered ? appCopy.prep.covered : appCopy.prep.missed}</b>
                     </em>
                   );
                 })}
@@ -80,7 +81,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
             </section>
             {prepExtraEvents(inspected, visibleOmens).length ? (
               <section>
-                <span>同じ準備で拾える出来事</span>
+                <span>{appCopy.prep.extraEvents}</span>
                 <div className="cue-tags">
                   {prepExtraEvents(inspected, visibleOmens).map((event) => (
                     <em key={event}>{EVENT_LABELS[event]}</em>
@@ -91,31 +92,31 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
           </div>
           <div className="cue-read">
             <div className="prep-intent-line">
-              <span>今回の狙い</span>
+              <span>{appCopy.prep.intent}</span>
               <strong>{prepIntent(inspected)}</strong>
-              {inspectedTone === 'danger' ? <em>見えている兆候とは少し外れる</em> : null}
+              {inspectedTone === 'danger' ? <em>{appCopy.prep.danger}</em> : null}
             </div>
-            <p>{prepReadMemo(inspected, inspectedCoveredOmens.length, visibleOmens.length)}</p>
+            <p>{prepReadMemo(inspected, inspectedCoveredOmens.length)}</p>
             <div className="cue-note-branches">
               <section>
-                <span>備えどおりに来たら</span>
-                <p><strong>{RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[inspected]]}</strong>で受ける。{PREP_RESPONSE_HINTS[inspected].aim}。</p>
+                <span>{appCopy.prep.onExpected}</span>
+                <p>{appCopy.prep.receiveWith(RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[inspected]], PREP_RESPONSE_HINTS[inspected].aim)}</p>
               </section>
               <section>
-                <span>外れたら</span>
+                <span>{appCopy.prep.onMissed}</span>
                 <p>{PREP_RESPONSE_HINTS[inspected].alternate}。</p>
               </section>
             </div>
           </div>
-          <div className={`cue-approval-slot ${isApproving ? 'is-approved' : ''}`} aria-label="承認欄" aria-live="polite">
-            <span>承認欄</span>
-            <strong>{isApproving ? '承認済' : '未承認'}</strong>
+          <div className={`cue-approval-slot ${isApproving ? 'is-approved' : ''}`} aria-label={appCopy.prep.approvalLabel} aria-live="polite">
+            <span>{appCopy.prep.approvalLabel}</span>
+            <strong>{isApproving ? appCopy.prep.approved : appCopy.prep.pending}</strong>
           </div>
         </div>
       </aside>
       <div className="prep-commit-bar">
         <button className="primary-action prep-commit-action" disabled={disabled} onClick={() => onSelect(inspected)}>
-          この準備で本番へ
+          {appCopy.prep.commit}
         </button>
       </div>
     </section>
@@ -125,7 +126,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, visibleOmens, onS
 function PrepSelectionMarker({ visible }: { visible: boolean }) {
   return (
     <em className={`selection-marker selection-marker--prep ${visible ? 'is-visible' : ''}`} aria-hidden={!visible}>
-      {visible ? 'メモ反映中' : ''}
+      {visible ? appCopy.prep.marker : ''}
     </em>
   );
 }
@@ -139,38 +140,4 @@ function prepTone(covered: number, total: number): PrepTone {
   if (covered === 1) return 'good';
   if (total === 0) return 'thin';
   return 'danger';
-}
-
-function prepToneLabel(tone: PrepTone) {
-  if (tone === 'strong') return '見えている兆候に合う';
-  if (tone === 'good') return '一部に備えあり';
-  if (tone === 'thin') return '別筋に備える';
-  return '今の兆候とは遠い';
-}
-
-function prepReadMemo(prep: PrepAction, covered: number, _total: number) {
-  if (covered >= 2) {
-    return '見えている兆候に備えが入っている。起きた出来事を、次の対応へつなぎやすい準備。';
-  }
-  if (covered === 1) {
-    return '見えている兆候の一部に備えている。備えが外れた時の受け方も残す準備。';
-  }
-  if (prep === 'prepareTransition') {
-    return '今見えている兆候とは別筋だが、崩れを小さく閉じるための準備。高負荷になる前に退路を残す。';
-  }
-  return '今見えている兆候とは別筋。役者の出来事が違う方向へ動いた時に備える準備。';
-}
-
-function prepShortAim(prep: PrepAction) {
-  if (prep === 'watch') return '熱を拾う';
-  if (prep === 'makeSpace') return '間を残す';
-  if (prep === 'tightenFlow') return '乱れを戻す';
-  return '次へ渡す';
-}
-
-function prepIntent(prep: PrepAction) {
-  if (prep === 'watch') return '予定外の熱を見せ場に変える';
-  if (prep === 'makeSpace') return '沈黙や退場を急かさず残す';
-  if (prep === 'tightenFlow') return 'ズレを舞台全体の呼吸へ戻す';
-  return '崩れを小さく閉じ、次公演を楽にする';
 }

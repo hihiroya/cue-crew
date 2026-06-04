@@ -1,6 +1,7 @@
 import { ACTOR_LABELS, EVENT_LABELS, PREP_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS, RESULT_TIER_STARS } from '../../game/constants';
 import type { ResultPreview } from '../../game/types';
 import { Icon } from '../ui/Icon';
+import { appCopy, deltaImpact, prepQualityBanner, stripAudienceReactionPrefix, type DeltaKind } from '../../content/ja/appCopy';
 
 type Props = {
   preview: ResultPreview | null;
@@ -13,18 +14,14 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
     return (
       <section className="result-preview empty-preview">
         <div className="section-heading">
-          <p>成立場面プレビュー</p>
-          <h2>対応を選ぶと、見通しが立つ</h2>
+          <p>{appCopy.resultPreview.emptyKicker}</p>
+          <h2>{appCopy.resultPreview.emptyTitle}</h2>
         </div>
-        <p>結果は確定前に確認できる。拾うか、整えるか、待つか、切るか。</p>
+        <p>{appCopy.resultPreview.emptyBody}</p>
       </section>
     );
   }
-  const prepBanner = {
-    hit: { className: 'is-hit', label: '準備が活きた', detail: '上振れ幅が広がった' },
-    partial: { className: 'is-partial', label: '準備が一部活きた', detail: '崩れを抑えた' },
-    miss: { className: 'is-miss', label: '別の備えだった', detail: '上限が下がった' },
-  }[preview.prepQuality];
+  const prepBanner = prepQualityBanner[preview.prepQuality];
   const isFinale = preview.resultMode === 'finale';
   const recoveredFray = preview.scoreBreakdown.some((item) => item.id === 'fray-reward' || item.id === 'fray');
   const reasonItems = [...preview.scoreBreakdown]
@@ -35,12 +32,12 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
     <section className={`result-preview cue-result-ticket tier-${preview.resultTier} result-mode-${preview.resultMode}`}>
       <div className="result-ticket-head">
         <div className="result-kicker">
-          <span>キュー結果票</span>
-          <span>{preview.performanceLabel}{isFinale ? ' / 千秋楽' : ''}</span>
+          <span>{appCopy.resultPreview.ticket}</span>
+          <span>{preview.performanceLabel}{isFinale ? ` / ${appCopy.resultPreview.finale}` : ''}</span>
         </div>
         <h2>{preview.sceneTitle}</h2>
-        <div className="scene-rating" aria-label={`場面成立度 ${RESULT_TIER_LABELS[preview.resultTier]}`}>
-          <span>成立</span>
+        <div className="scene-rating" aria-label={appCopy.resultPreview.ratingAria(RESULT_TIER_LABELS[preview.resultTier])}>
+          <span>{appCopy.resultPreview.ratingLabel}</span>
           <strong>{RESULT_TIER_LABELS[preview.resultTier]}</strong>
           <em>{RESULT_TIER_STARS[preview.resultTier]}</em>
         </div>
@@ -56,31 +53,31 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
       </div>
       {recoveredFray ? (
         <div className="fray-recovery-stamp">
-          <span>ほころび回収</span>
-          <strong>失敗の余白が場面の材料になった</strong>
+          <span>{appCopy.resultPreview.frayRecovery}</span>
+          <strong>{appCopy.resultPreview.frayRecoveryBody}</strong>
         </div>
       ) : null}
       <div className="next-note result-lesson-note">
-        <span>次回改善メモ</span>
+        <span>{appCopy.resultPreview.lesson}</span>
         <p>{preview.cueSummary.lesson}</p>
       </div>
       <div className="cue-summary-grid">
         <article className="cue-summary-card is-key">
-          <span>決め手</span>
+          <span>{appCopy.resultPreview.key}</span>
           <p>{preview.cueSummary.keyPoint}</p>
         </article>
         <article className="cue-summary-card">
-          <span>代償</span>
+          <span>{appCopy.resultPreview.cost}</span>
           <p>{preview.cueSummary.cost}</p>
         </article>
       </div>
       <div className="cue-subnote-line">
-        <span>{isFinale ? '公演報告へ' : '申し送り'}: {preview.cueSummary.handoff}</span>
-        <span>客席: {preview.cueSummary.audienceReaction.replace(/^客席反応: /, '')}</span>
+        <span>{isFinale ? appCopy.resultPreview.finalHandoff : appCopy.resultPreview.handoff}: {preview.cueSummary.handoff}</span>
+        <span>{appCopy.resultPreview.audience}: {stripAudienceReactionPrefix(preview.cueSummary.audienceReaction)}</span>
       </div>
       {reasonItems.length > 0 ? (
         <div className="cue-reason-list">
-          <span>主な理由</span>
+          <span>{appCopy.resultPreview.reasons}</span>
           <ul>
             {reasonItems.map((item) => (
               <li key={item.id} className={`breakdown-${item.tone}`}>
@@ -100,24 +97,22 @@ export function ResultPreviewCard({ preview, onCommit, canCommit }: Props) {
       </div>
       {preview.styleLabel ? (
         <div className={`performance-style-note ${preview.styleIsNew ? 'is-new' : ''}`}>
-          <span>{preview.styleIsNew ? 'この公演の色が決まった' : '公演の色'}</span>
+          <span>{preview.styleIsNew ? appCopy.resultPreview.styleNew : appCopy.resultPreview.style}</span>
           <strong>{preview.styleLabel}</strong>
           {preview.styleText ? <p>{preview.styleText}</p> : null}
         </div>
       ) : null}
-      <div className="delta-table" aria-label="結果差分">
-        <span className="delta-table-title">結果差分</span>
-        <Delta kind="scene" label="評判" value={preview.deltaScene} />
-        <Delta kind="flow" label="流れ" value={preview.deltaFlow} />
-        <Delta kind="trust" label="信頼" value={preview.deltaTrust} />
-        <Delta kind="load" label="負荷" value={preview.deltaLoad} />
+      <div className="delta-table" aria-label={appCopy.resultPreview.deltaAria}>
+        <span className="delta-table-title">{appCopy.resultPreview.deltaTitle}</span>
+        <Delta kind="scene" label={appCopy.result.finalScoreLabels.scene} value={preview.deltaScene} />
+        <Delta kind="flow" label={appCopy.resultPreview.deltaLabels.flow} value={preview.deltaFlow} />
+        <Delta kind="trust" label={appCopy.resultPreview.deltaLabels.trust} value={preview.deltaTrust} />
+        <Delta kind="load" label={appCopy.resultPreview.deltaLabels.load} value={preview.deltaLoad} />
       </div>
-      <button className="primary-action" disabled={!canCommit} onClick={onCommit}>{isFinale ? 'この結果で公演報告へ' : 'この結果で次公演へ'}</button>
+      <button className="primary-action" disabled={!canCommit} onClick={onCommit}>{isFinale ? appCopy.resultPreview.commitFinale : appCopy.resultPreview.commitNext}</button>
     </section>
   );
 }
-
-type DeltaKind = 'scene' | 'flow' | 'trust' | 'load';
 
 function Delta({ kind, label, value }: { kind: DeltaKind; label: string; value: number }) {
   const sign = value > 0 ? '+' : '';
@@ -129,31 +124,4 @@ function Delta({ kind, label, value }: { kind: DeltaKind; label: string; value: 
       <strong>{sign}{value}</strong>
     </div>
   );
-}
-
-function deltaImpact(kind: DeltaKind, value: number, maxLevel = 4): { label: string; level: number; tone: 'positive' | 'neutral' | 'negative' } {
-  const level = Math.min(maxLevel, Math.abs(value));
-  if (kind === 'scene') {
-    if (value >= 4) return { label: '見せ場級', level: 4, tone: 'positive' };
-    if (value >= 3) return { label: '評判が伸びた', level: 3, tone: 'positive' };
-    if (value > 0) return { label: '少し伸びた', level: value, tone: 'positive' };
-    if (value === 0) return { label: '伸びは控えめ', level: 0, tone: 'neutral' };
-    return { label: '沈んだ', level, tone: 'negative' };
-  }
-  if (kind === 'flow') {
-    if (value >= 2) return { label: '呼吸が戻った', level: 2, tone: 'positive' };
-    if (value > 0) return { label: '整った', level: 1, tone: 'positive' };
-    if (value === 0) return { label: '維持', level: 0, tone: 'neutral' };
-    return { label: value <= -2 ? '大きく乱れた' : '乱れた', level, tone: 'negative' };
-  }
-  if (kind === 'trust') {
-    if (value >= 2) return { label: '強く残った', level: 2, tone: 'positive' };
-    if (value > 0) return { label: '深まった', level: 1, tone: 'positive' };
-    if (value === 0) return { label: '維持', level: 0, tone: 'neutral' };
-    return { label: value <= -2 ? '削れた' : '少し削れた', level, tone: 'negative' };
-  }
-  if (value < 0) return { label: '軽くなった', level, tone: 'positive' };
-  if (value === 0) return { label: '維持', level: 0, tone: 'neutral' };
-  if (value >= 3) return { label: '危険圏', level: Math.min(maxLevel, value), tone: 'negative' };
-  return { label: value >= 2 ? '重い代償' : '攻めの代償', level: value, tone: 'negative' };
 }
