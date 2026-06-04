@@ -1,4 +1,5 @@
 import type { Actor, ActorEventType, ActorState, ActorType, LoadBias, LoadBiasArea, LoadStrain, MainResponse, PrepAction } from './types';
+import { ACTOR_LABELS as ACTOR_NAMES } from '../content/ja/gameLabels';
 export {
   ACTOR_LABELS,
   ACTOR_TRAITS,
@@ -24,9 +25,9 @@ export const TURNS_PER_ACT = 2;
 export const MAX_LOAD = 5;
 
 export const INITIAL_ACTORS: Actor[] = [
-  { id: 'lead', type: 'lead', name: '主役', state: 'contemplative', trust: 0, fatigue: 0, currentRole: 'focus' },
-  { id: 'junior', type: 'junior', name: '若手', state: 'elated', trust: 0, fatigue: 0, currentRole: 'sign' },
-  { id: 'skilled', type: 'skilled', name: '技巧派', state: 'immersed', trust: 0, fatigue: 0, currentRole: 'waiting' },
+  { id: 'lead', type: 'lead', name: ACTOR_NAMES.lead, state: 'contemplative', trust: 0, fatigue: 0, currentRole: 'focus' },
+  { id: 'junior', type: 'junior', name: ACTOR_NAMES.junior, state: 'elated', trust: 0, fatigue: 0, currentRole: 'sign' },
+  { id: 'skilled', type: 'skilled', name: ACTOR_NAMES.skilled, state: 'immersed', trust: 0, fatigue: 0, currentRole: 'waiting' },
 ];
 
 export const PREP_PRIMARY_RESPONSE: Record<PrepAction, MainResponse> = {

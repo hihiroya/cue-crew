@@ -1,7 +1,8 @@
 import { ACTOR_TRAITS, EVENT_LABELS, STATE_LABELS } from '../../game/constants';
 import { topOmenEvents } from '../../game/actorLogic';
-import type { Actor, ActorEvent, ActorState, ActorType, PrepAction } from '../../game/types';
+import type { Actor, ActorEvent, ActorType, PrepAction } from '../../game/types';
 import { ActorSilhouette } from '../actors/ActorSilhouette';
+import { STATE_HINTS, actorPassiveLabel, actorStageCopy, supportActorSummary } from '../../content/ja/actorStageCopy';
 
 type Props = {
   actors: Actor[];
@@ -19,14 +20,14 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
 
   if (event) {
     return (
-      <section className={`event-reveal actor-figure-${focusActor.type} figure-state-${focusActor.state}`} aria-label="本番の出来事">
+      <section className={`event-reveal actor-figure-${focusActor.type} figure-state-${focusActor.state}`} aria-label={actorStageCopy.eventAria}>
         <div className="event-reveal-figure">
           <ActorSilhouette type={focusActor.type} />
           <em className="event-actor-tag">{focusActor.name} / {STATE_LABELS[focusActor.state]}</em>
         </div>
         <div className="event-reveal-body">
           <div className="event-reveal-kicker">
-            <span>本番で起きた</span>
+            <span>{actorStageCopy.eventKicker}</span>
           </div>
           <h2 className={`event-title title-${eventTitleSize(event.title)}`}>{event.title}</h2>
           <p>{event.description}</p>
@@ -35,9 +36,9 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
     );
   }
   return (
-    <section className="actor-stage focus-stage" aria-label="役者の兆候">
+    <section className="actor-stage focus-stage" aria-label={actorStageCopy.stageAria}>
       <article className="actor-card focus-actor-card is-focus">
-        <span className="actor-role-badge focus-role">焦点役者</span>
+        <span className="actor-role-badge focus-role">{actorStageCopy.focusRole}</span>
         <div className={`actor-figure-wrap actor-figure-${focusActor.type} figure-state-${focusActor.state}`}>
           <ActorSilhouette type={focusActor.type} />
         </div>
@@ -48,7 +49,7 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
           </div>
         </div>
         <div className="actor-state-card">
-          <span>状態</span>
+          <span>{actorStageCopy.stateLabel}</span>
           <strong>{STATE_LABELS[focusActor.state]}</strong>
           <em>{STATE_HINTS[focusActor.state]}</em>
           {focusPassive ? (
@@ -57,28 +58,20 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
         </div>
         <OmenList actor={focusActor} />
       </article>
-      <div className="support-actors" aria-label="他の役者">
+      <div className="support-actors" aria-label={actorStageCopy.supportAria}>
         {supportingActors.map((actor) => (
           <div key={actor.id} className={`support-actor-chip ${actor.id === nextFocusActorId ? 'is-next' : ''}`}>
             <span className={`actor-role-badge ${actor.id === nextFocusActorId ? 'next-role' : 'reserve-role'}`}>
-              {actor.id === nextFocusActorId ? '次に来そう' : '控え'}
+              {actor.id === nextFocusActorId ? actorStageCopy.nextRole : actorStageCopy.reserveRole}
             </span>
             <strong>{actor.name}</strong>
-            <em>{supportActorSummary(actor, actor.id === nextFocusActorId, backstageLoad)}</em>
+            <em>{supportActorSummary(actor, actor.id === nextFocusActorId, backstageLoad, actorPassiveLabel(actor))}</em>
           </div>
         ))}
       </div>
     </section>
   );
 }
-
-const STATE_HINTS: Record<ActorState, string> = {
-  elated: '拾うと伸びやすい',
-  contemplative: '待つと活きやすい',
-  anxious: '整えると崩れにくい',
-  immersed: '拾う・待つが効きやすい',
-  fatigued: '整える・切るで守りやすい',
-};
 
 function eventTitleSize(title: string) {
   if (title.length <= 6) return 'large';
@@ -89,8 +82,8 @@ function eventTitleSize(title: string) {
 function OmenList({ actor }: { actor: Actor }) {
   const sorted = topOmenEvents(actor);
   return (
-    <div className="omen-chip-panel" aria-label="見えている兆候">
-      <span>見えている兆候</span>
+    <div className="omen-chip-panel" aria-label={actorStageCopy.visibleOmens}>
+      <span>{actorStageCopy.visibleOmens}</span>
       <div className="omen-chip-list">
         {sorted.map(({ event, intensity }) => (
           <em key={event} className={`omen-chip omen-${intensity}`}>
@@ -101,35 +94,6 @@ function OmenList({ actor }: { actor: Actor }) {
       </div>
     </div>
   );
-}
-
-function nextPressure(actor: Actor, isNext: boolean, backstageLoad: number) {
-  if (isNext && backstageLoad >= 3) {
-    if (actor.type === 'lead') return '負荷が高いまま入ると、沈黙が事故化しやすい';
-    if (actor.type === 'junior') return '負荷が高いまま入ると、勢いがほころびやすい';
-    return '負荷が高いまま入ると、ズレが広がりやすい';
-  }
-  if (actor.state === 'fatigued') return '疲労。次ターンの下振れリスク';
-  if (actor.state === 'anxious') return '不安。負荷を残すと乱れやすい';
-  if (actor.type === 'junior') return '拾うが活きやすいかも';
-  if (actor.type === 'lead') return '待つが活きやすいかも';
-  return '整えるが活きやすいかも';
-}
-
-function supportActorSummary(actor: Actor, isNext: boolean, backstageLoad: number) {
-  const passive = actorPassiveLabel(actor);
-  if (!isNext) return passive ? `${STATE_LABELS[actor.state]} / ${passive}` : STATE_LABELS[actor.state];
-  if (backstageLoad >= 3) return `${STATE_LABELS[actor.state]} / 次は負荷注意`;
-  if (actor.state === 'fatigued') return `${STATE_LABELS[actor.state]} / 守りたい`;
-  if (actor.state === 'anxious') return `${STATE_LABELS[actor.state]} / 整えたい`;
-  if (passive) return `${STATE_LABELS[actor.state]} / ${passive}`;
-  return `${STATE_LABELS[actor.state]} / ${nextPressure(actor, true, backstageLoad).replace('かも', '')}`;
-}
-
-function actorPassiveLabel(actor: Actor) {
-  if (actor.trust >= 5) return '以心伝心';
-  if (actor.trust >= 3) return '阿吽の呼吸';
-  return null;
 }
 
 function trustLevel(actor: Actor) {

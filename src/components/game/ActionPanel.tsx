@@ -1,9 +1,23 @@
 import { useMemo, useState } from 'react';
-import { EVENT_LABELS, PERFORMANCE_SLOT_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../game/constants';
+import { RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../game/constants';
 import { responseInsight } from '../../game/responseInsight';
 import type { GameState, MainResponse, ResponseInsight, ResultTier } from '../../game/types';
 import { Icon } from '../ui/Icon';
 import { effectDirection, effectIntensity, effectItems, effectLedSlots, effectSummary, effectTargetLabel, evaluationSign } from './responseEffectsView';
+import {
+  affinityLabels,
+  decisionMemo,
+  effectTargetShortLabel,
+  prepConnectionLabel,
+  prepConnectionShortLabel,
+  rangeShortLabel,
+  responsePanelCopy,
+  responseSendAria,
+  resultRangeIndices,
+  runSheetActLabel,
+  runSheetEventLabel,
+  rankForValue,
+} from '../../content/ja/responsePanelCopy';
 
 export { PrepPanel } from './PrepPanel';
 
@@ -26,7 +40,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
   return (
     <section className="choice-panel response-panel">
       <div className="section-heading">
-        <h2>行動に対応</h2>
+        <h2>{responsePanelCopy.heading}</h2>
       </div>
       <div className="choice-grid response-grid">
         {insights.map((insight) => (
@@ -48,7 +62,7 @@ export function ResponsePanel({ selected, disabled, state, onSelect }: ResponseP
 function ResponseSelectionMarker({ visible }: { visible: boolean }) {
   return (
     <em className={`selection-marker selection-marker--response ${visible ? 'is-visible' : ''}`} aria-hidden={!visible}>
-      {visible ? '確認中' : ''}
+      {visible ? responsePanelCopy.inspecting : ''}
     </em>
   );
 }
@@ -81,10 +95,10 @@ function ResponseChoiceCard({
           <em>{insight.tacticalSummary}</em>
         </span>
       </div>
-      <div className="outlook-summary" aria-label={`成立見込み: ${insight.successRangeLabel}`}>
+      <div className="outlook-summary" aria-label={responsePanelCopy.outlookAria(insight.successRangeLabel)}>
         <div className="outlook-head">
           <span><Icon name="scene" />{rangeShortLabel(insight.resultTier)}</span>
-          <em className={`response-prep-mark mark-${insight.prepRelationTone}`} aria-label={`準備との関係: ${insight.prepRelationLabel}`}>
+          <em className={`response-prep-mark mark-${insight.prepRelationTone}`} aria-label={responsePanelCopy.prepRelationAria(insight.prepRelationLabel)}>
             {prepConnectionShortLabel(insight.prepRelationTone)}
           </em>
         </div>
@@ -103,8 +117,8 @@ function ResponseEffectSummary({ insight }: { insight: ResponseInsight }) {
     || Math.abs(b.value) - Math.abs(a.value)
   )).slice(0, 2);
   return (
-    <div className="response-effect-summary" aria-label="影響の要約">
-      <span>主要影響</span>
+    <div className="response-effect-summary" aria-label={responsePanelCopy.effectSummaryAria}>
+      <span>{responsePanelCopy.effectSummaryTitle}</span>
       <div>
         {effects.map((item) => (
           <em key={item.key} className={`response-effect-mini effect-${item.tone}`} title={item.title} aria-label={item.title}>
@@ -119,13 +133,6 @@ function ResponseEffectSummary({ insight }: { insight: ResponseInsight }) {
   );
 }
 
-function effectTargetShortLabel(target: Parameters<typeof effectTargetLabel>[0]) {
-  if (target === 'scene') return '評';
-  if (target === 'flow') return '流';
-  if (target === 'trust') return '信';
-  return '負';
-}
-
 function ResponseSendBar({
   disabled,
   response,
@@ -136,10 +143,10 @@ function ResponseSendBar({
   onSelect: (response: MainResponse) => void;
 }) {
   return (
-    <div className="response-send-bar" aria-label={`${RESPONSE_LABELS[response]}を送出`}>
+    <div className="response-send-bar" aria-label={responseSendAria(response)}>
       <button className="primary-action decision-action cue-send-action" disabled={disabled} onClick={() => onSelect(response)}>
         <span className="cue-lamp-face cue-lamp-ready" aria-hidden="true" />
-        <span className="cue-send-label">この対応を送る</span>
+        <span className="cue-send-label">{responsePanelCopy.sendButton}</span>
         <span className="cue-lamp-face cue-lamp-send" aria-hidden="true" />
       </button>
     </div>
@@ -150,8 +157,8 @@ function ResponseConsole({ insight, state }: { insight: ResponseInsight; state: 
   return (
     <aside className={`decision-note response-console relation-${insight.prepRelationTone}`}>
       <div className="console-head">
-        <span>進行卓（コンソール）</span>
-        <div className="console-cue-strip" aria-label="送出キュー">
+        <span>{responsePanelCopy.consoleTitle}</span>
+        <div className="console-cue-strip" aria-label={responsePanelCopy.cueStripAria}>
           <em>
             <small>CUE</small>
             <strong>No.{String(state.totalTurn).padStart(2, '0')}</strong>
@@ -164,7 +171,7 @@ function ResponseConsole({ insight, state }: { insight: ResponseInsight; state: 
       </div>
       <ConsoleRunSheet state={state} />
       <div className="console-outlook">
-        <span>送出見込み</span>
+        <span>{responsePanelCopy.outlookTitle}</span>
         <div className="console-outlook-line">
           <em className={`console-outlook-prep mark-${insight.prepRelationTone}`}>
             {prepConnectionLabel(insight.prepRelationTone)}
@@ -175,18 +182,18 @@ function ResponseConsole({ insight, state }: { insight: ResponseInsight; state: 
       </div>
       <ReadoutHud insight={insight} />
       <div className="console-log">
-        <span>進行メモ</span>
-        <p>{decisionMemo(insight)}</p>
+        <span>{responsePanelCopy.logTitle}</span>
+        <p>{decisionMemo(insight, effectSummary(insight))}</p>
       </div>
       {insight.frayRelationLabel ? (
         <div className={`console-fray relation-${insight.frayRelationTone}`}>
-          <span>舞台裏のほころび</span>
+          <span>{responsePanelCopy.frayTitle}</span>
           <strong>{insight.frayRelationLabel}</strong>
         </div>
       ) : null}
       {insight.actorTrustLabel ? (
         <div className="console-fray relation-recover">
-          <span>パッシブ効果</span>
+          <span>{responsePanelCopy.passiveTitle}</span>
           <strong>{insight.actorTrustLabel}</strong>
         </div>
       ) : null}
@@ -195,17 +202,15 @@ function ResponseConsole({ insight, state }: { insight: ResponseInsight; state: 
 }
 
 function ConsoleRunSheet({ state }: { state: GameState }) {
-  const slotKey = state.turnInAct === 1 ? 'matinee' : 'soiree';
-  const eventLabel = state.currentActorEvent ? EVENT_LABELS[state.currentActorEvent.type] : '未定';
   return (
-    <div className="console-run-sheet" aria-label="進行表">
+    <div className="console-run-sheet" aria-label={responsePanelCopy.runSheetAria}>
       <span>
         <small>ACT</small>
-        <strong>{state.act}日目 / {PERFORMANCE_SLOT_LABELS[slotKey].label}</strong>
+        <strong>{runSheetActLabel(state)}</strong>
       </span>
       <span>
         <small>SCENE</small>
-        <strong>{eventLabel}</strong>
+        <strong>{runSheetEventLabel(state)}</strong>
       </span>
     </div>
   );
@@ -213,37 +218,14 @@ function ConsoleRunSheet({ state }: { state: GameState }) {
 
 const tierOrder: ResultTier[] = ['accident', 'fray', 'smallSuccess', 'scene', 'masterpiece'];
 
-function prepConnectionLabel(tone: ResponseInsight['prepRelationTone']) {
-  if (tone === 'primary') return '準備が活きる';
-  if (tone === 'alternate') return '準備外でも効く';
-  return '準備と合わない';
-}
-
-function prepConnectionShortLabel(tone: ResponseInsight['prepRelationTone']) {
-  if (tone === 'primary') return '準備活きる';
-  if (tone === 'alternate') return '準備外で効く';
-  return '準備合わず';
-}
-
-function rangeShortLabel(tier: ResultTier) {
-  if (tier === 'masterpiece') return '名場面狙い';
-  if (tier === 'scene') return '場面化狙い';
-  if (tier === 'smallSuccess') return '小さく成功';
-  if (tier === 'fray') return '崩れ抑え';
-  return '事故注意';
-}
-
 function resultRange(insight: ResponseInsight) {
-  const [lowLabel, highLabel] = insight.successRangeLabel.split('〜');
-  const lowIndex = Math.max(0, tierOrder.findIndex((tier) => RESULT_TIER_LABELS[tier] === lowLabel));
-  const highIndex = Math.max(lowIndex, tierOrder.findIndex((tier) => RESULT_TIER_LABELS[tier] === highLabel));
-  return { lowIndex, highIndex };
+  return resultRangeIndices(insight.successRangeLabel);
 }
 
 function ResultRail({ range, resultTier, danger }: { range: { lowIndex: number; highIndex: number }; resultTier: ResultTier; danger: boolean }) {
   const currentIndex = tierOrder.indexOf(resultTier);
   return (
-    <div className={`result-rail ${danger ? 'has-danger' : ''}`} aria-label="結果レンジ">
+    <div className={`result-rail ${danger ? 'has-danger' : ''}`} aria-label={responsePanelCopy.resultRailAria}>
       {tierOrder.map((tier, index) => (
         <span
           key={tier}
@@ -260,11 +242,11 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
   const affinity = affinityItems(insight);
   const effects = effectItems(insight);
   return (
-    <div className="readout-hud" aria-label="選択中の相性と影響">
+    <div className="readout-hud" aria-label={responsePanelCopy.readoutAria}>
       <section className="affinity-board">
         <div className="console-module-head">
-          <span>相性盤</span>
-          <small>判定ランプ</small>
+          <span>{responsePanelCopy.affinityBoardTitle}</span>
+          <small>{responsePanelCopy.affinityBoardSub}</small>
         </div>
         <div className="indicator-grid">
           {affinity.map((item) => (
@@ -278,8 +260,8 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
       </section>
       <section className="effect-board">
         <div className="console-module-head">
-          <span>送出後の影響</span>
-          <small>送出ゲージ</small>
+          <span>{responsePanelCopy.effectBoardTitle}</span>
+          <small>{responsePanelCopy.effectBoardSub}</small>
         </div>
         <div className="effect-meter-grid">
           {effects.map((item) => (
@@ -320,12 +302,7 @@ function affinityItems(insight: ResponseInsight) {
     title: `${label}: ${symbolForValue(value)} ${rankForValue(value)}`,
   });
   const value = (id: string) => insight.scoreBreakdown.find((entry) => entry.id === id)?.value ?? 0;
-  return [
-    item('event', 'event', '出来事', value('event')),
-    item('actor', 'actor', '役者型', value('actor')),
-    item('state', 'state', '状態', value('state')),
-    item('act', 'act', '公演回', value('act')),
-  ];
+  return affinityLabels().map((label) => item(label.id, label.icon, label.label, value(label.id)));
 }
 
 function symbolForValue(value: number) {
@@ -335,27 +312,9 @@ function symbolForValue(value: number) {
   return '△';
 }
 
-function rankForValue(value: number) {
-  if (value >= 3) return '強い';
-  if (value > 0) return '合う';
-  if (value < 0) return '注意';
-  return '普通';
-}
-
 function toneForValue(value: number) {
   if (value >= 3) return 'strong';
   if (value > 0) return 'good';
   if (value < 0) return 'bad';
   return 'neutral';
-}
-
-function decisionMemo(insight: ResponseInsight) {
-  const prep = insight.prepRelationTone === 'primary'
-    ? '準備と正面から噛み合う'
-    : insight.prepRelationTone === 'alternate'
-      ? '準備の想定外でも効く'
-      : '準備とは噛み合いにくい';
-  const danger = insight.dangerWarning ? ` ${insight.downsideLabel}。` : '';
-  const trust = insight.actorTrustLabel ? ` ${insight.actorTrustLabel}` : '';
-  return `${prep}手。${insight.tacticalSummary}。${insight.responseAimLabel}。見込みは${insight.successRangeLabel}。影響は${effectSummary(insight)}。${trust}${danger}`;
 }

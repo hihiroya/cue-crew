@@ -2,6 +2,7 @@ import { assignActorRoles } from './actorLogic';
 import { EVENT_DESCRIPTIONS, EVENT_LABELS, INITIAL_ACTORS } from './constants';
 import { createInitialGame } from './gameReducer';
 import { actForTurn } from './turnCalendar';
+import { uiScenarioCopy } from '../content/ja/uiScenarioCopy';
 import type { ActorEvent, ActorEventType, ActorState, ActorType, FrayEvent, GameState, LoadBias, LoadStrain, MainResponse, PerformanceStyle, PrepAction, PrepPredictionQuality, ResultTier, TurnLog } from './types';
 
 export const UI_SCENARIO_QUERY_KEY = 'uiScenario';
@@ -92,8 +93,8 @@ export function uiScenarioState(name: string): GameState | null {
     return responseScenario(name, {
       prep: 'tightenFlow',
       event: 'positionShift',
-      eventTitle: '立ち位置と照明の軸が大きくズレる',
-      eventDescription: '立ち位置のズレが照明と客席の視線まで巻き込み、舞台全体の軸が揺れている。',
+      eventTitle: uiScenarioCopy.longEventTitle,
+      eventDescription: uiScenarioCopy.longEventDescription,
       selectedResponse: 'arrange',
       focus: 'skilled',
       focusState: 'fatigued',
@@ -115,7 +116,7 @@ export function uiScenarioState(name: string): GameState | null {
       totalTurn: 3,
       trustScore: 2,
       backstageLoad: 4,
-      pendingFrayEvent: { bias: 'sound', title: '残響が少し長く残った' },
+      pendingFrayEvent: { bias: 'sound', title: uiScenarioCopy.soundFrayTitle },
       loadStrain: { light: 0, sound: 4, stageManagement: 1, props: 0 },
     });
   }
@@ -145,7 +146,7 @@ export function uiScenarioState(name: string): GameState | null {
         totalTurn: 3,
         trustScore: 2,
         backstageLoad: 4,
-        pendingFrayEvent: { bias: 'sound', title: '残響が少し長く残った' },
+        pendingFrayEvent: { bias: 'sound', title: uiScenarioCopy.soundFrayTitle },
         loadStrain: { light: 0, sound: 4, stageManagement: 1, props: 0 },
       }),
       status: 'result',
@@ -174,8 +175,8 @@ function seedUiScenarioStorage(name: string) {
         trustScore: 1,
         backstageLoad: 4,
         performanceStyle: 'heat',
-        title: '古い履歴の公演',
-        review: '旧形式の公演記録。',
+        title: uiScenarioCopy.legacyTitle,
+        review: uiScenarioCopy.legacyReview,
         highlights: [],
         logs: [],
       },
@@ -229,7 +230,7 @@ function scenarioActors(focus: ActorType, state: ActorState, fatigue = 0) {
   return assignActorRoles(actors, focus);
 }
 
-function scenarioEvent(type: ActorEventType, actorId: ActorType, title = EVENT_LABELS[type], description = EVENT_DESCRIPTIONS[type]): ActorEvent {
+function scenarioEvent(type: ActorEventType, actorId: ActorType, title: string = EVENT_LABELS[type], description: string = EVENT_DESCRIPTIONS[type]): ActorEvent {
   return {
     type,
     actorId,
@@ -266,12 +267,12 @@ function finishedScenario(name: string, options: FinishedScenarioOptions = {}): 
 
 function finishedLogs(performanceStyle: PerformanceStyle): TurnLog[] {
   return [
-    turnLog(1, 1, 'junior', 'elated', 'adlib', 'watch', 'catch', 'scene', 5, 3, 1, 1, 1, '拾われたアドリブ', 'light', true, 'hit', performanceStyle),
-    turnLog(1, 2, 'lead', 'contemplative', 'silence', 'makeSpace', 'wait', 'smallSuccess', 3, 1, 1, 1, -1, '客席まで届いた間', 'sound', true, 'hit', performanceStyle),
-    turnLog(2, 1, 'skilled', 'anxious', 'positionShift', 'tightenFlow', 'arrange', 'scene', 4, 3, 2, 1, -1, '意味を持った立ち位置', 'stageManagement', true, 'hit', performanceStyle),
-    turnLog(2, 2, 'junior', 'elated', 'heatUp', 'watch', 'catch', 'fray', 0, 0, -1, -1, 2, '熱だけが残った一瞬', 'light', false, 'partial', performanceStyle),
-    turnLog(3, 1, 'lead', 'immersed', 'delayedExit', 'makeSpace', 'wait', 'masterpiece', 8, 4, 2, 3, -1, '余韻を残す退場', 'sound', true, 'hit', performanceStyle),
-    turnLog(3, 2, 'skilled', 'fatigued', 'ensembleWaver', 'tightenFlow', 'arrange', 'smallSuccess', 3, 1, 1, 0, -1, '小さく整った呼吸', 'stageManagement', true, 'hit', performanceStyle),
+    turnLog(1, 1, 'junior', 'elated', 'adlib', 'watch', 'catch', 'scene', 5, 3, 1, 1, 1, uiScenarioCopy.finishedSceneTitles.adlib, 'light', true, 'hit', performanceStyle),
+    turnLog(1, 2, 'lead', 'contemplative', 'silence', 'makeSpace', 'wait', 'smallSuccess', 3, 1, 1, 1, -1, uiScenarioCopy.finishedSceneTitles.silence, 'sound', true, 'hit', performanceStyle),
+    turnLog(2, 1, 'skilled', 'anxious', 'positionShift', 'tightenFlow', 'arrange', 'scene', 4, 3, 2, 1, -1, uiScenarioCopy.finishedSceneTitles.position, 'stageManagement', true, 'hit', performanceStyle),
+    turnLog(2, 2, 'junior', 'elated', 'heatUp', 'watch', 'catch', 'fray', 0, 0, -1, -1, 2, uiScenarioCopy.finishedSceneTitles.heat, 'light', false, 'partial', performanceStyle),
+    turnLog(3, 1, 'lead', 'immersed', 'delayedExit', 'makeSpace', 'wait', 'masterpiece', 8, 4, 2, 3, -1, uiScenarioCopy.finishedSceneTitles.exit, 'sound', true, 'hit', performanceStyle),
+    turnLog(3, 2, 'skilled', 'fatigued', 'ensembleWaver', 'tightenFlow', 'arrange', 'smallSuccess', 3, 1, 1, 0, -1, uiScenarioCopy.finishedSceneTitles.breath, 'stageManagement', true, 'hit', performanceStyle),
   ];
 }
 
@@ -310,7 +311,7 @@ function turnLog(
     prepMatched,
     prepQuality,
     sceneTitle,
-    flavorText: '固定シナリオ用の場面記録。',
+    flavorText: uiScenarioCopy.fixedFlavorText,
     deltaScene,
     deltaFlow,
     deltaTrust,

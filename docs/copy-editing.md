@@ -33,16 +33,8 @@ npm run build
 
 UIの見た目に影響する長さ変更をした場合は、影響範囲に応じて `npm run check:ui` または `npm run check:ui:prep` / `npm run check:ui:response` / `npm run check:ui:result` を使います。
 
-## レガシー許可リスト
+## 直書き検査
 
-`scripts/check-copy-literals.mjs` には、まだ直接日本語文言が残っているファイルを明示的に許可しています。新しく移行したファイルはこの許可リストから外し、再混入を防いでください。
+`scripts/check-copy-literals.mjs` は `src/content/ja/**` 以外の日本語文字列を検出します。例外許可リストは空にしているため、新しい文言は必ず content 層へ追加してください。
 
-優先して移行する候補:
-
-- `src/game/scoreRules.ts`
-- `src/game/performanceReport.ts`
-- `src/game/fray.ts`
-- `src/components/game/ActionPanel.tsx`
-- `src/components/game/ActorStage.tsx`
-- `src/components/game/ScoreBar.tsx`
-- `src/components/layout/GameHeader.tsx`
+どうしても一時的な例外が必要な場合は、該当ファイルを許可リストへ足す前に、移行できない理由を PR 説明に書いてください。

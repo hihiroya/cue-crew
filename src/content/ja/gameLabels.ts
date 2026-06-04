@@ -16,12 +16,24 @@ export const ACTS = [
   { act: 3, name: '3日目', role: '千秋楽。残った信頼と負荷を回収して閉じる' },
 ] as const;
 
-export const PERFORMANCE_SLOT_LABELS: Record<PerformanceSlot, { label: string; role: string }> = {
+export const FALLBACK_ACT_NAME = '千秋楽';
+
+export const OMEN_INTENSITY_LABELS = {
+  high: '高',
+  medium: '中',
+  low: '低',
+} as const;
+
+export const PERFORMANCE_SLOT_LABELS = {
   matinee: { label: 'マチネ', role: '昼公演。見極めと調整が効きやすい' },
   soiree: { label: 'ソワレ', role: '夜公演。評判は伸びるが、負荷も残りやすい' },
-};
+} as const satisfies Record<PerformanceSlot, { label: string; role: string }>;
 
-export const PERFORMANCE_STYLE_DETAILS: Record<PerformanceStyle, { label: string; short: string; strength: MainResponse; cost: string }> = {
+export function performanceLabelText(day: number, slot: PerformanceSlot) {
+  return `${day}日目 ${PERFORMANCE_SLOT_LABELS[slot].label}`;
+}
+
+export const PERFORMANCE_STYLE_DETAILS = {
   heat: {
     label: '熱量で押す公演',
     short: '拾う判断は評判へつながりやすいが、裏方負荷も残りやすい。',
@@ -46,23 +58,23 @@ export const PERFORMANCE_STYLE_DETAILS: Record<PerformanceStyle, { label: string
     strength: 'cut',
     cost: '評判の伸びは控えめになりやすい',
   },
-};
+} as const satisfies Record<PerformanceStyle, { label: string; short: string; strength: MainResponse; cost: string }>;
 
-export const ACTOR_LABELS: Record<ActorType, string> = {
+export const ACTOR_LABELS = {
   lead: '主役',
   junior: '若手',
   skilled: '技巧派',
-};
+} as const satisfies Record<ActorType, string>;
 
-export const STATE_LABELS: Record<ActorState, string> = {
+export const STATE_LABELS = {
   elated: '高揚',
   contemplative: '沈思',
   anxious: '不安',
   immersed: '没入',
   fatigued: '疲労',
-};
+} as const satisfies Record<ActorState, string>;
 
-export const EVENT_LABELS: Record<ActorEventType, string> = {
+export const EVENT_LABELS = {
   stepForward: '前へ出る',
   adlib: 'アドリブ',
   heatUp: '熱が乗る',
@@ -71,9 +83,9 @@ export const EVENT_LABELS: Record<ActorEventType, string> = {
   tempoRush: 'テンポが走る',
   delayedExit: '退場が遅れる',
   ensembleWaver: '群像が揺れる',
-};
+} as const satisfies Record<ActorEventType, string>;
 
-export const EVENT_DESCRIPTIONS: Record<ActorEventType, string> = {
+export const EVENT_DESCRIPTIONS = {
   stepForward: '予定より半歩前に出て、客席の視線をさらいかけている。',
   adlib: '台詞の隙間に、台本にはない一言が落ちた。',
   heatUp: '言葉と身体に熱が宿り、場面が大きく膨らみ始めた。',
@@ -82,23 +94,23 @@ export const EVENT_DESCRIPTIONS: Record<ActorEventType, string> = {
   tempoRush: '呼吸より先に台詞が走り、舞台全体の拍が揺れている。',
   delayedExit: '退場の一歩が遅れ、余韻と進行の境目で揺れている。',
   ensembleWaver: '周囲の動きがわずかに乱れ、群像の輪郭が揺らいだ。',
-};
+} as const satisfies Record<ActorEventType, string>;
 
-export const PREP_LABELS: Record<PrepAction, string> = {
+export const PREP_LABELS = {
   watch: '注視',
   makeSpace: '余白',
   tightenFlow: '締め',
   prepareTransition: '転換',
-};
+} as const satisfies Record<PrepAction, string>;
 
-export const PREP_DESCRIPTIONS: Record<PrepAction, string> = {
+export const PREP_DESCRIPTIONS = {
   watch: '前へ出る・アドリブ・熱に備える',
   makeSpace: '沈黙・退場の余韻・熱に備える',
   tightenFlow: '立ち位置・テンポ・群像の乱れに備える',
   prepareTransition: '走り・退場・群像・立ち位置に備える',
-};
+} as const satisfies Record<PrepAction, string>;
 
-export const PREP_RESPONSE_HINTS: Record<PrepAction, { aim: string; alternate: string }> = {
+export const PREP_RESPONSE_HINTS = {
   watch: {
     aim: '予定外を見せ場に変える',
     alternate: '整えるで安全寄りに処理できる',
@@ -115,45 +127,45 @@ export const PREP_RESPONSE_HINTS: Record<PrepAction, { aim: string; alternate: s
     aim: '場面を伸ばすより、崩れを小さく閉じる',
     alternate: '低負荷なら整える・待つで場面化を狙える',
   },
-};
+} as const satisfies Record<PrepAction, { aim: string; alternate: string }>;
 
-export const RESPONSE_LABELS: Record<MainResponse, string> = {
+export const RESPONSE_LABELS = {
   catch: '拾う',
   arrange: '整える',
   wait: '待つ',
   cut: '切る',
-};
+} as const satisfies Record<MainResponse, string>;
 
-export const RESPONSE_DESCRIPTIONS: Record<MainResponse, string> = {
+export const RESPONSE_DESCRIPTIONS = {
   catch: '予定外の行動を見せ場に変える',
   arrange: '乱れを舞台全体の呼吸に戻す',
   wait: '間や余韻を信じて急かさない',
   cut: '場面を閉じ、転換と道具を次へ送る',
-};
+} as const satisfies Record<MainResponse, string>;
 
-export const RESULT_TIER_LABELS: Record<ResultTier, string> = {
+export const RESULT_TIER_LABELS = {
   masterpiece: '名場面',
   scene: '場面化',
   smallSuccess: '小さな成功',
   fray: 'ほころび',
   accident: '事故',
-};
+} as const satisfies Record<ResultTier, string>;
 
-export const RESULT_TIER_STARS: Record<ResultTier, string> = {
+export const RESULT_TIER_STARS = {
   masterpiece: '★★★★★',
   scene: '★★★★☆',
   smallSuccess: '★★★☆☆',
   fray: '★★☆☆☆',
   accident: '★☆☆☆☆',
-};
+} as const satisfies Record<ResultTier, string>;
 
-export const ACTOR_TRAITS: Record<ActorType, string> = {
+export const ACTOR_TRAITS = {
   junior: '勢い型。前へ出る・アドリブ・熱が乗るが多い。拾うと伸びやすい。',
   lead: '間の型。沈黙・退場の余韻が多い。待つと伸びやすい。',
   skilled: '制御型。立ち位置・群像の乱れが多い。整えると伸びやすい。',
-};
+} as const satisfies Record<ActorType, string>;
 
-export const ACT_RESPONSE_GUIDES: Record<number, Partial<Record<MainResponse, string>>> = {
+export const ACT_RESPONSE_GUIDES = {
   1: {
     catch: '1日目。初日の熱を評判に変えるが、型は攻め寄りになる。',
     arrange: '1日目。まず段取りを作り、以降の負荷を扱いやすくする。',
@@ -172,11 +184,11 @@ export const ACT_RESPONSE_GUIDES: Record<number, Partial<Record<MainResponse, st
     wait: '3日目。信頼が残っているほど、余韻として強く残る。',
     cut: '3日目。高負荷の崩れを閉じ、事故化を抑える。',
   },
-};
+} as const satisfies Record<number, Partial<Record<MainResponse, string>>>;
 
-export const LOAD_LABELS: Record<Exclude<LoadBias, null>, string> = {
+export const LOAD_LABELS = {
   light: '光',
   sound: '音',
   stageManagement: '進行',
   props: '道具',
-};
+} as const satisfies Record<Exclude<LoadBias, null>, string>;

@@ -1,4 +1,5 @@
-import { ACTS, PERFORMANCE_SLOT_LABELS } from './constants';
+import { ACTS } from './constants';
+import { FALLBACK_ACT_NAME, performanceLabelText } from '../content/ja/gameLabels';
 import type { PerformanceSlot } from './types';
 
 export function slotForTurnInAct(turnInAct: number): PerformanceSlot {
@@ -6,12 +7,12 @@ export function slotForTurnInAct(turnInAct: number): PerformanceSlot {
 }
 
 export function performanceLabel(day: number, slot: PerformanceSlot) {
-  return `${day}日目 ${PERFORMANCE_SLOT_LABELS[slot].label}`;
+  return performanceLabelText(day, slot);
 }
 
 export function actForTurn(totalTurn: number) {
   const act = Math.ceil(totalTurn / 2);
   const turnInAct = totalTurn % 2 === 0 ? 2 : 1;
-  const theme = ACTS[act - 1]?.name ?? '千秋楽';
+  const theme = ACTS[act - 1]?.name ?? FALLBACK_ACT_NAME;
   return { act, turnInAct, theme };
 }

@@ -6,22 +6,7 @@ const sourceRoot = path.join(repoRoot, 'src');
 const contentRoot = path.join(sourceRoot, 'content');
 const japanesePattern = /[ぁ-んァ-ン一-龥ー]/;
 
-const legacyCopyFiles = new Set([
-  'src/components/game/ActionPanel.tsx',
-  'src/components/game/ActorStage.tsx',
-  'src/components/game/EventPanel.tsx',
-  'src/components/game/ScoreBar.tsx',
-  'src/components/game/responseEffectsView.ts',
-  'src/components/layout/GameHeader.tsx',
-  'src/game/actorLogic.ts',
-  'src/game/constants.ts',
-  'src/game/fray.ts',
-  'src/game/gameReducer.ts',
-  'src/game/performanceReport.ts',
-  'src/game/scoreRules.ts',
-  'src/game/turnCalendar.ts',
-  'src/game/uiScenarios.ts',
-]);
+const legacyCopyFiles = new Set();
 
 async function collectFiles(dir) {
   const entries = await readdir(dir, { withFileTypes: true });

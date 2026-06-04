@@ -1,4 +1,5 @@
 import { ACTOR_WEIGHTS, EVENT_DESCRIPTIONS, EVENT_LABELS, STATE_WEIGHTS } from './constants';
+import { OMEN_INTENSITY_LABELS } from '../content/ja/gameLabels';
 import { createRng, pickWeighted } from './rng';
 import type { Actor, ActorEvent, ActorEventType, ActorState, ActorType, GameState } from './types';
 
@@ -42,7 +43,7 @@ function volatileEventWeightsFor(actor: Actor): Record<ActorEventType, number> {
   ) as Record<ActorEventType, number>;
 }
 
-export function topOmenEvents(actor: Actor, limit = 3): Array<{ event: ActorEventType; weight: number; intensity: '高' | '中' | '低' }> {
+export function topOmenEvents(actor: Actor, limit = 3): Array<{ event: ActorEventType; weight: number; intensity: typeof OMEN_INTENSITY_LABELS[keyof typeof OMEN_INTENSITY_LABELS] }> {
   const weights = eventWeightsFor(actor);
   const sorted = (Object.entries(weights) as Array<[ActorEventType, number]>)
     .sort((a, b) => b[1] - a[1])
@@ -51,7 +52,7 @@ export function topOmenEvents(actor: Actor, limit = 3): Array<{ event: ActorEven
   return sorted.map(([event, weight]) => ({
     event,
     weight,
-    intensity: weight >= top - 2 ? '高' : weight >= top - 8 ? '中' : '低',
+    intensity: weight >= top - 2 ? OMEN_INTENSITY_LABELS.high : weight >= top - 8 ? OMEN_INTENSITY_LABELS.medium : OMEN_INTENSITY_LABELS.low,
   }));
 }
 

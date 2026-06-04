@@ -3,7 +3,6 @@ import {
   ACT_RESPONSE_GUIDES,
   EVENT_COMPATIBILITY,
   EVENT_LABELS,
-  LOAD_LABELS,
   MAX_LOAD,
   PERFORMANCE_STYLE_DETAILS,
   PREP_LABELS,
@@ -17,6 +16,7 @@ import {
   STATE_LABELS,
   TURNS_PER_ACT,
 } from './constants';
+import * as ruleText from '../content/ja/ruleCopy';
 import { topOmenEvents } from './actorLogic';
 import { createRng } from './rng';
 import { frayFitFor, guardTierForFrayRecovery } from './fray';
@@ -48,12 +48,12 @@ function actorTrustScoreItem(actor: Actor, response: MainResponse): ScoreBreakdo
     || (actor.type === 'junior' && ['catch', 'arrange'].includes(response))
     || (actor.type === 'skilled' && ['arrange', 'wait'].includes(response));
   if (!fitsActor) return undefined;
-  const passiveLabel = actor.trust >= 5 ? '以心伝心' : '阿吽の呼吸';
+  const copy = ruleText.actorTrustScoreCopy(actor, response);
   return scoreItem(
     'actor-trust',
-    `${passiveLabel}が働いた`,
+    copy.label,
     1,
-    `${passiveLabel}: ${ACTOR_LABELS[actor.type]}の得意対応が${RESPONSE_LABELS[response]}の下振れを支える。`,
+    copy.detail,
   );
 }
 
@@ -71,13 +71,16 @@ function actBonus(state: GameState, response: MainResponse): number {
 function finaleScoreItem(state: GameState, response: MainResponse): ScoreBreakdownItem | undefined {
   if (state.act !== 3 || slotForTurnInAct(state.turnInAct) !== 'soiree') return undefined;
   if (state.backstageLoad >= 3 && ['arrange', 'cut'].includes(response)) {
-    return scoreItem('finale', '千秋楽で崩れを閉じる判断', 1, '最終公演では、重い負荷を残さない判断が客席の余韻を守る。');
+    const copy = ruleText.finaleScoreCopy('closeFray');
+    return scoreItem('finale', copy.label, 1, copy.detail);
   }
   if (state.trustScore >= 4 && response === 'wait') {
-    return scoreItem('finale', '千秋楽で信頼を待つ判断', 1, '積み上げた信頼が、待つ間を支える。');
+    const copy = ruleText.finaleScoreCopy('waitTrust');
+    return scoreItem('finale', copy.label, 1, copy.detail);
   }
   if (state.backstageLoad <= 1 && response === 'catch') {
-    return scoreItem('finale', '千秋楽で攻め切る判断', 1, '低負荷で迎えた最終公演では、予定外を評判に変えやすい。');
+    const copy = ruleText.finaleScoreCopy('attackLowLoad');
+    return scoreItem('finale', copy.label, 1, copy.detail);
   }
   return undefined;
 }
@@ -86,7 +89,7 @@ function performanceStyleScoreItem(state: GameState, response: MainResponse): Sc
   if (!state.performanceStyle) return undefined;
   const style = PERFORMANCE_STYLE_DETAILS[state.performanceStyle];
   if (response !== style.strength) return undefined;
-  return scoreItem('performance-style', `${style.label}に${RESPONSE_LABELS[response]}が沿った`, 1, style.short);
+  return scoreItem('performance-style', ruleText.performanceStyleScoreLabel(style.label, response), 1, style.short);
 }
 
 function previousCutSetupActive(state: GameState): boolean {
@@ -106,15 +109,15 @@ function repeatPenalty(state: GameState, response: MainResponse): number {
 function frayScoreItem(state: GameState, response: MainResponse): ScoreBreakdownItem | undefined {
   const fit = frayFitFor(state, response);
   if (fit.status === 'none') return undefined;
-  if (fit.status === 'miss') return scoreItem('fray-miss', fit.label ?? '舞台裏のほころびは残りそう', 0, fit.detail);
-  return scoreItem('fray', fit.label ?? '舞台裏のほころびを拾った', fit.value, fit.detail);
+  if (fit.status === 'miss') return scoreItem('fray-miss', fit.label ?? ruleText.ruleCopy.frayMiss, 0, fit.detail);
+  return scoreItem('fray', fit.label ?? ruleText.ruleCopy.frayRecover, fit.value, fit.detail);
 }
 
 function frayRelationLabel(state: GameState, response: MainResponse): Pick<ResponseInsight, 'frayRelationLabel' | 'frayRelationTone'> {
   const fit = frayFitFor(state, response);
   if (fit.status === 'none') return {};
-  if (fit.status === 'miss') return { frayRelationLabel: '舞台裏のほころびは残りそう', frayRelationTone: 'miss' };
-  return { frayRelationLabel: fit.status === 'strong' ? '舞台裏のほころびを拾える' : '舞台裏のほころびを整えられる', frayRelationTone: 'recover' };
+  if (fit.status === 'miss') return { frayRelationLabel: ruleText.ruleCopy.frayMiss, frayRelationTone: 'miss' };
+  return { frayRelationLabel: fit.status === 'strong' ? ruleText.ruleCopy.frayRelationStrong : ruleText.ruleCopy.frayRelationMatch, frayRelationTone: 'recover' };
 }
 
 function actorTrustLabel(actor: Actor, response: MainResponse): Pick<ResponseInsight, 'actorTrustLabel'> {
@@ -137,48 +140,54 @@ function prepResponseRelation(state: GameState, response: MainResponse): PrepRes
   const primary = PREP_PRIMARY_RESPONSE[prep];
   if (response === primary) {
     return {
-      label: `◎ ${PREP_LABELS[prep]}が乗る`,
+      label: ruleText.prepRelationPrimaryLabel(prep),
       tone: 'primary',
       aim: PREP_RESPONSE_HINTS[prep].aim,
     };
   }
   if (prep === 'watch' && response === 'arrange') {
+    const copy = ruleText.prepRelationCopy('watchArrange');
     return {
-      label: '△ 安定の別筋',
+      label: copy.label,
       tone: 'alternate',
-      aim: '予定外を伸ばしすぎず、舞台の呼吸に戻す',
+      aim: copy.aim ?? '',
     };
   }
   if (prep === 'makeSpace' && response === 'catch' && event === 'heatUp') {
+    const copy = ruleText.prepRelationCopy('spaceCatch');
     return {
-      label: '△ 攻めの別筋',
+      label: copy.label,
       tone: 'alternate',
-      aim: '残した余白から熱を見せ場に変える',
+      aim: copy.aim ?? '',
     };
   }
   if (prep === 'tightenFlow' && response === 'cut') {
+    const copy = ruleText.prepRelationCopy('flowCut');
     return {
-      label: '△ 守りの別筋',
+      label: copy.label,
       tone: 'alternate',
-      aim: '走った場面を早めに閉じ、崩れを小さくする',
+      aim: copy.aim ?? '',
     };
   }
   if (prep === 'prepareTransition' && (response === 'wait' || response === 'arrange')) {
+    const copy = ruleText.prepRelationCopy(response === 'wait' ? 'transitionWait' : 'transitionArrange');
     return {
-      label: '△ 別筋',
+      label: copy.label,
       tone: 'alternate',
-      aim: response === 'wait' ? '遅れや揺れを余韻として残す' : '遅れや揺れを舞台全体の流れに戻す',
+      aim: copy.aim ?? '',
     };
   }
   if (EVENT_COMPATIBILITY[event][response] > 0) {
+    const copy = ruleText.prepRelationCopy('alternate');
     return {
-      label: '△ 別筋',
+      label: copy.label,
       tone: 'alternate',
-      aim: `${PREP_LABELS[prep]}とは狙いを変えて、${RESPONSE_DESCRIPTIONS[response]}`,
+      aim: ruleText.alternatePrepAim(prep, response),
     };
   }
+  const copy = ruleText.prepRelationCopy('poor');
   return {
-    label: '× 噛み合いにくい',
+    label: copy.label,
     tone: 'poor',
     aim: RESPONSE_DESCRIPTIONS[response],
   };
@@ -190,19 +199,22 @@ function prepResponseScoreItem(state: GameState, response: MainResponse, prepQua
   const primary = PREP_PRIMARY_RESPONSE[prep];
   if (response !== primary) return undefined;
   if (prep === 'prepareTransition' && response === 'cut') {
+    const copy = ruleText.prepResponseGuardCopy(prepQuality);
     if (prepQuality === 'hit') {
-      return scoreItem('prep-response-guard', '転換の備えが切る判断を支えた', 2, '崩れを閉じるだけでなく、次へ渡す場面の切れ味になった。');
+      return scoreItem('prep-response-guard', copy.label, 2, copy.detail);
     }
     if (prepQuality === 'partial') {
-      return scoreItem('prep-response-guard', '転換の備えが切る判断を支えた', 1, '読みの一部を使い、崩れを小さく閉じた。');
+      return scoreItem('prep-response-guard', copy.label, 1, copy.detail);
     }
-    return scoreItem('prep-response-guard', '転換の備えが切る判断を支えた', 0, '場面の伸びより、崩れを小さく閉じる。');
+    return scoreItem('prep-response-guard', copy.label, 0, copy.detail);
   }
   if (prepQuality === 'hit') {
-    return scoreItem('prep-response', `${PREP_LABELS[prep]}の準備が活きた`, 1, `${RESPONSE_LABELS[response]}の上振れを少し広げた。`);
+    const copy = ruleText.prepResponseCopy(prep, response, 'hit');
+    return scoreItem('prep-response', copy.label, 1, copy.detail);
   }
   if (prepQuality === 'partial') {
-    return scoreItem('prep-response', `${PREP_LABELS[prep]}の準備を受けた`, 0, '見えていた兆候には沿っているため、判断が安定する。');
+    const copy = ruleText.prepResponseCopy(prep, response, 'partial');
+    return scoreItem('prep-response', copy.label, 0, copy.detail);
   }
   return undefined;
 }
@@ -214,13 +226,16 @@ function transitionCutGuardActive(state: GameState, response: MainResponse): boo
 function cutContainmentBonus(state: GameState, response: MainResponse): ScoreBreakdownItem | undefined {
   if (response !== 'cut') return undefined;
   if (transitionCutGuardActive(state, response) && state.backstageLoad >= 3) {
-    return scoreItem('cut-containment', '転換で高負荷を閉じた', 3, '場面を伸ばすより、崩れを次へ持ち越さない判断。');
+    const copy = ruleText.cutContainmentCopy('transitionHighLoad');
+    return scoreItem('cut-containment', copy.label, 3, copy.detail);
   }
   if (transitionCutGuardActive(state, response)) {
-    return scoreItem('cut-containment', '転換の備えで閉じた', 2, '次の場面へ渡すために崩れを小さくした。');
+    const copy = ruleText.cutContainmentCopy('transition');
+    return scoreItem('cut-containment', copy.label, 2, copy.detail);
   }
   if (state.backstageLoad >= 4) {
-    return scoreItem('cut-containment', '高負荷を早めに閉じた', 2, '負荷が重い局面では、閉じる判断が事故を抑える。');
+    const copy = ruleText.cutContainmentCopy('highLoad');
+    return scoreItem('cut-containment', copy.label, 2, copy.detail);
   }
   return undefined;
 }
@@ -230,7 +245,8 @@ function frayRecoveryReward(state: GameState, response: MainResponse): ScoreBrea
   const isRepeatedResponse = state.lastResponses[state.lastResponses.length - 1] === response;
   if (isRepeatedResponse) return undefined;
   if (fit.status !== 'strong') return undefined;
-  return scoreItem('fray-reward', 'ほころびを場面の材料に変えた', 1, '舞台裏の揺れを、次の場面の意味として回収した。');
+  const copy = ruleText.frayRecoveryRewardCopy();
+  return scoreItem('fray-reward', copy.label, 1, copy.detail);
 }
 
 function guardTierForTransitionCut(tier: ResultTier, state: GameState, response: MainResponse, prepQuality: PrepPredictionQuality): ResultTier {
@@ -284,89 +300,97 @@ function repeatAdjustment(response: MainResponse, count: number, success: boolea
   if (count < 2) return { deltaLoad: 0, deltaFlow: 0, deltaScene: 0, deltaTrust: 0 };
   if (response === 'catch') {
     if (count >= 3) {
+      const copy = ruleText.repeatAdjustmentCopy(response, count, success);
       return {
         deltaLoad: 2,
         deltaFlow: -1,
         deltaScene: 0,
         deltaTrust: 0,
-        label: '拾う判断が続いた',
-        detail: '予定外を見せ場に変えるための負荷が残った。',
-        cardLabel: '連続使用: 負荷+2 / 流れ-1',
+        label: copy.label,
+        detail: copy.detail,
+        cardLabel: copy.cardLabel,
       };
     }
+    const copy = ruleText.repeatAdjustmentCopy(response, count, success);
     return {
       deltaLoad: 1,
       deltaFlow: 0,
       deltaScene: 0,
       deltaTrust: 0,
-      label: '拾う判断が続いた',
-      detail: '攻め続けるぶん負荷が残った。',
-      cardLabel: '連続使用: 負荷+1',
+      label: copy.label,
+      detail: copy.detail,
+      cardLabel: copy.cardLabel,
     };
   }
   if (response === 'arrange') {
     if (count >= 3) {
+      const copy = ruleText.repeatAdjustmentCopy(response, count, success);
       return {
         deltaLoad: 1,
         deltaFlow: 0,
         deltaScene: -1,
         deltaTrust: 0,
-        label: '整える判断が続いた',
-        detail: '舞台は安定したが、同じ調整では場面の伸びが鈍った。',
-        cardLabel: '連続使用: 負荷+1 / 評判-1',
+        label: copy.label,
+        detail: copy.detail,
+        cardLabel: copy.cardLabel,
       };
     }
+    const copy = ruleText.repeatAdjustmentCopy(response, count, success);
     return {
       deltaLoad: success ? 1 : 0,
       deltaFlow: 0,
       deltaScene: 0,
       deltaTrust: 0,
-      label: success ? '整える判断が続いた' : undefined,
-      detail: success ? '舞台は安定したが、同じ調整では負荷が抜けきらなかった。' : undefined,
-      cardLabel: '連続使用: 負荷回復なし',
+      label: copy.label,
+      detail: copy.detail,
+      cardLabel: copy.cardLabel,
     };
   }
   if (response === 'wait') {
     if (count >= 3) {
+      const copy = ruleText.repeatAdjustmentCopy(response, count, success);
       return {
         deltaLoad: 1,
         deltaFlow: -1,
         deltaScene: 0,
         deltaTrust: 0,
-        label: '待つ判断が続いた',
-        detail: '余韻は残ったが、次の場面への処理が滞った。',
-        cardLabel: '連続使用: 負荷+1 / 流れ-1',
+        label: copy.label,
+        detail: copy.detail,
+        cardLabel: copy.cardLabel,
       };
     }
+    const copy = ruleText.repeatAdjustmentCopy(response, count, success);
     return {
       deltaLoad: success ? 1 : 0,
       deltaFlow: 0,
       deltaScene: 0,
       deltaTrust: 0,
-      label: success ? '待つ判断が続いた' : undefined,
-      detail: success ? '余韻は残ったが、同じ待ちでは負荷が抜けきらなかった。' : undefined,
-      cardLabel: '連続使用: 負荷回復なし',
+      label: copy.label,
+      detail: copy.detail,
+      cardLabel: copy.cardLabel,
     };
   }
   if (count >= 3) {
+    const copy = ruleText.repeatAdjustmentCopy(response, count, success);
     return {
       deltaLoad: 1,
       deltaFlow: -1,
       deltaScene: -1,
       deltaTrust: -2,
-      label: '切る判断が続いた',
-      detail: '進行は守ったが、役者との信頼が削れた。',
-      cardLabel: '連続使用: 評判-1 / 流れ-1 / 信頼-2 / 負荷+1',
+      label: copy.label,
+      detail: copy.detail,
+      cardLabel: copy.cardLabel,
     };
   }
+  const copy = ruleText.repeatAdjustmentCopy(response, count, success);
   return {
     deltaLoad: 0,
     deltaFlow: 0,
     deltaScene: 0,
     deltaTrust: -2,
-    label: '切る判断が続いた',
-    detail: '進行は守ったが、役者との信頼が削れた。',
-    cardLabel: '連続使用: 信頼-2',
+    label: copy.label,
+    detail: copy.detail,
+    cardLabel: copy.cardLabel,
   };
 }
 
@@ -444,24 +468,6 @@ function symbolFor(value: number) {
   return '△';
 }
 
-function actorResponseLabel(actor: Actor, response: MainResponse, value: number) {
-  if (actor.type === 'junior' && response === 'wait' && actor.state === 'elated') return '高揚した若手に待つは噛み合いにくい';
-  if (value > 0) return `${ACTOR_LABELS[actor.type]}に${RESPONSE_LABELS[response]}が合っていた`;
-  return `${ACTOR_LABELS[actor.type]}との相性は通常`;
-}
-
-function stateResponseLabel(actor: Actor, response: MainResponse, value: number) {
-  if (value > 0) return `${STATE_LABELS[actor.state]}に${RESPONSE_LABELS[response]}が合っていた`;
-  if (value < 0) return `${STATE_LABELS[actor.state]}に${RESPONSE_LABELS[response]}は負担が大きい`;
-  return `${STATE_LABELS[actor.state]}との相性は通常`;
-}
-
-function actLabel(state: GameState, response: MainResponse, value: number) {
-  const label = performanceLabel(state.act, slotForTurnInAct(state.turnInAct));
-  if (value > 0) return `${label}に${RESPONSE_LABELS[response]}が合っていた`;
-  return `${label}との相性は通常`;
-}
-
 function prepPredictionQuality(state: GameState, actor: Actor): PrepPredictionQuality {
   if (!state.currentActorEvent || !state.selectedPrep) {
     throw new Error('Cannot inspect prep before event and prep are selected.');
@@ -472,9 +478,8 @@ function prepPredictionQuality(state: GameState, actor: Actor): PrepPredictionQu
 }
 
 function prepScoreItem(quality: PrepPredictionQuality): ScoreBreakdownItem {
-  if (quality === 'hit') return scoreItem('prep-hit', '準備が活きた', 1, '上振れ幅が広がり、副作用を抑えやすくなる。');
-  if (quality === 'partial') return scoreItem('prep-partial', '準備が一部活きた', 0, '見えている兆候には備えていたため、崩れにくい。');
-  return scoreItem('prep-miss', '別の備えだった', -1, '上限が下がり、攻めるほど負荷が残りやすい。');
+  const copy = ruleText.prepScoreCopy(quality);
+  return scoreItem(copy.id, copy.label, copy.value, copy.detail);
 }
 
 function capForPrepQuality(quality: PrepPredictionQuality, state?: GameState) {
@@ -490,7 +495,8 @@ function arrangeMasterpieceCap(state: GameState, actor: Actor, response: MainRes
     || actor.state === 'anxious'
     || actor.state === 'fatigued'
     || frayFitFor(state, response).status !== 'none';
-  return canReachMasterpiece ? undefined : scoreItem('arrange-cap', '整える判断の上限', 6, '安定して場面化へ戻す手。名場面化には技巧派、不安/疲労、ほころび回収などの強い理由がいる。');
+  const copy = ruleText.arrangeCapCopy();
+  return canReachMasterpiece ? undefined : scoreItem('arrange-cap', copy.label, 6, copy.detail);
 }
 
 function buildScoreBreakdown(state: GameState, actor: Actor, response: MainResponse): ScoreBreakdownItem[] {
@@ -514,25 +520,26 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
   const actorTrustItem = actorTrustScoreItem(actor, response);
   const finaleItem = finaleScoreItem(state, response);
   const frayRewardItem = frayRecoveryReward(state, response);
+  const eventCopy = ruleText.eventScoreCopy(state.currentActorEvent.type, response, eventValue);
   const items = [
     scoreItem(
       'event',
-      `${EVENT_LABELS[state.currentActorEvent.type]}と${RESPONSE_LABELS[response]}の相性`,
+      eventCopy.label,
       eventValue,
-      eventValue >= 3 ? '出来事に強く噛み合う対応。' : eventValue > 0 ? '出来事を受け止められる対応。' : eventValue < 0 ? '出来事と逆方向の対応。' : '決定打にはなりにくい対応。',
+      eventCopy.detail,
     ),
-    scoreItem('actor', actorResponseLabel(actor, response, actorValue), actorValue),
-    scoreItem('state', stateResponseLabel(actor, response, stateValue), stateValue),
+    scoreItem('actor', ruleText.actorResponseLabel(actor, response, actorValue), actorValue),
+    scoreItem('state', ruleText.stateResponseLabel(actor, response, stateValue), stateValue),
     prepScoreItem(prepQuality),
     prepResponseItem,
-    scoreItem('act', actLabel(state, response, actValue), actValue),
+    scoreItem('act', ruleText.actLabel(state, response, actValue), actValue),
     finaleItem,
     styleItem,
     cutItem,
     actorTrustItem,
-    scoreItem('trust', '公演全体の信頼補正', trustValue),
-    scoreItem('load', '裏方負荷の重さ', loadValue),
-    scoreItem('repeat', repeat.label ?? '同じ対応の連続使用', repeatedValue, repeat.detail),
+    scoreItem('trust', ruleText.ruleCopy.trustScore, trustValue),
+    scoreItem('load', ruleText.ruleCopy.loadScore, loadValue),
+    scoreItem('repeat', repeat.label ?? ruleText.ruleCopy.repeatedResponse, repeatedValue, repeat.detail),
     frayItem,
     frayRewardItem,
   ].filter((item): item is ScoreBreakdownItem => Boolean(item));
@@ -542,17 +549,12 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
   const cap = Math.min(prepCap, arrangeCap);
   if (rawScore > cap) {
     const isArrangeCap = arrangeCap <= prepCap;
+    const copy = ruleText.capScoreCopy(isArrangeCap ? 'arrange' : 'prep', prepQuality, previousCutSetupActive(state));
     items.push(scoreItem(
       isArrangeCap ? 'arrange-cap' : 'prep-cap',
-      isArrangeCap ? '整える判断の上限' : '準備の上限',
+      copy.label,
       cap - rawScore,
-      isArrangeCap
-        ? '安定して場面化へ戻す手。名場面化には技巧派、不安/疲労、ほころび回収などの強い理由がいる。'
-        : prepQuality === 'partial'
-          ? '一部だけ活きたため場面化までに留まる。'
-          : previousCutSetupActive(state)
-            ? '前の場面を閉じていたため、別の備えでも場面化までは届く。'
-            : '別の備えだったため小さな成功までに留まる。',
+      copy.detail,
     ));
   }
   return items.filter((item) => item.value !== 0 || ['prep-partial', 'prep-response', 'prep-response-guard', 'fray-miss'].includes(item.id));
@@ -567,9 +569,7 @@ function rangeForScore(score: number, quality: PrepPredictionQuality, cap = capF
   const highScore = score + (quality === 'hit' ? 2 : quality === 'partial' ? 1 : 0);
   const highTier = tierFromScore(Math.min(highScore, cap));
   const lowTier = tierFromScore(lowScore);
-  const dangerWarning = lowTier === 'accident' ? '危険: 事故圏内' : undefined;
-  const visibleLow = lowTier === 'accident' ? 'ほころび' : RESULT_TIER_LABELS[lowTier];
-  const label = `${visibleLow}〜${RESULT_TIER_LABELS[highTier]}`;
+  const { label, dangerWarning } = ruleText.rangeCopy(lowTier, highTier);
   const tone: ResponseInsight['rangeTone'] = dangerWarning ? 'danger' : highTier === 'masterpiece' ? 'best' : highTier === 'scene' ? 'good' : lowTier === 'fray' ? 'thin' : 'good';
   return { label, tone, dangerWarning, highTier, lowTier };
 }
@@ -581,55 +581,24 @@ function guardedRangeForScore(score: number, quality: PrepPredictionQuality, sta
   const range = rangeForScore(score, quality, Math.min(prepCap, arrangeCap));
   const lowTier = guardTierForStrongFrayRecovery(guardTierForActorTrust(guardTierForTransitionCut(range.lowTier, state, response, quality), actor, response), state, response);
   const highTier = guardTierForStrongFrayRecovery(guardTierForActorTrust(guardTierForTransitionCut(range.highTier, state, response, quality), actor, response), state, response);
-  const dangerWarning = lowTier === 'accident' ? range.dangerWarning : undefined;
-  const visibleLow = lowTier === 'accident' ? 'ほころび' : RESULT_TIER_LABELS[lowTier];
-  const label = `${visibleLow}〜${RESULT_TIER_LABELS[highTier]}`;
+  const { label, dangerWarning } = ruleText.rangeCopy(lowTier, highTier, range.dangerWarning);
   const tone: ResponseInsight['rangeTone'] = dangerWarning ? 'danger' : highTier === 'masterpiece' ? 'best' : highTier === 'scene' ? 'good' : lowTier === 'fray' ? 'thin' : 'good';
   return { ...range, label, tone, dangerWarning, highTier, lowTier };
 }
 
-function upsideLabel(response: MainResponse, highTier: ResultTier) {
-  if (highTier === 'masterpiece') return `${RESPONSE_LABELS[response]}が噛み合えば名場面まで狙える`;
-  if (highTier === 'scene') return `${RESPONSE_LABELS[response]}が噛み合えば場面化まで届く`;
-  if (highTier === 'smallSuccess') return `${RESPONSE_LABELS[response]}で小さな成功まで守れる`;
-  return '崩れを小さく留める手';
-}
-
-function downsideLabel(response: MainResponse, lowTier: ResultTier, deltaLoad: number) {
-  if (lowTier === 'accident') return '下振れると事故圏内';
-  if (response === 'catch' && deltaLoad > 0) return '下振れると負荷が残る';
-  if (response === 'cut') return '場面は閉じるが信頼を削りやすい';
-  if (lowTier === 'fray') return '下振れるとほころびが残る';
-  return '下振れても大崩れはしにくい';
-}
-
 function effectLabel(target: ResponseEffectTarget, value: number) {
-  const label = {
-    scene: '評判',
-    flow: '流れ',
-    trust: '信頼',
-    load: '負荷',
-  }[target];
-  if (value > 0) return `${label}+${value}`;
-  if (value < 0) return `${label}${value}`;
-  return `${label}±0`;
+  return ruleText.effectLabel(target, value);
 }
 
 function responseEffect(target: ResponseEffectTarget, value: number, repeat = false, label = effectLabel(target, value)): ResponseEffect {
-  return { target, value, repeat, label: repeat ? `連続使用: ${label}` : label };
+  return { target, value, repeat, label: repeat ? ruleText.repeatEffectLabel(label) : label };
 }
 
 function repeatSideEffects(label?: string): ResponseEffect[] {
   if (!label) return [];
-  const text = label.replace(/^連続使用:\s*/, '');
+  const text = ruleText.stripRepeatPrefix(label);
   return text.split(' / ').filter(Boolean).map((part) => {
-    const target: ResponseEffectTarget = part.startsWith('評判') || part.startsWith('場面')
-      ? 'scene'
-      : part.startsWith('流れ')
-        ? 'flow'
-        : part.startsWith('信頼')
-          ? 'trust'
-          : 'load';
+    const target = ruleText.sideEffectTargetFromLabel(part);
     const value = Number(part.match(/[+-]\d+/)?.[0] ?? 0);
     return responseEffect(target, value, true, part);
   });
@@ -646,82 +615,37 @@ function sideEffects(deltas: ReturnType<typeof deltasFor>): ResponseEffect[] {
 }
 
 function cueKeyPoint(preview: Pick<ResultPreview, 'actorEventType' | 'mainResponse' | 'prepQuality' | 'resultTier' | 'scoreBreakdown'>) {
-  const eventLabel = EVENT_LABELS[preview.actorEventType];
-  const responseLabel = RESPONSE_LABELS[preview.mainResponse];
-  if (preview.prepQuality === 'hit' && ['masterpiece', 'scene'].includes(preview.resultTier)) {
-    return `${eventLabel}に備えが届き、${responseLabel}判断が場面の芯になった。`;
-  }
-  const strongest = [...preview.scoreBreakdown]
-    .filter((item) => item.value > 0)
-    .sort((a, b) => b.value - a.value)[0];
-  if (strongest) return `${strongest.label}が決め手になった。`;
-  if (preview.resultTier === 'accident') return `${eventLabel}への${responseLabel}が一拍遅れ、流れから外れた。`;
-  return `${eventLabel}を${responseLabel}で受け、小さく次へ渡した。`;
+  return ruleText.cueKeyPoint(preview);
 }
 
 function cueCost(preview: Pick<ResultPreview, 'deltaLoad' | 'deltaFlow' | 'deltaTrust' | 'resultTier' | 'mainResponse'>) {
-  if (preview.deltaLoad >= 2) return `評判は伸びたが、${RESPONSE_LABELS[preview.mainResponse]}の代償として裏方負荷が重く残った。`;
-  if (preview.deltaFlow < 0) return '場面の揺れが進行へ残り、次の公演で整える余地がある。';
-  if (preview.deltaTrust < 0) return '進行は守ったが、役者との信頼は少し削れた。';
-  if (preview.resultTier === 'masterpiece') return '負荷は残るが、客席まで届く見せ場として回収できた。';
-  if (preview.resultTier === 'fray' || preview.resultTier === 'accident') return '舞台裏に揺れが残り、次の判断で拾う余白になった。';
-  return '大きな代償は抑えつつ、次の場面へ渡せた。';
+  return ruleText.cueCost(preview);
 }
 
 function cueHandoff(state: GameState, preview: Pick<ResultPreview, 'resultMode' | 'deltaLoad' | 'mainResponse' | 'performanceStyle'>) {
-  if (preview.resultMode === 'finale') return 'この手応えを公演報告書へ回す。';
-  if (state.pendingFrayEvent) {
-    return `${LOAD_LABELS[state.pendingFrayEvent.bias]}のほころびが残る。次は拾える対応を優先したい。`;
-  }
-  if (state.backstageLoad + preview.deltaLoad >= 4) {
-    return '次公演は負荷4以上で入る。整えるか待つ判断で一度息を戻したい。';
-  }
-  if (preview.performanceStyle) {
-    const style = PERFORMANCE_STYLE_DETAILS[preview.performanceStyle];
-    return `公演の色は「${style.label}」。${RESPONSE_LABELS[style.strength]}が次の軸になりやすい。`;
-  }
-  if (preview.mainResponse === 'catch') return '攻めの手応えがある。ソワレでは負荷との釣り合いを見る。';
-  if (preview.mainResponse === 'arrange') return '流れは戻った。次は場面を伸ばす余地を探す。';
-  if (preview.mainResponse === 'wait') return '余韻は残った。次は熱が来たら拾う判断も視野に入る。';
-  return '崩れは閉じた。次は信頼を戻す判断を置きたい。';
+  return ruleText.cueHandoff(state, preview);
 }
 
 function tacticalSummary(state: GameState, response: MainResponse, insight: Pick<ResponseInsight, 'resultTier' | 'deltaLoad' | 'prepRelationTone' | 'frayRelationTone'>) {
-  if (insight.frayRelationTone === 'recover') return 'ほころび回収';
-  if (transitionCutGuardActive(state, response)) return '次へ渡す';
-  if (response === 'cut') return state.backstageLoad >= 3 ? '崩れを閉じる' : '早めに閉じる';
-  if (response === 'arrange') return insight.resultTier === 'masterpiece' ? '乱れを意味にする' : '安定させる';
-  if (response === 'wait') return state.trustScore >= 4 || state.act === 3 ? '余韻を伸ばす' : '信頼を残す';
-  if (insight.deltaLoad >= 2) return '負荷覚悟で伸ばす';
-  if (insight.prepRelationTone === 'primary') return '準備から攻める';
-  return '見せ場を狙う';
+  return ruleText.tacticalSummaryCopy({
+    frayRelationTone: insight.frayRelationTone,
+    transitionCutActive: transitionCutGuardActive(state, response),
+    response,
+    backstageLoad: state.backstageLoad,
+    resultTier: insight.resultTier,
+    trustScore: state.trustScore,
+    act: state.act,
+    deltaLoad: insight.deltaLoad,
+    prepRelationTone: insight.prepRelationTone,
+  });
 }
 
 function audienceReaction(preview: Pick<ResultPreview, 'resultTier' | 'actorEventType' | 'mainResponse' | 'deltaScene'>) {
-  if (preview.resultTier === 'masterpiece') {
-    if (preview.mainResponse === 'catch') return '客席反応: 予定外の一言に、拍手が少し長く残った。';
-    if (preview.mainResponse === 'wait') return '客席反応: 沈黙のあと、客席の息が揃った。';
-    if (preview.mainResponse === 'arrange') return '客席反応: 乱れが意味に変わり、場面の輪郭が締まった。';
-    return '客席反応: 暗転の切れ味に、次の場面を待つ空気が生まれた。';
-  }
-  if (preview.resultTier === 'scene') return '客席反応: 危うさごと場面として受け取られた。';
-  if (preview.resultTier === 'smallSuccess') return '客席反応: 大きな拍手ではないが、舞台の呼吸は途切れなかった。';
-  if (preview.resultTier === 'fray') return '客席反応: ざわめきは残ったが、生の揺れとして受け止められた。';
-  return '客席反応: 一拍の乱れが見えたが、熱は消えなかった。';
+  return ruleText.audienceReaction(preview);
 }
 
 function cueLesson(preview: Pick<ResultPreview, 'prepQuality' | 'deltaLoad' | 'deltaFlow' | 'deltaTrust' | 'mainResponse' | 'scoreBreakdown' | 'resultTier'>) {
-  const byId = (id: string) => preview.scoreBreakdown.find((item) => item.id === id);
-  if (byId('fray-reward')) return '次回メモ: ほころびは失敗の残骸ではなく、合う対応で拾うと場面の材料になる。';
-  if (byId('actor-trust')) return '次回メモ: 阿吽の呼吸や以心伝心が出ている役者は、得意対応を選ぶと下振れを支えられる。';
-  if (byId('arrange-cap')) return '次回メモ: 整えるは安定手。名場面を狙うなら、技巧派・不安/疲労・ほころび回収などの理由がほしい。';
-  if (byId('cut-containment')) return '次回メモ: 転換の備えから切ると、崩れを閉じて次の場面へ渡しやすい。';
-  if (preview.deltaLoad >= 2) return '次回メモ: 攻めた代償が重い。次公演は待つ・整える・切るで負荷を戻したい。';
-  if (preview.prepQuality === 'miss') return '次回メモ: 準備が外れると上限が下がる。焦点役者の兆候と準備範囲をもう一度合わせたい。';
-  if (preview.deltaFlow < 0) return '次回メモ: 場面の揺れが流れに残った。次は進行か負荷を整える判断を挟みたい。';
-  if (preview.deltaTrust < 0) return '次回メモ: 閉じる判断は効くが、続けると信頼が削れる。次は信頼を戻す手を置きたい。';
-  if (preview.resultTier === 'masterpiece') return '次回メモ: 準備・出来事・対応が噛み合った形。似た兆候では同じ筋を再現できる。';
-  return '次回メモ: 大崩れは防げた。次は準備が活きた局面で、評判を伸ばす手も狙える。';
+  return ruleText.cueLesson(preview);
 }
 
 function cueResultSummary(state: GameState, preview: ResultPreview): CueResultSummary {
@@ -794,14 +718,14 @@ export function responseInsight(state: GameState, response: MainResponse): Respo
     deltaLoad,
     tacticalSummary: '',
     successRangeLabel: range.label,
-    upsideLabel: upsideLabel(response, range.highTier),
-    downsideLabel: downsideLabel(response, range.lowTier, deltaLoad),
+    upsideLabel: ruleText.upsideLabel(response, range.highTier),
+    downsideLabel: ruleText.downsideLabel(response, range.lowTier, deltaLoad),
     prepRelationLabel: relation.label,
     prepRelationTone: relation.tone,
     responseAimLabel: relation.aim,
     eventAffinityLabel: `${EVENT_LABELS[state.currentActorEvent.type]}${symbolFor(eventValue)}`,
     actorAffinityLabel: `${ACTOR_LABELS[actor.type]}${symbolFor(actorValue)} / ${STATE_LABELS[actor.state]}${symbolFor(stateResponseBonus(actor, response))}`,
-    actInfluenceLabel: ACT_RESPONSE_GUIDES[state.act]?.[response] ?? `${state.theme}の判断。`,
+    actInfluenceLabel: (ACT_RESPONSE_GUIDES as Record<number, Partial<Record<MainResponse, string>>>)[state.act]?.[response] ?? ruleText.ruleCopy.actFallback(state.theme),
     sideEffects: sideEffects(deltas),
     ...frayRelation,
     ...actorTrustLabel(actor, response),

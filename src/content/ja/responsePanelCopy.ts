@@ -1,0 +1,101 @@
+import { EVENT_LABELS, PERFORMANCE_SLOT_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS } from './gameLabels';
+import type { GameState, MainResponse, ResponseEffectTarget, ResponseInsight, ResultTier } from '../../game/types';
+
+export const responsePanelCopy = {
+  heading: '行動に対応',
+  inspecting: '確認中',
+  outlookAria: (label: string) => `成立見込み: ${label}`,
+  prepRelationAria: (label: string) => `準備との関係: ${label}`,
+  effectSummaryAria: '影響の要約',
+  effectSummaryTitle: '主要影響',
+  sendButton: 'この対応を送る',
+  consoleTitle: '進行卓（コンソール）',
+  cueStripAria: '送出キュー',
+  outlookTitle: '送出見込み',
+  logTitle: '進行メモ',
+  frayTitle: '舞台裏のほころび',
+  passiveTitle: 'パッシブ効果',
+  unknownEvent: '未定',
+  runSheetAria: '進行表',
+  resultRailAria: '結果レンジ',
+  readoutAria: '選択中の相性と影響',
+  affinityBoardTitle: '相性盤',
+  affinityBoardSub: '判定ランプ',
+  effectBoardTitle: '送出後の影響',
+  effectBoardSub: '送出ゲージ',
+} as const;
+
+export function responseSendAria(response: MainResponse) {
+  return `${RESPONSE_LABELS[response]}を送出`;
+}
+
+export function effectTargetShortLabel(target: ResponseEffectTarget) {
+  if (target === 'scene') return '評';
+  if (target === 'flow') return '流';
+  if (target === 'trust') return '信';
+  return '負';
+}
+
+export function prepConnectionLabel(tone: ResponseInsight['prepRelationTone']) {
+  if (tone === 'primary') return '準備が活きる';
+  if (tone === 'alternate') return '準備外でも効く';
+  return '準備と合わない';
+}
+
+export function prepConnectionShortLabel(tone: ResponseInsight['prepRelationTone']) {
+  if (tone === 'primary') return '準備活きる';
+  if (tone === 'alternate') return '準備外で効く';
+  return '準備合わず';
+}
+
+export function rangeShortLabel(tier: ResultTier) {
+  if (tier === 'masterpiece') return '名場面狙い';
+  if (tier === 'scene') return '場面化狙い';
+  if (tier === 'smallSuccess') return '小さく成功';
+  if (tier === 'fray') return '崩れ抑え';
+  return '事故注意';
+}
+
+export function runSheetActLabel(state: GameState) {
+  const slotKey = state.turnInAct === 1 ? 'matinee' : 'soiree';
+  return `${state.act}日目 / ${PERFORMANCE_SLOT_LABELS[slotKey].label}`;
+}
+
+export function runSheetEventLabel(state: GameState) {
+  return state.currentActorEvent ? EVENT_LABELS[state.currentActorEvent.type] : responsePanelCopy.unknownEvent;
+}
+
+export function affinityLabels() {
+  return [
+    { id: 'event', icon: 'event' as const, label: '出来事' },
+    { id: 'actor', icon: 'actor' as const, label: '役者型' },
+    { id: 'state', icon: 'state' as const, label: '状態' },
+    { id: 'act', icon: 'act' as const, label: '公演回' },
+  ];
+}
+
+export function rankForValue(value: number) {
+  if (value >= 3) return '強い';
+  if (value > 0) return '合う';
+  if (value < 0) return '注意';
+  return '普通';
+}
+
+export function decisionMemo(insight: ResponseInsight, effectSummaryText: string) {
+  const prep = insight.prepRelationTone === 'primary'
+    ? '準備と正面から噛み合う'
+    : insight.prepRelationTone === 'alternate'
+      ? '準備の想定外でも効く'
+      : '準備とは噛み合いにくい';
+  const danger = insight.dangerWarning ? ` ${insight.downsideLabel}。` : '';
+  const trust = insight.actorTrustLabel ? ` ${insight.actorTrustLabel}` : '';
+  return `${prep}手。${insight.tacticalSummary}。${insight.responseAimLabel}。見込みは${insight.successRangeLabel}。影響は${effectSummaryText}。${trust}${danger}`;
+}
+
+export function resultRangeIndices(label: string) {
+  const [lowLabel, highLabel] = label.split('〜');
+  const tierOrder: ResultTier[] = ['accident', 'fray', 'smallSuccess', 'scene', 'masterpiece'];
+  const lowIndex = Math.max(0, tierOrder.findIndex((tier) => RESULT_TIER_LABELS[tier] === lowLabel));
+  const highIndex = Math.max(lowIndex, tierOrder.findIndex((tier) => RESULT_TIER_LABELS[tier] === highLabel));
+  return { lowIndex, highIndex };
+}

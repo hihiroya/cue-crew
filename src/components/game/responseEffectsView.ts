@@ -1,4 +1,5 @@
 import type { ResponseEffect, ResponseInsight } from '../../game/types';
+import { effectChangeLabel, effectPhrase as effectPhraseCopy, effectTargetLabel, effectTitle, responseEffectsCopy } from '../../content/ja/responseEffectsCopy';
 
 export type EffectIcon = ResponseEffect['target'];
 export type EffectTone = 'good' | 'watch' | 'bad' | 'neutral';
@@ -14,7 +15,7 @@ export type EffectItem = {
 
 export function effectItems(insight: ResponseInsight) {
   const parsed = insight.sideEffects.map(makeEffect);
-  return parsed.length ? parsed : [makeEffect('負荷維持', 'load', 0, false)];
+  return parsed.length ? parsed : [makeEffect(responseEffectsCopy.neutralLoadRaw, 'load', 0, false)];
 }
 
 function makeEffect(effect: ResponseEffect): EffectItem;
@@ -25,8 +26,7 @@ function makeEffect(rawOrEffect: string | ResponseEffect, icon?: EffectIcon, val
   const effectValue = typeof rawOrEffect === 'string' ? value ?? 0 : rawOrEffect.value;
   const isRepeat = typeof rawOrEffect === 'string' ? repeat ?? false : rawOrEffect.repeat;
   const tone = effectTone(effectIcon, effectValue);
-  const changeLabel = effectChangeLabel(effectValue);
-  const title = `${isRepeat ? '連続使用: ' : ''}${effectTargetLabel(effectIcon)} ${changeLabel}`;
+  const title = effectTitle(effectIcon, effectValue, isRepeat);
   return {
     key: `${isRepeat ? 'repeat-' : ''}${raw}`,
     icon: effectIcon,
@@ -36,14 +36,6 @@ function makeEffect(rawOrEffect: string | ResponseEffect, icon?: EffectIcon, val
     value: effectValue,
     repeat: isRepeat,
   };
-}
-
-function effectChangeLabel(value: number) {
-  if (value >= 2) return '大きく増える';
-  if (value === 1) return '増える';
-  if (value === 0) return '維持';
-  if (value === -1) return '減る';
-  return '大きく減る';
 }
 
 function effectTone(icon: EffectIcon, value: number): EffectTone {
@@ -67,12 +59,7 @@ export function evaluationSign(item: EffectItem) {
   return '±';
 }
 
-export function effectTargetLabel(icon: EffectIcon) {
-  if (icon === 'scene') return '評判';
-  if (icon === 'load') return '負荷';
-  if (icon === 'trust') return '信頼';
-  return '流れ';
-}
+export { effectTargetLabel };
 
 export function effectDirection(item: EffectItem) {
   if (item.value > 0) return 'up';
@@ -92,28 +79,9 @@ export function effectLedSlots(item: EffectItem) {
 }
 
 export function effectPhrase(item: EffectItem) {
-  if (item.raw === '負荷回復なし') return `${item.repeat ? '連続使用で' : ''}負荷は軽くならない`;
-  if (item.icon === 'load') {
-    if (item.value >= 2) return `${item.repeat ? '連続使用で' : ''}負荷が大きく増える`;
-    if (item.value > 0) return `${item.repeat ? '連続使用で' : ''}負荷が増える`;
-    if (item.value < 0) return `${item.repeat ? '連続使用で' : ''}負荷が減る`;
-    return '負荷は変わらない';
-  }
-  if (item.icon === 'trust') {
-    if (item.value > 0) return `${item.repeat ? '連続使用で' : ''}信頼が増える`;
-    if (item.value < 0) return `${item.repeat ? '連続使用で' : ''}信頼が減る`;
-    return '信頼は変わらない';
-  }
-  if (item.icon === 'scene') {
-    if (item.value > 0) return `${item.repeat ? '連続使用で' : ''}評判が伸びる`;
-    if (item.value < 0) return `${item.repeat ? '連続使用で' : ''}評判が伸びにくい`;
-    return '評判は変わらない';
-  }
-  if (item.value > 0) return `${item.repeat ? '連続使用で' : ''}流れが整う`;
-  if (item.value < 0) return `${item.repeat ? '連続使用で' : ''}流れが乱れる`;
-  return '流れは変わらない';
+  return effectPhraseCopy(item);
 }
 
 export function effectSummary(insight: ResponseInsight) {
-  return effectItems(insight).map(effectPhrase).join('、');
+  return effectItems(insight).map(effectPhrase).join(responseEffectsCopy.summarySeparator);
 }

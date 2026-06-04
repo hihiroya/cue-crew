@@ -1,4 +1,5 @@
 import { ACTS, INITIAL_ACTORS, INITIAL_LOAD_STRAIN, TURNS_PER_ACT, TOTAL_TURNS } from './constants';
+import { FALLBACK_ACT_NAME } from '../content/ja/gameLabels';
 import { advanceActorStates, assignActorRoles, pickFocusActor, resolveActorEvent } from './actorLogic';
 import { nextLoadStrain, resolvePendingFray } from './fray';
 import { createAudienceSurvey, createMediaReview, createPerformanceInsight, createPerformanceReview } from './performanceReport';
@@ -160,7 +161,7 @@ export function commitResult(state: GameState): GameState {
     ...withActors,
     ...actForTurn(totalTurn),
     totalTurn,
-    theme: ACTS[Math.ceil(totalTurn / TURNS_PER_ACT) - 1]?.name ?? '千秋楽',
+    theme: ACTS[Math.ceil(totalTurn / TURNS_PER_ACT) - 1]?.name ?? FALLBACK_ACT_NAME,
     actors: assignActorRoles(withActors.actors, focus),
     currentFocusActorId: focus,
     currentActorEvent: null,
