@@ -5,7 +5,7 @@ export const actorStageCopy = {
   eventAria: '本番の出来事',
   eventKicker: '本番で起きた',
   stageAria: '役者の兆候',
-  focusRole: '焦点役者',
+  focusRole: '今回の注目役者',
   stateLabel: '状態',
   supportAria: '他の役者',
   nextRole: '次に来そう',

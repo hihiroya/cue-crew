@@ -1915,6 +1915,9 @@ button:disabled {
   top: 8px;
   left: 8px;
   z-index: 2;
+  max-width: 78px;
+  white-space: normal;
+  text-align: center;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
 }
 
@@ -6131,7 +6134,14 @@ button:disabled {
   .focus-actor-card {
     grid-template-columns: 70px minmax(0, 1fr);
     min-height: 0;
-    padding: 21px 8px 8px;
+    padding: 26px 8px 8px;
+  }
+
+  .focus-role {
+    max-width: 64px;
+    padding: 4px 6px;
+    font-size: 0.6rem;
+    line-height: 1.05;
   }
 
   .focus-actor-card .actor-figure-wrap {
