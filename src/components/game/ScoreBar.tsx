@@ -11,12 +11,7 @@ export function ScoreBar({ state }: Props) {
   const loadRisk = loadRiskLabel(state.backstageLoad);
   const likelyBias = !state.pendingFrayEvent && state.backstageLoad >= 3 ? likelyFrayBias(state) : null;
   return (
-    <section className="score-rail" aria-label={scoreBarCopy.aria}>
-      <div className="score-trio">
-        <ScoreChip icon="scene" label={scoreBarCopy.scene} value={state.sceneScore} />
-        <ScoreChip icon="flow" label={scoreBarCopy.flow} value={state.flowScore} />
-        <ScoreChip icon="trust" label={scoreBarCopy.trust} value={state.trustScore} />
-      </div>
+    <section className={`score-rail load-${loadRisk.tone}`} aria-label={scoreBarCopy.aria}>
       <div className={`backstage-load-console load-${loadRisk.tone}`}>
         <div className="backstage-load-head">
           <span className="score-icon"><Icon name="load" /></span>
@@ -28,6 +23,11 @@ export function ScoreBar({ state }: Props) {
             <span key={index} className={index < state.backstageLoad ? 'is-lit' : ''} />
           ))}
         </div>
+      </div>
+      <div className="score-trio">
+        <ScoreChip icon="scene" label={scoreBarCopy.scene} value={state.sceneScore} />
+        <ScoreChip icon="flow" label={scoreBarCopy.flow} value={state.flowScore} />
+        <ScoreChip icon="trust" label={scoreBarCopy.trust} value={state.trustScore} />
       </div>
       {state.pendingFrayEvent ? (
         <div className="fray-ribbon" aria-label={frayAria(state.pendingFrayEvent.bias, state.pendingFrayEvent.title)}>

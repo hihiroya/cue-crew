@@ -1135,22 +1135,34 @@ button:disabled {
   gap: 7px;
 }
 
+.score-rail.load-danger,
+.score-rail.load-fray {
+  padding: 2px;
+  border-radius: calc(var(--radius) + 2px);
+  background: linear-gradient(135deg, rgba(255, 119, 111, 0.16), rgba(229, 189, 104, 0.05));
+}
+
 .score-trio {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 7px;
+  gap: 6px;
 }
 
 .score-rail-item {
   min-width: 0;
-  min-height: 44px;
+  min-height: 36px;
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 7px;
+  padding: 6px 7px;
   border-radius: var(--radius);
   border: 1px solid rgba(230, 190, 108, 0.2);
   background: rgba(12, 13, 20, 0.76);
+}
+
+.score-rail-item .score-icon {
+  width: 24px;
+  height: 24px;
 }
 
 .score-rail-item span:not(.score-icon) {
@@ -1162,20 +1174,20 @@ button:disabled {
 .score-rail-item small,
 .score-rail-item em {
   color: var(--muted);
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-style: normal;
 }
 
 .score-rail-item strong {
   color: var(--text);
-  font-size: 1.04rem;
+  font-size: 0.92rem;
   line-height: 1;
 }
 
 .backstage-load-console {
   display: grid;
-  gap: 7px;
-  padding: 9px 10px;
+  gap: 8px;
+  padding: 10px 11px;
   border-radius: var(--radius);
   border: 1px solid rgba(230, 190, 108, 0.2);
   background:
@@ -1193,7 +1205,7 @@ button:disabled {
 
 .backstage-load-head span:not(.score-icon) {
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 800;
 }
 
@@ -1202,7 +1214,7 @@ button:disabled {
   border-radius: 999px;
   color: var(--gold-strong);
   background: rgba(229, 189, 104, 0.1);
-  font-size: 0.72rem;
+  font-size: 0.76rem;
   font-weight: 800;
 }
 
@@ -1229,7 +1241,7 @@ button:disabled {
 }
 
 .load-light-row span {
-  height: 9px;
+  height: 10px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.12);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
@@ -6062,34 +6074,34 @@ button:disabled {
   }
 
   .score-trio {
-    gap: 6px;
+    gap: 5px;
   }
 
   .score-rail-item {
-    min-height: 40px;
-    gap: 5px;
-    padding: 6px;
+    min-height: 32px;
+    gap: 4px;
+    padding: 5px 6px;
     border-radius: 8px;
   }
 
   .score-rail-item .score-icon {
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
   }
 
   .score-rail-item small {
-    font-size: 0.62rem;
+    font-size: 0.58rem;
   }
 
   .score-rail-item strong {
-    font-size: 0.96rem;
+    font-size: 0.86rem;
   }
 
   .backstage-load-console {
     grid-template-columns: auto 1fr;
     align-items: center;
     gap: 6px 8px;
-    padding: 7px 8px;
+    padding: 9px 10px;
     border-radius: 8px;
   }
 
@@ -6117,7 +6129,7 @@ button:disabled {
   }
 
   .load-light-row span {
-    height: 7px;
+    height: 9px;
   }
 
   .fray-ribbon {
@@ -6612,8 +6624,13 @@ button:disabled {
   }
 
   .score-rail-item {
-    min-height: 40px;
-    padding: 6px;
+    min-height: 30px;
+    padding: 5px;
+  }
+
+  .score-rail-item .score-icon {
+    width: 20px;
+    height: 20px;
   }
 
   .load-rail-item {
