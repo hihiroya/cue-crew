@@ -5,13 +5,19 @@ export const actorStageCopy = {
   eventAria: '本番の出来事',
   eventKicker: '本番で起きた',
   stageAria: '役者の兆候',
-  focusRole: '今回の注目役者',
+  focusRole: '注目',
   stateLabel: '状態',
   actorTrust: '役者信頼',
   supportAria: '他の役者',
   nextRole: '次に来そう',
   reserveRole: '控え',
-  visibleOmens: '見えている兆候',
+  visibleOmens: '兆候',
+} as const;
+
+export const omenIntensityCopy = {
+  high: '高',
+  medium: '中',
+  strengthAria: (intensity: string) => `発生しやすさ ${intensity}`,
 } as const;
 
 export const STATE_HINTS: Record<ActorState, string> = {

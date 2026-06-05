@@ -1,5 +1,6 @@
-import { ACTOR_LABELS, EVENT_LABELS, PERFORMANCE_SLOT_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS, RESULT_TIER_STARS } from './gameLabels';
-import type { MainResponse, PerformanceResult, PrepAction, PrepPredictionQuality, ResultTier } from '../../game/types';
+import { ACTOR_LABELS, ACTOR_TRAITS, EVENT_LABELS, PERFORMANCE_SLOT_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS, RESULT_TIER_STARS, STATE_LABELS } from './gameLabels';
+import { STATE_HINTS } from './actorStageCopy';
+import type { Actor, GameState, MainResponse, PerformanceResult, PrepAction, PrepPredictionQuality, ResultTier } from '../../game/types';
 
 export const appCopy = {
   phase: {
@@ -160,20 +161,31 @@ export const appCopy = {
     heading: '準備を決める',
     lead: '役者の兆候を見て、本番中の想定外に備える準備を選ぶ。',
     affinity: '兆候との相性',
-    coverage: (covered: number, _total: number) => `備え ${covered}灯`,
+    coverage: '兆候備え',
+    coverageAria: (covered: number, total: number) => `兆候備え ${covered}/${total}`,
     memo: '本番前メモ',
     prepTitle: (label: string) => `${label}の準備`,
     visibleOmens: '見えている兆候',
-    covered: '準備済み',
+    covered: '備えあり',
     missed: '備え外',
     extraEvents: '同じ準備で拾える出来事',
+    performanceMemo: '今回の回',
+    actorMemo: '注目役者',
+    actorBreath: '役者との呼吸',
+    prepMeaning: '準備の意味',
+    responseFit: '活きる対応',
+    scoreMeter: '公演メーター',
+    scoreLabels: {
+      scene: '評判',
+      flow: '段取り',
+      trust: '一体感',
+    },
     stateRead: '状態の読み',
     intent: '今回の読み',
     danger: '見えている兆候とは少し外れる',
     onExpected: '備えどおりに来たら',
     onMissed: '外れたら',
-    receiveWith: (responseLabel: string, aim: string) => `${responseLabel}で受ける。${aim}。`,
-    responseHint: (responseLabel: string) => responseLabel,
+    responseHint: (responseLabel: string) => `活きる対応 ${responseLabel}`,
     approvalLabel: '承認欄',
     approved: '承認済',
     pending: '未承認',
@@ -312,6 +324,80 @@ export function prepToneLabel(tone: 'strong' | 'good' | 'thin' | 'danger') {
   if (tone === 'good') return '一部に備える';
   if (tone === 'thin') return '別筋に備える';
   return '備え外';
+}
+
+export function prepPerformanceMemo(state: Pick<GameState, 'act' | 'turnInAct'>) {
+  const slot = state.turnInAct === 1 ? 'matinee' : 'soiree';
+  const label = PERFORMANCE_SLOT_LABELS[slot].label;
+  if (state.turnInAct === 1) {
+    return `${state.act}日目${label}。昼の回は、夜へ向けて公演の土台を作りやすい。無理に伸ばし切るより、次に残る呼吸を整えたい。`;
+  }
+  return `${state.act}日目${label}。夜の回は、その日の印象が客席と座組に残りやすい。攻めるなら評判へ、守るなら段取りへ、判断の色が出る。`;
+}
+
+export function prepActorMemo(actor: Actor) {
+  return `${actor.name}。${ACTOR_TRAITS[actor.type]} 今は${STATE_LABELS[actor.state]}で、${STATE_HINTS[actor.state]}。`;
+}
+
+export function actorBreathLabel(trust: number) {
+  if (trust >= 5) return '以心伝心';
+  if (trust >= 4) return '深い呼吸';
+  if (trust >= 3) return '阿吽の呼吸';
+  if (trust >= 2) return '少し通じている';
+  if (trust >= 1) return '合わせ始め';
+  return '探り合い';
+}
+
+export function actorBreathMemo(actor: Actor) {
+  const label = actorBreathLabel(actor.trust);
+  if (actor.trust >= 5) return `${label}。こちらの意図がかなり届いていて、得意な対応なら場面の芯を作りやすい。`;
+  if (actor.trust >= 3) return `${label}。得意な対応で受けると、役者がこちらの読みを汲みやすい。`;
+  if (actor.trust >= 1) return `${label}。まだ強い補正はないが、噛み合う対応を重ねれば呼吸は育つ。`;
+  return `${label}。まずはこの回で、役者が動きやすい受け方を探したい。`;
+}
+
+export function prepKindLabel(prep: PrepAction) {
+  if (prep === 'watch') return '熱を見る';
+  if (prep === 'makeSpace') return '間を残す';
+  if (prep === 'tightenFlow') return '進行を締める';
+  return '崩れを閉じる';
+}
+
+export function prepMeaningMemo(prep: PrepAction) {
+  if (prep === 'watch') return '注視は、役者の熱がこぼれた瞬間を見逃さないための準備。止めるよりも、出てきた動きを舞台上の意味に変える。';
+  if (prep === 'makeSpace') return '余白は、沈黙や退場の間を急かさず残すための準備。何も起きていないように見える時間を、余韻として客席へ渡す。';
+  if (prep === 'tightenFlow') return '締めは、立ち位置やテンポのズレを舞台全体の呼吸へ戻すための準備。熱を削りすぎず、進行の軸を支える。';
+  return '転換は、崩れを大きくする前に小さく閉じるための準備。場面を伸ばすより、次の回へ渡す道筋を残す。';
+}
+
+export function prepExpectedMemo(prep: PrepAction) {
+  if (prep === 'watch') return '役者が前へ出たら、その動きを拾って場面にする。予定外の熱を止めず、客席に届く見せ場として扱う。';
+  if (prep === 'makeSpace') return '沈黙や退場の余韻が来たら、待つことで間を保つ。急いで埋めず、役者の呼吸が客席へ届く時間にする。';
+  if (prep === 'tightenFlow') return '立ち位置やテンポが乱れたら、整えることで舞台全体の呼吸に戻す。目立つ熱より、崩れない進行を優先する。';
+  return '転換の崩れが来たら、切ることで場面を閉じる。広がりかけた乱れを小さくして、次の回が始めやすい形にする。';
+}
+
+export function prepMissedMemo(prep: PrepAction) {
+  if (prep === 'watch') return '熱ではなく進行の乱れが来た時は、整える判断で安全寄りに戻せる。注視していたぶん、崩れの入口は見つけやすい。';
+  if (prep === 'makeSpace') return '間ではなく熱が来た時は、拾う判断に切り替える余地がある。残した余白を、熱が立ち上がる場所として使える。';
+  if (prep === 'tightenFlow') return '進行ではなく熱や間が来た時は、無理に締めすぎない。負荷が高いなら切る、余裕があるなら拾う・待つへ寄せる。';
+  return '崩れが来なければ、低負荷のまま整える・待つで場面化を狙える。閉じる準備は、外れても退路として残る。';
+}
+
+export function scoreMeterMemo(kind: 'scene' | 'flow' | 'trust', value: number) {
+  if (kind === 'scene') {
+    if (value <= 0) return 'まだ客席の熱は積み上がっていない。ここから見せ場を作る。';
+    if (value < 6) return '客席に少し手応えが残っている。噛み合う対応で伸ばしたい。';
+    return '客席に届く熱が育っている。攻めた判断が評価に残りやすい。';
+  }
+  if (kind === 'flow') {
+    if (value <= 0) return '進行はまだ土台作りの途中。乱れを残さない判断が効く。';
+    if (value < 4) return '段取りの支えができ始めている。崩れを受けても戻しやすい。';
+    return '進行の軸が強い。多少の揺れなら舞台全体で支えられる。';
+  }
+  if (value <= 0) return '座組の呼吸はこれから育つ。噛み合う受け方を重ねたい。';
+  if (value < 4) return '座組に少し呼吸が残っている。待つ判断や得意筋が活きやすい。';
+  return '座組の呼吸が深まっている。終盤の伸びにつながりやすい。';
 }
 
 export function prepReadMemo(prep: PrepAction, covered: number) {

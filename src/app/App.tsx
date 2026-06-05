@@ -143,7 +143,8 @@ export function App() {
             selected={displayState.selectedPrep}
             disabled={Boolean(pendingPrepCue)}
             approvingPrep={pendingPrepCue?.prep ?? null}
-            focusActorState={focusActor.state}
+            state={displayState}
+            focusActor={focusActor}
             visibleOmens={visibleOmenEvents}
             previousPrep={previousTurnLog?.prepAction ?? null}
             onSelect={(prep) => {

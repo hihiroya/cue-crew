@@ -5,15 +5,24 @@ export const gameHeaderCopy = {
   styleLabel: '公演の色',
   pendingStyle: '仕込み中',
   pendingHint: '初日ソワレ後に決まる',
+  score: {
+    scene: '評判',
+    flow: '段取り',
+    trust: '一体感',
+  },
 } as const;
 
-export function slotDetail(turnInAct: number) {
-  return turnInAct === 1 ? '昼公演' : '夜公演';
+export function slotIcon(turnInAct: number) {
+  return turnInAct === 1 ? 'sun' : 'moon';
 }
 
 export function performanceLabel(state: GameState) {
   const slot = state.turnInAct === 1 ? 'matinee' : 'soiree';
   return `${state.act}日目 ${PERFORMANCE_SLOT_LABELS[slot].label}`;
+}
+
+export function scoreMeterAria(state: GameState) {
+  return `公演メーター 評判 ${state.sceneScore} 段取り ${state.flowScore} 一体感 ${state.trustScore}`;
 }
 
 export const PERFORMANCE_COLOR_HUD: Record<PerformanceStyle, { label: string; hint: string; tone: string }> = {

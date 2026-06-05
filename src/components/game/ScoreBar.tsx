@@ -24,11 +24,6 @@ export function ScoreBar({ state }: Props) {
           ))}
         </div>
       </div>
-      <div className="score-trio">
-        <ScoreChip icon="scene" label={scoreBarCopy.scene} value={state.sceneScore} />
-        <ScoreChip icon="flow" label={scoreBarCopy.flow} value={state.flowScore} />
-        <ScoreChip icon="trust" label={scoreBarCopy.trust} value={state.trustScore} />
-      </div>
       {state.pendingFrayEvent ? (
         <div className="fray-ribbon" aria-label={frayAria(state.pendingFrayEvent.bias, state.pendingFrayEvent.title)}>
           <span>{scoreBarCopy.fray}</span>
@@ -41,14 +36,5 @@ export function ScoreBar({ state }: Props) {
         </div>
       ) : null}
     </section>
-  );
-}
-
-function ScoreChip({ icon, label, value }: { icon: 'scene' | 'flow' | 'trust'; label: string; value: number }) {
-  return (
-    <div className="score-rail-item">
-      <span className="score-icon"><Icon name={icon} /></span>
-      <span><small>{label}</small><strong>{value}</strong></span>
-    </div>
   );
 }

@@ -1,15 +1,26 @@
 import { useState } from 'react';
-import { EVENT_LABELS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, PREP_RESPONSE_HINTS, RESPONSE_LABELS, STATE_LABELS } from '../../game/constants';
-import type { ActorEventType, ActorState, PrepAction } from '../../game/types';
+import { EVENT_LABELS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, RESPONSE_LABELS } from '../../game/constants';
+import type { Actor, ActorEventType, GameState, PrepAction } from '../../game/types';
 import { Icon } from '../ui/Icon';
-import { appCopy, prepIntent, prepReadMemo, prepShortAim, prepToneLabel } from '../../content/ja/appCopy';
-import { STATE_HINTS } from '../../content/ja/actorStageCopy';
+import {
+  actorBreathLabel,
+  actorBreathMemo,
+  appCopy,
+  prepActorMemo,
+  prepExpectedMemo,
+  prepKindLabel,
+  prepMeaningMemo,
+  prepMissedMemo,
+  prepPerformanceMemo,
+  scoreMeterMemo,
+} from '../../content/ja/appCopy';
 
 type PrepProps = {
   selected: PrepAction | null;
   disabled: boolean;
   approvingPrep: PrepAction | null;
-  focusActorState: ActorState;
+  state: GameState;
+  focusActor: Actor;
   visibleOmens: ActorEventType[];
   previousPrep?: PrepAction | null;
   onSelect: (prep: PrepAction) => void;
@@ -18,12 +29,13 @@ type PrepProps = {
 const prepActions: PrepAction[] = ['watch', 'makeSpace', 'tightenFlow', 'prepareTransition'];
 type PrepTone = 'strong' | 'good' | 'thin' | 'danger';
 
-export function PrepPanel({ selected, disabled, approvingPrep, focusActorState, visibleOmens, previousPrep = null, onSelect }: PrepProps) {
+export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor, visibleOmens, previousPrep = null, onSelect }: PrepProps) {
   const [inspectedPrep, setInspectedPrep] = useState<PrepAction>(selected ?? 'watch');
   const inspected = inspectedPrep;
   const isApproving = approvingPrep === inspected;
   const inspectedCoveredOmens = visibleOmens.filter((event) => PREP_MATCHES[inspected].includes(event));
   const inspectedTone = prepTone(inspectedCoveredOmens.length, visibleOmens.length);
+  const inspectedResponse = PREP_PRIMARY_RESPONSE[inspected];
   return (
     <section className={`choice-panel prep-panel ${isApproving ? 'is-approving' : ''}`}>
       <div className="section-heading">
@@ -48,12 +60,12 @@ export function PrepPanel({ selected, disabled, approvingPrep, focusActorState, 
                 <Icon name={prep} />
                 <span className="prep-title">
                   <strong>{PREP_LABELS[prep]}</strong>
-                  <em>{prepToneLabel(tone)}</em>
+                  <em>{prepKindLabel(prep)}</em>
                 </span>
               </div>
               <div className="cue-cover">
-                <span>{appCopy.prep.coverage(coveredOmens.length, visibleOmens.length)}</span>
-                <strong>{prepShortAim(prep)}</strong>
+                <span>{appCopy.prep.coverage}</span>
+                <PrepCoverageMeter covered={coveredOmens.length} total={visibleOmens.length} tone={tone} />
               </div>
               <small className="prep-response-hint">
                 <Icon name={PREP_PRIMARY_RESPONSE[prep]} />
@@ -75,6 +87,22 @@ export function PrepPanel({ selected, disabled, approvingPrep, focusActorState, 
           <div className="cue-sheet-head">
             <span>{appCopy.prep.memo}</span>
             <strong>{appCopy.prep.prepTitle(PREP_LABELS[inspected])}</strong>
+          </div>
+          <div className="cue-read cue-read--context">
+            <div className="prep-state-line">
+              <span>{appCopy.prep.performanceMemo}</span>
+              <p>{prepPerformanceMemo(state)}</p>
+            </div>
+            <div className="prep-state-line">
+              <span>{appCopy.prep.actorMemo}</span>
+              <p>{prepActorMemo(focusActor)}</p>
+            </div>
+            <div className="prep-breath-line">
+              <span>{appCopy.prep.actorBreath}</span>
+              <strong>{actorBreathLabel(focusActor.trust)}</strong>
+              <BreathMeter value={focusActor.trust} />
+              <p>{actorBreathMemo(focusActor)}</p>
+            </div>
           </div>
           <div className="cue-sheet-grid cue-sheet-focus">
             <section>
@@ -104,27 +132,29 @@ export function PrepPanel({ selected, disabled, approvingPrep, focusActorState, 
             ) : null}
           </div>
           <div className="cue-read">
-            <div className="prep-state-line">
-              <span>{appCopy.prep.stateRead}</span>
-              <p><strong>{STATE_LABELS[focusActorState]}</strong>: {STATE_HINTS[focusActorState]}</p>
-            </div>
             <div className="prep-intent-line">
-              <span>{appCopy.prep.intent}</span>
-              <strong>{prepIntent(inspected)}</strong>
+              <span>{appCopy.prep.prepMeaning}</span>
+              <strong>{prepKindLabel(inspected)}</strong>
               {inspectedTone === 'danger' ? <em>{appCopy.prep.danger}</em> : null}
+              <p>{prepMeaningMemo(inspected)}</p>
             </div>
-            <p>{prepReadMemo(inspected, inspectedCoveredOmens.length)}</p>
             <div className="cue-note-branches">
               <section>
-                <span>{appCopy.prep.onExpected}</span>
-                <p>{appCopy.prep.receiveWith(RESPONSE_LABELS[PREP_PRIMARY_RESPONSE[inspected]], PREP_RESPONSE_HINTS[inspected].aim)}</p>
+                <span>{appCopy.prep.responseFit}</span>
+                <p><strong>{RESPONSE_LABELS[inspectedResponse]}</strong>。{prepExpectedMemo(inspected)}</p>
               </section>
               <section>
                 <span>{appCopy.prep.onMissed}</span>
-                <p>{PREP_RESPONSE_HINTS[inspected].alternate}。</p>
+                <p>{prepMissedMemo(inspected)}</p>
               </section>
             </div>
           </div>
+          <section className="cue-score-meter" aria-label={appCopy.prep.scoreMeter}>
+            <span>{appCopy.prep.scoreMeter}</span>
+            <ScoreMeterLine icon="scene" label={appCopy.prep.scoreLabels.scene} value={state.sceneScore} body={scoreMeterMemo('scene', state.sceneScore)} />
+            <ScoreMeterLine icon="flow" label={appCopy.prep.scoreLabels.flow} value={state.flowScore} body={scoreMeterMemo('flow', state.flowScore)} />
+            <ScoreMeterLine icon="trust" label={appCopy.prep.scoreLabels.trust} value={state.trustScore} body={scoreMeterMemo('trust', state.trustScore)} />
+          </section>
           <div className={`cue-approval-slot ${isApproving ? 'is-approved' : ''}`} aria-label={appCopy.prep.approvalLabel} aria-live="polite">
             <span>{appCopy.prep.approvalLabel}</span>
             <strong>{isApproving ? appCopy.prep.approved : appCopy.prep.pending}</strong>
@@ -132,6 +162,41 @@ export function PrepPanel({ selected, disabled, approvingPrep, focusActorState, 
         </div>
       </aside>
     </section>
+  );
+}
+
+function PrepCoverageMeter({ covered, total, tone }: { covered: number; total: number; tone: PrepTone }) {
+  const slots = Math.max(3, total);
+  return (
+    <strong className={`prep-coverage-meter cue-${tone}`} aria-label={appCopy.prep.coverageAria(covered, total)}>
+      {Array.from({ length: slots }, (_, index) => (
+        <i key={index} className={index < covered ? 'is-lit' : ''} />
+      ))}
+    </strong>
+  );
+}
+
+function BreathMeter({ value }: { value: number }) {
+  const lit = Math.min(5, Math.max(0, value));
+  return (
+    <span className="breath-meter" aria-hidden="true">
+      {Array.from({ length: 5 }, (_, index) => (
+        <i key={index} className={index < lit ? 'is-lit' : ''} />
+      ))}
+    </span>
+  );
+}
+
+function ScoreMeterLine({ icon, label, value, body }: { icon: 'scene' | 'flow' | 'trust'; label: string; value: number; body: string }) {
+  return (
+    <p className="cue-score-meter-line">
+      <span>
+        <Icon name={icon} />
+        <strong>{label}</strong>
+        <b>{value}</b>
+      </span>
+      {body}
+    </p>
   );
 }
 
