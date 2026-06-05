@@ -22,7 +22,7 @@ export function performanceLabel(state: GameState) {
 }
 
 export function scoreMeterAria(state: GameState) {
-  return `公演メーター 評判 ${state.sceneScore} 段取り ${state.flowScore} 一体感 ${state.trustScore}`;
+  return `公演の雰囲気 評判 ${state.sceneScore} 段取り ${state.flowScore} 一体感 ${state.trustScore}`;
 }
 
 export const PERFORMANCE_COLOR_HUD: Record<PerformanceStyle, { label: string; hint: string; tone: string }> = {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { EVENT_LABELS, PREP_LABELS, PREP_MATCHES, PREP_PRIMARY_RESPONSE, RESPONSE_LABELS } from '../../game/constants';
 import type { Actor, ActorEventType, GameState, PrepAction } from '../../game/types';
 import { Icon } from '../ui/Icon';
@@ -33,9 +33,19 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
   const [inspectedPrep, setInspectedPrep] = useState<PrepAction>(selected ?? 'watch');
   const inspected = inspectedPrep;
   const isApproving = approvingPrep === inspected;
+  const approvalRef = useRef<HTMLDivElement | null>(null);
   const inspectedCoveredOmens = visibleOmens.filter((event) => PREP_MATCHES[inspected].includes(event));
   const inspectedTone = prepTone(inspectedCoveredOmens.length, visibleOmens.length);
   const inspectedResponse = PREP_PRIMARY_RESPONSE[inspected];
+
+  useEffect(() => {
+    if (!isApproving) return;
+    window.requestAnimationFrame(() => {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      approvalRef.current?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
+    });
+  }, [isApproving]);
+
   return (
     <section className={`choice-panel prep-panel ${isApproving ? 'is-approving' : ''}`}>
       <div className="section-heading">
@@ -155,7 +165,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
             <ScoreMoodLine icon="flow" label={appCopy.prep.scoreLabels.flow} value={state.flowScore} body={scoreMoodMemo('flow', state.flowScore)} />
             <ScoreMoodLine icon="trust" label={appCopy.prep.scoreLabels.trust} value={state.trustScore} body={scoreMoodMemo('trust', state.trustScore)} />
           </section>
-          <div className={`cue-approval-slot ${isApproving ? 'is-approved' : ''}`} aria-label={appCopy.prep.approvalLabel} aria-live="polite">
+          <div ref={approvalRef} className={`cue-approval-slot ${isApproving ? 'is-approved' : ''}`} aria-label={appCopy.prep.approvalLabel} aria-live="polite">
             <span>{appCopy.prep.approvalLabel}</span>
             <strong>{isApproving ? appCopy.prep.approved : appCopy.prep.pending}</strong>
           </div>

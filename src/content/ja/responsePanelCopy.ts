@@ -3,7 +3,6 @@ import type { GameState, MainResponse, ResponseInsight, ResultTier } from '../..
 
 export const responsePanelCopy = {
   heading: '対応を決める',
-  inspecting: '確認中',
   outlookAria: (label: string) => `成立見込み: ${label}`,
   prepRelationAria: (label: string) => `準備との関係: ${label}`,
   effectSummaryAria: '影響の要約',
@@ -16,6 +15,7 @@ export const responsePanelCopy = {
   frayTitle: '舞台裏のほころび',
   passiveTitle: 'パッシブ効果',
   buildCue: '公演の色',
+  pendingStyle: '仕込み中',
   buildLevel: '色の濃さ',
   previousCue: '前回',
   replayDelta: '前回比',

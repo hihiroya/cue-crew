@@ -12,10 +12,13 @@ import {
   prepConnectionShortLabel,
   responsePanelCopy,
   responseSendAria,
+  resultRangeIndices,
   runSheetActLabel,
   runSheetEventLabel,
   rankForValue,
 } from '../../content/ja/responsePanelCopy';
+import { PERFORMANCE_COLOR_HUD } from '../../content/ja/gameHeaderCopy';
+import { RESULT_TIER_LABELS } from '../../content/ja/gameLabels';
 
 export { PrepPanel } from './PrepPanel';
 
@@ -66,9 +69,7 @@ export function ResponsePanel({ selected, disabled, state, previousTurnLog = nul
 
 function ResponseSelectionMarker({ visible }: { visible: boolean }) {
   return (
-    <em className={`selection-marker selection-marker--response ${visible ? 'is-visible' : ''}`} aria-hidden={!visible}>
-      {visible ? responsePanelCopy.inspecting : ''}
-    </em>
+    <em className={`selection-marker selection-marker--response ${visible ? 'is-visible' : ''}`} aria-hidden="true" />
   );
 }
 
@@ -104,8 +105,14 @@ function ResponseChoiceCard({
           <em className={`response-prep-mark mark-${insight.prepRelationTone}`} aria-label={responsePanelCopy.prepRelationAria(insight.prepRelationLabel)}>
             {prepConnectionShortLabel(insight.prepRelationTone)}
           </em>
+          <span>
+            <Icon name="event" />
+            {responsePanelCopy.outlookTitle}
+          </span>
+          <strong>{insight.successRangeLabel}</strong>
         </div>
       </div>
+      <ResultRail insight={insight} variant="card" />
       <ResponseEffectSummary insight={insight} />
       {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
       <ResponseSelectionMarker visible={isInspected} />
@@ -166,6 +173,7 @@ function ResponseConsole({
   replayDelta: ReturnType<typeof replayDeltaForResponse>;
 }) {
   const buildLevelItem = insight.scoreBreakdown.find((item) => item.id === 'build-level');
+  const styleHud = state.performanceStyle ? PERFORMANCE_COLOR_HUD[state.performanceStyle] : null;
   return (
     <aside className={`decision-note response-console relation-${insight.prepRelationTone}`}>
       <div className="console-head">
@@ -178,6 +186,11 @@ function ResponseConsole({
           <em>
             <small>CALL</small>
             <strong>{RESPONSE_LABELS[insight.response]}</strong>
+          </em>
+          <em className={styleHud ? `style-${styleHud.tone}` : ''}>
+            <small>STYLE</small>
+            <strong>{styleHud?.label ?? responsePanelCopy.pendingStyle}</strong>
+            <b>{buildCue}</b>
           </em>
         </div>
       </div>
@@ -192,14 +205,11 @@ function ResponseConsole({
         </div>
         <small>{insight.responseAimLabel}</small>
       </div>
+      <ResultRail insight={insight} variant="console" />
       <ReadoutHud insight={insight} />
       <div className="console-log">
         <span>{responsePanelCopy.logTitle}</span>
         <p>{decisionMemo(insight, effectSummary(insight))}</p>
-      </div>
-      <div className="console-fray relation-recover">
-        <span>{responsePanelCopy.buildCue}</span>
-        <strong>{buildCue}</strong>
       </div>
       {buildLevelItem ? (
         <div className="console-fray relation-recover">
@@ -226,6 +236,36 @@ function ResponseConsole({
         </div>
       ) : null}
     </aside>
+  );
+}
+
+function ResultRail({ insight, variant }: { insight: ResponseInsight; variant: 'card' | 'console' }) {
+  const range = resultRangeIndices(insight.successRangeLabel);
+  const tiers = resultTierOrder();
+  const currentIndex = tiers.indexOf(insight.resultTier);
+  return (
+    <div className={`result-rail-box result-rail-box--${variant}`} aria-label={`${responsePanelCopy.resultRailAria}: ${insight.successRangeLabel}`}>
+      <div className="result-rail-head">
+        <span>{responsePanelCopy.resultRailAria}</span>
+        <strong>{insight.successRangeLabel}</strong>
+      </div>
+      <div className={`result-rail has-${insight.rangeTone}`} aria-hidden="true">
+        {tiers.map((tier, index) => (
+          <span
+            key={tier}
+            className={[
+              index >= range.lowIndex && index <= range.highIndex ? 'is-in-range' : '',
+              index === currentIndex ? 'is-current' : '',
+            ].filter(Boolean).join(' ')}
+          />
+        ))}
+      </div>
+      {variant === 'console' ? (
+        <div className="result-rail-labels" aria-hidden="true">
+          {tiers.map((tier) => <span key={tier}>{RESULT_TIER_LABELS[tier]}</span>)}
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -295,6 +335,10 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
       </section>
     </div>
   );
+}
+
+function resultTierOrder(): ResponseInsight['resultTier'][] {
+  return ['accident', 'fray', 'smallSuccess', 'scene', 'masterpiece'];
 }
 
 function affinityItems(insight: ResponseInsight) {
