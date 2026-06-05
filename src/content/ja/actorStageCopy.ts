@@ -4,6 +4,7 @@ import type { Actor, ActorState } from '../../game/types';
 export const actorStageCopy = {
   eventAria: '本番の出来事',
   eventKicker: '本番で起きた',
+  eventActorAria: (actor: string, state: string) => `本番の役者 ${actor} 状態 ${state}`,
   stageAria: '役者の兆候',
   focusRole: '注目',
   stateLabel: '状態',

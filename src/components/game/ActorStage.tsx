@@ -23,14 +23,17 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
 
   if (event) {
     return (
-      <section className={`event-reveal actor-figure-${focusActor.type} figure-state-${focusActor.state}`} aria-label={actorStageCopy.eventAria}>
+      <section className={`event-reveal actor-figure-${focusActor.type} figure-state-${focusActor.state} event-${event.type} event-motion-${eventMotionType(event.type)}`} aria-label={actorStageCopy.eventAria}>
         <div className="event-reveal-figure">
           <ActorSilhouette type={focusActor.type} />
-          <em className="event-actor-tag">{focusActor.name} / {STATE_LABELS[focusActor.state]}</em>
         </div>
         <div className="event-reveal-body">
           <div className="event-reveal-kicker">
             <span>{actorStageCopy.eventKicker}</span>
+            <div className="event-actor-tags" aria-label={actorStageCopy.eventActorAria(focusActor.name, STATE_LABELS[focusActor.state])}>
+              <em>{focusActor.name}</em>
+              <em><small>{actorStageCopy.stateLabel}</small>{STATE_LABELS[focusActor.state]}</em>
+            </div>
           </div>
           <h2 className={`event-title title-${eventTitleSize(event.title)}`}>{event.title}</h2>
           <p>{event.description}</p>
@@ -97,6 +100,12 @@ function eventTitleSize(title: string) {
   if (title.length <= 6) return 'large';
   if (title.length <= 10) return 'medium';
   return 'compact';
+}
+
+function eventMotionType(event: ActorEvent['type']) {
+  if (event === 'stepForward' || event === 'adlib' || event === 'heatUp') return 'heat';
+  if (event === 'silence' || event === 'delayedExit') return 'pause';
+  return 'flow';
 }
 
 function OmenList({ actor, seed, totalTurn }: { actor: Actor; seed: string; totalTurn: number }) {

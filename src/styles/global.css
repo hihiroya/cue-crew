@@ -1717,11 +1717,65 @@ button:disabled {
   overflow: hidden;
 }
 
+.event-reveal-figure::before,
+.event-reveal-figure::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.event-motion-heat .event-reveal-figure::before {
+  background:
+    linear-gradient(118deg, transparent 0 28%, rgba(255, 217, 138, 0.34) 42%, transparent 58%),
+    radial-gradient(ellipse at 55% 72%, rgba(255, 96, 82, 0.22), transparent 46%);
+  animation: eventActionSweep 900ms ease-out 320ms both;
+}
+
+.event-motion-heat .event-reveal-figure::after {
+  inset: 12px -24px 20px 18px;
+  background: repeating-linear-gradient(108deg, transparent 0 11px, rgba(255, 217, 138, 0.2) 12px 14px, transparent 15px 28px);
+  opacity: 0.7;
+  transform: translateX(-12px);
+  animation: eventHeatLines 1100ms ease-out 260ms both;
+}
+
+.event-motion-pause .event-reveal-figure::before {
+  background:
+    radial-gradient(ellipse at 50% 35%, transparent 0 34%, rgba(0, 0, 0, 0.34) 72%),
+    linear-gradient(90deg, transparent 0 44%, rgba(216, 232, 255, 0.2) 48% 52%, transparent 56%);
+  animation: eventStillFocus 1500ms ease-out 280ms both;
+}
+
+.event-motion-pause .event-reveal-figure::after {
+  inset: 42% 14px auto;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(216, 232, 255, 0.46);
+  box-shadow: 0 0 18px rgba(216, 232, 255, 0.22);
+}
+
+.event-motion-flow .event-reveal-figure::before {
+  background:
+    linear-gradient(90deg, transparent 0 18%, rgba(139, 201, 213, 0.2) 30%, transparent 44%),
+    linear-gradient(112deg, transparent 0 38%, rgba(255, 217, 138, 0.22) 46%, transparent 54%);
+  animation: eventFlowShift 1100ms ease-out 280ms both;
+}
+
+.event-motion-flow .event-reveal-figure::after {
+  inset: 16px 10px;
+  border: 1px solid rgba(139, 201, 213, 0.18);
+  transform: translateX(7px);
+  filter: blur(0.2px);
+  opacity: 0.7;
+}
+
 .event-reveal-figure .silhouette {
   width: 88px;
   height: 138px;
   transform: translateY(-10px);
-  z-index: 1;
+  z-index: 2;
 }
 
 .event-actor-tag {
@@ -1759,16 +1813,46 @@ button:disabled {
 }
 
 .event-reveal-kicker {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 6px 10px;
-  align-items: baseline;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
 }
 
 .event-reveal-kicker span {
   color: var(--gold);
   font-size: 0.78rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.event-actor-tags {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  min-width: max-content;
+  white-space: nowrap;
+}
+
+.event-actor-tags em {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  color: #151017;
+  background: var(--gold);
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.event-actor-tags small {
+  color: rgba(21, 16, 23, 0.68);
+  font-size: 0.58rem;
   font-weight: 900;
 }
 
@@ -2359,8 +2443,8 @@ button:disabled {
   overflow: hidden;
   grid-template-columns: 1fr;
   grid-template-rows: auto;
-  gap: 9px;
-  min-height: 174px;
+  gap: 7px;
+  min-height: 136px;
 }
 
 .response-choice::before {
@@ -2509,14 +2593,14 @@ button:disabled {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 8px;
+  gap: 7px;
   align-items: center;
   min-width: 0;
 }
 
 .response-card-top .icon {
-  width: 1.35rem;
-  height: 1.35rem;
+  width: 1.26rem;
+  height: 1.26rem;
   color: var(--gold);
 }
 
@@ -2527,17 +2611,17 @@ button:disabled {
   gap: 5px 7px;
   align-items: center;
   color: var(--text);
-  font-size: 1.04rem;
+  font-size: 0.98rem;
   line-height: 1.1;
 }
 
 .response-title strong {
-  font-size: 1.08rem;
+  font-size: 1.02rem;
 }
 
 .response-title em {
   min-height: 18px;
-  padding: 3px 7px;
+  padding: 3px 6px;
   border-radius: 999px;
   color: #151017;
   background: rgba(229, 189, 104, 0.9);
@@ -2627,16 +2711,14 @@ button:disabled {
 
 .outlook-summary {
   grid-column: 1 / -1;
-  display: grid;
-  gap: 6px;
+  display: block;
   min-width: 0;
 }
 
 .outlook-head {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 4px 6px;
+  display: flex;
   align-items: center;
+  min-height: 22px;
 }
 
 .outlook-head > span {
@@ -2663,13 +2745,9 @@ button:disabled {
 }
 
 .outlook-summary .response-prep-mark {
-  grid-column: 2 / 3;
-  grid-row: 1 / 2;
-  align-self: start;
-  justify-self: end;
   max-width: 100%;
   padding: 3px 6px;
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   line-height: 1.05;
   opacity: 0.92;
 }
@@ -2710,7 +2788,7 @@ button:disabled {
   align-items: center;
   gap: 5px;
   min-width: 0;
-  padding: 6px;
+  padding: 6px 7px;
   border-radius: 7px;
   background: rgba(0, 0, 0, 0.18);
 }
@@ -2718,7 +2796,7 @@ button:disabled {
 .response-effect-summary > span {
   flex: 0 0 auto;
   color: var(--muted);
-  font-size: 0.64rem;
+  font-size: 0.66rem;
   font-weight: 800;
 }
 
@@ -2965,6 +3043,7 @@ button:disabled {
 .response-console {
   position: relative;
   overflow: visible;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   padding: 17px 13px;
   border-color: rgba(255, 217, 138, 0.36);
@@ -3509,6 +3588,7 @@ button:disabled {
 .console-head {
   position: relative;
   z-index: 1;
+  grid-column: 1 / -1;
   display: grid;
   grid-template-columns: minmax(116px, 0.95fr) minmax(0, 1.35fr);
   gap: 6px 8px;
@@ -3606,6 +3686,10 @@ button:disabled {
     rgba(0, 0, 0, 0.26);
 }
 
+.console-outlook {
+  grid-column: auto;
+}
+
 .console-run-sheet span {
   min-width: 0;
   display: grid;
@@ -3697,7 +3781,9 @@ button:disabled {
 .readout-hud {
   position: relative;
   z-index: 1;
+  grid-column: 1 / -1;
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -3934,7 +4020,7 @@ button:disabled {
 
 .effect-meter-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
 }
 
@@ -4056,6 +4142,7 @@ button:disabled {
 .console-log {
   position: relative;
   z-index: 1;
+  grid-column: 1 / -1;
   display: grid;
   gap: 5px;
   padding: 8px 9px;
@@ -6157,6 +6244,53 @@ button:disabled {
   }
 }
 
+@keyframes eventActionSweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  42% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.82;
+    transform: translateX(0);
+  }
+}
+
+@keyframes eventHeatLines {
+  0% {
+    opacity: 0;
+    transform: translateX(-22px);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateX(0);
+  }
+}
+
+@keyframes eventStillFocus {
+  0% {
+    opacity: 0;
+    filter: brightness(1.15);
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes eventFlowShift {
+  0% {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  100% {
+    opacity: 0.88;
+    transform: translateX(0);
+  }
+}
+
 @media (min-width: 680px) {
   .game-header {
     grid-template-columns: minmax(210px, auto) minmax(250px, 1fr);
@@ -6614,6 +6748,7 @@ button:disabled {
 
   .response-choice {
     gap: 6px;
+    min-height: 120px;
   }
 
   .prep-title em,

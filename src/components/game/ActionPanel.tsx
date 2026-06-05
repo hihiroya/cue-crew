@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import { RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../game/constants';
+import { RESPONSE_LABELS } from '../../game/constants';
 import { responseInsight } from '../../game/responseInsight';
-import type { GameState, MainResponse, ResponseInsight, ResultTier, TurnLog } from '../../game/types';
+import type { GameState, MainResponse, ResponseInsight, TurnLog } from '../../game/types';
 import { Icon } from '../ui/Icon';
 import { effectDirection, effectIntensity, effectItems, effectLedSlots, effectSummary, effectTargetLabel, evaluationSign } from './responseEffectsView';
 import { buildStyleSummary, replayDeltaForResponse, responseBuildCue } from '../../game/rogueliteProgress';
@@ -10,10 +10,8 @@ import {
   decisionMemo,
   prepConnectionLabel,
   prepConnectionShortLabel,
-  rangeShortLabel,
   responsePanelCopy,
   responseSendAria,
-  resultRangeIndices,
   runSheetActLabel,
   runSheetEventLabel,
   rankForValue,
@@ -86,7 +84,6 @@ function ResponseChoiceCard({
   onInspect: (response: MainResponse) => void;
 }) {
   const response = insight.response;
-  const range = resultRange(insight);
   return (
     <button
       aria-pressed={isInspected}
@@ -104,12 +101,10 @@ function ResponseChoiceCard({
       </div>
       <div className="outlook-summary" aria-label={responsePanelCopy.outlookAria(insight.successRangeLabel)}>
         <div className="outlook-head">
-          <span><Icon name="scene" />{rangeShortLabel(insight.resultTier)}</span>
           <em className={`response-prep-mark mark-${insight.prepRelationTone}`} aria-label={responsePanelCopy.prepRelationAria(insight.prepRelationLabel)}>
             {prepConnectionShortLabel(insight.prepRelationTone)}
           </em>
         </div>
-        <ResultRail range={range} resultTier={insight.resultTier} danger={Boolean(insight.dangerWarning)} />
       </div>
       <ResponseEffectSummary insight={insight} />
       {insight.dangerWarning ? <strong className="danger-warning compact-danger">{insight.downsideLabel}</strong> : null}
@@ -245,28 +240,6 @@ function ConsoleRunSheet({ state }: { state: GameState }) {
         <small>SCENE</small>
         <strong>{runSheetEventLabel(state)}</strong>
       </span>
-    </div>
-  );
-}
-
-const tierOrder: ResultTier[] = ['accident', 'fray', 'smallSuccess', 'scene', 'masterpiece'];
-
-function resultRange(insight: ResponseInsight) {
-  return resultRangeIndices(insight.successRangeLabel);
-}
-
-function ResultRail({ range, resultTier, danger }: { range: { lowIndex: number; highIndex: number }; resultTier: ResultTier; danger: boolean }) {
-  const currentIndex = tierOrder.indexOf(resultTier);
-  return (
-    <div className={`result-rail ${danger ? 'has-danger' : ''}`} aria-label={responsePanelCopy.resultRailAria}>
-      {tierOrder.map((tier, index) => (
-        <span
-          key={tier}
-          className={`${index >= range.lowIndex && index <= range.highIndex ? 'is-in-range' : ''} ${index === currentIndex ? 'is-current' : ''}`}
-          title={RESULT_TIER_LABELS[tier]}
-          aria-label={RESULT_TIER_LABELS[tier]}
-        />
-      ))}
     </div>
   );
 }
