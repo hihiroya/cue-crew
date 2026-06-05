@@ -52,7 +52,7 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
                 <h3>{focusActor.name}</h3>
               </div>
               <div className="actor-meta-line">
-                <span className="actor-state-inline">{STATE_LABELS[focusActor.state]}</span>
+                <span className="actor-state-inline"><small>{actorStageCopy.stateLabel}</small>{STATE_LABELS[focusActor.state]}</span>
                 {focusPassive ? (
                   <small className={`actor-trust-pill trust-${trustLevel(focusActor)}`}>{focusPassive}</small>
                 ) : null}

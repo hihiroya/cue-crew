@@ -1024,7 +1024,7 @@ button:disabled {
   border: 1px solid rgba(255, 217, 138, 0.16);
   color: var(--muted);
   background: rgba(7, 9, 15, 0.5);
-  font-size: 0.64rem;
+  font-size: 0.68rem;
   font-style: normal;
   font-weight: 900;
   line-height: 1;
@@ -1032,7 +1032,7 @@ button:disabled {
 
 .performance-style-inline b {
   color: var(--gold-strong);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
 }
 
 .header-score-meters {
@@ -1571,7 +1571,7 @@ button:disabled {
 .actor-figure-wrap {
   grid-row: 1 / span 2;
   display: grid;
-  place-items: end center;
+  place-items: center;
   min-height: 126px;
   border-radius: 7px;
   background:
@@ -1587,6 +1587,10 @@ button:disabled {
 
 .focus-actor-card .actor-figure-wrap {
   min-height: 126px;
+}
+
+.focus-actor-card .actor-figure-wrap .silhouette {
+  width: 104%;
 }
 
 .has-event-stage .focus-actor-card {
@@ -1986,6 +1990,7 @@ button:disabled {
 .actor-state-inline {
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   min-height: 23px;
   padding: 4px 7px;
   border-radius: 999px;
@@ -1994,6 +1999,12 @@ button:disabled {
   font-size: 0.72rem;
   font-weight: 900;
   line-height: 1;
+}
+
+.actor-state-inline small {
+  color: rgba(21, 16, 23, 0.7);
+  font-size: 0.58rem;
+  font-weight: 900;
 }
 
 .actor-role-badge {
@@ -6279,11 +6290,11 @@ button:disabled {
   .performance-style-inline {
     gap: 3px;
     padding: 2px 3px;
-    font-size: 0.56rem;
+    font-size: 0.6rem;
   }
 
   .performance-style-inline b {
-    font-size: 0.58rem;
+    font-size: 0.62rem;
   }
 
   .performance-color-chip {
@@ -6454,6 +6465,10 @@ button:disabled {
     min-height: 96px;
   }
 
+  .focus-actor-card .actor-figure-wrap .silhouette {
+    width: 108%;
+  }
+
   .actor-card h3 {
     font-size: 1.02rem;
   }
@@ -6467,6 +6482,10 @@ button:disabled {
     min-height: 22px;
     padding: 4px 7px;
     font-size: 0.64rem;
+  }
+
+  .actor-state-inline small {
+    font-size: 0.54rem;
   }
 
   .omen-chip-list {
