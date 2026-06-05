@@ -37,12 +37,12 @@ const prepForResponse = {
 };
 const BALANCE_TARGETS = {
   avgScore: {
-    random: [18, 28],
-    catch: [24, 38],
-    wait: [24, 38],
+    random: [16, 28],
+    catch: [14, 32],
+    wait: [20, 38],
     arrange: [24, 36],
     cut: [12, 28],
-    cycle: [34, 46],
+    cycle: [22, 42],
     lowLoad: [38, 50],
     omen: [48, 60],
     expectedScore: [52, 64],
@@ -61,13 +61,13 @@ const BALANCE_TARGETS = {
   relative: {
     minOmenCycleGap: 8,
     expectedOmenGap: [0, 10],
-    oracleExpectedGap: [5, 18],
-    waitArrangeGap: [-4, 8],
+    oracleExpectedGap: [5, 20],
+    waitArrangeGap: [-8, 8],
     minCatchUpside: 18,
     cycleMedianSPlusCap: 52,
     waitSafetyLoad: 0.8,
     waitSafetyScore: 34,
-    minCatchP90: 50,
+    minCatchP90: 40,
     maxOmenSceneOrBetterPerRun: 5.9,
     minCycleFrayOrAccidentRate: 18,
     minOmenFrayOrAccidentRate: 6,

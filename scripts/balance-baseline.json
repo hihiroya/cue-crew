@@ -3,15 +3,15 @@
   "targets": {
     "avgScore": {
       "random": [
-        18,
+        16,
         28
       ],
       "catch": [
-        24,
-        38
+        14,
+        32
       ],
       "wait": [
-        24,
+        20,
         38
       ],
       "arrange": [
@@ -23,8 +23,8 @@
         28
       ],
       "cycle": [
-        34,
-        46
+        22,
+        42
       ],
       "lowLoad": [
         38,
@@ -85,17 +85,17 @@
       ],
       "oracleExpectedGap": [
         5,
-        18
+        20
       ],
       "waitArrangeGap": [
-        -4,
+        -8,
         8
       ],
       "minCatchUpside": 18,
       "cycleMedianSPlusCap": 52,
       "waitSafetyLoad": 0.8,
       "waitSafetyScore": 34,
-      "minCatchP90": 50,
+      "minCatchP90": 40,
       "maxOmenSceneOrBetterPerRun": 5.9,
       "minCycleFrayOrAccidentRate": 18,
       "minOmenFrayOrAccidentRate": 6
@@ -104,67 +104,67 @@
   "reports": [
     {
       "id": "catch",
-      "avgScore": 27.666666666666668,
-      "p10": 1,
-      "p50": 31,
-      "p90": 52,
+      "avgScore": 16.833333333333332,
+      "p10": -12,
+      "p50": 14,
+      "p90": 42,
       "best": 71,
-      "worst": -18,
+      "worst": -25,
       "avgLoad": 4,
-      "prepHitRate": 40.625,
-      "masterpiecePerRun": 1.6666666666666667,
-      "sceneOrBetterPerRun": 3.25,
-      "frayOrAccidentRate": 20.13888888888889,
-      "accidentRate": 4.166666666666666,
+      "prepHitRate": 37.5,
+      "masterpiecePerRun": 1.0416666666666667,
+      "sceneOrBetterPerRun": 2.6458333333333335,
+      "frayOrAccidentRate": 29.166666666666668,
+      "accidentRate": 4.513888888888888,
       "scores": [
-        44,
-        52,
-        31,
-        38,
-        4,
-        -7,
-        48,
-        59,
-        49,
-        27,
-        51,
-        32,
-        33,
-        9,
-        26,
-        44,
-        24,
-        3,
-        2,
-        0,
-        24,
-        41,
-        6,
-        36,
-        14,
-        -1,
         7,
+        -2,
+        5,
+        7,
+        -20,
+        -7,
         6,
-        12,
-        38,
-        8,
-        16,
-        20,
-        -18,
-        35,
+        -5,
+        57,
+        -12,
+        39,
+        44,
+        21,
+        17,
+        21,
+        36,
+        37,
+        3,
+        -25,
+        29,
+        23,
+        49,
+        21,
+        -14,
+        14,
+        31,
+        -24,
+        6,
+        31,
+        5,
+        15,
+        34,
+        14,
+        7,
+        13,
         71,
         34,
         33,
-        1,
-        71,
-        34,
-        60,
-        63,
-        9,
-        6,
-        32,
-        52,
-        49
+        3,
+        38,
+        7,
+        42,
+        -5,
+        22,
+        -2,
+        57,
+        7,
+        18
       ],
       "loads": [
         4,
@@ -216,27 +216,27 @@
         4,
         4
       ],
-      "prepHits": 117,
+      "prepHits": 108,
       "turns": 288,
       "tiers": {
-        "masterpiece": 80,
-        "smallSuccess": 74,
-        "scene": 76,
-        "fray": 46,
-        "accident": 12
+        "smallSuccess": 77,
+        "masterpiece": 50,
+        "scene": 77,
+        "fray": 71,
+        "accident": 13
       },
       "styles": {
         "heat": 48
       },
       "events": {
-        "adlib": 28,
-        "stepForward": 40,
-        "delayedExit": 28,
-        "positionShift": 46,
-        "heatUp": 49,
-        "tempoRush": 23,
-        "ensembleWaver": 29,
-        "silence": 45
+        "positionShift": 47,
+        "heatUp": 41,
+        "adlib": 32,
+        "ensembleWaver": 30,
+        "delayedExit": 29,
+        "silence": 47,
+        "tempoRush": 27,
+        "stepForward": 35
       },
       "responses": {
         "catch": 288
@@ -247,42 +247,43 @@
       "turnsByNumber": {
         "1": {
           "tiers": {
-            "masterpiece": 27,
-            "fray": 4,
-            "scene": 10,
-            "smallSuccess": 7
+            "smallSuccess": 13,
+            "fray": 9,
+            "scene": 14,
+            "masterpiece": 12
           },
           "responses": {
             "catch": 48
           },
           "prepQuality": {
-            "hit": 28,
-            "miss": 4,
-            "partial": 16
+            "miss": 9,
+            "partial": 16,
+            "hit": 23
           }
         },
         "2": {
           "tiers": {
-            "masterpiece": 12,
-            "scene": 17,
-            "smallSuccess": 16,
-            "fray": 3
+            "masterpiece": 13,
+            "fray": 7,
+            "scene": 10,
+            "smallSuccess": 17,
+            "accident": 1
           },
           "responses": {
             "catch": 48
           },
           "prepQuality": {
-            "hit": 16,
-            "partial": 28,
-            "miss": 4
+            "hit": 15,
+            "miss": 15,
+            "partial": 18
           }
         },
         "3": {
           "tiers": {
-            "masterpiece": 17,
-            "smallSuccess": 18,
-            "fray": 2,
-            "scene": 10,
+            "scene": 13,
+            "smallSuccess": 15,
+            "masterpiece": 9,
+            "fray": 10,
             "accident": 1
           },
           "responses": {
@@ -290,58 +291,58 @@
           },
           "prepQuality": {
             "hit": 18,
-            "miss": 21,
-            "partial": 9
+            "miss": 22,
+            "partial": 8
           }
         },
         "4": {
           "tiers": {
-            "smallSuccess": 19,
+            "fray": 8,
             "scene": 16,
-            "masterpiece": 12,
-            "fray": 1
+            "smallSuccess": 13,
+            "masterpiece": 11
           },
           "responses": {
             "catch": 48
           },
           "prepQuality": {
-            "partial": 24,
-            "hit": 20,
+            "partial": 26,
+            "hit": 18,
             "miss": 4
           }
         },
         "5": {
           "tiers": {
-            "smallSuccess": 9,
-            "scene": 11,
-            "fray": 15,
-            "masterpiece": 11,
-            "accident": 2
+            "smallSuccess": 15,
+            "fray": 14,
+            "accident": 2,
+            "scene": 14,
+            "masterpiece": 3
           },
           "responses": {
             "catch": 48
           },
           "prepQuality": {
-            "partial": 11,
-            "hit": 21,
-            "miss": 16
+            "partial": 16,
+            "hit": 19,
+            "miss": 13
           }
         },
         "6": {
           "tiers": {
-            "smallSuccess": 5,
-            "fray": 21,
             "accident": 9,
-            "scene": 12,
-            "masterpiece": 1
+            "fray": 23,
+            "scene": 10,
+            "smallSuccess": 4,
+            "masterpiece": 2
           },
           "responses": {
             "catch": 48
           },
           "prepQuality": {
-            "partial": 8,
-            "miss": 26,
-            "hit": 14
+            "miss": 28,
+            "hit": 15,
+            "partial": 5
           }
         }
       },
@@ -351,66 +352,66 @@
     },
     {
       "id": "wait",
-      "avgScore": 29.208333333333332,
-      "p10": -9,
-      "p50": 30,
-      "p90": 58,
-      "best": 68,
-      "worst": -37,
-      "avgLoad": 1.3541666666666667,
-      "prepHitRate": 46.875,
-      "masterpiecePerRun": 1.75,
-      "sceneOrBetterPerRun": 3.2291666666666665,
-      "frayOrAccidentRate": 23.958333333333336,
+      "avgScore": 30.520833333333332,
+      "p10": -10,
+      "p50": 32,
+      "p90": 60,
+      "best": 72,
+      "worst": -43,
+      "avgLoad": 1.3333333333333333,
+      "prepHitRate": 48.61111111111111,
+      "masterpiecePerRun": 1.875,
+      "sceneOrBetterPerRun": 3.5416666666666665,
+      "frayOrAccidentRate": 25.694444444444443,
       "accidentRate": 6.944444444444445,
       "scores": [
-        -9,
-        27,
-        -31,
-        41,
-        39,
-        28,
-        46,
-        28,
-        53,
-        23,
-        -5,
-        67,
-        14,
-        14,
-        32,
-        64,
-        41,
-        8,
-        52,
-        30,
-        7,
-        52,
-        4,
-        58,
-        14,
-        30,
-        58,
-        50,
-        24,
-        49,
-        37,
-        -37,
-        -14,
-        13,
-        9,
-        67,
-        68,
+        -4,
+        57,
+        -43,
+        12,
         38,
-        53,
-        48,
-        54,
-        25,
-        -26,
-        21,
+        52,
+        49,
+        28,
+        17,
+        58,
+        46,
+        72,
+        -8,
+        14,
+        11,
         39,
+        64,
+        33,
+        20,
+        41,
+        9,
+        71,
+        -7,
+        32,
+        60,
+        58,
+        63,
+        29,
+        24,
+        31,
+        23,
+        -37,
+        -18,
+        44,
+        27,
+        67,
+        51,
+        52,
+        57,
+        34,
+        48,
+        25,
+        -10,
+        39,
+        49,
         30,
-        37,
+        -14,
         32
       ],
       "loads": [
@@ -422,28 +423,28 @@
         0,
         1,
         0,
+        2,
         0,
         1,
-        2,
         0,
         3,
         1,
         2,
         0,
-        2,
+        1,
         4,
         1,
         2,
-        2,
+        3,
         0,
-        2,
+        3,
         0,
-        2,
+        1,
         0,
         0,
         0,
         1,
-        2,
+        3,
         2,
         4,
         4,
@@ -451,7 +452,7 @@
         2,
         0,
         0,
-        2,
+        0,
         0,
         2,
         0,
@@ -463,127 +464,126 @@
         2,
         0
       ],
-      "prepHits": 135,
+      "prepHits": 140,
       "turns": 288,
       "tiers": {
-        "fray": 49,
-        "smallSuccess": 64,
-        "accident": 20,
-        "scene": 71,
-        "masterpiece": 84
+        "fray": 54,
+        "scene": 80,
+        "smallSuccess": 44,
+        "masterpiece": 90,
+        "accident": 20
       },
       "styles": {
         "breath": 48
       },
       "events": {
-        "tempoRush": 27,
-        "positionShift": 33,
-        "stepForward": 31,
-        "heatUp": 45,
-        "adlib": 36,
-        "delayedExit": 41,
-        "ensembleWaver": 26,
-        "silence": 49
+        "tempoRush": 26,
+        "positionShift": 41,
+        "stepForward": 28,
+        "heatUp": 52,
+        "adlib": 32,
+        "silence": 46,
+        "delayedExit": 42,
+        "ensembleWaver": 21
       },
       "responses": {
         "wait": 288
       },
       "loadDistribution": {
-        "0": 17,
-        "1": 9,
-        "2": 15,
-        "3": 2,
+        "0": 18,
+        "1": 11,
+        "2": 9,
+        "3": 5,
         "4": 5
       },
       "turnsByNumber": {
         "1": {
           "tiers": {
-            "fray": 5,
-            "accident": 11,
-            "smallSuccess": 21,
-            "scene": 5,
-            "masterpiece": 6
-          },
-          "responses": {
-            "wait": 48
-          },
-          "prepQuality": {
-            "partial": 23,
-            "hit": 25
-          }
-        },
-        "2": {
-          "tiers": {
-            "fray": 13,
-            "scene": 9,
-            "masterpiece": 17,
-            "smallSuccess": 8,
-            "accident": 1
-          },
-          "responses": {
-            "wait": 48
-          },
-          "prepQuality": {
-            "partial": 24,
-            "hit": 23,
-            "miss": 1
-          }
-        },
-        "3": {
-          "tiers": {
             "fray": 12,
-            "masterpiece": 9,
-            "smallSuccess": 14,
-            "scene": 10,
+            "masterpiece": 13,
+            "scene": 11,
+            "smallSuccess": 9,
             "accident": 3
           },
           "responses": {
             "wait": 48
           },
           "prepQuality": {
-            "partial": 28,
-            "miss": 1,
-            "hit": 19
+            "partial": 21,
+            "hit": 27
           }
         },
-        "4": {
+        "2": {
           "tiers": {
-            "fray": 11,
-            "masterpiece": 11,
-            "accident": 4,
-            "smallSuccess": 11,
-            "scene": 11
+            "fray": 12,
+            "masterpiece": 16,
+            "accident": 7,
+            "scene": 5,
+            "smallSuccess": 8
           },
           "responses": {
             "wait": 48
           },
           "prepQuality": {
-            "hit": 18,
+            "partial": 25,
+            "hit": 22,
+            "miss": 1
+          }
+        },
+        "3": {
+          "tiers": {
+            "fray": 10,
+            "smallSuccess": 13,
+            "accident": 4,
+            "masterpiece": 8,
+            "scene": 13
+          },
+          "responses": {
+            "wait": 48
+          },
+          "prepQuality": {
+            "partial": 27,
+            "miss": 1,
+            "hit": 20
+          }
+        },
+        "4": {
+          "tiers": {
+            "fray": 11,
+            "masterpiece": 9,
+            "accident": 5,
+            "smallSuccess": 8,
+            "scene": 15
+          },
+          "responses": {
+            "wait": 48
+          },
+          "prepQuality": {
+            "hit": 20,
             "miss": 9,
-            "partial": 21
+            "partial": 19
           }
         },
         "5": {
           "tiers": {
-            "smallSuccess": 7,
             "scene": 17,
             "fray": 4,
-            "masterpiece": 20
+            "masterpiece": 23,
+            "smallSuccess": 4
           },
           "responses": {
             "wait": 48
           },
           "prepQuality": {
             "partial": 21,
-            "hit": 26,
-            "miss": 1
+            "hit": 27
           }
         },
         "6": {
           "tiers": {
-            "smallSuccess": 3,
+            "smallSuccess": 2,
             "scene": 19,
-            "fray": 4,
+            "fray": 5,
             "masterpiece": 21,
             "accident": 1
           },
@@ -603,67 +603,67 @@
     },
     {
       "id": "arrange",
-      "avgScore": 26.354166666666668,
-      "p10": 9,
-      "p50": 28,
-      "p90": 39,
-      "best": 50,
-      "worst": -5,
-      "avgLoad": 0.041666666666666664,
-      "prepHitRate": 31.25,
-      "masterpiecePerRun": 0.9375,
-      "sceneOrBetterPerRun": 3.125,
-      "frayOrAccidentRate": 9.027777777777777,
+      "avgScore": 30.1875,
+      "p10": 19,
+      "p50": 31,
+      "p90": 41,
+      "best": 53,
+      "worst": 0,
+      "avgLoad": 0.020833333333333332,
+      "prepHitRate": 32.29166666666667,
+      "masterpiecePerRun": 1.1041666666666667,
+      "sceneOrBetterPerRun": 3.5833333333333335,
+      "frayOrAccidentRate": 6.25,
       "accidentRate": 0,
       "scores": [
-        33,
-        26,
+        32,
+        32,
         29,
-        9,
-        37,
-        18,
-        43,
-        3,
-        33,
+        25,
+        30,
         39,
-        26,
-        44,
-        33,
+        47,
         19,
         32,
-        34,
-        41,
-        23,
-        11,
-        19,
+        20,
         30,
-        25,
-        24,
+        33,
+        44,
+        8,
+        43,
+        34,
+        31,
         28,
+        37,
+        19,
+        29,
+        19,
+        24,
+        39,
         23,
         12,
         9,
-        29,
-        -5,
-        31,
+        40,
+        0,
+        41,
         35,
-        50,
-        3,
-        12,
-        35,
-        25,
-        36,
-        23,
+        32,
         29,
-        28,
-        26,
-        34,
-        31,
-        14,
-        42,
         27,
         34,
-        23
+        35,
+        40,
+        32,
+        41,
+        43,
+        26,
+        39,
+        19,
+        23,
+        53,
+        27,
+        38,
+        28
       ],
       "loads": [
         0,
@@ -684,7 +684,7 @@
         0,
         0,
         0,
-        1,
+        0,
         0,
         0,
         0,
@@ -715,85 +715,87 @@
         0,
         0
       ],
-      "prepHits": 90,
+      "prepHits": 93,
       "turns": 288,
       "tiers": {
-        "smallSuccess": 112,
-        "scene": 105,
-        "masterpiece": 45,
-        "fray": 26
+        "smallSuccess": 98,
+        "scene": 119,
+        "masterpiece": 53,
+        "fray": 18
       },
       "styles": {
         "control": 48
       },
       "events": {
-        "stepForward": 47,
-        "silence": 43,
-        "adlib": 31,
+        "stepForward": 42,
+        "heatUp": 38,
+        "silence": 42,
         "positionShift": 28,
-        "ensembleWaver": 29,
-        "heatUp": 31,
-        "delayedExit": 46,
-        "tempoRush": 33
+        "ensembleWaver": 33,
+        "delayedExit": 43,
+        "adlib": 30,
+        "tempoRush": 32
       },
       "responses": {
         "arrange": 288
       },
       "loadDistribution": {
-        "0": 46,
-        "1": 2
+        "0": 47,
+        "1": 1
       },
       "turnsByNumber": {
         "1": {
           "tiers": {
-            "smallSuccess": 24,
-            "fray": 4,
-            "scene": 17,
-            "masterpiece": 3
+            "smallSuccess": 18,
+            "scene": 14,
+            "masterpiece": 11,
+            "fray": 5
           },
           "responses": {
             "arrange": 48
           },
           "prepQuality": {
-            "miss": 28,
-            "hit": 20
+            "miss": 22,
+            "partial": 3,
+            "hit": 23
           }
         },
         "2": {
           "tiers": {
-            "smallSuccess": 24,
-            "fray": 14,
-            "scene": 10
+            "smallSuccess": 22,
+            "fray": 6,
+            "scene": 14,
+            "masterpiece": 6
           },
           "responses": {
             "arrange": 48
           },
           "prepQuality": {
-            "miss": 34,
-            "hit": 7,
-            "partial": 7
+            "miss": 16,
+            "partial": 21,
+            "hit": 11
           }
         },
         "3": {
           "tiers": {
-            "scene": 20,
-            "masterpiece": 14,
-            "smallSuccess": 11,
-            "fray": 3
+            "scene": 26,
+            "masterpiece": 11,
+            "smallSuccess": 7,
+            "fray": 4
           },
           "responses": {
             "arrange": 48
           },
           "prepQuality": {
-            "partial": 23,
-            "hit": 14,
-            "miss": 11
+            "partial": 26,
+            "hit": 12,
+            "miss": 10
           }
         },
         "4": {
           "tiers": {
-            "smallSuccess": 16,
-            "scene": 25,
+            "smallSuccess": 15,
+            "scene": 26,
             "masterpiece": 7
           },
           "responses": {
@@ -807,33 +809,33 @@
         },
         "5": {
           "tiers": {
-            "masterpiece": 8,
+            "masterpiece": 6,
             "scene": 12,
-            "smallSuccess": 25,
-            "fray": 3
-          },
-          "responses": {
-            "arrange": 48
-          },
-          "prepQuality": {
-            "hit": 12,
-            "partial": 10,
-            "miss": 26
-          }
-        },
-        "6": {
-          "tiers": {
-            "masterpiece": 13,
-            "smallSuccess": 12,
-            "scene": 21,
+            "smallSuccess": 28,
             "fray": 2
           },
           "responses": {
             "arrange": 48
           },
           "prepQuality": {
-            "hit": 16,
-            "partial": 28,
+            "hit": 11,
+            "partial": 10,
+            "miss": 27
+          }
+        },
+        "6": {
+          "tiers": {
+            "masterpiece": 12,
+            "scene": 27,
+            "smallSuccess": 8,
+            "fray": 1
+          },
+          "responses": {
+            "arrange": 48
+          },
+          "prepQuality": {
+            "hit": 15,
+            "partial": 29,
             "miss": 4
           }
         }
@@ -844,105 +846,105 @@
     },
     {
       "id": "cut",
-      "avgScore": 13.708333333333334,
-      "p10": -17,
-      "p50": 11,
-      "p90": 44,
+      "avgScore": 15.604166666666666,
+      "p10": -9,
+      "p50": 15,
+      "p90": 40,
       "best": 57,
-      "worst": -35,
-      "avgLoad": 0.4583333333333333,
+      "worst": -13,
+      "avgLoad": 0.3958333333333333,
       "prepHitRate": 45.83333333333333,
-      "masterpiecePerRun": 1.25,
-      "sceneOrBetterPerRun": 3,
-      "frayOrAccidentRate": 30.208333333333332,
-      "accidentRate": 6.25,
+      "masterpiecePerRun": 1.2916666666666667,
+      "sceneOrBetterPerRun": 2.8958333333333335,
+      "frayOrAccidentRate": 25.694444444444443,
+      "accidentRate": 4.166666666666666,
       "scores": [
-        25,
-        26,
         39,
-        -35,
+        39,
+        30,
+        -12,
         -13,
-        28,
-        5,
-        -7,
-        44,
         49,
-        7,
+        9,
+        -7,
+        1,
+        49,
+        -8,
         -9,
-        11,
-        11,
-        18,
-        25,
-        3,
-        11,
-        5,
-        -13,
-        25,
+        16,
+        20,
+        31,
+        15,
+        40,
+        22,
+        7,
+        20,
+        57,
         22,
         52,
-        -32,
-        -19,
-        -9,
-        21,
-        5,
-        6,
-        44,
-        2,
-        21,
-        57,
-        -3,
-        10,
-        -22,
-        36,
-        25,
-        10,
-        15,
-        31,
-        49,
-        4,
-        -17,
-        20,
-        43,
+        -11,
+        -6,
         22,
+        21,
+        30,
+        6,
+        20,
+        -9,
+        39,
+        15,
+        13,
+        10,
+        -3,
+        9,
+        15,
+        -1,
+        48,
+        2,
+        28,
+        4,
+        -13,
+        11,
+        16,
+        4,
         10
       ],
       "loads": [
         0,
-        1,
-        0,
-        2,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1,
         0,
         0,
         2,
-        0,
-        0,
+        1,
         0,
         0,
         1,
         0,
         0,
-        0,
         1,
-        2,
-        0,
-        0,
-        0,
         1,
+        0,
         0,
         1,
         0,
         0,
         1,
         0,
-        2,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
         1,
         0,
         0,
@@ -959,90 +961,89 @@
       "prepHits": 132,
       "turns": 288,
       "tiers": {
-        "fray": 69,
-        "scene": 84,
-        "masterpiece": 60,
-        "smallSuccess": 57,
-        "accident": 18
+        "smallSuccess": 75,
+        "scene": 77,
+        "masterpiece": 62,
+        "fray": 62,
+        "accident": 12
       },
       "styles": {
         "closure": 48
       },
       "events": {
-        "heatUp": 36,
-        "delayedExit": 39,
-        "ensembleWaver": 23,
-        "positionShift": 38,
-        "tempoRush": 32,
-        "silence": 38,
-        "stepForward": 48,
-        "adlib": 34
+        "heatUp": 43,
+        "delayedExit": 35,
+        "ensembleWaver": 25,
+        "tempoRush": 36,
+        "silence": 36,
+        "positionShift": 36,
+        "stepForward": 45,
+        "adlib": 32
       },
       "responses": {
         "cut": 288
       },
       "loadDistribution": {
         "0": 30,
-        "1": 14,
-        "2": 4
+        "1": 17,
+        "2": 1
       },
       "turnsByNumber": {
         "1": {
           "tiers": {
-            "fray": 13,
-            "masterpiece": 18,
-            "accident": 10,
-            "smallSuccess": 7
+            "smallSuccess": 12,
+            "masterpiece": 19,
+            "accident": 6,
+            "fray": 11
           },
           "responses": {
             "cut": 48
           },
           "prepQuality": {
-            "miss": 23,
-            "hit": 18,
-            "partial": 7
+            "partial": 14,
+            "hit": 19,
+            "miss": 15
           }
         },
         "2": {
           "tiers": {
-            "scene": 22,
+            "scene": 20,
+            "fray": 16,
             "smallSuccess": 10,
-            "fray": 13,
-            "accident": 2,
-            "masterpiece": 1
+            "accident": 2
           },
           "responses": {
             "cut": 48
           },
           "prepQuality": {
-            "hit": 23,
-            "partial": 22,
-            "miss": 3
+            "hit": 20,
+            "miss": 8,
+            "partial": 20
           }
         },
         "3": {
           "tiers": {
-            "scene": 19,
-            "masterpiece": 12,
-            "smallSuccess": 9,
-            "fray": 8
+            "masterpiece": 14,
+            "smallSuccess": 16,
+            "fray": 4,
+            "scene": 14
           },
           "responses": {
             "cut": 48
           },
           "prepQuality": {
-            "hit": 25,
-            "partial": 22,
+            "hit": 26,
+            "partial": 21,
             "miss": 1
           }
         },
         "4": {
           "tiers": {
-            "masterpiece": 17,
-            "smallSuccess": 7,
-            "fray": 16,
-            "scene": 5,
-            "accident": 3
+            "masterpiece": 15,
+            "smallSuccess": 11,
+            "fray": 14,
+            "scene": 6,
+            "accident": 2
           },
           "responses": {
             "cut": 48
@@ -1055,35 +1056,35 @@
         },
         "5": {
           "tiers": {
-            "smallSuccess": 13,
-            "fray": 9,
-            "accident": 2,
-            "scene": 18,
-            "masterpiece": 6
-          },
-          "responses": {
-            "cut": 48
-          },
-          "prepQuality": {
-            "partial": 20,
-            "miss": 6,
-            "hit": 22
-          }
-        },
-        "6": {
-          "tiers": {
-            "scene": 20,
-            "smallSuccess": 11,
-            "masterpiece": 6,
-            "fray": 10,
+            "smallSuccess": 15,
+            "fray": 8,
+            "scene": 17,
+            "masterpiece": 7,
             "accident": 1
           },
           "responses": {
             "cut": 48
           },
           "prepQuality": {
-            "hit": 23,
-            "partial": 23,
+            "partial": 19,
+            "miss": 7,
+            "hit": 22
+          }
+        },
+        "6": {
+          "tiers": {
+            "masterpiece": 7,
+            "smallSuccess": 11,
+            "fray": 9,
+            "scene": 20,
+            "accident": 1
+          },
+          "responses": {
+            "cut": 48
+          },
+          "prepQuality": {
+            "hit": 24,
+            "partial": 22,
             "miss": 2
           }
         }
@@ -1094,67 +1095,67 @@
     },
     {
       "id": "cycle",
-      "avgScore": 36.75,
-      "p10": 4,
-      "p50": 38,
-      "p90": 62,
-      "best": 73,
-      "worst": -14,
-      "avgLoad": 0.5625,
-      "prepHitRate": 49.30555555555556,
-      "masterpiecePerRun": 1.6041666666666667,
-      "sceneOrBetterPerRun": 3.5208333333333335,
-      "frayOrAccidentRate": 26.73611111111111,
-      "accidentRate": 10.76388888888889,
+      "avgScore": 27.895833333333332,
+      "p10": -3,
+      "p50": 29,
+      "p90": 52,
+      "best": 71,
+      "worst": -26,
+      "avgLoad": 0.4791666666666667,
+      "prepHitRate": 44.44444444444444,
+      "masterpiecePerRun": 0.9375,
+      "sceneOrBetterPerRun": 2.9166666666666665,
+      "frayOrAccidentRate": 31.25,
+      "accidentRate": 13.541666666666666,
       "scores": [
-        52,
+        -11,
         27,
         40,
-        -10,
-        48,
+        1,
+        29,
         34,
-        30,
-        30,
-        64,
-        10,
-        31,
+        29,
+        -3,
+        17,
+        1,
+        20,
         44,
-        62,
-        62,
-        56,
-        -14,
+        14,
+        25,
+        46,
+        46,
         42,
         70,
-        37,
+        -1,
         52,
-        55,
-        23,
-        48,
-        2,
-        40,
-        51,
-        47,
-        8,
-        29,
-        69,
-        24,
-        -4,
-        25,
-        57,
-        9,
-        38,
-        4,
-        57,
         45,
-        73,
+        56,
+        46,
+        23,
+        40,
+        31,
+        29,
+        -19,
+        71,
+        38,
+        41,
+        -26,
+        -7,
+        9,
         26,
-        35,
-        26,
-        37,
-        63,
+        29,
+        13,
+        54,
+        31,
         53,
-        8,
-        49
+        26,
+        18,
+        32,
+        3,
+        43,
+        25,
+        41,
+        46
       ],
       "loads": [
         0,
@@ -1164,21 +1165,12 @@
         0,
         0,
         0,
-        1,
+        0,
         0,
         2,
         0,
         0,
         0,
-        1,
-        1,
-        1,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
         0,
         1,
         1,
@@ -1187,15 +1179,24 @@
         1,
         0,
         0,
-        1,
-        1,
         0,
         0,
         1,
         1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1,
+        0,
         2,
         1,
-        1,
+        0,
         0,
         0,
         1,
@@ -1206,28 +1207,28 @@
         1,
         0
       ],
-      "prepHits": 142,
+      "prepHits": 128,
       "turns": 288,
       "tiers": {
-        "masterpiece": 77,
-        "scene": 92,
-        "fray": 46,
-        "smallSuccess": 42,
-        "accident": 31
+        "smallSuccess": 58,
+        "fray": 51,
+        "scene": 95,
+        "accident": 39,
+        "masterpiece": 45
       },
       "styles": {
-        "heat": 46,
-        "breath": 2
+        "heat": 43,
+        "breath": 5
       },
       "events": {
-        "adlib": 34,
-        "delayedExit": 34,
-        "stepForward": 49,
-        "heatUp": 58,
+        "tempoRush": 28,
+        "ensembleWaver": 23,
+        "stepForward": 47,
+        "heatUp": 56,
+        "delayedExit": 37,
         "positionShift": 19,
-        "silence": 42,
-        "ensembleWaver": 24,
-        "tempoRush": 28
+        "silence": 46,
+        "adlib": 32
       },
       "responses": {
         "catch": 96,
@@ -1236,82 +1237,83 @@
         "cut": 48
       },
       "loadDistribution": {
-        "0": 23,
-        "1": 23,
-        "2": 2
+        "0": 28,
+        "1": 17,
+        "2": 3
       },
       "turnsByNumber": {
         "1": {
           "tiers": {
-            "masterpiece": 30,
-            "smallSuccess": 3,
-            "scene": 12,
-            "fray": 3
+            "smallSuccess": 7,
+            "masterpiece": 17,
+            "scene": 17,
+            "fray": 7
           },
           "responses": {
             "catch": 48
           },
           "prepQuality": {
-            "hit": 36,
-            "partial": 10,
-            "miss": 2
+            "partial": 8,
+            "hit": 30,
+            "miss": 10
           }
         },
         "2": {
           "tiers": {
-            "masterpiece": 19,
-            "smallSuccess": 7,
-            "fray": 9,
-            "scene": 13
+            "fray": 8,
+            "smallSuccess": 12,
+            "masterpiece": 9,
+            "scene": 15,
+            "accident": 4
           },
           "responses": {
             "wait": 48
           },
           "prepQuality": {
-            "hit": 31,
-            "partial": 17
+            "partial": 21,
+            "hit": 25,
+            "miss": 2
           }
         },
         "3": {
           "tiers": {
-            "scene": 23,
-            "smallSuccess": 16,
-            "fray": 2,
-            "masterpiece": 7
+            "scene": 18,
+            "smallSuccess": 17,
+            "fray": 4,
+            "masterpiece": 9
           },
           "responses": {
             "arrange": 48
           },
           "prepQuality": {
-            "partial": 30,
-            "miss": 5,
-            "hit": 13
+            "partial": 32,
+            "miss": 6,
+            "hit": 10
           }
         },
         "4": {
           "tiers": {
-            "fray": 15,
-            "scene": 16,
-            "accident": 15,
-            "masterpiece": 1,
-            "smallSuccess": 1
+            "accident": 17,
+            "scene": 17,
+            "fray": 12,
+            "smallSuccess": 2
           },
           "responses": {
             "cut": 48
           },
           "prepQuality": {
-            "miss": 21,
+            "miss": 20,
             "hit": 17,
-            "partial": 10
+            "partial": 11
           }
         },
         "5": {
           "tiers": {
-            "scene": 16,
-            "smallSuccess": 7,
+            "accident": 4,
+            "smallSuccess": 12,
             "fray": 7,
-            "masterpiece": 15,
-            "accident": 3
+            "scene": 18,
+            "masterpiece": 7
           },
           "responses": {
             "catch": 48
@@ -1324,19 +1326,19 @@
         },
         "6": {
           "tiers": {
-            "scene": 12,
-            "accident": 13,
-            "fray": 10,
-            "masterpiece": 5,
-            "smallSuccess": 8
+            "accident": 14,
+            "fray": 13,
+            "scene": 10,
+            "smallSuccess": 8,
+            "masterpiece": 3
           },
           "responses": {
             "wait": 48
           },
           "prepQuality": {
-            "hit": 20,
+            "hit": 21,
             "partial": 25,
-            "miss": 3
+            "miss": 2
           }
         }
       },
@@ -1349,94 +1351,94 @@
     },
     {
       "id": "random",
-      "avgScore": 22.166666666666668,
-      "p10": -3,
-      "p50": 23,
-      "p90": 49,
+      "avgScore": 19.9375,
+      "p10": -17,
+      "p50": 19,
+      "p90": 48,
       "best": 67,
       "worst": -31,
-      "avgLoad": 1.0833333333333333,
-      "prepHitRate": 38.88888888888889,
+      "avgLoad": 1.2708333333333333,
+      "prepHitRate": 38.54166666666667,
       "masterpiecePerRun": 1.1041666666666667,
-      "sceneOrBetterPerRun": 2.7291666666666665,
-      "frayOrAccidentRate": 37.5,
-      "accidentRate": 10.416666666666668,
+      "sceneOrBetterPerRun": 2.6666666666666665,
+      "frayOrAccidentRate": 40.625,
+      "accidentRate": 12.152777777777777,
       "scores": [
-        9,
+        11,
         5,
         38,
-        11,
-        49,
-        39,
-        -14,
-        -6,
-        67,
-        -3,
-        31,
-        33,
-        29,
-        26,
-        30,
-        11,
+        -10,
+        -7,
+        48,
+        -27,
+        18,
+        44,
+        -19,
+        45,
+        12,
+        -4,
+        8,
+        60,
+        7,
         21,
         57,
-        28,
-        54,
-        11,
+        15,
+        37,
+        43,
         28,
         -16,
         17,
-        2,
-        35,
-        37,
-        31,
-        52,
-        -2,
+        -17,
+        25,
         36,
-        32,
-        -1,
-        17,
-        37,
+        42,
+        67,
         -2,
-        3,
-        23,
-        17,
+        38,
+        38,
+        26,
         30,
-        55,
-        23,
-        23,
-        44,
-        17,
+        54,
+        6,
+        3,
         33,
+        6,
+        43,
+        19,
+        48,
+        9,
+        11,
+        -30,
+        45,
         -31,
-        -2
+        27
       ],
       "loads": [
         4,
         4,
         0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        2,
-        0,
-        1,
-        0,
-        0,
         2,
         0,
         0,
+        3,
+        0,
+        0,
+        4,
         0,
         2,
         0,
         4,
         0,
-        1,
+        0,
+        2,
+        0,
+        0,
+        0,
+        3,
+        0,
+        4,
+        0,
+        0,
         0,
         1,
         0,
@@ -1444,7 +1446,7 @@
         2,
         1,
         0,
-        4,
+        2,
         4,
         0,
         0,
@@ -1456,35 +1458,35 @@
         0,
         0,
         4,
-        0,
-        0,
         4,
-        4
+        1,
+        4,
+        0
       ],
-      "prepHits": 112,
+      "prepHits": 111,
       "turns": 288,
       "tiers": {
-        "scene": 78,
-        "smallSuccess": 49,
+        "fray": 82,
+        "accident": 35,
         "masterpiece": 53,
-        "fray": 78,
-        "accident": 30
+        "scene": 75,
+        "smallSuccess": 43
       },
       "styles": {
-        "heat": 17,
-        "control": 12,
-        "breath": 6,
-        "closure": 13
+        "heat": 14,
+        "control": 11,
+        "breath": 11,
+        "closure": 12
       },
       "events": {
-        "positionShift": 40,
-        "stepForward": 41,
-        "silence": 35,
+        "ensembleWaver": 21,
         "adlib": 36,
-        "ensembleWaver": 15,
-        "delayedExit": 44,
-        "heatUp": 35,
-        "tempoRush": 42
+        "positionShift": 39,
+        "silence": 35,
+        "heatUp": 39,
+        "stepForward": 37,
+        "delayedExit": 41,
+        "tempoRush": 40
       },
       "responses": {
         "catch": 76,
@@ -1493,20 +1495,20 @@
         "wait": 67
       },
       "loadDistribution": {
-        "0": 27,
-        "1": 7,
-        "2": 5,
-        "3": 1,
-        "4": 8
+        "0": 26,
+        "1": 4,
+        "2": 6,
+        "3": 3,
+        "4": 9
       },
       "turnsByNumber": {
         "1": {
           "tiers": {
-            "scene": 16,
-            "accident": 8,
-            "masterpiece": 5,
-            "smallSuccess": 8,
-            "fray": 11
+            "fray": 12,
+            "accident": 6,
+            "masterpiece": 10,
+            "scene": 11,
+            "smallSuccess": 9
           },
           "responses": {
             "catch": 13,
@@ -1515,18 +1517,18 @@
             "arrange": 14
           },
           "prepQuality": {
-            "partial": 15,
-            "miss": 16,
-            "hit": 17
+            "miss": 9,
+            "hit": 18,
+            "partial": 21
           }
         },
         "2": {
           "tiers": {
-            "smallSuccess": 9,
-            "scene": 10,
-            "masterpiece": 13,
-            "fray": 14,
-            "accident": 2
+            "accident": 8,
+            "scene": 11,
+            "masterpiece": 10,
+            "smallSuccess": 7,
+            "fray": 12
           },
           "responses": {
             "arrange": 12,
@@ -1535,18 +1537,18 @@
             "cut": 12
           },
           "prepQuality": {
-            "miss": 11,
-            "hit": 22,
-            "partial": 15
+            "miss": 17,
+            "hit": 20,
+            "partial": 11
           }
         },
         "3": {
           "tiers": {
-            "masterpiece": 12,
-            "fray": 12,
-            "smallSuccess": 8,
+            "masterpiece": 9,
+            "fray": 14,
             "accident": 7,
-            "scene": 9
+            "scene": 12,
+            "smallSuccess": 6
           },
           "responses": {
             "arrange": 7,
@@ -1555,18 +1557,18 @@
             "wait": 14
           },
           "prepQuality": {
-            "hit": 17,
-            "partial": 23,
+            "hit": 18,
+            "partial": 22,
             "miss": 8
           }
         },
         "4": {
           "tiers": {
-            "smallSuccess": 11,
-            "fray": 15,
-            "scene": 11,
-            "accident": 6,
-            "masterpiece": 5
+            "fray": 16,
+            "scene": 15,
+            "smallSuccess": 7,
+            "accident": 8,
+            "masterpiece": 2
           },
           "responses": {
             "arrange": 12,
@@ -1575,18 +1577,18 @@
             "wait": 12
           },
           "prepQuality": {
-            "miss": 12,
-            "partial": 22,
-            "hit": 14
+            "miss": 17,
+            "partial": 19,
+            "hit": 12
           }
         },
         "5": {
           "tiers": {
-            "fray": 14,
-            "masterpiece": 8,
-            "scene": 16,
+            "masterpiece": 10,
+            "scene": 14,
+            "fray": 15,
             "smallSuccess": 6,
-            "accident": 4
+            "accident": 3
           },
           "responses": {
             "catch": 12,
@@ -1595,18 +1597,18 @@
             "cut": 11
           },
           "prepQuality": {
+            "hit": 20,
             "partial": 19,
-            "hit": 19,
-            "miss": 10
+            "miss": 9
           }
         },
         "6": {
           "tiers": {
-            "fray": 12,
-            "scene": 16,
-            "masterpiece": 10,
+            "fray": 13,
+            "smallSuccess": 8,
+            "masterpiece": 12,
             "accident": 3,
-            "smallSuccess": 7
+            "scene": 12
           },
           "responses": {
             "catch": 15,
@@ -1615,8 +1617,8 @@
             "cut": 17
           },
           "prepQuality": {
-            "partial": 19,
-            "miss": 6,
+            "partial": 18,
+            "miss": 7,
             "hit": 23
           }
         }
@@ -1627,483 +1629,490 @@
     },
     {
       "id": "omen",
-      "avgScore": 54.875,
-      "p10": 37,
-      "p50": 55,
-      "p90": 68,
-      "best": 84,
-      "worst": 21,
-      "avgLoad": 0.5625,
-      "prepHitRate": 47.22222222222222,
-      "masterpiecePerRun": 2.3958333333333335,
-      "sceneOrBetterPerRun": 4.5625,
+      "avgScore": 54.583333333333336,
+      "p10": 31,
+      "p50": 54,
+      "p90": 72,
+      "best": 81,
+      "worst": 8,
+      "avgLoad": 0.5208333333333334,
+      "prepHitRate": 50.69444444444444,
+      "masterpiecePerRun": 2.6666666666666665,
+      "sceneOrBetterPerRun": 4.541666666666667,
       "frayOrAccidentRate": 12.5,
-      "accidentRate": 0.6944444444444444,
+      "accidentRate": 0,
       "scores": [
-        66,
-        66,
-        23,
-        57,
-        38,
-        64,
-        55,
-        54,
-        62,
-        49,
-        66,
+        53,
         81,
-        49,
-        73,
-        84,
+        16,
+        54,
+        45,
+        31,
+        55,
+        78,
+        53,
+        60,
+        53,
+        81,
+        72,
+        72,
+        57,
         51,
-        63,
+        72,
         37,
         31,
-        45,
-        41,
-        21,
-        48,
-        67,
-        37,
-        59,
-        55,
-        70,
-        62,
-        62,
-        44,
-        60,
-        66,
-        48,
-        33,
-        66,
         47,
-        49,
-        41,
+        50,
+        40,
+        71,
+        57,
+        42,
         63,
-        68,
-        47,
+        71,
+        30,
+        8,
         52,
-        84,
+        52,
+        68,
+        69,
+        69,
+        39,
+        76,
+        47,
+        63,
+        44,
+        63,
+        60,
+        49,
+        66,
+        61,
         54,
         58,
-        68,
-        50
+        64,
+        35
       ],
       "loads": [
         0,
         1,
         0,
         0,
-        1,
-        1,
-        1,
+        4,
         0,
         1,
-        1,
         0,
-        1,
-        1,
-        0,
-        1,
-        1,
-        1,
-        0,
-        0,
-        1,
-        1,
-        0,
+        2,
         0,
         0,
         1,
         0,
+        0,
+        0,
+        3,
         1,
         0,
+        0,
         1,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         1,
         0,
         1,
         0,
         2,
-        1,
+        0,
         1,
         1,
         0,
         1,
-        1,
-        1,
         0,
+        0,
+        1,
         0,
         1,
         0,
         0,
         0
       ],
-      "prepHits": 136,
+      "prepHits": 146,
       "turns": 288,
       "tiers": {
-        "scene": 104,
-        "masterpiece": 115,
-        "fray": 34,
-        "smallSuccess": 33,
-        "accident": 2
+        "scene": 90,
+        "masterpiece": 128,
+        "smallSuccess": 34,
+        "fray": 36
       },
       "styles": {
-        "heat": 40,
-        "breath": 8
+        "heat": 35,
+        "breath": 10,
+        "closure": 2,
+        "control": 1
       },
       "events": {
-        "tempoRush": 34,
-        "adlib": 38,
-        "delayedExit": 33,
+        "tempoRush": 31,
+        "heatUp": 44,
+        "delayedExit": 37,
         "ensembleWaver": 23,
-        "stepForward": 41,
-        "silence": 36,
-        "positionShift": 32,
-        "heatUp": 51
+        "stepForward": 40,
+        "silence": 46,
+        "adlib": 36,
+        "positionShift": 31
       },
       "responses": {
-        "catch": 118,
-        "cut": 69,
+        "catch": 97,
         "arrange": 39,
-        "wait": 62
+        "wait": 99,
+        "cut": 53
       },
       "loadDistribution": {
-        "0": 22,
-        "1": 25,
-        "2": 1
+        "0": 31,
+        "1": 12,
+        "2": 3,
+        "3": 1,
+        "4": 1
       },
       "turnsByNumber": {
         "1": {
           "tiers": {
-            "scene": 12,
-            "masterpiece": 30,
-            "smallSuccess": 3,
-            "fray": 3
+            "scene": 6,
+            "masterpiece": 31,
+            "fray": 5,
+            "smallSuccess": 6
           },
           "responses": {
-            "catch": 36,
-            "wait": 9,
-            "cut": 3
+            "catch": 20,
+            "wait": 22,
+            "cut": 5,
+            "arrange": 1
           },
           "prepQuality": {
-            "partial": 18,
-            "hit": 30
+            "partial": 16,
+            "hit": 32
           }
         },
         "2": {
           "tiers": {
-            "masterpiece": 16,
-            "fray": 11,
-            "scene": 15,
-            "smallSuccess": 6
+            "scene": 14,
+            "masterpiece": 22,
+            "fray": 9,
+            "smallSuccess": 3
           },
           "responses": {
-            "catch": 14,
-            "cut": 11,
-            "wait": 17,
-            "arrange": 6
+            "arrange": 7,
+            "wait": 15,
+            "cut": 8,
+            "catch": 18
           },
           "prepQuality": {
-            "hit": 25,
-            "partial": 23
+            "hit": 28,
+            "partial": 20
           }
         },
         "3": {
           "tiers": {
-            "masterpiece": 18,
-            "fray": 10,
-            "smallSuccess": 4,
-            "scene": 16
+            "masterpiece": 21,
+            "fray": 8,
+            "smallSuccess": 10,
+            "scene": 9
           },
           "responses": {
-            "cut": 15,
-            "wait": 13,
-            "catch": 10,
-            "arrange": 10
+            "wait": 23,
+            "cut": 6,
+            "arrange": 8,
+            "catch": 11
           },
           "prepQuality": {
-            "hit": 24,
-            "partial": 23,
+            "hit": 27,
+            "partial": 20,
             "miss": 1
           }
         },
         "4": {
           "tiers": {
-            "scene": 22,
-            "masterpiece": 15,
-            "fray": 3,
-            "accident": 2,
-            "smallSuccess": 6
+            "scene": 20,
+            "masterpiece": 18,
+            "fray": 5,
+            "smallSuccess": 5
           },
           "responses": {
-            "catch": 34,
-            "arrange": 6,
+            "catch": 29,
+            "arrange": 7,
             "cut": 7,
-            "wait": 1
+            "wait": 5
           },
           "prepQuality": {
             "partial": 24,
-            "hit": 18,
-            "miss": 6
+            "hit": 20,
+            "miss": 4
           }
         },
         "5": {
           "tiers": {
+            "smallSuccess": 7,
+            "masterpiece": 22,
             "scene": 16,
-            "masterpiece": 18,
-            "fray": 4,
-            "smallSuccess": 10
+            "fray": 3
           },
           "responses": {
-            "cut": 29,
-            "arrange": 10,
-            "catch": 4,
-            "wait": 5
+            "cut": 23,
+            "arrange": 9,
+            "catch": 6,
+            "wait": 10
           },
           "prepQuality": {
-            "partial": 20,
-            "hit": 19,
-            "miss": 9
+            "partial": 18,
+            "hit": 24,
+            "miss": 6
           }
         },
         "6": {
           "tiers": {
-            "masterpiece": 18,
-            "scene": 23,
-            "smallSuccess": 4,
-            "fray": 3
+            "masterpiece": 14,
+            "scene": 25,
+            "fray": 6,
+            "smallSuccess": 3
           },
           "responses": {
-            "arrange": 7,
-            "catch": 20,
-            "wait": 17,
-            "cut": 4
+            "wait": 24,
+            "catch": 13,
+            "cut": 4,
+            "arrange": 7
           },
           "prepQuality": {
-            "hit": 20,
-            "partial": 28
+            "hit": 15,
+            "partial": 31,
+            "miss": 2
           }
         }
       },
       "choiceReasons": {
-        "omen:visible-omens+best-score": 223,
-        "omen:high-load-or-fray": 53,
-        "omen:likely-fray": 12
+        "omen:visible-omens+best-score": 239,
+        "omen:high-load-or-fray": 35,
+        "omen:likely-fray": 14
       }
     },
     {
       "id": "expectedScore",
-      "avgScore": 63.333333333333336,
-      "p10": 42,
-      "p50": 65,
-      "p90": 80,
-      "best": 83,
-      "worst": 13,
+      "avgScore": 57.729166666666664,
+      "p10": 36,
+      "p50": 57,
+      "p90": 78,
+      "best": 87,
+      "worst": 9,
       "avgLoad": 1.125,
-      "prepHitRate": 56.94444444444444,
-      "masterpiecePerRun": 3.1875,
-      "sceneOrBetterPerRun": 5.125,
-      "frayOrAccidentRate": 3.8194444444444446,
+      "prepHitRate": 53.125,
+      "masterpiecePerRun": 2.8958333333333335,
+      "sceneOrBetterPerRun": 4.520833333333333,
+      "frayOrAccidentRate": 5.555555555555555,
       "accidentRate": 0,
       "scores": [
-        77,
+        70,
+        41,
+        84,
         72,
-        63,
-        80,
-        72,
-        68,
-        60,
         47,
-        52,
-        53,
-        80,
         51,
-        81,
-        81,
-        69,
+        49,
+        40,
+        66,
+        34,
         71,
+        51,
+        63,
+        57,
+        58,
+        81,
+        40,
+        67,
+        53,
+        72,
+        53,
+        72,
+        57,
+        31,
         42,
-        71,
         46,
-        73,
-        55,
-        83,
+        59,
+        34,
+        52,
+        78,
+        65,
+        46,
         52,
         64,
-        64,
-        34,
-        59,
-        61,
-        64,
-        72,
-        65,
-        76,
-        26,
-        74,
-        62,
-        68,
-        38,
-        77,
+        60,
+        55,
+        44,
+        82,
         69,
         77,
-        81,
-        62,
-        83,
-        73,
-        56,
-        49,
-        13,
-        74
+        68,
+        42,
+        80,
+        74,
+        70,
+        9,
+        36,
+        87
       ],
       "loads": [
-        2,
+        1,
         0,
         0,
         3,
         1,
         3,
         0,
+        3,
+        2,
+        1,
+        2,
+        4,
+        2,
+        1,
         0,
         2,
+        2,
+        1,
+        0,
+        2,
+        4,
+        0,
+        0,
+        0,
+        2,
+        2,
+        1,
+        0,
+        2,
+        0,
+        1,
+        1,
         1,
         3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
         4,
-        2,
-        1,
         0,
-        4,
-        4,
-        0,
-        1,
-        0,
-        4,
-        0,
-        0,
-        1,
-        2,
-        2,
-        1,
-        0,
-        0,
-        0,
-        1,
-        1,
-        2,
-        3,
-        0,
-        0,
-        2,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        1
+        2
       ],
-      "prepHits": 164,
+      "prepHits": 153,
       "turns": 288,
       "tiers": {
-        "masterpiece": 153,
-        "smallSuccess": 31,
-        "scene": 93,
-        "fray": 11
+        "masterpiece": 139,
+        "smallSuccess": 55,
+        "fray": 16,
+        "scene": 78
       },
       "styles": {
-        "heat": 44,
-        "breath": 3,
-        "control": 1
+        "heat": 33,
+        "control": 6,
+        "breath": 6,
+        "closure": 3
       },
       "events": {
-        "adlib": 37,
-        "silence": 42,
-        "stepForward": 43,
-        "positionShift": 30,
-        "heatUp": 44,
-        "delayedExit": 31,
-        "ensembleWaver": 27,
-        "tempoRush": 34
+        "adlib": 32,
+        "silence": 52,
+        "stepForward": 39,
+        "positionShift": 35,
+        "heatUp": 42,
+        "delayedExit": 30,
+        "ensembleWaver": 28,
+        "tempoRush": 30
       },
       "responses": {
-        "catch": 145,
-        "wait": 50,
-        "cut": 78,
-        "arrange": 15
+        "catch": 129,
+        "cut": 94,
+        "wait": 41,
+        "arrange": 24
       },
       "loadDistribution": {
         "0": 21,
-        "1": 12,
-        "2": 7,
+        "1": 10,
+        "2": 10,
         "3": 4,
-        "4": 4
+        "4": 3
       },
       "turnsByNumber": {
         "1": {
           "tiers": {
-            "masterpiece": 25,
-            "smallSuccess": 7,
-            "scene": 16
+            "masterpiece": 20,
+            "fray": 4,
+            "scene": 13,
+            "smallSuccess": 11
           },
           "responses": {
-            "catch": 42,
+            "catch": 21,
+            "cut": 18,
             "wait": 5,
-            "cut": 1
+            "arrange": 4
           },
           "prepQuality": {
-            "hit": 25,
-            "partial": 23
+            "hit": 24,
+            "partial": 24
           }
         },
         "2": {
           "tiers": {
-            "masterpiece": 24,
-            "smallSuccess": 6,
-            "scene": 14,
-            "fray": 4
+            "smallSuccess": 16,
+            "scene": 9,
+            "masterpiece": 20,
+            "fray": 3
           },
           "responses": {
-            "wait": 18,
-            "catch": 22,
-            "cut": 6,
-            "arrange": 2
+            "cut": 16,
+            "arrange": 5,
+            "wait": 9,
+            "catch": 18
           },
           "prepQuality": {
-            "hit": 31,
-            "partial": 17
+            "partial": 24,
+            "hit": 24
           }
         },
         "3": {
           "tiers": {
-            "smallSuccess": 4,
-            "scene": 16,
-            "masterpiece": 25,
-            "fray": 3
+            "smallSuccess": 10,
+            "fray": 6,
+            "masterpiece": 19,
+            "scene": 13
           },
           "responses": {
             "wait": 5,
-            "catch": 10,
-            "cut": 33
+            "cut": 26,
+            "catch": 15,
+            "arrange": 2
           },
           "prepQuality": {
-            "partial": 23,
-            "hit": 25
+            "partial": 29,
+            "hit": 19
           }
         },
         "4": {
           "tiers": {
-            "masterpiece": 28,
-            "scene": 19,
-            "fray": 1
+            "masterpiece": 29,
+            "scene": 18,
+            "smallSuccess": 1
           },
           "responses": {
-            "catch": 45,
-            "arrange": 2,
-            "cut": 1
+            "catch": 47,
+            "arrange": 1
           },
           "prepQuality": {
             "hit": 29,
@@ -2113,37 +2122,37 @@
         "5": {
           "tiers": {
             "masterpiece": 26,
-            "scene": 15,
-            "smallSuccess": 5,
-            "fray": 2
+            "scene": 14,
+            "smallSuccess": 7,
+            "fray": 1
           },
           "responses": {
-            "cut": 17,
-            "arrange": 3,
+            "cut": 14,
+            "catch": 18,
             "wait": 13,
-            "catch": 15
+            "arrange": 3
           },
           "prepQuality": {
-            "hit": 27,
-            "partial": 21
+            "hit": 28,
+            "partial": 20
           }
         },
         "6": {
           "tiers": {
             "masterpiece": 25,
-            "smallSuccess": 9,
-            "scene": 13,
-            "fray": 1
+            "smallSuccess": 10,
+            "scene": 11,
+            "fray": 2
           },
           "responses": {
-            "catch": 11,
+            "catch": 10,
             "cut": 20,
             "wait": 9,
-            "arrange": 8
+            "arrange": 9
           },
           "prepQuality": {
-            "hit": 27,
-            "partial": 21
+            "hit": 29,
+            "partial": 19
           }
         }
       },
@@ -2153,81 +2162,81 @@
     },
     {
       "id": "lowLoad",
-      "avgScore": 40.25,
-      "p10": 23,
-      "p50": 41,
-      "p90": 59,
-      "best": 70,
-      "worst": 8,
+      "avgScore": 38.166666666666664,
+      "p10": 21,
+      "p50": 37,
+      "p90": 56,
+      "best": 73,
+      "worst": -1,
       "avgLoad": 0.0625,
-      "prepHitRate": 52.77777777777778,
-      "masterpiecePerRun": 1.7708333333333333,
-      "sceneOrBetterPerRun": 4.020833333333333,
-      "frayOrAccidentRate": 21.52777777777778,
+      "prepHitRate": 50.69444444444444,
+      "masterpiecePerRun": 1.7916666666666667,
+      "sceneOrBetterPerRun": 3.7291666666666665,
+      "frayOrAccidentRate": 26.38888888888889,
       "accidentRate": 0.6944444444444444,
       "scores": [
-        23,
-        46,
-        46,
+        27,
+        15,
+        51,
         36,
         41,
-        23,
-        49,
+        35,
+        42,
         27,
-        42,
-        33,
-        25,
-        66,
-        38,
-        65,
-        56,
+        44,
+        39,
+        3,
+        24,
+        24,
+        51,
+        44,
         37,
-        59,
+        35,
         22,
-        26,
+        27,
+        59,
+        -1,
+        48,
+        21,
         51,
-        28,
-        38,
-        8,
-        64,
-        51,
-        41,
-        41,
-        29,
-        70,
-        25,
-        51,
+        66,
+        50,
+        48,
+        35,
+        57,
+        32,
+        23,
+        54,
+        48,
+        60,
+        40,
         52,
-        23,
-        43,
-        23,
-        42,
         43,
         17,
-        23,
+        28,
         35,
         28,
-        44,
+        28,
         55,
-        59,
-        23,
+        32,
+        31,
         56,
-        67,
-        42
+        73,
+        39
       ],
       "loads": [
         0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
         1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0,
         0,
         0,
@@ -2265,36 +2274,36 @@
         0,
         0
       ],
-      "prepHits": 152,
+      "prepHits": 146,
       "turns": 288,
       "tiers": {
-        "scene": 108,
-        "fray": 60,
+        "scene": 93,
+        "masterpiece": 86,
+        "fray": 74,
         "smallSuccess": 33,
-        "masterpiece": 85,
         "accident": 2
       },
       "styles": {
-        "control": 11,
-        "heat": 19,
-        "closure": 6,
-        "breath": 12
+        "control": 10,
+        "breath": 15,
+        "heat": 17,
+        "closure": 6
       },
       "events": {
-        "heatUp": 50,
-        "adlib": 27,
-        "silence": 41,
-        "delayedExit": 41,
-        "stepForward": 39,
-        "tempoRush": 33,
-        "ensembleWaver": 27,
-        "positionShift": 30
+        "heatUp": 46,
+        "ensembleWaver": 29,
+        "silence": 48,
+        "delayedExit": 40,
+        "stepForward": 34,
+        "positionShift": 36,
+        "tempoRush": 29,
+        "adlib": 26
       },
       "responses": {
-        "arrange": 123,
-        "wait": 57,
-        "cut": 80,
-        "catch": 28
+        "arrange": 109,
+        "cut": 102,
+        "wait": 52,
+        "catch": 25
       },
       "loadDistribution": {
         "0": 46,
@@ -2304,187 +2313,206 @@
       "turnsByNumber": {
         "1": {
           "tiers": {
-            "scene": 27,
-            "masterpiece": 10,
-            "fray": 8,
-            "smallSuccess": 3
+            "scene": 13,
+            "masterpiece": 14,
+            "fray": 10,
+            "smallSuccess": 11
           },
           "responses": {
-            "arrange": 16,
-            "catch": 19,
-            "cut": 11,
-            "wait": 2
+            "arrange": 6,
+            "wait": 8,
+            "cut": 24,
+            "catch": 10
           },
           "prepQuality": {
-            "hit": 26,
-            "partial": 22
+            "hit": 20,
+            "partial": 28
           }
         },
         "2": {
           "tiers": {
-            "scene": 7,
-            "smallSuccess": 14,
-            "fray": 12,
-            "masterpiece": 14,
-            "accident": 1
+            "masterpiece": 19,
+            "accident": 1,
+            "fray": 11,
+            "smallSuccess": 5,
+            "scene": 12
           },
           "responses": {
-            "wait": 15,
-            "arrange": 24,
-            "cut": 7,
-            "catch": 2
+            "cut": 9,
+            "catch": 9,
+            "arrange": 18,
+            "wait": 12
           },
           "prepQuality": {
-            "partial": 19,
-            "miss": 13,
-            "hit": 16
+            "hit": 27,
+            "partial": 17,
+            "miss": 4
           }
         },
         "3": {
           "tiers": {
-            "fray": 5,
-            "scene": 24,
-            "masterpiece": 16,
+            "fray": 9,
+            "scene": 22,
+            "masterpiece": 14,
             "smallSuccess": 3
           },
           "responses": {
-            "cut": 25,
-            "arrange": 14,
-            "wait": 9
+            "arrange": 15,
+            "cut": 26,
+            "wait": 7
           },
           "prepQuality": {
-            "partial": 21,
-            "hit": 27
+            "partial": 26,
+            "hit": 22
           }
         },
         "4": {
           "tiers": {
-            "fray": 22,
-            "scene": 17,
+            "fray": 24,
+            "scene": 18,
             "smallSuccess": 4,
-            "masterpiece": 5
+            "masterpiece": 2
           },
           "responses": {
-            "arrange": 36,
-            "cut": 10,
-            "wait": 2
-          },
-          "prepQuality": {
-            "partial": 22,
-            "hit": 26
-          }
-        },
-        "5": {
-          "tiers": {
-            "smallSuccess": 6,
-            "masterpiece": 20,
-            "fray": 6,
-            "scene": 15,
-            "accident": 1
-          },
-          "responses": {
-            "wait": 23,
             "cut": 13,
-            "catch": 6,
-            "arrange": 6
+            "arrange": 32,
+            "wait": 3
           },
           "prepQuality": {
             "partial": 24,
             "hit": 24
           }
         },
+        "5": {
+          "tiers": {
+            "smallSuccess": 8,
+            "fray": 10,
+            "masterpiece": 18,
+            "scene": 11,
+            "accident": 1
+          },
+          "responses": {
+            "wait": 16,
+            "arrange": 11,
+            "cut": 17,
+            "catch": 4
+          },
+          "prepQuality": {
+            "partial": 26,
+            "hit": 22
+          }
+        },
         "6": {
           "tiers": {
-            "scene": 18,
-            "masterpiece": 20,
-            "smallSuccess": 3,
-            "fray": 7
+            "scene": 17,
+            "masterpiece": 19,
+            "fray": 10,
+            "smallSuccess": 2
           },
           "responses": {
             "arrange": 27,
+            "catch": 2,
             "wait": 6,
-            "cut": 14,
-            "catch": 1
+            "cut": 13
           },
           "prepQuality": {
-            "hit": 33,
-            "partial": 14,
+            "hit": 31,
+            "partial": 16,
             "miss": 1
           }
         }
       },
       "choiceReasons": {
-        "lowLoad:weighted-events": 264,
-        "lowLoad:likely-fray": 24
+        "lowLoad:weighted-events": 274,
+        "lowLoad:likely-fray": 14
       }
     },
     {
       "id": "styleCommit",
-      "avgScore": 35.104166666666664,
-      "p10": 15,
-      "p50": 34,
+      "avgScore": 33.520833333333336,
+      "p10": 13,
+      "p50": 32,
       "p90": 53,
-      "best": 77,
+      "best": 66,
       "worst": -13,
-      "avgLoad": 3.2708333333333335,
-      "prepHitRate": 41.31944444444444,
-      "masterpiecePerRun": 1.9583333333333333,
-      "sceneOrBetterPerRun": 3.8125,
-      "frayOrAccidentRate": 16.666666666666664,
-      "accidentRate": 3.8194444444444446,
+      "avgLoad": 3.2291666666666665,
+      "prepHitRate": 38.54166666666667,
+      "masterpiecePerRun": 2,
+      "sceneOrBetterPerRun": 3.5208333333333335,
+      "frayOrAccidentRate": 17.708333333333336,
+      "accidentRate": 2.083333333333333,
       "scores": [
-        15,
-        54,
-        59,
-        28,
-        -13,
-        42,
-        31,
-        45,
-        30,
-        34,
-        38,
-        31,
-        27,
-        33,
-        46,
-        46,
-        21,
-        17,
-        40,
-        43,
-        46,
-        31,
-        23,
-        22,
-        46,
-        2,
-        28,
-        56,
-        40,
-        29,
-        46,
-        63,
-        34,
-        52,
-        32,
-        9,
-        19,
-        12,
-        30,
-        29,
         36,
-        51,
-        77,
         53,
-        20,
+        64,
+        48,
+        -13,
+        26,
+        36,
+        52,
+        30,
+        31,
+        5,
+        41,
+        30,
+        49,
+        26,
+        29,
+        56,
+        13,
+        66,
+        -1,
+        58,
+        40,
+        16,
+        22,
+        44,
+        15,
+        35,
+        27,
+        43,
+        32,
+        29,
+        55,
+        32,
+        49,
+        31,
+        16,
+        17,
+        12,
+        40,
+        29,
+        32,
+        47,
+        37,
+        30,
+        39,
         34,
-        45,
-        53
+        48,
+        23
       ],
       "loads": [
         4,
         4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        0,
+        4,
+        4,
+        0,
+        4,
+        0,
+        4,
+        0,
+        4,
+        2,
+        4,
+        0,
+        4,
+        4,
         0,
         4,
         4,
@@ -2492,13 +2520,15 @@
         4,
         4,
         4,
+        3,
         4,
         4,
         4,
         4,
         4,
         4,
-        0,
+        4,
+        4,
         4,
         4,
         4,
@@ -2506,255 +2536,229 @@
         1,
         4,
         4,
-        4,
         0,
         4,
-        0,
-        4,
-        4,
-        4,
-        0,
-        4,
-        4,
-        4,
         1,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        1,
-        4,
-        4,
-        1,
-        1
+        4
       ],
-      "prepHits": 119,
+      "prepHits": 111,
       "turns": 288,
       "tiers": {
-        "scene": 89,
-        "fray": 37,
-        "masterpiece": 94,
-        "smallSuccess": 57,
-        "accident": 11
+        "scene": 73,
+        "masterpiece": 96,
+        "smallSuccess": 68,
+        "fray": 45,
+        "accident": 6
       },
       "styles": {
-        "heat": 38,
+        "heat": 37,
         "breath": 7,
-        "closure": 1,
-        "control": 2
+        "closure": 4
       },
       "events": {
-        "tempoRush": 35,
+        "tempoRush": 31,
         "ensembleWaver": 31,
-        "positionShift": 38,
-        "stepForward": 34,
-        "delayedExit": 35,
-        "adlib": 31,
-        "silence": 46,
-        "heatUp": 38
+        "positionShift": 37,
+        "stepForward": 35,
+        "silence": 45,
+        "adlib": 33,
+        "delayedExit": 44,
+        "heatUp": 32
       },
       "responses": {
-        "catch": 212,
-        "cut": 14,
-        "wait": 50,
-        "arrange": 12
+        "catch": 187,
+        "cut": 43,
+        "wait": 55,
+        "arrange": 3
       },
       "loadDistribution": {
-        "0": 5,
-        "1": 5,
-        "4": 38
+        "0": 7,
+        "1": 2,
+        "2": 1,
+        "3": 1,
+        "4": 37
       },
       "turnsByNumber": {
         "1": {
           "tiers": {
-            "scene": 13,
-            "smallSuccess": 8,
-            "masterpiece": 26,
-            "fray": 1
+            "scene": 7,
+            "masterpiece": 28,
+            "smallSuccess": 10,
+            "fray": 3
           },
           "responses": {
-            "catch": 39,
-            "wait": 5,
-            "cut": 3,
+            "catch": 17,
+            "wait": 17,
+            "cut": 13,
             "arrange": 1
           },
           "prepQuality": {
-            "partial": 21,
-            "hit": 27
+            "partial": 19,
+            "hit": 29
           }
         },
         "2": {
           "tiers": {
-            "fray": 6,
             "masterpiece": 21,
-            "scene": 13,
-            "smallSuccess": 8
+            "scene": 9,
+            "smallSuccess": 14,
+            "fray": 4
           },
           "responses": {
-            "cut": 7,
-            "wait": 17,
-            "catch": 21,
-            "arrange": 3
+            "cut": 14,
+            "catch": 22,
+            "wait": 10,
+            "arrange": 2
           },
           "prepQuality": {
-            "partial": 22,
-            "hit": 26
+            "hit": 24,
+            "partial": 24
           }
         },
         "3": {
           "tiers": {
-            "scene": 11,
-            "masterpiece": 17,
-            "smallSuccess": 19,
-            "fray": 1
+            "scene": 14,
+            "masterpiece": 16,
+            "smallSuccess": 16,
+            "fray": 2
           },
           "responses": {
-            "catch": 38,
+            "catch": 37,
             "wait": 7,
-            "cut": 1,
-            "arrange": 2
+            "cut": 4
           },
           "prepQuality": {
-            "miss": 18,
-            "hit": 19,
-            "partial": 11
+            "miss": 17,
+            "hit": 17,
+            "partial": 14
           }
         },
         "4": {
           "tiers": {
-            "masterpiece": 13,
-            "scene": 24,
+            "masterpiece": 17,
+            "scene": 19,
             "fray": 2,
-            "smallSuccess": 9
+            "smallSuccess": 10
           },
           "responses": {
-            "catch": 38,
+            "catch": 37,
             "wait": 7,
-            "cut": 1,
-            "arrange": 2
+            "cut": 4
           },
           "prepQuality": {
-            "hit": 16,
+            "hit": 17,
             "partial": 29,
-            "miss": 3
+            "miss": 2
           }
         },
         "5": {
           "tiers": {
-            "fray": 8,
-            "scene": 16,
-            "masterpiece": 11,
-            "smallSuccess": 11,
-            "accident": 2
+            "smallSuccess": 13,
+            "scene": 15,
+            "masterpiece": 10,
+            "fray": 10
           },
           "responses": {
-            "catch": 38,
+            "catch": 37,
             "wait": 7,
-            "cut": 1,
-            "arrange": 2
+            "cut": 4
           },
           "prepQuality": {
-            "miss": 12,
-            "partial": 16,
-            "hit": 20
+            "partial": 27,
+            "hit": 15,
+            "miss": 6
           }
         },
         "6": {
           "tiers": {
-            "fray": 19,
-            "scene": 12,
-            "masterpiece": 6,
-            "smallSuccess": 2,
-            "accident": 9
+            "fray": 24,
+            "scene": 9,
+            "smallSuccess": 5,
+            "masterpiece": 4,
+            "accident": 6
           },
           "responses": {
-            "catch": 38,
+            "catch": 37,
             "wait": 7,
-            "cut": 1,
-            "arrange": 2
+            "cut": 4
           },
           "prepQuality": {
-            "miss": 27,
-            "hit": 11,
-            "partial": 10
+            "miss": 30,
+            "hit": 9,
+            "partial": 9
           }
         }
       },
       "choiceReasons": {
         "expectedScore:weighted-events+best-score": 96,
-        "styleCommit:heat": 152,
+        "styleCommit:heat": 148,
         "styleCommit:breath": 28,
-        "styleCommit:closure": 4,
-        "styleCommit:control": 8
+        "styleCommit:closure": 16
       }
     },
     {
       "id": "oracle",
-      "avgScore": 79.39583333333333,
-      "p10": 72,
-      "p50": 79,
-      "p90": 86,
-      "best": 89,
+      "avgScore": 77.64583333333333,
+      "p10": 71,
+      "p50": 78,
+      "p90": 84,
+      "best": 86,
       "worst": 68,
       "avgLoad": 0,
-      "prepHitRate": 98.26388888888889,
-      "masterpiecePerRun": 5.333333333333333,
+      "prepHitRate": 98.95833333333334,
+      "masterpiecePerRun": 5.375,
       "sceneOrBetterPerRun": 6,
       "frayOrAccidentRate": 0,
       "accidentRate": 0,
       "scores": [
-        84,
+        72,
         78,
         76,
-        77,
+        71,
         78,
-        86,
-        75,
-        68,
-        84,
-        79,
         82,
-        86,
-        89,
-        77,
-        71,
-        86,
-        86,
-        81,
-        77,
-        81,
-        71,
-        84,
-        78,
-        80,
-        84,
-        75,
-        70,
-        79,
-        77,
-        86,
+        69,
         74,
-        81,
-        80,
-        76,
-        73,
-        76,
-        85,
+        77,
+        79,
+        75,
+        86,
         80,
         77,
+        71,
+        78,
         82,
+        74,
+        71,
+        82,
+        79,
         84,
+        76,
+        80,
+        76,
+        75,
+        79,
+        79,
+        80,
+        73,
+        77,
+        78,
+        77,
+        76,
+        79,
+        76,
+        79,
+        72,
+        77,
+        86,
+        68,
         86,
         72,
         81,
-        76,
-        82,
-        83,
-        78
+        79,
+        86,
+        86,
+        79
       ],
       "loads": [
         0,
@@ -2806,32 +2810,32 @@
         0,
         0
       ],
-      "prepHits": 283,
+      "prepHits": 285,
       "turns": 288,
       "tiers": {
-        "masterpiece": 256,
-        "scene": 32
+        "masterpiece": 258,
+        "scene": 30
       },
       "styles": {
-        "heat": 34,
-        "breath": 10,
-        "control": 4
+        "control": 7,
+        "heat": 26,
+        "breath": 15
       },
       "events": {
         "positionShift": 27,
-        "heatUp": 33,
-        "adlib": 39,
-        "delayedExit": 41,
-        "stepForward": 33,
-        "silence": 50,
-        "tempoRush": 32,
-        "ensembleWaver": 33
+        "ensembleWaver": 35,
+        "adlib": 33,
+        "stepForward": 35,
+        "delayedExit": 42,
+        "silence": 45,
+        "heatUp": 34,
+        "tempoRush": 37
       },
       "responses": {
-        "cut": 53,
-        "catch": 63,
-        "arrange": 83,
-        "wait": 89
+        "cut": 46,
+        "arrange": 104,
+        "wait": 91,
+        "catch": 47
       },
       "loadDistribution": {
         "0": 48
@@ -2839,14 +2843,14 @@
       "turnsByNumber": {
         "1": {
           "tiers": {
-            "masterpiece": 45,
-            "scene": 3
+            "masterpiece": 40,
+            "scene": 8
           },
           "responses": {
-            "cut": 15,
-            "wait": 6,
-            "catch": 24,
-            "arrange": 3
+            "cut": 13,
+            "catch": 9,
+            "wait": 17,
+            "arrange": 9
           },
           "prepQuality": {
             "hit": 48
@@ -2854,14 +2858,14 @@
         },
         "2": {
           "tiers": {
-            "masterpiece": 42,
-            "scene": 6
+            "masterpiece": 47,
+            "scene": 1
           },
           "responses": {
-            "catch": 14,
-            "wait": 22,
-            "arrange": 4,
-            "cut": 8
+            "arrange": 9,
+            "wait": 13,
+            "catch": 19,
+            "cut": 7
           },
           "prepQuality": {
             "hit": 48
@@ -2869,14 +2873,14 @@
         },
         "3": {
           "tiers": {
-            "masterpiece": 42,
-            "scene": 6
+            "masterpiece": 40,
+            "scene": 8
           },
           "responses": {
-            "arrange": 17,
-            "wait": 23,
-            "catch": 6,
-            "cut": 2
+            "arrange": 23,
+            "wait": 20,
+            "catch": 2,
+            "cut": 3
           },
           "prepQuality": {
             "hit": 46,
@@ -2885,14 +2889,14 @@
         },
         "4": {
           "tiers": {
-            "masterpiece": 39,
-            "scene": 9
+            "masterpiece": 38,
+            "scene": 10
           },
           "responses": {
-            "catch": 14,
-            "arrange": 12,
-            "cut": 13,
-            "wait": 9
+            "arrange": 17,
+            "cut": 8,
+            "wait": 11,
+            "catch": 12
           },
           "prepQuality": {
             "hit": 48
@@ -2900,18 +2904,18 @@
         },
         "5": {
           "tiers": {
-            "masterpiece": 40,
-            "scene": 8
+            "masterpiece": 45,
+            "scene": 3
           },
           "responses": {
-            "wait": 19,
-            "arrange": 14,
-            "cut": 10,
+            "wait": 21,
+            "arrange": 15,
+            "cut": 7,
             "catch": 5
           },
           "prepQuality": {
-            "hit": 45,
-            "partial": 3
+            "hit": 47,
+            "partial": 1
           }
         },
         "6": {
@@ -2919,9 +2923,9 @@
             "masterpiece": 48
           },
           "responses": {
-            "arrange": 33,
-            "wait": 10,
-            "cut": 5
+            "arrange": 31,
+            "wait": 9,
+            "cut": 8
           },
           "prepQuality": {
             "hit": 48
@@ -2936,43 +2940,43 @@
   "checks": [
     {
       "status": "OK",
-      "message": "random.avgScore 22.2 should be 18-28"
+      "message": "random.avgScore 19.9 should be 16-28"
     },
     {
       "status": "OK",
-      "message": "catch.avgScore 27.7 should be 24-38"
+      "message": "catch.avgScore 16.8 should be 14-32"
     },
     {
       "status": "OK",
-      "message": "wait.avgScore 29.2 should be 24-38"
+      "message": "wait.avgScore 30.5 should be 20-38"
     },
     {
       "status": "OK",
-      "message": "arrange.avgScore 26.4 should be 24-36"
+      "message": "arrange.avgScore 30.2 should be 24-36"
     },
     {
       "status": "OK",
-      "message": "cut.avgScore 13.7 should be 12-28"
+      "message": "cut.avgScore 15.6 should be 12-28"
     },
     {
       "status": "OK",
-      "message": "cycle.avgScore 36.8 should be 34-46"
+      "message": "cycle.avgScore 27.9 should be 22-42"
     },
     {
       "status": "OK",
-      "message": "lowLoad.avgScore 40.3 should be 38-50"
+      "message": "lowLoad.avgScore 38.2 should be 38-50"
     },
     {
       "status": "OK",
-      "message": "omen.avgScore 54.9 should be 48-60"
+      "message": "omen.avgScore 54.6 should be 48-60"
     },
     {
       "status": "OK",
-      "message": "expectedScore.avgScore 63.3 should be 52-64"
+      "message": "expectedScore.avgScore 57.7 should be 52-64"
     },
     {
       "status": "OK",
-      "message": "oracle.avgScore 79.4 should be 66-80"
+      "message": "oracle.avgScore 77.6 should be 66-80"
     },
     {
       "status": "OK",
@@ -2980,7 +2984,7 @@
     },
     {
       "status": "OK",
-      "message": "wait.avgLoad 1.4 should be 0.8-2"
+      "message": "wait.avgLoad 1.3 should be 0.8-2"
     },
     {
       "status": "OK",
@@ -2988,15 +2992,15 @@
     },
     {
       "status": "OK",
-      "message": "cut.avgLoad 0.5 should be 0-1.5"
+      "message": "cut.avgLoad 0.4 should be 0-1.5"
     },
     {
       "status": "OK",
-      "message": "cycle.avgLoad 0.6 should be 0.4-2.2"
+      "message": "cycle.avgLoad 0.5 should be 0.4-2.2"
     },
     {
       "status": "OK",
-      "message": "omen.avgLoad 0.6 should be 0.5-2"
+      "message": "omen.avgLoad 0.5 should be 0.5-2"
     },
     {
       "status": "OK",
@@ -3008,39 +3012,39 @@
     },
     {
       "status": "OK",
-      "message": "omen should beat cycle by at least 8 points; gap=18.1"
+      "message": "omen should beat cycle by at least 8 points; gap=26.7"
     },
     {
       "status": "OK",
-      "message": "expectedScore should be 0..10 above omen; gap=8.5"
+      "message": "expectedScore should be 0..10 above omen; gap=3.1"
     },
     {
       "status": "OK",
-      "message": "oracle should be 5..18 above expectedScore; gap=16.1"
+      "message": "oracle should be 5..20 above expectedScore; gap=19.9"
     },
     {
       "status": "OK",
-      "message": "wait should be within -4..8 of arrange; gap=2.9"
+      "message": "wait should be within -8..8 of arrange; gap=0.3"
     },
     {
       "status": "OK",
-      "message": "catch should have visible upside; p90-avg=24.3"
+      "message": "catch should have visible upside; p90-avg=25.2"
     },
     {
       "status": "OK",
-      "message": "cycle median should stay below S+ threshold 52; p50=38"
+      "message": "cycle median should stay below S+ threshold 52; p50=29"
     },
     {
       "status": "OK",
-      "message": "wait should not be both very safe and high scoring; avgScore=29.2 avgLoad=1.4"
+      "message": "wait should not be both very safe and high scoring; avgScore=30.5 avgLoad=1.3"
     },
     {
       "status": "OK",
-      "message": "catch p90 should reach at least 50; p90=52"
+      "message": "catch p90 should reach at least 40; p90=42"
     },
     {
       "status": "OK",
-      "message": "cycle should keep visible texture; fray+accident=26.7%"
+      "message": "cycle should keep visible texture; fray+accident=31.3%"
     },
     {
       "status": "OK",
@@ -3048,11 +3052,11 @@
     },
     {
       "status": "OK",
-      "message": "omen should leave some run texture; scene+/run=4.6"
+      "message": "omen should leave some run texture; scene+/run=4.5"
     },
     {
       "status": "OK",
-      "message": "expectedScore should not erase all fray/accident texture; fray+accident=3.8% accident=0%"
+      "message": "expectedScore should not erase all fray/accident texture; fray+accident=5.6% accident=0%"
     }
   ],
   "comparison": null

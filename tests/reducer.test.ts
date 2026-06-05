@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { assignActorRoles } from '../src/game/actorLogic';
+import { assignActorRoles, pickFocusActor } from '../src/game/actorLogic';
 import { INITIAL_ACTORS, INITIAL_LOAD_STRAIN } from '../src/game/constants';
 import { gameReducer, readPerformanceHistory } from '../src/game/gameReducer';
 import type { GameState, MainResponse, PrepAction } from '../src/game/types';
@@ -37,6 +37,20 @@ function resultState(overrides: Partial<GameState> = {}): GameState {
     ...overrides,
   };
 }
+
+test('opening focus actors are varied and the first day does not repeat the same actor', () => {
+  const counts = { junior: 0, lead: 0, skilled: 0 };
+  Array.from({ length: 300 }, (_, index) => `opening-focus-${index}`).forEach((seed) => {
+    const first = pickFocusActor(seed, 1);
+    const second = pickFocusActor(seed, 2);
+    counts[first] += 1;
+    assert.equal(second !== first, true);
+  });
+
+  assert.equal(counts.junior >= 100 && counts.junior <= 140, true);
+  assert.equal(counts.lead >= 75 && counts.lead <= 115, true);
+  assert.equal(counts.skilled >= 75 && counts.skilled <= 115, true);
+});
 
 test('COMMIT_RESULT applies preview deltas and advances to the next performance slot', () => {
   const next = gameReducer(resultState(), { type: 'COMMIT_RESULT' });
@@ -85,8 +99,8 @@ test('a full performance is deterministic for the same seed and choices', () => 
     titles: finalState.logs.map((log) => log.sceneTitle),
   }, {
     sceneScore: 6,
-    flowScore: -2,
-    trustScore: -2,
+    flowScore: -1,
+    trustScore: -1,
     backstageLoad: 1,
     performanceStyle: 'breath',
     tiers: ['smallSuccess', 'scene', 'fray', 'scene', 'fray', 'accident'],

@@ -5,10 +5,26 @@ import { createRng, pickWeighted } from './rng';
 import type { Actor, ActorEvent, ActorEventType, ActorState, ActorType, GameState, MainResponse, TurnLog } from './types';
 
 const focusOrder: ActorType[] = ['junior', 'lead', 'skilled', 'junior', 'lead', 'skilled', 'junior', 'skilled', 'lead', 'junior'];
+const openingFocusWeights: Record<ActorType, number> = {
+  junior: 4,
+  lead: 3,
+  skilled: 3,
+};
 type EventWeightContext = { seed: string; totalTurn: number };
 type StateWeights = Record<ActorState, number>;
 
+function pickOpeningFocusActor(seed: string): ActorType {
+  return pickWeighted(createRng(`${seed}:focus:opening`), openingFocusWeights);
+}
+
 export function pickFocusActor(seed: string, totalTurn: number): ActorType {
+  if (totalTurn === 1) return pickOpeningFocusActor(seed);
+  if (totalTurn === 2) {
+    const firstFocus = pickOpeningFocusActor(seed);
+    const rng = createRng(`${seed}:focus:${totalTurn}`);
+    const alternatives = focusOrder.filter((actor) => actor !== firstFocus);
+    return alternatives[Math.floor(rng() * alternatives.length)];
+  }
   const rng = createRng(`${seed}:focus:${totalTurn}`);
   const preferred = focusOrder[(totalTurn - 1) % focusOrder.length];
   if (rng() < 0.72) return preferred;

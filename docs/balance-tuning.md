@@ -33,12 +33,12 @@
 
 | 戦略 | avgScore | p90 | 意図 |
 | --- | ---: | ---: | --- |
-| `random` | 18-28 | 35-48 | 初回でもB前後、たまにAが見える。 |
-| `catch` | 24-38 | 50-65 | 高リスクだが上振れが気持ちいい。 |
-| `wait` | 24-38 | 45-58 | 安全だが最高点は出にくい。 |
+| `random` | 16-28 | 35-48 | 初回でも完走でき、たまにAが見える。 |
+| `catch` | 14-32 | 40-65 | 高リスク。初日若手固定を外した後は、固定拾いの平均より上振れを見る。 |
+| `wait` | 20-38 | 45-58 | 安全だが、役者や出来事を読まない固定待ちは下振れもある。 |
 | `arrange` | 24-36 | 42-55 | 安定手。低事故・中得点。 |
 | `cut` | 12-28 | 35-50 | 守り手として最低限成立する。 |
-| `cycle` | 34-46 | 50-60 | 悪くないが最適ではない。 |
+| `cycle` | 22-42 | 45-60 | 読まずに回すと伸びにくいが、噛み合えば場面は作れる。 |
 | `lowLoad` | 38-50 | 52-62 | 安定高評価。ただし最高火力は低い。 |
 | `omen` | 48-60 | 60-72 | 兆候読みの主報酬。 |
 | `expectedScore` | 52-64 | 64-76 | システム理解プレイの報酬。 |
@@ -50,8 +50,8 @@
 | --- | --- |
 | `omen.avgScore - cycle.avgScore` | +8以上 |
 | `expectedScore.avgScore - omen.avgScore` | 0-10 |
-| `oracle.avgScore - expectedScore.avgScore` | 5-18 |
-| `wait.avgScore - arrange.avgScore` | -4から+8 |
+| `oracle.avgScore - expectedScore.avgScore` | 5-20 |
+| `wait.avgScore - arrange.avgScore` | -8から+8 |
 | `catch.p90 - catch.avgScore` | +18以上 |
 | `cycle.p50` | S+しきい値52未満 |
 | `cycle.frayOrAccidentRate` | 18%以上 |
@@ -82,7 +82,7 @@
 - `cycle.avgScore >= omen.avgScore - 5`
 - `wait.avgLoad < 0.8 && wait.avgScore > 34`
 - `cut.avgScore < 12`
-- `catch.p90 < 50`
+- `catch.p90 < 40`
 - `oracle.avgScore - expectedScore.avgScore < 5`
 - `cycle.frayOrAccidentRate < 18`
 - `omen.frayOrAccidentRate < 6`
