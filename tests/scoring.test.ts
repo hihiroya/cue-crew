@@ -61,7 +61,7 @@ test('previewResult scores a prepared silence and wait as a masterpiece with tru
   assert.equal(preview.deltaLoad, -2);
 });
 
-test('prep misses cap the result even when event and actor affinity are strong', () => {
+test('prep misses add a pivot cost even when event and actor affinity are strong', () => {
   const state = gameState({
     act: 2,
     turnInAct: 1,
@@ -77,9 +77,9 @@ test('prep misses cap the result even when event and actor affinity are strong',
   const preview = previewResult(state);
 
   assert.equal(preview.prepQuality, 'miss');
-  assert.equal(preview.score, 3);
-  assert.equal(preview.resultTier, 'smallSuccess');
-  assert.equal(preview.scoreBreakdown.some((item) => item.id === 'prep-cap'), true);
+  assert.equal(preview.score, 1);
+  assert.equal(preview.resultTier, 'fray');
+  assert.equal(preview.scoreBreakdown.some((item) => item.id === 'prep-pivot' && item.value === -2), true);
 });
 
 test('responseInsight exposes repeated response penalties before committing', () => {
@@ -156,7 +156,7 @@ test('strong fray recovery adds a reward only when it changes the response rhyth
     lastResponses: ['wait'],
   }), 'wait');
 
-  assert.equal(recovery.scoreBreakdown.some((item) => item.id === 'fray-reward' && item.value === 1), true);
+  assert.equal(recovery.scoreBreakdown.some((item) => item.id === 'fray-reward' && item.value === 2), true);
   assert.equal(repeated.scoreBreakdown.some((item) => item.id === 'fray-reward'), false);
 });
 

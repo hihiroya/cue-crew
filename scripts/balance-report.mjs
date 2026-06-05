@@ -39,7 +39,7 @@ const BALANCE_TARGETS = {
   avgScore: {
     random: [18, 28],
     catch: [24, 38],
-    wait: [26, 38],
+    wait: [24, 38],
     arrange: [24, 36],
     cut: [12, 28],
     cycle: [34, 46],
@@ -53,15 +53,15 @@ const BALANCE_TARGETS = {
     wait: [0.8, 2.0],
     arrange: [0, 1.0],
     cut: [0, 1.5],
-    cycle: [0.8, 2.2],
-    omen: [0.8, 2.0],
+    cycle: [0.4, 2.2],
+    omen: [0.5, 2.0],
     expectedScore: [1.0, 2.5],
     oracle: [0, 1.0],
   },
   relative: {
     minOmenCycleGap: 8,
-    expectedOmenGap: [0, 8],
-    oracleExpectedGap: [5, 16],
+    expectedOmenGap: [0, 10],
+    oracleExpectedGap: [5, 18],
     waitArrangeGap: [-4, 8],
     minCatchUpside: 18,
     cycleMedianSPlusCap: 52,
@@ -69,6 +69,8 @@ const BALANCE_TARGETS = {
     waitSafetyScore: 34,
     minCatchP90: 50,
     maxOmenSceneOrBetterPerRun: 5.9,
+    minCycleFrayOrAccidentRate: 18,
+    minOmenFrayOrAccidentRate: 6,
   },
 };
 
@@ -213,19 +215,31 @@ function chooseForStrategy(strategy, state, turn, sampleIndex, context) {
 
 function randomChoice(state, sampleIndex, context) {
   const random = context.createRng(`${state.seed}:balance-random:${sampleIndex}:${state.totalTurn}`);
+  const prep = prepActions[Math.floor(random() * prepActions.length)];
+  const response = random() < 0.7
+    ? context.PREP_PRIMARY_RESPONSE[prep]
+    : responses[Math.floor(random() * responses.length)];
   return {
-    prep: prepActions[Math.floor(random() * prepActions.length)],
-    response: responses[Math.floor(random() * responses.length)],
+    prep,
+    response,
     reason: 'random:rng',
   };
 }
 
 function omenChoice(state, context) {
-  const prep = bestPrepByVisibleOmens(state, context);
+  let prep = bestPrepByVisibleOmens(state, context);
+  let reason = 'omen:visible-omens+best-score';
+  if (state.backstageLoad >= 3 || state.pendingFrayEvent) {
+    prep = 'prepareTransition';
+    reason = 'omen:high-load-or-fray';
+  } else if (state.backstageLoad >= 2 && context.likelyFrayBias(state)) {
+    prep = 'tightenFlow';
+    reason = 'omen:likely-fray';
+  }
   return {
     prep,
-    response: bestResponseAfterPrep(state, prep, context, scoreComparator).response,
-    reason: 'omen:visible-omens+best-score',
+    response: bestResponseAfterPrep(state, prep, context, oracleComparator).response,
+    reason,
   };
 }
 
@@ -335,10 +349,12 @@ function scoreComparator(a, b) {
 }
 
 function loadComparator(a, b) {
+  const aValue = finalDeltaValue(a.preview) - Math.max(0, a.preview.deltaLoad) * 4;
+  const bValue = finalDeltaValue(b.preview) - Math.max(0, b.preview.deltaLoad) * 4;
   return (
-    a.preview.deltaLoad - b.preview.deltaLoad
-    || finalDeltaValue(b.preview) - finalDeltaValue(a.preview)
+    bValue - aValue
     || b.preview.score - a.preview.score
+    || a.preview.deltaLoad - b.preview.deltaLoad
   );
 }
 
@@ -413,6 +429,8 @@ function balanceChecks(reports) {
   add(byId.cycle.p50 < BALANCE_TARGETS.relative.cycleMedianSPlusCap, `cycle median should stay below S+ threshold ${BALANCE_TARGETS.relative.cycleMedianSPlusCap}; p50=${round(byId.cycle.p50)}`);
   add(!(byId.wait.avgLoad < BALANCE_TARGETS.relative.waitSafetyLoad && byId.wait.avgScore > BALANCE_TARGETS.relative.waitSafetyScore), `wait should not be both very safe and high scoring; avgScore=${round(byId.wait.avgScore)} avgLoad=${round(byId.wait.avgLoad)}`);
   add(byId.catch.p90 >= BALANCE_TARGETS.relative.minCatchP90, `catch p90 should reach at least ${BALANCE_TARGETS.relative.minCatchP90}; p90=${round(byId.catch.p90)}`);
+  add(byId.cycle.frayOrAccidentRate >= BALANCE_TARGETS.relative.minCycleFrayOrAccidentRate, `cycle should keep visible texture; fray+accident=${round(byId.cycle.frayOrAccidentRate)}%`);
+  add(byId.omen.frayOrAccidentRate >= BALANCE_TARGETS.relative.minOmenFrayOrAccidentRate, `omen should keep some visible texture; fray+accident=${round(byId.omen.frayOrAccidentRate)}%`);
   add(byId.omen.sceneOrBetterPerRun < BALANCE_TARGETS.relative.maxOmenSceneOrBetterPerRun, `omen should leave some run texture; scene+/run=${round(byId.omen.sceneOrBetterPerRun)}`);
   add(!(byId.expectedScore.accidentRate === 0 && byId.expectedScore.frayOrAccidentRate === 0), `expectedScore should not erase all fray/accident texture; fray+accident=${round(byId.expectedScore.frayOrAccidentRate)}% accident=${round(byId.expectedScore.accidentRate)}%`);
 

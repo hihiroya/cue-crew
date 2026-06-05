@@ -15,14 +15,14 @@
 
 | 戦略 | 役割 |
 | --- | --- |
-| `random` | 初見に近い下限。完走はできるが安定しない。 |
+| `random` | 初見に近い下限。準備の主対応を70%選び、残りは迷う。完走はできるが安定しない。 |
 | `catch` | 拾う固定。攻め手の上振れと負荷を見る。 |
 | `wait` | 待つ固定。安全手が万能化していないかを見る。 |
 | `arrange` | 整える固定。安定と負荷管理の基準。 |
 | `cut` | 切る固定。守り手として最低限成立しているかを見る。 |
 | `cycle` | 固定ローテ。読まずに回す戦略が強すぎないかを見る。 |
 | `lowLoad` | 負荷管理重視。安全高評価の上限を見る。 |
-| `omen` | 兆候読み。通常プレイで目指したい強さ。 |
+| `omen` | 兆候読み。高負荷/保留ほころびでは安全に寄せ、それ以外は見えている兆しから通常プレイで目指したい強さを出す。 |
 | `expectedScore` | 期待値重視。システム理解プレイの強さ。 |
 | `styleCommit` | 公演の色へ寄せる戦略。色ボーナスの効き方を見る。 |
 | `oracle` | 発生イベントを知る理論上限。通常プレイとの差を見る。 |
@@ -35,7 +35,7 @@
 | --- | ---: | ---: | --- |
 | `random` | 18-28 | 35-48 | 初回でもB前後、たまにAが見える。 |
 | `catch` | 24-38 | 50-65 | 高リスクだが上振れが気持ちいい。 |
-| `wait` | 26-38 | 45-58 | 安全だが最高点は出にくい。 |
+| `wait` | 24-38 | 45-58 | 安全だが最高点は出にくい。 |
 | `arrange` | 24-36 | 42-55 | 安定手。低事故・中得点。 |
 | `cut` | 12-28 | 35-50 | 守り手として最低限成立する。 |
 | `cycle` | 34-46 | 50-60 | 悪くないが最適ではない。 |
@@ -49,11 +49,13 @@
 | 条件 | 目標 |
 | --- | --- |
 | `omen.avgScore - cycle.avgScore` | +8以上 |
-| `expectedScore.avgScore - omen.avgScore` | 0-8 |
-| `oracle.avgScore - expectedScore.avgScore` | 5-16 |
+| `expectedScore.avgScore - omen.avgScore` | 0-10 |
+| `oracle.avgScore - expectedScore.avgScore` | 5-18 |
 | `wait.avgScore - arrange.avgScore` | -4から+8 |
 | `catch.p90 - catch.avgScore` | +18以上 |
 | `cycle.p50` | S+しきい値52未満 |
+| `cycle.frayOrAccidentRate` | 18%以上 |
+| `omen.frayOrAccidentRate` | 6%以上 |
 
 ### 負荷
 
@@ -63,8 +65,8 @@
 | `wait` | 0.8-2.0 | 低めだがゼロ付近で安定しすぎない。 |
 | `arrange` | 0.0-1.0 | 負荷管理の専門家。 |
 | `cut` | 0.0-1.5 | 崩れを閉じる役割。 |
-| `cycle` | 0.8-2.2 | 固定ローテで低負荷すぎない。 |
-| `omen` | 0.8-2.0 | 読めば抑えられる。 |
+| `cycle` | 0.4-2.2 | 固定ローテは最終負荷が低くても、ほころび/事故で揺れを見る。 |
+| `omen` | 0.5-2.0 | 読めば抑えられるが、ほころび/事故が消えない程度にする。 |
 | `expectedScore` | 1.0-2.5 | 高得点狙いで多少負荷を背負う。 |
 | `oracle` | 0.0-1.0 | 理論上限なので低くてよい。 |
 
@@ -82,6 +84,8 @@
 - `cut.avgScore < 12`
 - `catch.p90 < 50`
 - `oracle.avgScore - expectedScore.avgScore < 5`
+- `cycle.frayOrAccidentRate < 18`
+- `omen.frayOrAccidentRate < 6`
 - `omen.sceneOrBetterPerRun >= 5.9`
 - `expectedScore.accidentRate === 0 && expectedScore.frayOrAccidentRate === 0`
 
@@ -105,10 +109,10 @@ JSONを保存する。
 npm run balance:report -- --samples=48 --out=tmp/balance-report.json
 ```
 
-前回JSONと比較する。
+ベースラインと比較する。
 
 ```bash
-npm run balance:report -- --samples=48 --compare=tmp/balance-report.json
+npm run balance:report -- --samples=48 --compare=scripts/balance-baseline.json
 ```
 
 警告を失敗扱いにする。
@@ -118,6 +122,8 @@ npm run balance:report -- --samples=48 --fail-on-warn
 ```
 
 採点、イベント重み、日替わり補正、公演の色ボーナス、称号/図鑑条件を変更した場合は、`npm run test:logic` とこのレポートを両方確認する。
+
+調整が一段落した時は、`npm run balance:report -- --samples=48 --out=scripts/balance-baseline.json` で現行値を保存する。PR前や大きな数値変更では `--compare=scripts/balance-baseline.json` と `--fail-on-warn` を併用する。
 
 ## レポートの見方
 

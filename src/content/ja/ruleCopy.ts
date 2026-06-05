@@ -111,6 +111,21 @@ export function prepResponseCopy(prep: PrepAction, response: MainResponse, quali
   };
 }
 
+export function prepPivotPenaltyCopy(quality: Exclude<PrepPredictionQuality, 'hit'>) {
+  if (quality === 'partial') {
+    return {
+      label: '準備とは別筋で受けた',
+      value: -1,
+      detail: '兆候の一部は読めていたが、本番対応への切り替えに一拍使った。',
+    };
+  }
+  return {
+    label: '準備外から切り替えた',
+    value: -2,
+    detail: '本番前の備えと違う筋で受けたため、場面化までに余白を失った。',
+  };
+}
+
 export function cutContainmentCopy(kind: 'transitionHighLoad' | 'transition' | 'highLoad') {
   if (kind === 'transitionHighLoad') {
     return { label: '転換で高負荷を閉じた', detail: '場面を伸ばすより、崩れを次へ持ち越さない判断。' };
@@ -182,6 +197,14 @@ export function repeatAdjustmentCopy(response: MainResponse, count: number, succ
     label: '切る判断が続いた',
     detail: '進行は守ったが、役者の気持ちは少し置き去りになった。',
     cardLabel: '連続使用: 一体感-1',
+  };
+}
+
+export function diffuseRhythmPenaltyCopy() {
+  return {
+    label: '判断の軸が散った',
+    value: -3,
+    detail: '四つのキューを順番に散らすだけでは、公演全体の狙いが薄くなる。',
   };
 }
 

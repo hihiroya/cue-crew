@@ -101,6 +101,7 @@ function performanceBuildLevelScoreItem(state: GameState, response: MainResponse
     let value = log.mainResponse === style.strength ? 2 : 0;
     if (log.resultTier === 'masterpiece') value += 2;
     if (log.resultTier === 'scene') value += 1;
+    if (log.mainResponse !== style.strength) return total + Math.min(value, 1);
     if (state.performanceStyle === 'heat') value += Math.max(0, log.deltaScene);
     if (state.performanceStyle === 'breath') value += Math.max(0, log.deltaTrust);
     if (state.performanceStyle === 'control') value += Math.max(0, log.deltaFlow) + Math.max(0, -log.deltaLoad);
@@ -239,6 +240,13 @@ function prepResponseScoreItem(state: GameState, response: MainResponse, prepQua
   return undefined;
 }
 
+function prepPivotPenaltyScoreItem(state: GameState, response: MainResponse, prepQuality: PrepPredictionQuality): ScoreBreakdownItem | undefined {
+  if (!state.selectedPrep || prepQuality === 'hit') return undefined;
+  if (response === PREP_PRIMARY_RESPONSE[state.selectedPrep]) return undefined;
+  const copy = ruleText.prepPivotPenaltyCopy(prepQuality);
+  return scoreItem('prep-pivot', copy.label, copy.value, copy.detail);
+}
+
 function transitionCutGuardActive(state: GameState, response: MainResponse): boolean {
   return state.selectedPrep === 'prepareTransition' && response === 'cut';
 }
@@ -266,7 +274,7 @@ function frayRecoveryReward(state: GameState, response: MainResponse): ScoreBrea
   if (isRepeatedResponse) return undefined;
   if (fit.status !== 'strong') return undefined;
   const copy = ruleText.frayRecoveryRewardCopy();
-  return scoreItem('fray-reward', copy.label, 1, copy.detail);
+  return scoreItem('fray-reward', copy.label, 2, copy.detail);
 }
 
 function guardTierForTransitionCut(tier: ResultTier, state: GameState, response: MainResponse, prepQuality: PrepPredictionQuality): ResultTier {
@@ -442,10 +450,12 @@ function deltasFor(tier: ResultTier, response: MainResponse, state: GameState, p
   if (response === 'catch') deltaLoad = tier === 'masterpiece' ? 2 : success ? 1 : 2;
   if (response === 'arrange') deltaLoad = success ? -1 : 1;
   if (response === 'wait') deltaLoad = success && eventIsOneOf(state, ['silence', 'delayedExit', 'adlib']) ? -1 : success ? 0 : 1;
+  if (response === 'wait' && success && !eventIsOneOf(state, ['silence', 'delayedExit', 'adlib'])) deltaLoad += 1;
   if (response === 'cut') deltaLoad = 0;
   if (state.act === 2 && response === 'catch') deltaLoad += 1;
   if (state.act === 3 && success && ['arrange', 'cut'].includes(response)) deltaLoad -= 1;
   if (prepQuality === 'miss' && response === 'catch') deltaLoad += 1;
+  if (state.selectedPrep && prepQuality === 'miss' && response !== PREP_PRIMARY_RESPONSE[state.selectedPrep]) deltaLoad += 1;
   if (prepQuality === 'hit' && deltaLoad > 0) deltaLoad -= 1;
   if (transitionCutGuardActive(state, response) && deltaLoad > 0) deltaLoad -= 1;
   const slot = slotForTurnInAct(state.turnInAct);
@@ -470,12 +480,13 @@ function deltasFor(tier: ResultTier, response: MainResponse, state: GameState, p
   const cutScenePenalty = response === 'cut' && success && state.backstageLoad <= 1 && eventIsOneOf(state, ['stepForward', 'adlib', 'heatUp', 'silence']) && !transitionCutGuardActive(state, response) ? -1 : 0;
   const styleSceneBonus = state.performanceStyle === 'heat' && response === 'catch' && success ? 1 : 0;
   const catchHeatSceneBonus = response === 'catch' && success && eventIsOneOf(state, ['stepForward', 'adlib', 'heatUp']) ? 1 : 0;
+  const catchPeakSceneBonus = response === 'catch' && tier === 'masterpiece' && prepQuality === 'hit' ? 1 : 0;
   const repeatedFrayResponse = frayFit.status === 'strong' && state.lastResponses[state.lastResponses.length - 1] === response;
-  const strongFraySceneBonus = frayFit.status === 'strong' && !repeatedFrayResponse && success ? 1 : 0;
+  const strongFraySceneBonus = frayFit.status === 'strong' && !repeatedFrayResponse && success ? 2 : 0;
   const strongFrayTrustBonus = frayFit.status === 'strong' && !repeatedFrayResponse && success ? 1 : 0;
   const strongFrayFlowBonus = frayFit.status === 'strong' && !repeatedFrayResponse && success ? 1 : 0;
   return {
-    deltaScene: base.scene + repeat.deltaScene + styleSceneBonus + catchHeatSceneBonus + strongFraySceneBonus + cutScenePenalty,
+    deltaScene: base.scene + repeat.deltaScene + styleSceneBonus + catchHeatSceneBonus + catchPeakSceneBonus + strongFraySceneBonus + cutScenePenalty,
     deltaFlow: base.flow + loadPenalty + repeat.deltaFlow + frayFit.deltaFlow + strongFrayFlowBonus + catchFlowPenalty + arrangeFlowBonus + waitFlowPenalty + cutFlowBonus + cutFlowPenalty,
     deltaTrust: base.trust + waitTrustBonus + styleTrustBonus + cutTrustPenalty + repeat.deltaTrust + strongFrayTrustBonus + catchUnityPenalty + arrangeUnityPenalty,
     deltaLoad: deltaLoad + repeat.deltaLoad + frayFit.deltaLoad,
@@ -518,9 +529,20 @@ function prepScoreItem(quality: PrepPredictionQuality): ScoreBreakdownItem {
 
 function capForPrepQuality(quality: PrepPredictionQuality, state?: GameState) {
   if (quality === 'hit') return Number.POSITIVE_INFINITY;
+  if (quality === 'miss' && state?.selectedPrep && state.selectedResponse && state.selectedResponse !== PREP_PRIMARY_RESPONSE[state.selectedPrep] && !previousCutSetupActive(state)) return 1;
   if (quality === 'miss' && state && previousCutSetupActive(state)) return 4;
+  if (quality === 'partial' && state?.selectedPrep && state.selectedResponse && state.selectedResponse !== PREP_PRIMARY_RESPONSE[state.selectedPrep]) return 1;
   if (quality === 'partial') return 6;
   return 3;
+}
+
+function diffuseRhythmPenaltyScoreItem(state: GameState, response: MainResponse): ScoreBreakdownItem | undefined {
+  const previous = state.lastResponses.slice(-3);
+  if (previous.length < 3) return undefined;
+  if (previous.includes(response)) return undefined;
+  if (new Set(previous).size < 3) return undefined;
+  const copy = ruleText.diffuseRhythmPenaltyCopy();
+  return scoreItem('diffuse-rhythm', copy.label, copy.value, copy.detail);
 }
 
 function arrangeMasterpieceCap(state: GameState, actor: Actor, response: MainResponse, quality: PrepPredictionQuality): ScoreBreakdownItem | undefined {
@@ -548,6 +570,7 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
   const repeatedValue = repeatPenalty(state, response);
   const repeat = repeatAdjustment(response, consecutiveUseCount(state, response), true);
   const prepResponseItem = prepResponseScoreItem(state, response, prepQuality);
+  const prepPivotItem = prepPivotPenaltyScoreItem(state, response, prepQuality);
   const styleItem = performanceStyleScoreItem(state, response);
   const buildLevelItem = performanceBuildLevelScoreItem(state, response);
   const frayItem = frayScoreItem(state, response);
@@ -555,6 +578,7 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
   const actorTrustItem = actorTrustScoreItem(actor, response);
   const finaleItem = finaleScoreItem(state, response);
   const frayRewardItem = frayRecoveryReward(state, response);
+  const diffuseRhythmItem = diffuseRhythmPenaltyScoreItem(state, response);
   const eventCopy = ruleText.eventScoreCopy(state.currentActorEvent.type, response, eventValue);
   const items = [
     scoreItem(
@@ -567,6 +591,7 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
     scoreItem('state', ruleText.stateResponseLabel(actor, response, stateValue), stateValue),
     prepScoreItem(prepQuality),
     prepResponseItem,
+    prepPivotItem,
     scoreItem('act', ruleText.actLabel(state, response, actValue), actValue),
     finaleItem,
     styleItem,
@@ -576,6 +601,7 @@ function buildScoreBreakdown(state: GameState, actor: Actor, response: MainRespo
     scoreItem('trust', ruleText.ruleCopy.trustScore, trustValue),
     scoreItem('load', ruleText.ruleCopy.loadScore, loadValue),
     scoreItem('repeat', repeat.label ?? ruleText.ruleCopy.repeatedResponse, repeatedValue, repeat.detail),
+    diffuseRhythmItem,
     frayItem,
     frayRewardItem,
   ].filter((item): item is ScoreBreakdownItem => Boolean(item));
@@ -697,7 +723,7 @@ function cueResultSummary(state: GameState, preview: ResultPreview): CueResultSu
 
 type StyleSource = Pick<TurnLog, 'mainResponse' | 'deltaScene' | 'deltaFlow' | 'deltaTrust' | 'deltaLoad'>;
 
-export function determinePerformanceStyle(logs: StyleSource[]): PerformanceStyle {
+function performanceStyleScores(logs: StyleSource[]): Array<[PerformanceStyle, number]> {
   const scores: Record<PerformanceStyle, number> = {
     heat: 0,
     breath: 0,
@@ -709,18 +735,30 @@ export function determinePerformanceStyle(logs: StyleSource[]): PerformanceStyle
     if (log.mainResponse === 'wait') scores.breath += 3;
     if (log.mainResponse === 'arrange') scores.control += 3;
     if (log.mainResponse === 'cut') scores.closure += 3;
-    scores.heat += Math.max(0, log.deltaScene);
-    scores.breath += Math.max(0, log.deltaTrust);
-    scores.control += Math.max(0, log.deltaFlow) + Math.max(0, -log.deltaLoad);
-    scores.closure += Math.max(0, -log.deltaFlow) + (log.deltaLoad <= 0 ? 1 : 0);
+    if (log.mainResponse === 'catch') scores.heat += Math.max(0, log.deltaScene);
+    if (log.mainResponse === 'wait') scores.breath += Math.max(0, log.deltaTrust);
+    if (log.mainResponse === 'arrange') scores.control += Math.max(0, log.deltaFlow) + Math.max(0, -log.deltaLoad);
+    if (log.mainResponse === 'cut') scores.closure += Math.max(0, -log.deltaFlow) + (log.deltaLoad <= 0 ? 1 : 0);
   });
-  return (Object.entries(scores) as Array<[PerformanceStyle, number]>).sort((a, b) => b[1] - a[1])[0][0];
+  return (Object.entries(scores) as Array<[PerformanceStyle, number]>).sort((a, b) => b[1] - a[1]);
+}
+
+export function determinePerformanceStyle(logs: StyleSource[]): PerformanceStyle {
+  return performanceStyleScores(logs)[0][0];
+}
+
+function committedPerformanceStyle(logs: StyleSource[]): PerformanceStyle | null {
+  const ranked = performanceStyleScores(logs);
+  const [topStyle, topScore] = ranked[0];
+  const secondScore = ranked[1]?.[1] ?? 0;
+  return topScore - secondScore >= 4 ? topStyle : null;
 }
 
 function stylePreviewFor(state: GameState, preview: StyleSource): { style: PerformanceStyle | null; isNew: boolean } {
   if (state.performanceStyle) return { style: state.performanceStyle, isNew: false };
-  if (state.totalTurn !== TURNS_PER_ACT) return { style: null, isNew: false };
-  return { style: determinePerformanceStyle([...state.logs, preview]), isNew: true };
+  if (state.totalTurn < TURNS_PER_ACT) return { style: null, isNew: false };
+  const style = committedPerformanceStyle([...state.logs, preview]);
+  return { style, isNew: Boolean(style) };
 }
 
 export function responseInsight(state: GameState, response: MainResponse): ResponseInsight {

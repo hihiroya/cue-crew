@@ -17,7 +17,7 @@
 | 変更対象 | 主なファイル |
 | --- | --- |
 | ターン進行、状態遷移 | `src/game/gameReducer.ts` |
-| 採点、対応結果、型ボーナス | `src/game/scoreRules.ts` |
+| 採点、対応結果、公演の色ボーナス | `src/game/scoreRules.ts` |
 | 役者イベント、イベント重み | `src/game/actorLogic.ts` |
 | 日替わりseed、日替わり補正 | `src/game/dailyRun.ts` |
 | 図鑑、称号、発見点、再演比較 | `src/game/rogueliteProgress.ts` |
@@ -32,7 +32,7 @@
 
 | 変更 | 標準確認 |
 | --- | --- |
-| 採点、イベント重み、日替わり補正、型ボーナス | `npm run test:logic` と `npm run balance:report -- --samples=48` |
+| 採点、イベント重み、日替わり補正、公演の色ボーナス | `npm run test:logic` と `npm run balance:report -- --samples=48` |
 | Reducer、ターン進行、保存処理 | `npm run test:logic` |
 | UIレイアウト、文言密度、カード表示 | `npm run check:ui` |
 | 準備/対応/結果の一部だけの軽微なUI変更 | `npm run check:ui:prep`、`npm run check:ui:response`、`npm run check:ui:result` の該当範囲 |

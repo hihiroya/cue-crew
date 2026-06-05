@@ -111,6 +111,7 @@ function styleProgressForLog(log: TurnLog, style: PerformanceStyle, strength: Ma
   let value = log.mainResponse === strength ? 2 : 0;
   if (log.resultTier === 'masterpiece') value += 2;
   if (log.resultTier === 'scene') value += 1;
+  if (log.mainResponse !== strength) return Math.min(value, 1);
   if (style === 'heat') value += Math.max(0, log.deltaScene);
   if (style === 'breath') value += Math.max(0, log.deltaTrust);
   if (style === 'control') value += Math.max(0, log.deltaFlow) + Math.max(0, -log.deltaLoad);
