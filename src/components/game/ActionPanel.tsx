@@ -69,7 +69,9 @@ export function ResponsePanel({ selected, disabled, state, previousTurnLog = nul
 
 function ResponseSelectionMarker({ visible }: { visible: boolean }) {
   return (
-    <em className={`selection-marker selection-marker--response ${visible ? 'is-visible' : ''}`} aria-hidden="true" />
+    <em className={`selection-marker selection-marker--response ${visible ? 'is-visible' : ''}`} aria-hidden={!visible}>
+      {visible ? responsePanelCopy.marker : ''}
+    </em>
   );
 }
 
@@ -105,11 +107,6 @@ function ResponseChoiceCard({
           <em className={`response-prep-mark mark-${insight.prepRelationTone}`} aria-label={responsePanelCopy.prepRelationAria(insight.prepRelationLabel)}>
             {prepConnectionShortLabel(insight.prepRelationTone)}
           </em>
-          <span>
-            <Icon name="event" />
-            {responsePanelCopy.outlookTitle}
-          </span>
-          <strong>{insight.successRangeLabel}</strong>
         </div>
       </div>
       <ResultRail insight={insight} variant="card" />
@@ -246,7 +243,7 @@ function ResultRail({ insight, variant }: { insight: ResponseInsight; variant: '
   return (
     <div className={`result-rail-box result-rail-box--${variant}`} aria-label={`${responsePanelCopy.resultRailAria}: ${insight.successRangeLabel}`}>
       <div className="result-rail-head">
-        <span>{responsePanelCopy.resultRailAria}</span>
+        {variant === 'console' ? <span>{responsePanelCopy.resultRailAria}</span> : null}
         <strong>{insight.successRangeLabel}</strong>
       </div>
       <div className={`result-rail has-${insight.rangeTone}`} aria-hidden="true">

@@ -3,6 +3,7 @@ import type { GameState, MainResponse, ResponseInsight, ResultTier } from '../..
 
 export const responsePanelCopy = {
   heading: '対応を決める',
+  marker: '卓に反映',
   outlookAria: (label: string) => `成立見込み: ${label}`,
   prepRelationAria: (label: string) => `準備との関係: ${label}`,
   effectSummaryAria: '影響の要約',
