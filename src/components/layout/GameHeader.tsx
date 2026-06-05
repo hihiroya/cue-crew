@@ -19,13 +19,15 @@ export function GameHeader({ state }: Props) {
           <Icon name={slotIcon(state.turnInAct)} />
           {performanceLabel(state)}
         </strong>
-        <em className={`performance-style-inline ${color ? `color-${color.tone}` : 'color-pending'}`}>
-          {gameHeaderCopy.styleLabel} <b>{color ? color.label : gameHeaderCopy.pendingStyle}</b>
-        </em>
-        <div className="header-score-meters" aria-label={scoreMeterAria(state)}>
-          <HeaderScore icon="scene" label={gameHeaderCopy.score.scene} value={state.sceneScore} />
-          <HeaderScore icon="flow" label={gameHeaderCopy.score.flow} value={state.flowScore} />
-          <HeaderScore icon="trust" label={gameHeaderCopy.score.trust} value={state.trustScore} />
+        <div className="performance-right-cluster">
+          <em className={`performance-style-inline ${color ? `color-${color.tone}` : 'color-pending'}`}>
+            {gameHeaderCopy.styleLabel} <b>{color ? color.label : gameHeaderCopy.pendingStyle}</b>
+          </em>
+          <div className="header-score-meters" aria-label={scoreMeterAria(state)}>
+            <HeaderScore icon="scene" label={gameHeaderCopy.score.scene} value={state.sceneScore} />
+            <HeaderScore icon="flow" label={gameHeaderCopy.score.flow} value={state.flowScore} />
+            <HeaderScore icon="trust" label={gameHeaderCopy.score.trust} value={state.trustScore} />
+          </div>
         </div>
       </div>
       {dailyRun ? (

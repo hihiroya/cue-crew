@@ -174,7 +174,7 @@ export const appCopy = {
     actorBreath: '役者との呼吸',
     prepMeaning: '準備の意味',
     responseFit: '活きる対応',
-    scoreMeter: '公演メーター',
+    scoreMood: '公演の雰囲気',
     scoreLabels: {
       scene: '評判',
       flow: '段取り',
@@ -384,20 +384,20 @@ export function prepMissedMemo(prep: PrepAction) {
   return '崩れが来なければ、低負荷のまま整える・待つで場面化を狙える。閉じる準備は、外れても退路として残る。';
 }
 
-export function scoreMeterMemo(kind: 'scene' | 'flow' | 'trust', value: number) {
+export function scoreMoodMemo(kind: 'scene' | 'flow' | 'trust', value: number) {
   if (kind === 'scene') {
-    if (value <= 0) return 'まだ客席の熱は積み上がっていない。ここから見せ場を作る。';
-    if (value < 6) return '客席に少し手応えが残っている。噛み合う対応で伸ばしたい。';
-    return '客席に届く熱が育っている。攻めた判断が評価に残りやすい。';
+    if (value <= 0) return '客席はまだ静か。ここから最初の見せ場を作る。';
+    if (value < 6) return '客席に少し熱が残っている。噛み合う対応なら、場面として届きやすい。';
+    return '客席の熱が育っている。攻めた判断が、そのまま評判として残りやすい。';
   }
   if (kind === 'flow') {
-    if (value <= 0) return '進行はまだ土台作りの途中。乱れを残さない判断が効く。';
-    if (value < 4) return '段取りの支えができ始めている。崩れを受けても戻しやすい。';
-    return '進行の軸が強い。多少の揺れなら舞台全体で支えられる。';
+    if (value <= 0) return '進行はまだ手探り。乱れを残さず、舞台の足場を作りたい。';
+    if (value < 4) return '段取りの支えができ始めている。少し揺れても、舞台へ戻す余地がある。';
+    return '進行の軸が通っている。多少の揺れなら、舞台全体で受け止められる。';
   }
-  if (value <= 0) return '座組の呼吸はこれから育つ。噛み合う受け方を重ねたい。';
-  if (value < 4) return '座組に少し呼吸が残っている。待つ判断や得意筋が活きやすい。';
-  return '座組の呼吸が深まっている。終盤の伸びにつながりやすい。';
+  if (value <= 0) return '座組の呼吸はこれから。噛み合う受け方を重ねて、舞台の息を合わせたい。';
+  if (value < 4) return '座組に少し呼吸が残っている。待つ判断や得意筋が、場面の余韻になりやすい。';
+  return '座組の呼吸が深まっている。終盤の伸びまでつながる空気がある。';
 }
 
 export function prepReadMemo(prep: PrepAction, covered: number) {

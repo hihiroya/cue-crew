@@ -12,7 +12,7 @@ import {
   prepMeaningMemo,
   prepMissedMemo,
   prepPerformanceMemo,
-  scoreMeterMemo,
+  scoreMoodMemo,
 } from '../../content/ja/appCopy';
 
 type PrepProps = {
@@ -88,22 +88,6 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
             <span>{appCopy.prep.memo}</span>
             <strong>{appCopy.prep.prepTitle(PREP_LABELS[inspected])}</strong>
           </div>
-          <div className="cue-read cue-read--context">
-            <div className="prep-state-line">
-              <span>{appCopy.prep.performanceMemo}</span>
-              <p>{prepPerformanceMemo(state)}</p>
-            </div>
-            <div className="prep-state-line">
-              <span>{appCopy.prep.actorMemo}</span>
-              <p>{prepActorMemo(focusActor)}</p>
-            </div>
-            <div className="prep-breath-line">
-              <span>{appCopy.prep.actorBreath}</span>
-              <strong>{actorBreathLabel(focusActor.trust)}</strong>
-              <BreathMeter value={focusActor.trust} />
-              <p>{actorBreathMemo(focusActor)}</p>
-            </div>
-          </div>
           <div className="cue-sheet-grid cue-sheet-focus">
             <section>
               <span>{appCopy.prep.visibleOmens}</span>
@@ -149,11 +133,27 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
               </section>
             </div>
           </div>
-          <section className="cue-score-meter" aria-label={appCopy.prep.scoreMeter}>
-            <span>{appCopy.prep.scoreMeter}</span>
-            <ScoreMeterLine icon="scene" label={appCopy.prep.scoreLabels.scene} value={state.sceneScore} body={scoreMeterMemo('scene', state.sceneScore)} />
-            <ScoreMeterLine icon="flow" label={appCopy.prep.scoreLabels.flow} value={state.flowScore} body={scoreMeterMemo('flow', state.flowScore)} />
-            <ScoreMeterLine icon="trust" label={appCopy.prep.scoreLabels.trust} value={state.trustScore} body={scoreMeterMemo('trust', state.trustScore)} />
+          <div className="cue-read cue-read--context">
+            <div className="prep-state-line">
+              <span>{appCopy.prep.performanceMemo}</span>
+              <p>{prepPerformanceMemo(state)}</p>
+            </div>
+            <div className="prep-state-line">
+              <span>{appCopy.prep.actorMemo}</span>
+              <p>{prepActorMemo(focusActor)}</p>
+            </div>
+            <div className="prep-breath-line">
+              <span>{appCopy.prep.actorBreath}</span>
+              <strong>{actorBreathLabel(focusActor.trust)}</strong>
+              <BreathMeter value={focusActor.trust} />
+              <p>{actorBreathMemo(focusActor)}</p>
+            </div>
+          </div>
+          <section className="cue-performance-mood" aria-label={appCopy.prep.scoreMood}>
+            <span>{appCopy.prep.scoreMood}</span>
+            <ScoreMoodLine icon="scene" label={appCopy.prep.scoreLabels.scene} value={state.sceneScore} body={scoreMoodMemo('scene', state.sceneScore)} />
+            <ScoreMoodLine icon="flow" label={appCopy.prep.scoreLabels.flow} value={state.flowScore} body={scoreMoodMemo('flow', state.flowScore)} />
+            <ScoreMoodLine icon="trust" label={appCopy.prep.scoreLabels.trust} value={state.trustScore} body={scoreMoodMemo('trust', state.trustScore)} />
           </section>
           <div className={`cue-approval-slot ${isApproving ? 'is-approved' : ''}`} aria-label={appCopy.prep.approvalLabel} aria-live="polite">
             <span>{appCopy.prep.approvalLabel}</span>
@@ -187,9 +187,9 @@ function BreathMeter({ value }: { value: number }) {
   );
 }
 
-function ScoreMeterLine({ icon, label, value, body }: { icon: 'scene' | 'flow' | 'trust'; label: string; value: number; body: string }) {
+function ScoreMoodLine({ icon, label, value, body }: { icon: 'scene' | 'flow' | 'trust'; label: string; value: number; body: string }) {
   return (
-    <p className="cue-score-meter-line">
+    <p className="cue-performance-mood-line">
       <span>
         <Icon name={icon} />
         <strong>{label}</strong>

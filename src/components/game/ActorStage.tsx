@@ -41,22 +41,26 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
   return (
     <section className="actor-stage focus-stage" aria-label={actorStageCopy.stageAria}>
       <article className="actor-card focus-actor-card is-focus">
-        <span className="actor-role-badge focus-role">{actorStageCopy.focusRole}</span>
         <div className={`actor-figure-wrap actor-figure-${focusActor.type} figure-state-${focusActor.state}`}>
           <ActorSilhouette type={focusActor.type} />
         </div>
-        <div className="actor-card-head">
-          <div className="actor-title-stack">
-            <h3>{focusActor.name}</h3>
-            <div className="actor-meta-line">
-              <span className="actor-state-inline">{STATE_LABELS[focusActor.state]}</span>
-              {focusPassive ? (
-                <small className={`actor-trust-pill trust-${trustLevel(focusActor)}`}>{focusPassive}</small>
-              ) : null}
+        <div className="actor-stage-main">
+          <div className="actor-card-head">
+            <div className="actor-title-stack">
+              <div className="actor-identity-line">
+                <span className="actor-role-badge focus-role">{actorStageCopy.focusRole}</span>
+                <h3>{focusActor.name}</h3>
+              </div>
+              <div className="actor-meta-line">
+                <span className="actor-state-inline">{STATE_LABELS[focusActor.state]}</span>
+                {focusPassive ? (
+                  <small className={`actor-trust-pill trust-${trustLevel(focusActor)}`}>{focusPassive}</small>
+                ) : null}
+              </div>
             </div>
           </div>
+          <OmenList actor={focusActor} seed={seed} totalTurn={totalTurn} />
         </div>
-        <OmenList actor={focusActor} seed={seed} totalTurn={totalTurn} />
       </article>
       <SupportActors
         actors={supportingActors}
@@ -114,12 +118,10 @@ function OmenList({ actor, seed, totalTurn }: { actor: Actor; seed: string; tota
 }
 
 function OmenStrength({ intensity }: { intensity: string }) {
-  const lit = intensity === omenIntensityCopy.high ? 3 : intensity === omenIntensityCopy.medium ? 2 : 1;
+  const level = intensity === omenIntensityCopy.high ? 'high' : intensity === omenIntensityCopy.medium ? 'medium' : 'low';
   return (
-    <span className="omen-strength" aria-label={omenIntensityCopy.strengthAria(intensity)}>
-      {Array.from({ length: 3 }, (_, index) => (
-        <i key={index} className={index < lit ? 'is-lit' : ''} />
-      ))}
+    <span className={`omen-strength strength-${level}`} aria-label={omenIntensityCopy.strengthAria(intensity)}>
+      <i />
     </span>
   );
 }
