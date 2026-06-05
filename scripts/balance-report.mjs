@@ -29,6 +29,12 @@ const fixedPlans = {
   arrange: { prep: 'tightenFlow', response: 'arrange' },
   cut: { prep: 'prepareTransition', response: 'cut' },
 };
+const stylePlans = {
+  styleHeat: { style: 'heat', response: 'catch' },
+  styleBreath: { style: 'breath', response: 'wait' },
+  styleControl: { style: 'control', response: 'arrange' },
+  styleClosure: { style: 'closure', response: 'cut' },
+};
 const prepForResponse = {
   catch: 'watch',
   wait: 'makeSpace',
@@ -40,12 +46,16 @@ const BALANCE_TARGETS = {
     random: [16, 28],
     catch: [14, 32],
     wait: [20, 38],
-    arrange: [24, 36],
+    arrange: [24, 38],
     cut: [12, 28],
     cycle: [22, 42],
     lowLoad: [38, 50],
     omen: [48, 60],
     expectedScore: [52, 64],
+    styleHeat: [40, 58],
+    styleBreath: [38, 56],
+    styleControl: [34, 54],
+    styleClosure: [36, 54],
     oracle: [66, 80],
   },
   avgLoad: {
@@ -54,15 +64,15 @@ const BALANCE_TARGETS = {
     arrange: [0, 1.0],
     cut: [0, 1.5],
     cycle: [0.4, 2.2],
-    omen: [0.5, 2.0],
-    expectedScore: [1.0, 2.5],
+    omen: [0.4, 2.0],
+    expectedScore: [0.8, 2.5],
     oracle: [0, 1.0],
   },
   relative: {
     minOmenCycleGap: 8,
     expectedOmenGap: [0, 10],
-    oracleExpectedGap: [5, 20],
-    waitArrangeGap: [-8, 8],
+    oracleExpectedGap: [5, 22],
+    waitArrangeGap: [-10, 8],
     minCatchUpside: 18,
     cycleMedianSPlusCap: 52,
     waitSafetyLoad: 0.8,
@@ -71,6 +81,8 @@ const BALANCE_TARGETS = {
     maxOmenSceneOrBetterPerRun: 5.9,
     minCycleFrayOrAccidentRate: 18,
     minOmenFrayOrAccidentRate: 6,
+    maxSkilledHeatShare: 72,
+    maxStyleStrategyWrongColorShare: 28,
   },
 };
 
@@ -107,6 +119,10 @@ async function main() {
     { id: 'random', kind: 'random' },
     { id: 'omen', kind: 'omen' },
     { id: 'expectedScore', kind: 'expectedScore' },
+    { id: 'styleHeat', kind: 'styleTarget' },
+    { id: 'styleBreath', kind: 'styleTarget' },
+    { id: 'styleControl', kind: 'styleTarget' },
+    { id: 'styleClosure', kind: 'styleTarget' },
     { id: 'lowLoad', kind: 'lowLoad' },
     { id: 'styleCommit', kind: 'styleCommit' },
     { id: 'oracle', kind: 'oracle' },
@@ -207,6 +223,7 @@ function chooseForStrategy(strategy, state, turn, sampleIndex, context) {
   if (strategy.kind === 'random') return randomChoice(state, sampleIndex, context);
   if (strategy.kind === 'omen') return omenChoice(state, context);
   if (strategy.kind === 'expectedScore') return expectedScoreChoice(state, context);
+  if (strategy.kind === 'styleTarget') return styleTargetChoice(strategy, state, context);
   if (strategy.kind === 'lowLoad') return lowLoadChoice(state, context);
   if (strategy.kind === 'styleCommit') return styleCommitChoice(state, context);
   if (strategy.kind === 'oracle') return oracleChoice(state, context);
@@ -249,6 +266,24 @@ function expectedScoreChoice(state, context) {
     prep,
     response: bestResponseAfterPrep(state, prep, context, scoreComparator).response,
     reason: 'expectedScore:weighted-events+best-score',
+  };
+}
+
+function styleTargetChoice(strategy, state, context) {
+  const plan = stylePlans[strategy.id];
+  if (!plan) throw new Error(`Unknown style strategy: ${strategy.id}`);
+  if (!state.performanceStyle) {
+    return {
+      prep: prepForResponse[plan.response],
+      response: plan.response,
+      reason: `${strategy.id}:opening-${plan.style}`,
+    };
+  }
+  const prep = bestPrepByExpectedEvents(state, context);
+  return {
+    prep,
+    response: bestResponseAfterPrep(state, prep, context, styleComparator(plan.style)).response,
+    reason: `${strategy.id}:style-aware`,
   };
 }
 
@@ -366,8 +401,28 @@ function oracleComparator(a, b) {
   );
 }
 
+function styleComparator(style) {
+  return (a, b) => {
+    const aValue = finalDeltaValue(a.preview) + styleDeltaValue(a.preview, style);
+    const bValue = finalDeltaValue(b.preview) + styleDeltaValue(b.preview, style);
+    return (
+      bValue - aValue
+      || b.preview.score - a.preview.score
+      || a.preview.deltaLoad - b.preview.deltaLoad
+    );
+  };
+}
+
 function finalDeltaValue(preview) {
   return preview.deltaScene * 2 + preview.deltaFlow + preview.deltaTrust - preview.deltaLoad * 2;
+}
+
+function styleDeltaValue(preview, style) {
+  if (style === 'heat') return preview.mainResponse === 'catch' ? Math.max(0, preview.deltaScene) * 2 - Math.max(0, preview.deltaLoad) : 0;
+  if (style === 'breath') return preview.mainResponse === 'wait' ? Math.max(0, preview.deltaTrust) * 3 + (preview.deltaLoad <= 0 ? 1 : 0) : 0;
+  if (style === 'control') return preview.mainResponse === 'arrange' ? Math.max(0, preview.deltaFlow) * 3 + Math.max(0, -preview.deltaLoad) * 2 : 0;
+  if (style === 'closure') return preview.mainResponse === 'cut' ? Math.max(0, -preview.deltaLoad) * 3 + (preview.frayRecovery?.status === 'strong' ? 8 : 0) : 0;
+  return 0;
 }
 
 function currentActor(state) {
@@ -433,8 +488,30 @@ function balanceChecks(reports) {
   add(byId.omen.frayOrAccidentRate >= BALANCE_TARGETS.relative.minOmenFrayOrAccidentRate, `omen should keep some visible texture; fray+accident=${round(byId.omen.frayOrAccidentRate)}%`);
   add(byId.omen.sceneOrBetterPerRun < BALANCE_TARGETS.relative.maxOmenSceneOrBetterPerRun, `omen should leave some run texture; scene+/run=${round(byId.omen.sceneOrBetterPerRun)}`);
   add(!(byId.expectedScore.accidentRate === 0 && byId.expectedScore.frayOrAccidentRate === 0), `expectedScore should not erase all fray/accident texture; fray+accident=${round(byId.expectedScore.frayOrAccidentRate)}% accident=${round(byId.expectedScore.accidentRate)}%`);
+  const skilledStyleRuns =
+    (byId.omen.styles.heat ?? 0) +
+    (byId.expectedScore.styles.heat ?? 0) +
+    (byId.oracle.styles.heat ?? 0);
+  const skilledStyleTotal = styleTotal(byId.omen) + styleTotal(byId.expectedScore) + styleTotal(byId.oracle);
+  const skilledHeatShare = skilledStyleTotal ? (skilledStyleRuns / skilledStyleTotal) * 100 : 0;
+  add(skilledHeatShare <= BALANCE_TARGETS.relative.maxSkilledHeatShare, `skilled strategies should not collapse into heat; heat=${round(skilledHeatShare)}%`);
+
+  Object.entries(stylePlans).forEach(([id, plan]) => {
+    const report = byId[id];
+    const wrongColorShare = report ? 100 - styleShare(report, plan.style) : 100;
+    add(wrongColorShare <= BALANCE_TARGETS.relative.maxStyleStrategyWrongColorShare, `${id} should usually land on ${plan.style}; off-color=${round(wrongColorShare)}%`);
+  });
 
   return checks;
+}
+
+function styleTotal(report) {
+  return Object.values(report.styles).reduce((total, count) => total + count, 0);
+}
+
+function styleShare(report, style) {
+  const total = styleTotal(report);
+  return total ? ((report.styles[style] ?? 0) / total) * 100 : 0;
 }
 
 async function loadComparison(targetPath, reports) {

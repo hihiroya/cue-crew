@@ -90,7 +90,13 @@ function performanceStyleScoreItem(state: GameState, response: MainResponse): Sc
   if (!state.performanceStyle) return undefined;
   const style = PERFORMANCE_STYLE_DETAILS[state.performanceStyle];
   if (response !== style.strength) return undefined;
-  return scoreItem('performance-style', ruleText.performanceStyleScoreLabel(style.label, response), 1, style.short);
+  let value = 1;
+  if (state.performanceStyle === 'control' && (state.backstageLoad >= 1 || eventIsOneOf(state, ['positionShift', 'tempoRush', 'ensembleWaver']))) value = 2;
+  if (state.performanceStyle === 'closure' && (state.backstageLoad >= 3 || state.pendingFrayEvent)) value = 2;
+  if (state.performanceStyle === 'breath' && (state.trustScore >= 2 || state.act >= 3)) value = 2;
+  if (state.performanceStyle === 'heat' && state.backstageLoad <= 1 && !eventIsOneOf(state, ['stepForward', 'adlib', 'heatUp'])) value = 0;
+  if (value === 0) return undefined;
+  return scoreItem('performance-style', ruleText.performanceStyleScoreLabel(style.label, response), value, style.short);
 }
 
 function performanceBuildLevelScoreItem(state: GameState, response: MainResponse): ScoreBreakdownItem | undefined {
@@ -474,11 +480,15 @@ function deltasFor(tier: ResultTier, response: MainResponse, state: GameState, p
   const waitTrustBonus = response === 'wait' && success && eventIsOneOf(state, ['silence', 'delayedExit', 'adlib']) ? 1 : 0;
   const waitFlowPenalty = response === 'wait' && eventIsOneOf(state, ['positionShift', 'tempoRush', 'ensembleWaver']) ? -1 : 0;
   const styleTrustBonus = state.performanceStyle === 'breath' && response === 'wait' && success ? 1 : 0;
+  const breathFinaleTrustBonus = state.performanceStyle === 'breath' && response === 'wait' && success && state.act >= 3 && state.trustScore >= 2 ? 1 : 0;
   const cutTrustPenalty = response === 'cut' && success && state.backstageLoad < 3 && eventIsOneOf(state, ['stepForward', 'adlib', 'heatUp', 'silence']) && !transitionCutGuardActive(state, response) ? -1 : 0;
   const cutFlowBonus = response === 'cut' && success && (state.backstageLoad >= 3 || transitionCutGuardActive(state, response)) ? 1 : 0;
   const cutFlowPenalty = response === 'cut' && success && state.backstageLoad <= 1 && eventIsOneOf(state, ['stepForward', 'adlib', 'heatUp', 'silence']) && !transitionCutGuardActive(state, response) ? -1 : 0;
   const cutScenePenalty = response === 'cut' && success && state.backstageLoad <= 1 && eventIsOneOf(state, ['stepForward', 'adlib', 'heatUp', 'silence']) && !transitionCutGuardActive(state, response) ? -1 : 0;
   const styleSceneBonus = state.performanceStyle === 'heat' && response === 'catch' && success ? 1 : 0;
+  const controlSceneBonus = state.performanceStyle === 'control' && response === 'arrange' && success && (eventIsOneOf(state, ['positionShift', 'tempoRush', 'ensembleWaver']) || state.backstageLoad >= 1) ? 1 : 0;
+  const controlFlowBonus = state.performanceStyle === 'control' && response === 'arrange' && success ? 1 : 0;
+  const closureSceneBonus = state.performanceStyle === 'closure' && response === 'cut' && success && (state.backstageLoad >= 3 || frayFit.status === 'strong') ? 1 : 0;
   const catchHeatSceneBonus = response === 'catch' && success && eventIsOneOf(state, ['stepForward', 'adlib', 'heatUp']) ? 1 : 0;
   const catchPeakSceneBonus = response === 'catch' && tier === 'masterpiece' && prepQuality === 'hit' ? 1 : 0;
   const repeatedFrayResponse = frayFit.status === 'strong' && state.lastResponses[state.lastResponses.length - 1] === response;
@@ -486,9 +496,9 @@ function deltasFor(tier: ResultTier, response: MainResponse, state: GameState, p
   const strongFrayTrustBonus = frayFit.status === 'strong' && !repeatedFrayResponse && success ? 1 : 0;
   const strongFrayFlowBonus = frayFit.status === 'strong' && !repeatedFrayResponse && success ? 1 : 0;
   return {
-    deltaScene: base.scene + repeat.deltaScene + styleSceneBonus + catchHeatSceneBonus + catchPeakSceneBonus + strongFraySceneBonus + cutScenePenalty,
-    deltaFlow: base.flow + loadPenalty + repeat.deltaFlow + frayFit.deltaFlow + strongFrayFlowBonus + catchFlowPenalty + arrangeFlowBonus + waitFlowPenalty + cutFlowBonus + cutFlowPenalty,
-    deltaTrust: base.trust + waitTrustBonus + styleTrustBonus + cutTrustPenalty + repeat.deltaTrust + strongFrayTrustBonus + catchUnityPenalty + arrangeUnityPenalty,
+    deltaScene: base.scene + repeat.deltaScene + styleSceneBonus + controlSceneBonus + closureSceneBonus + catchHeatSceneBonus + catchPeakSceneBonus + strongFraySceneBonus + cutScenePenalty,
+    deltaFlow: base.flow + loadPenalty + repeat.deltaFlow + frayFit.deltaFlow + strongFrayFlowBonus + catchFlowPenalty + arrangeFlowBonus + controlFlowBonus + waitFlowPenalty + cutFlowBonus + cutFlowPenalty,
+    deltaTrust: base.trust + waitTrustBonus + styleTrustBonus + breathFinaleTrustBonus + cutTrustPenalty + repeat.deltaTrust + strongFrayTrustBonus + catchUnityPenalty + arrangeUnityPenalty,
     deltaLoad: deltaLoad + repeat.deltaLoad + frayFit.deltaLoad,
     repeat,
     frayFit,
@@ -731,14 +741,14 @@ function performanceStyleScores(logs: StyleSource[]): Array<[PerformanceStyle, n
     closure: 0,
   };
   logs.forEach((log) => {
-    if (log.mainResponse === 'catch') scores.heat += 3;
-    if (log.mainResponse === 'wait') scores.breath += 3;
-    if (log.mainResponse === 'arrange') scores.control += 3;
-    if (log.mainResponse === 'cut') scores.closure += 3;
-    if (log.mainResponse === 'catch') scores.heat += Math.max(0, log.deltaScene);
-    if (log.mainResponse === 'wait') scores.breath += Math.max(0, log.deltaTrust);
-    if (log.mainResponse === 'arrange') scores.control += Math.max(0, log.deltaFlow) + Math.max(0, -log.deltaLoad);
-    if (log.mainResponse === 'cut') scores.closure += Math.max(0, -log.deltaFlow) + (log.deltaLoad <= 0 ? 1 : 0);
+    if (log.mainResponse === 'catch') scores.heat += 4;
+    if (log.mainResponse === 'wait') scores.breath += 4;
+    if (log.mainResponse === 'arrange') scores.control += 4;
+    if (log.mainResponse === 'cut') scores.closure += 4;
+    if (log.mainResponse === 'catch') scores.heat += Math.min(2, Math.max(0, log.deltaScene));
+    if (log.mainResponse === 'wait') scores.breath += Math.min(3, Math.max(0, log.deltaTrust));
+    if (log.mainResponse === 'arrange') scores.control += Math.min(3, Math.max(0, log.deltaFlow) + Math.max(0, -log.deltaLoad));
+    if (log.mainResponse === 'cut') scores.closure += Math.min(3, Math.max(0, -log.deltaFlow) + (log.deltaLoad <= 0 ? 1 : 0));
   });
   return (Object.entries(scores) as Array<[PerformanceStyle, number]>).sort((a, b) => b[1] - a[1]);
 }

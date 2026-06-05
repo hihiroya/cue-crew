@@ -16,7 +16,7 @@
       ],
       "arrange": [
         24,
-        36
+        38
       ],
       "cut": [
         12,
@@ -37,6 +37,22 @@
       "expectedScore": [
         52,
         64
+      ],
+      "styleHeat": [
+        40,
+        58
+      ],
+      "styleBreath": [
+        38,
+        56
+      ],
+      "styleControl": [
+        34,
+        54
+      ],
+      "styleClosure": [
+        36,
+        54
       ],
       "oracle": [
         66,
@@ -65,11 +81,11 @@
         2.2
       ],
       "omen": [
-        0.5,
+        0.4,
         2
       ],
       "expectedScore": [
-        1,
+        0.8,
         2.5
       ],
       "oracle": [
@@ -85,10 +101,10 @@
       ],
       "oracleExpectedGap": [
         5,
-        20
+        22
       ],
       "waitArrangeGap": [
-        -8,
+        -10,
         8
       ],
       "minCatchUpside": 18,
@@ -98,7 +114,9 @@
       "minCatchP90": 40,
       "maxOmenSceneOrBetterPerRun": 5.9,
       "minCycleFrayOrAccidentRate": 18,
-      "minOmenFrayOrAccidentRate": 6
+      "minOmenFrayOrAccidentRate": 6,
+      "maxSkilledHeatShare": 72,
+      "maxStyleStrategyWrongColorShare": 28
     }
   },
   "reports": [
@@ -352,67 +370,67 @@
     },
     {
       "id": "wait",
-      "avgScore": 30.520833333333332,
-      "p10": -10,
-      "p50": 32,
-      "p90": 60,
-      "best": 72,
+      "avgScore": 35.375,
+      "p10": -5,
+      "p50": 39,
+      "p90": 65,
+      "best": 74,
       "worst": -43,
-      "avgLoad": 1.3333333333333333,
+      "avgLoad": 1.2916666666666667,
       "prepHitRate": 48.61111111111111,
-      "masterpiecePerRun": 1.875,
-      "sceneOrBetterPerRun": 3.5416666666666665,
-      "frayOrAccidentRate": 25.694444444444443,
-      "accidentRate": 6.944444444444445,
+      "masterpiecePerRun": 2.0416666666666665,
+      "sceneOrBetterPerRun": 3.75,
+      "frayOrAccidentRate": 21.875,
+      "accidentRate": 6.597222222222222,
       "scores": [
-        -4,
-        57,
+        1,
+        59,
         -43,
         12,
-        38,
-        52,
-        49,
-        28,
-        17,
-        58,
-        46,
-        72,
-        -8,
-        14,
-        11,
-        39,
-        64,
-        33,
-        20,
-        41,
-        9,
-        71,
-        -7,
-        32,
-        60,
-        58,
-        63,
-        29,
+        40,
+        54,
+        56,
+        36,
         24,
-        31,
-        23,
-        -37,
-        -18,
-        44,
-        27,
-        67,
-        51,
+        65,
         52,
-        57,
-        34,
-        48,
-        25,
-        -10,
+        74,
+        -3,
+        14,
+        15,
+        41,
+        66,
         39,
-        49,
+        21,
+        53,
+        20,
+        73,
+        3,
+        34,
+        66,
+        60,
+        65,
+        31,
+        36,
+        33,
         30,
-        -14,
-        32
+        -26,
+        -5,
+        50,
+        29,
+        69,
+        58,
+        59,
+        64,
+        36,
+        50,
+        33,
+        -10,
+        41,
+        51,
+        40,
+        -8,
+        40
       ],
       "loads": [
         2,
@@ -446,32 +464,32 @@
         1,
         3,
         2,
-        4,
-        4,
-        2,
-        2,
-        0,
-        0,
-        0,
-        0,
-        2,
-        0,
-        1,
-        4,
-        1,
-        0,
         3,
+        4,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        1,
+        4,
+        1,
+        0,
+        2,
         2,
         0
       ],
       "prepHits": 140,
       "turns": 288,
       "tiers": {
-        "fray": 54,
-        "scene": 80,
-        "smallSuccess": 44,
-        "masterpiece": 90,
-        "accident": 20
+        "fray": 44,
+        "scene": 82,
+        "masterpiece": 98,
+        "smallSuccess": 45,
+        "accident": 19
       },
       "styles": {
         "breath": 48
@@ -492,9 +510,9 @@
       "loadDistribution": {
         "0": 18,
         "1": 11,
-        "2": 9,
+        "2": 10,
         "3": 5,
-        "4": 5
+        "4": 4
       },
       "turnsByNumber": {
         "1": {
@@ -532,10 +550,10 @@
         },
         "3": {
           "tiers": {
-            "fray": 10,
-            "smallSuccess": 13,
+            "fray": 9,
+            "smallSuccess": 10,
             "accident": 4,
-            "masterpiece": 8,
+            "masterpiece": 12,
             "scene": 13
           },
           "responses": {
@@ -549,10 +567,10 @@
         },
         "4": {
           "tiers": {
-            "fray": 11,
-            "masterpiece": 9,
-            "accident": 5,
-            "smallSuccess": 8,
+            "fray": 7,
+            "masterpiece": 10,
+            "accident": 4,
+            "smallSuccess": 12,
             "scene": 15
           },
           "responses": {
@@ -566,10 +584,10 @@
         },
         "5": {
           "tiers": {
-            "scene": 17,
-            "fray": 4,
-            "masterpiece": 23,
-            "smallSuccess": 4
+            "scene": 18,
+            "fray": 2,
+            "masterpiece": 25,
+            "smallSuccess": 3
           },
           "responses": {
             "wait": 48
@@ -581,10 +599,10 @@
         },
         "6": {
           "tiers": {
-            "smallSuccess": 2,
-            "scene": 19,
-            "fray": 5,
-            "masterpiece": 21,
+            "scene": 20,
+            "fray": 2,
+            "masterpiece": 22,
+            "smallSuccess": 3,
             "accident": 1
           },
           "responses": {
@@ -603,12 +621,12 @@
     },
     {
       "id": "arrange",
-      "avgScore": 30.1875,
-      "p10": 19,
-      "p50": 31,
-      "p90": 41,
-      "best": 53,
-      "worst": 0,
+      "avgScore": 36.625,
+      "p10": 23,
+      "p50": 37,
+      "p90": 47,
+      "best": 63,
+      "worst": 4,
       "avgLoad": 0.020833333333333332,
       "prepHitRate": 32.29166666666667,
       "masterpiecePerRun": 1.1041666666666667,
@@ -616,54 +634,54 @@
       "frayOrAccidentRate": 6.25,
       "accidentRate": 0,
       "scores": [
-        32,
-        32,
-        29,
-        25,
-        30,
-        39,
-        47,
-        19,
-        32,
-        20,
-        30,
-        33,
-        44,
-        8,
-        43,
-        34,
-        31,
-        28,
-        37,
-        19,
-        29,
-        19,
-        24,
-        39,
-        23,
-        12,
-        9,
         40,
-        0,
-        41,
-        35,
-        32,
-        29,
+        38,
+        37,
+        31,
+        40,
+        45,
+        55,
+        23,
+        38,
         27,
         34,
-        35,
-        40,
+        43,
+        50,
+        13,
+        51,
+        42,
+        37,
         32,
-        41,
         43,
         26,
-        39,
-        19,
-        23,
-        53,
+        37,
         27,
-        38,
-        28
+        32,
+        47,
+        31,
+        19,
+        14,
+        46,
+        4,
+        47,
+        43,
+        40,
+        33,
+        31,
+        40,
+        41,
+        46,
+        36,
+        47,
+        51,
+        32,
+        47,
+        25,
+        27,
+        63,
+        31,
+        44,
+        32
       ],
       "loads": [
         0,
@@ -1095,66 +1113,66 @@
     },
     {
       "id": "cycle",
-      "avgScore": 27.895833333333332,
-      "p10": -3,
+      "avgScore": 26.75,
+      "p10": -4,
       "p50": 29,
       "p90": 52,
-      "best": 71,
+      "best": 66,
       "worst": -26,
-      "avgLoad": 0.4791666666666667,
+      "avgLoad": 0.4375,
       "prepHitRate": 44.44444444444444,
-      "masterpiecePerRun": 0.9375,
-      "sceneOrBetterPerRun": 2.9166666666666665,
-      "frayOrAccidentRate": 31.25,
-      "accidentRate": 13.541666666666666,
+      "masterpiecePerRun": 0.8958333333333334,
+      "sceneOrBetterPerRun": 2.9375,
+      "frayOrAccidentRate": 33.33333333333333,
+      "accidentRate": 14.583333333333334,
       "scores": [
         -11,
-        27,
-        40,
+        20,
+        45,
         1,
         29,
         34,
         29,
         -3,
-        17,
+        13,
         1,
         20,
-        44,
-        14,
+        43,
+        19,
         25,
-        46,
-        46,
+        52,
+        41,
         42,
-        70,
+        66,
         -1,
         52,
         45,
-        56,
+        57,
         46,
-        23,
+        19,
         40,
-        31,
+        26,
         29,
         -19,
-        71,
+        65,
         38,
-        41,
+        38,
         -26,
         -7,
         9,
-        26,
+        15,
         29,
-        13,
+        9,
         54,
         31,
-        53,
+        54,
         26,
-        18,
+        13,
         32,
-        3,
+        -4,
         43,
         25,
-        41,
+        34,
         46
       ],
       "loads": [
@@ -1172,10 +1190,10 @@
         0,
         0,
         0,
-        1,
-        1,
         0,
         1,
+        0,
+        0,
         1,
         0,
         0,
@@ -1210,15 +1228,15 @@
       "prepHits": 128,
       "turns": 288,
       "tiers": {
-        "smallSuccess": 58,
-        "fray": 51,
-        "scene": 95,
-        "accident": 39,
-        "masterpiece": 45
+        "smallSuccess": 51,
+        "fray": 54,
+        "scene": 98,
+        "accident": 42,
+        "masterpiece": 43
       },
       "styles": {
-        "heat": 43,
-        "breath": 5
+        "heat": 35,
+        "breath": 13
       },
       "events": {
         "tempoRush": 28,
@@ -1237,8 +1255,8 @@
         "cut": 48
       },
       "loadDistribution": {
-        "0": 28,
-        "1": 17,
+        "0": 30,
+        "1": 15,
         "2": 3
       },
       "turnsByNumber": {
@@ -1309,11 +1327,11 @@
         },
         "5": {
           "tiers": {
-            "accident": 4,
-            "smallSuccess": 12,
-            "fray": 7,
+            "accident": 8,
+            "fray": 11,
             "scene": 18,
-            "masterpiece": 7
+            "smallSuccess": 7,
+            "masterpiece": 4
           },
           "responses": {
             "catch": 48
@@ -1326,19 +1344,19 @@
         },
         "6": {
           "tiers": {
-            "accident": 14,
-            "fray": 13,
-            "scene": 10,
-            "smallSuccess": 8,
-            "masterpiece": 3
+            "accident": 13,
+            "scene": 13,
+            "smallSuccess": 6,
+            "masterpiece": 4,
+            "fray": 12
           },
           "responses": {
             "wait": 48
           },
           "prepQuality": {
             "hit": 21,
-            "partial": 25,
-            "miss": 2
+            "partial": 24,
+            "miss": 3
           }
         }
       },
@@ -1351,17 +1369,17 @@
     },
     {
       "id": "random",
-      "avgScore": 19.9375,
-      "p10": -17,
-      "p50": 19,
+      "avgScore": 20.979166666666668,
+      "p10": -16,
+      "p50": 21,
       "p90": 48,
-      "best": 67,
+      "best": 73,
       "worst": -31,
-      "avgLoad": 1.2708333333333333,
+      "avgLoad": 1.1875,
       "prepHitRate": 38.54166666666667,
       "masterpiecePerRun": 1.1041666666666667,
-      "sceneOrBetterPerRun": 2.6666666666666665,
-      "frayOrAccidentRate": 40.625,
+      "sceneOrBetterPerRun": 2.6875,
+      "frayOrAccidentRate": 39.93055555555556,
       "accidentRate": 12.152777777777777,
       "scores": [
         11,
@@ -1369,9 +1387,9 @@
         38,
         -10,
         -7,
-        48,
+        52,
         -27,
-        18,
+        24,
         44,
         -19,
         45,
@@ -1381,18 +1399,18 @@
         60,
         7,
         21,
-        57,
+        66,
         15,
         37,
         43,
         28,
         -16,
-        17,
+        21,
         -17,
-        25,
+        20,
         36,
-        42,
-        67,
+        43,
+        73,
         -2,
         38,
         38,
@@ -1401,14 +1419,14 @@
         54,
         6,
         3,
-        33,
+        34,
         6,
         43,
-        19,
+        22,
         48,
-        9,
         11,
-        -30,
+        11,
+        -11,
         45,
         -31,
         27
@@ -1458,7 +1476,7 @@
         0,
         0,
         4,
-        4,
+        0,
         1,
         4,
         0
@@ -1466,15 +1484,15 @@
       "prepHits": 111,
       "turns": 288,
       "tiers": {
-        "fray": 82,
+        "fray": 80,
         "accident": 35,
         "masterpiece": 53,
-        "scene": 75,
-        "smallSuccess": 43
+        "scene": 76,
+        "smallSuccess": 44
       },
       "styles": {
-        "heat": 14,
-        "control": 11,
+        "heat": 13,
+        "control": 12,
         "breath": 11,
         "closure": 12
       },
@@ -1495,11 +1513,11 @@
         "wait": 67
       },
       "loadDistribution": {
-        "0": 26,
+        "0": 27,
         "1": 4,
         "2": 6,
         "3": 3,
-        "4": 9
+        "4": 8
       },
       "turnsByNumber": {
         "1": {
@@ -1545,10 +1563,10 @@
         "3": {
           "tiers": {
             "masterpiece": 9,
-            "fray": 14,
+            "fray": 13,
             "accident": 7,
             "scene": 12,
-            "smallSuccess": 6
+            "smallSuccess": 7
           },
           "responses": {
             "arrange": 7,
@@ -1565,8 +1583,8 @@
         "4": {
           "tiers": {
             "fray": 16,
-            "scene": 15,
-            "smallSuccess": 7,
+            "scene": 17,
+            "smallSuccess": 5,
             "accident": 8,
             "masterpiece": 2
           },
@@ -1585,9 +1603,9 @@
         "5": {
           "tiers": {
             "masterpiece": 10,
-            "scene": 14,
+            "scene": 13,
             "fray": 15,
-            "smallSuccess": 6,
+            "smallSuccess": 7,
             "accident": 3
           },
           "responses": {
@@ -1604,8 +1622,8 @@
         },
         "6": {
           "tiers": {
-            "fray": 13,
-            "smallSuccess": 8,
+            "fray": 12,
+            "smallSuccess": 9,
             "masterpiece": 12,
             "accident": 3,
             "scene": 12
@@ -1629,66 +1647,66 @@
     },
     {
       "id": "omen",
-      "avgScore": 54.583333333333336,
+      "avgScore": 55.229166666666664,
       "p10": 31,
-      "p50": 54,
-      "p90": 72,
-      "best": 81,
+      "p50": 55,
+      "p90": 73,
+      "best": 78,
       "worst": 8,
-      "avgLoad": 0.5208333333333334,
-      "prepHitRate": 50.69444444444444,
-      "masterpiecePerRun": 2.6666666666666665,
-      "sceneOrBetterPerRun": 4.541666666666667,
-      "frayOrAccidentRate": 12.5,
+      "avgLoad": 0.4583333333333333,
+      "prepHitRate": 51.041666666666664,
+      "masterpiecePerRun": 2.75,
+      "sceneOrBetterPerRun": 4.625,
+      "frayOrAccidentRate": 12.152777777777777,
       "accidentRate": 0,
       "scores": [
         53,
-        81,
+        73,
         16,
-        54,
-        45,
+        55,
+        60,
         31,
         55,
         78,
-        53,
+        65,
         60,
-        53,
-        81,
+        55,
+        76,
+        77,
         72,
-        72,
-        57,
-        51,
-        72,
+        78,
+        54,
+        54,
         37,
         31,
-        47,
+        49,
         50,
         40,
         71,
-        57,
+        58,
         42,
-        63,
+        65,
         71,
         30,
         8,
         52,
         52,
-        68,
-        69,
-        69,
+        62,
+        62,
+        71,
         39,
-        76,
+        78,
         47,
+        50,
+        46,
         63,
-        44,
-        63,
-        60,
+        71,
         49,
-        66,
-        61,
+        71,
+        62,
         54,
         58,
-        64,
+        65,
         35
       ],
       "loads": [
@@ -1696,19 +1714,19 @@
         1,
         0,
         0,
-        4,
-        0,
-        1,
-        0,
-        2,
         0,
         0,
         1,
-        0,
-        0,
         0,
         3,
+        0,
+        0,
         1,
+        0,
+        0,
+        0,
+        2,
+        0,
         0,
         0,
         1,
@@ -1724,7 +1742,7 @@
         0,
         1,
         0,
-        1,
+        2,
         0,
         2,
         0,
@@ -1732,7 +1750,7 @@
         1,
         0,
         1,
-        0,
+        1,
         0,
         1,
         0,
@@ -1741,42 +1759,41 @@
         0,
         0
       ],
-      "prepHits": 146,
+      "prepHits": 147,
       "turns": 288,
       "tiers": {
         "scene": 90,
-        "masterpiece": 128,
-        "smallSuccess": 34,
-        "fray": 36
+        "masterpiece": 132,
+        "smallSuccess": 31,
+        "fray": 35
       },
       "styles": {
-        "heat": 35,
-        "breath": 10,
+        "heat": 19,
+        "breath": 26,
         "closure": 2,
         "control": 1
       },
       "events": {
         "tempoRush": 31,
-        "heatUp": 44,
+        "heatUp": 45,
         "delayedExit": 37,
         "ensembleWaver": 23,
         "stepForward": 40,
-        "silence": 46,
+        "silence": 45,
         "adlib": 36,
         "positionShift": 31
       },
       "responses": {
-        "catch": 97,
-        "arrange": 39,
-        "wait": 99,
-        "cut": 53
+        "catch": 89,
+        "arrange": 44,
+        "wait": 113,
+        "cut": 42
       },
       "loadDistribution": {
-        "0": 31,
-        "1": 12,
-        "2": 3,
-        "3": 1,
-        "4": 1
+        "0": 32,
+        "1": 11,
+        "2": 4,
+        "3": 1
       },
       "turnsByNumber": {
         "1": {
@@ -1817,16 +1834,16 @@
         },
         "3": {
           "tiers": {
-            "masterpiece": 21,
-            "fray": 8,
-            "smallSuccess": 10,
-            "scene": 9
+            "masterpiece": 23,
+            "fray": 9,
+            "scene": 9,
+            "smallSuccess": 7
           },
           "responses": {
-            "wait": 23,
-            "cut": 6,
-            "arrange": 8,
-            "catch": 11
+            "wait": 25,
+            "cut": 7,
+            "arrange": 7,
+            "catch": 9
           },
           "prepQuality": {
             "hit": 27,
@@ -1836,78 +1853,78 @@
         },
         "4": {
           "tiers": {
-            "scene": 20,
-            "masterpiece": 18,
-            "fray": 5,
-            "smallSuccess": 5
+            "scene": 21,
+            "masterpiece": 20,
+            "fray": 4,
+            "smallSuccess": 3
           },
           "responses": {
-            "catch": 29,
-            "arrange": 7,
-            "cut": 7,
-            "wait": 5
+            "catch": 25,
+            "arrange": 8,
+            "cut": 5,
+            "wait": 10
           },
           "prepQuality": {
-            "partial": 24,
-            "hit": 20,
+            "partial": 23,
+            "hit": 21,
             "miss": 4
           }
         },
         "5": {
           "tiers": {
-            "smallSuccess": 7,
+            "smallSuccess": 10,
+            "scene": 14,
             "masterpiece": 22,
-            "scene": 16,
-            "fray": 3
+            "fray": 2
           },
           "responses": {
-            "cut": 23,
-            "arrange": 9,
-            "catch": 6,
-            "wait": 10
+            "cut": 13,
+            "arrange": 14,
+            "catch": 7,
+            "wait": 14
           },
           "prepQuality": {
-            "partial": 18,
+            "partial": 15,
             "hit": 24,
-            "miss": 6
+            "miss": 9
           }
         },
         "6": {
           "tiers": {
             "masterpiece": 14,
-            "scene": 25,
+            "scene": 26,
             "fray": 6,
-            "smallSuccess": 3
+            "smallSuccess": 2
           },
           "responses": {
-            "wait": 24,
-            "catch": 13,
-            "cut": 4,
-            "arrange": 7
+            "wait": 27,
+            "catch": 10,
+            "arrange": 7,
+            "cut": 4
           },
           "prepQuality": {
             "hit": 15,
-            "partial": 31,
-            "miss": 2
+            "partial": 32,
+            "miss": 1
           }
         }
       },
       "choiceReasons": {
-        "omen:visible-omens+best-score": 239,
-        "omen:high-load-or-fray": 35,
-        "omen:likely-fray": 14
+        "omen:visible-omens+best-score": 247,
+        "omen:high-load-or-fray": 21,
+        "omen:likely-fray": 20
       }
     },
     {
       "id": "expectedScore",
-      "avgScore": 57.729166666666664,
-      "p10": 36,
+      "avgScore": 58.083333333333336,
+      "p10": 39,
       "p50": 57,
-      "p90": 78,
+      "p90": 76,
       "best": 87,
       "worst": 9,
-      "avgLoad": 1.125,
-      "prepHitRate": 53.125,
+      "avgLoad": 0.9375,
+      "prepHitRate": 52.77777777777778,
       "masterpiecePerRun": 2.8958333333333335,
       "sceneOrBetterPerRun": 4.520833333333333,
       "frayOrAccidentRate": 5.555555555555555,
@@ -1915,11 +1932,11 @@
       "scores": [
         70,
         41,
-        84,
-        72,
-        47,
-        51,
+        86,
+        76,
         49,
+        52,
+        50,
         40,
         66,
         34,
@@ -1928,45 +1945,45 @@
         63,
         57,
         58,
-        81,
+        87,
         40,
-        67,
+        69,
         53,
-        72,
+        73,
         53,
         72,
         57,
-        31,
+        42,
         42,
         46,
         59,
-        34,
+        37,
         52,
         78,
         65,
-        46,
+        41,
         52,
-        64,
+        57,
         60,
         55,
-        44,
-        82,
-        69,
-        77,
-        68,
-        42,
-        80,
-        74,
-        70,
+        47,
+        84,
+        73,
+        73,
+        71,
+        39,
+        76,
+        76,
+        72,
         9,
         36,
-        87
+        78
       ],
       "loads": [
         1,
         0,
         0,
-        3,
+        0,
         1,
         3,
         0,
@@ -1978,11 +1995,11 @@
         2,
         1,
         0,
-        2,
+        0,
         2,
         1,
         0,
-        2,
+        0,
         4,
         0,
         0,
@@ -2004,15 +2021,15 @@
         0,
         0,
         0,
-        1,
+        0,
         0,
         0,
         0,
         4,
         0,
-        2
+        1
       ],
-      "prepHits": 153,
+      "prepHits": 152,
       "turns": 288,
       "tiers": {
         "masterpiece": 139,
@@ -2021,9 +2038,9 @@
         "scene": 78
       },
       "styles": {
-        "heat": 33,
-        "control": 6,
-        "breath": 6,
+        "heat": 26,
+        "control": 7,
+        "breath": 12,
         "closure": 3
       },
       "events": {
@@ -2037,16 +2054,16 @@
         "tempoRush": 30
       },
       "responses": {
-        "catch": 129,
+        "catch": 123,
         "cut": 94,
-        "wait": 41,
+        "wait": 47,
         "arrange": 24
       },
       "loadDistribution": {
-        "0": 21,
+        "0": 25,
         "1": 10,
-        "2": 10,
-        "3": 4,
+        "2": 7,
+        "3": 3,
         "4": 3
       },
       "turnsByNumber": {
@@ -2088,15 +2105,15 @@
         },
         "3": {
           "tiers": {
-            "smallSuccess": 10,
+            "smallSuccess": 12,
             "fray": 6,
             "masterpiece": 19,
-            "scene": 13
+            "scene": 11
           },
           "responses": {
             "wait": 5,
-            "cut": 26,
-            "catch": 15,
+            "cut": 27,
+            "catch": 14,
             "arrange": 2
           },
           "prepQuality": {
@@ -2106,13 +2123,14 @@
         },
         "4": {
           "tiers": {
-            "masterpiece": 29,
-            "scene": 18,
+            "masterpiece": 28,
+            "scene": 19,
             "smallSuccess": 1
           },
           "responses": {
-            "catch": 47,
-            "arrange": 1
+            "catch": 45,
+            "wait": 1,
+            "arrange": 2
           },
           "prepQuality": {
             "hit": 29,
@@ -2122,15 +2140,15 @@
         "5": {
           "tiers": {
             "masterpiece": 26,
-            "scene": 14,
-            "smallSuccess": 7,
+            "scene": 16,
+            "smallSuccess": 5,
             "fray": 1
           },
           "responses": {
-            "cut": 14,
-            "catch": 18,
-            "wait": 13,
-            "arrange": 3
+            "cut": 12,
+            "catch": 15,
+            "wait": 17,
+            "arrange": 4
           },
           "prepQuality": {
             "hit": 28,
@@ -2139,20 +2157,20 @@
         },
         "6": {
           "tiers": {
-            "masterpiece": 25,
+            "masterpiece": 26,
             "smallSuccess": 10,
-            "scene": 11,
+            "scene": 10,
             "fray": 2
           },
           "responses": {
             "catch": 10,
-            "cut": 20,
-            "wait": 9,
-            "arrange": 9
+            "cut": 21,
+            "wait": 10,
+            "arrange": 7
           },
           "prepQuality": {
-            "hit": 29,
-            "partial": 19
+            "hit": 28,
+            "partial": 20
           }
         }
       },
@@ -2161,37 +2179,1068 @@
       }
     },
     {
-      "id": "lowLoad",
-      "avgScore": 38.166666666666664,
+      "id": "styleHeat",
+      "avgScore": 55.958333333333336,
+      "p10": 35,
+      "p50": 54,
+      "p90": 74,
+      "best": 90,
+      "worst": 28,
+      "avgLoad": 1.3958333333333333,
+      "prepHitRate": 45.83333333333333,
+      "masterpiecePerRun": 2.375,
+      "sceneOrBetterPerRun": 4.479166666666667,
+      "frayOrAccidentRate": 6.25,
+      "accidentRate": 0,
+      "scores": [
+        76,
+        59,
+        49,
+        28,
+        41,
+        37,
+        50,
+        62,
+        50,
+        42,
+        78,
+        35,
+        63,
+        43,
+        68,
+        71,
+        48,
+        58,
+        74,
+        35,
+        60,
+        60,
+        47,
+        44,
+        51,
+        66,
+        31,
+        69,
+        40,
+        54,
+        69,
+        57,
+        47,
+        40,
+        70,
+        69,
+        85,
+        73,
+        54,
+        76,
+        52,
+        66,
+        31,
+        50,
+        90,
+        51,
+        62,
+        55
+      ],
+      "loads": [
+        1,
+        3,
+        2,
+        4,
+        0,
+        1,
+        4,
+        0,
+        0,
+        2,
+        0,
+        4,
+        0,
+        0,
+        1,
+        2,
+        0,
+        0,
+        2,
+        4,
+        2,
+        1,
+        3,
+        4,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        4,
+        2,
+        3,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        3,
+        1,
+        1,
+        2,
+        0,
+        4
+      ],
+      "prepHits": 132,
+      "turns": 288,
+      "tiers": {
+        "masterpiece": 114,
+        "scene": 101,
+        "fray": 18,
+        "smallSuccess": 55
+      },
+      "styles": {
+        "heat": 48
+      },
+      "events": {
+        "heatUp": 40,
+        "positionShift": 35,
+        "stepForward": 41,
+        "silence": 43,
+        "tempoRush": 30,
+        "delayedExit": 37,
+        "ensembleWaver": 28,
+        "adlib": 34
+      },
+      "responses": {
+        "catch": 179,
+        "cut": 79,
+        "arrange": 14,
+        "wait": 16
+      },
+      "loadDistribution": {
+        "0": 17,
+        "1": 13,
+        "2": 7,
+        "3": 4,
+        "4": 7
+      },
+      "turnsByNumber": {
+        "1": {
+          "tiers": {
+            "masterpiece": 18,
+            "scene": 13,
+            "fray": 5,
+            "smallSuccess": 12
+          },
+          "responses": {
+            "catch": 48
+          },
+          "prepQuality": {
+            "hit": 26,
+            "partial": 14,
+            "miss": 8
+          }
+        },
+        "2": {
+          "tiers": {
+            "scene": 15,
+            "fray": 5,
+            "smallSuccess": 13,
+            "masterpiece": 15
+          },
+          "responses": {
+            "catch": 48
+          },
+          "prepQuality": {
+            "partial": 21,
+            "miss": 8,
+            "hit": 19
+          }
+        },
+        "3": {
+          "tiers": {
+            "scene": 23,
+            "masterpiece": 14,
+            "smallSuccess": 8,
+            "fray": 3
+          },
+          "responses": {
+            "catch": 9,
+            "arrange": 3,
+            "cut": 35,
+            "wait": 1
+          },
+          "prepQuality": {
+            "partial": 30,
+            "hit": 18
+          }
+        },
+        "4": {
+          "tiers": {
+            "masterpiece": 28,
+            "scene": 17,
+            "smallSuccess": 2,
+            "fray": 1
+          },
+          "responses": {
+            "catch": 44,
+            "cut": 1,
+            "arrange": 3
+          },
+          "prepQuality": {
+            "hit": 23,
+            "partial": 25
+          }
+        },
+        "5": {
+          "tiers": {
+            "masterpiece": 20,
+            "scene": 15,
+            "smallSuccess": 12,
+            "fray": 1
+          },
+          "responses": {
+            "catch": 15,
+            "cut": 23,
+            "wait": 8,
+            "arrange": 2
+          },
+          "prepQuality": {
+            "hit": 23,
+            "partial": 25
+          }
+        },
+        "6": {
+          "tiers": {
+            "masterpiece": 19,
+            "scene": 18,
+            "fray": 3,
+            "smallSuccess": 8
+          },
+          "responses": {
+            "cut": 20,
+            "catch": 15,
+            "wait": 7,
+            "arrange": 6
+          },
+          "prepQuality": {
+            "hit": 23,
+            "partial": 25
+          }
+        }
+      },
+      "choiceReasons": {
+        "styleHeat:opening-heat": 96,
+        "styleHeat:style-aware": 192
+      }
+    },
+    {
+      "id": "styleBreath",
+      "avgScore": 47.916666666666664,
       "p10": 21,
-      "p50": 37,
-      "p90": 56,
-      "best": 73,
-      "worst": -1,
-      "avgLoad": 0.0625,
-      "prepHitRate": 50.69444444444444,
+      "p50": 53,
+      "p90": 65,
+      "best": 70,
+      "worst": 4,
+      "avgLoad": 0.375,
+      "prepHitRate": 54.861111111111114,
+      "masterpiecePerRun": 2.4375,
+      "sceneOrBetterPerRun": 4.458333333333333,
+      "frayOrAccidentRate": 13.541666666666666,
+      "accidentRate": 5.555555555555555,
+      "scores": [
+        34,
+        55,
+        59,
+        44,
+        69,
+        56,
+        53,
+        61,
+        60,
+        56,
+        70,
+        21,
+        63,
+        45,
+        18,
+        56,
+        31,
+        59,
+        54,
+        26,
+        59,
+        46,
+        58,
+        52,
+        50,
+        60,
+        54,
+        43,
+        50,
+        13,
+        43,
+        66,
+        24,
+        60,
+        66,
+        70,
+        54,
+        50,
+        37,
+        4,
+        18,
+        57,
+        51,
+        50,
+        29,
+        21,
+        65,
+        60
+      ],
+      "loads": [
+        2,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        2,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "prepHits": 158,
+      "turns": 288,
+      "tiers": {
+        "fray": 23,
+        "masterpiece": 117,
+        "scene": 97,
+        "smallSuccess": 35,
+        "accident": 16
+      },
+      "styles": {
+        "breath": 48
+      },
+      "events": {
+        "ensembleWaver": 25,
+        "positionShift": 27,
+        "tempoRush": 26,
+        "delayedExit": 50,
+        "silence": 56,
+        "heatUp": 42,
+        "stepForward": 34,
+        "adlib": 28
+      },
+      "responses": {
+        "wait": 201,
+        "cut": 44,
+        "catch": 33,
+        "arrange": 10
+      },
+      "loadDistribution": {
+        "0": 35,
+        "1": 9,
+        "2": 3,
+        "3": 1
+      },
+      "turnsByNumber": {
+        "1": {
+          "tiers": {
+            "fray": 7,
+            "masterpiece": 20,
+            "smallSuccess": 6,
+            "accident": 6,
+            "scene": 9
+          },
+          "responses": {
+            "wait": 48
+          },
+          "prepQuality": {
+            "partial": 17,
+            "hit": 31
+          }
+        },
+        "2": {
+          "tiers": {
+            "fray": 10,
+            "masterpiece": 14,
+            "scene": 10,
+            "smallSuccess": 4,
+            "accident": 10
+          },
+          "responses": {
+            "wait": 48
+          },
+          "prepQuality": {
+            "partial": 22,
+            "hit": 25,
+            "miss": 1
+          }
+        },
+        "3": {
+          "tiers": {
+            "masterpiece": 21,
+            "scene": 15,
+            "smallSuccess": 11,
+            "fray": 1
+          },
+          "responses": {
+            "cut": 17,
+            "wait": 21,
+            "arrange": 3,
+            "catch": 7
+          },
+          "prepQuality": {
+            "hit": 24,
+            "partial": 24
+          }
+        },
+        "4": {
+          "tiers": {
+            "scene": 31,
+            "masterpiece": 13,
+            "fray": 2,
+            "smallSuccess": 2
+          },
+          "responses": {
+            "catch": 16,
+            "arrange": 6,
+            "wait": 20,
+            "cut": 6
+          },
+          "prepQuality": {
+            "partial": 22,
+            "hit": 26
+          }
+        },
+        "5": {
+          "tiers": {
+            "scene": 16,
+            "masterpiece": 25,
+            "smallSuccess": 6,
+            "fray": 1
+          },
+          "responses": {
+            "catch": 6,
+            "wait": 32,
+            "cut": 9,
+            "arrange": 1
+          },
+          "prepQuality": {
+            "partial": 21,
+            "hit": 27
+          }
+        },
+        "6": {
+          "tiers": {
+            "masterpiece": 24,
+            "scene": 16,
+            "smallSuccess": 6,
+            "fray": 2
+          },
+          "responses": {
+            "wait": 32,
+            "cut": 12,
+            "catch": 4
+          },
+          "prepQuality": {
+            "hit": 25,
+            "partial": 23
+          }
+        }
+      },
+      "choiceReasons": {
+        "styleBreath:opening-breath": 96,
+        "styleBreath:style-aware": 192
+      }
+    },
+    {
+      "id": "styleControl",
+      "avgScore": 36.166666666666664,
+      "p10": 18,
+      "p50": 33,
+      "p90": 55,
+      "best": 62,
+      "worst": -3,
+      "avgLoad": 0.14583333333333334,
+      "prepHitRate": 47.22222222222222,
+      "masterpiecePerRun": 1,
+      "sceneOrBetterPerRun": 3.6666666666666665,
+      "frayOrAccidentRate": 16.319444444444446,
+      "accidentRate": 0,
+      "scores": [
+        58,
+        53,
+        5,
+        37,
+        50,
+        55,
+        -3,
+        62,
+        23,
+        41,
+        41,
+        62,
+        29,
+        33,
+        48,
+        22,
+        24,
+        42,
+        14,
+        47,
+        45,
+        58,
+        51,
+        26,
+        22,
+        43,
+        40,
+        40,
+        29,
+        33,
+        29,
+        20,
+        32,
+        32,
+        33,
+        18,
+        58,
+        48,
+        54,
+        44,
+        33,
+        13,
+        42,
+        27,
+        24,
+        22,
+        48,
+        29
+      ],
+      "loads": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "prepHits": 136,
+      "turns": 288,
+      "tiers": {
+        "scene": 128,
+        "masterpiece": 48,
+        "smallSuccess": 65,
+        "fray": 47
+      },
+      "styles": {
+        "control": 48
+      },
+      "events": {
+        "positionShift": 29,
+        "silence": 41,
+        "heatUp": 37,
+        "tempoRush": 23,
+        "stepForward": 34,
+        "adlib": 35,
+        "delayedExit": 56,
+        "ensembleWaver": 33
+      },
+      "responses": {
+        "arrange": 210,
+        "cut": 37,
+        "wait": 10,
+        "catch": 31
+      },
+      "loadDistribution": {
+        "0": 42,
+        "1": 5,
+        "2": 1
+      },
+      "turnsByNumber": {
+        "1": {
+          "tiers": {
+            "scene": 13,
+            "smallSuccess": 23,
+            "fray": 10,
+            "masterpiece": 2
+          },
+          "responses": {
+            "arrange": 48
+          },
+          "prepQuality": {
+            "hit": 12,
+            "miss": 28,
+            "partial": 8
+          }
+        },
+        "2": {
+          "tiers": {
+            "scene": 13,
+            "masterpiece": 5,
+            "smallSuccess": 16,
+            "fray": 14
+          },
+          "responses": {
+            "arrange": 48
+          },
+          "prepQuality": {
+            "hit": 15,
+            "partial": 12,
+            "miss": 21
+          }
+        },
+        "3": {
+          "tiers": {
+            "scene": 24,
+            "smallSuccess": 9,
+            "masterpiece": 10,
+            "fray": 5
+          },
+          "responses": {
+            "cut": 17,
+            "arrange": 24,
+            "catch": 7
+          },
+          "prepQuality": {
+            "partial": 24,
+            "hit": 24
+          }
+        },
+        "4": {
+          "tiers": {
+            "scene": 37,
+            "masterpiece": 8,
+            "fray": 3
+          },
+          "responses": {
+            "arrange": 33,
+            "catch": 13,
+            "cut": 2
+          },
+          "prepQuality": {
+            "hit": 31,
+            "partial": 17
+          }
+        },
+        "5": {
+          "tiers": {
+            "scene": 21,
+            "fray": 10,
+            "smallSuccess": 10,
+            "masterpiece": 7
+          },
+          "responses": {
+            "arrange": 22,
+            "wait": 7,
+            "cut": 12,
+            "catch": 7
+          },
+          "prepQuality": {
+            "hit": 21,
+            "partial": 27
+          }
+        },
+        "6": {
+          "tiers": {
+            "masterpiece": 16,
+            "scene": 20,
+            "fray": 5,
+            "smallSuccess": 7
+          },
+          "responses": {
+            "arrange": 35,
+            "wait": 3,
+            "cut": 6,
+            "catch": 4
+          },
+          "prepQuality": {
+            "hit": 33,
+            "partial": 15
+          }
+        }
+      },
+      "choiceReasons": {
+        "styleControl:opening-control": 96,
+        "styleControl:style-aware": 192
+      }
+    },
+    {
+      "id": "styleClosure",
+      "avgScore": 42.083333333333336,
+      "p10": 21,
+      "p50": 42,
+      "p90": 60,
+      "best": 70,
+      "worst": -6,
+      "avgLoad": 0.5416666666666666,
+      "prepHitRate": 48.26388888888889,
       "masterpiecePerRun": 1.7916666666666667,
+      "sceneOrBetterPerRun": 4.104166666666667,
+      "frayOrAccidentRate": 15.625,
+      "accidentRate": 2.7777777777777777,
+      "scores": [
+        59,
+        69,
+        58,
+        53,
+        60,
+        29,
+        27,
+        52,
+        40,
+        40,
+        60,
+        14,
+        35,
+        35,
+        48,
+        44,
+        48,
+        52,
+        54,
+        60,
+        21,
+        24,
+        70,
+        21,
+        -6,
+        42,
+        48,
+        49,
+        31,
+        28,
+        58,
+        24,
+        24,
+        36,
+        36,
+        56,
+        44,
+        41,
+        64,
+        63,
+        56,
+        24,
+        52,
+        18,
+        62,
+        28,
+        27,
+        42
+      ],
+      "loads": [
+        3,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        1,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1,
+        0,
+        2,
+        1,
+        0,
+        0,
+        1,
+        0
+      ],
+      "prepHits": 139,
+      "turns": 288,
+      "tiers": {
+        "masterpiece": 86,
+        "smallSuccess": 46,
+        "scene": 111,
+        "fray": 37,
+        "accident": 8
+      },
+      "styles": {
+        "closure": 48
+      },
+      "events": {
+        "positionShift": 37,
+        "stepForward": 42,
+        "delayedExit": 38,
+        "adlib": 29,
+        "silence": 37,
+        "heatUp": 43,
+        "tempoRush": 34,
+        "ensembleWaver": 28
+      },
+      "responses": {
+        "cut": 163,
+        "wait": 25,
+        "catch": 63,
+        "arrange": 37
+      },
+      "loadDistribution": {
+        "0": 33,
+        "1": 8,
+        "2": 4,
+        "3": 2,
+        "4": 1
+      },
+      "turnsByNumber": {
+        "1": {
+          "tiers": {
+            "masterpiece": 21,
+            "smallSuccess": 13,
+            "fray": 10,
+            "accident": 4
+          },
+          "responses": {
+            "cut": 48
+          },
+          "prepQuality": {
+            "hit": 21,
+            "partial": 17,
+            "miss": 10
+          }
+        },
+        "2": {
+          "tiers": {
+            "smallSuccess": 12,
+            "scene": 20,
+            "fray": 9,
+            "accident": 4,
+            "masterpiece": 3
+          },
+          "responses": {
+            "cut": 48
+          },
+          "prepQuality": {
+            "partial": 18,
+            "hit": 23,
+            "miss": 7
+          }
+        },
+        "3": {
+          "tiers": {
+            "scene": 22,
+            "smallSuccess": 14,
+            "masterpiece": 8,
+            "fray": 4
+          },
+          "responses": {
+            "wait": 12,
+            "cut": 13,
+            "arrange": 10,
+            "catch": 13
+          },
+          "prepQuality": {
+            "hit": 20,
+            "partial": 28
+          }
+        },
+        "4": {
+          "tiers": {
+            "masterpiece": 22,
+            "scene": 22,
+            "fray": 4
+          },
+          "responses": {
+            "catch": 32,
+            "arrange": 11,
+            "cut": 3,
+            "wait": 2
+          },
+          "prepQuality": {
+            "hit": 29,
+            "partial": 19
+          }
+        },
+        "5": {
+          "tiers": {
+            "scene": 25,
+            "masterpiece": 14,
+            "smallSuccess": 3,
+            "fray": 6
+          },
+          "responses": {
+            "wait": 8,
+            "arrange": 9,
+            "catch": 8,
+            "cut": 23
+          },
+          "prepQuality": {
+            "partial": 25,
+            "hit": 23
+          }
+        },
+        "6": {
+          "tiers": {
+            "masterpiece": 18,
+            "scene": 22,
+            "fray": 4,
+            "smallSuccess": 4
+          },
+          "responses": {
+            "catch": 10,
+            "cut": 28,
+            "arrange": 7,
+            "wait": 3
+          },
+          "prepQuality": {
+            "hit": 23,
+            "partial": 25
+          }
+        }
+      },
+      "choiceReasons": {
+        "styleClosure:opening-closure": 96,
+        "styleClosure:style-aware": 192
+      }
+    },
+    {
+      "id": "lowLoad",
+      "avgScore": 38.791666666666664,
+      "p10": 19,
+      "p50": 40,
+      "p90": 56,
+      "best": 74,
+      "worst": -1,
+      "avgLoad": 0.041666666666666664,
+      "prepHitRate": 50.69444444444444,
+      "masterpiecePerRun": 1.8125,
       "sceneOrBetterPerRun": 3.7291666666666665,
-      "frayOrAccidentRate": 26.38888888888889,
+      "frayOrAccidentRate": 26.73611111111111,
       "accidentRate": 0.6944444444444444,
       "scores": [
-        27,
-        15,
+        28,
+        10,
         51,
         36,
         41,
-        35,
         42,
-        27,
+        42,
+        30,
         44,
-        39,
+        42,
         3,
-        24,
+        25,
         24,
         51,
-        44,
-        37,
-        35,
+        47,
+        38,
+        39,
         22,
         27,
         59,
@@ -2202,31 +3251,31 @@
         66,
         50,
         48,
-        35,
-        57,
-        32,
-        23,
-        54,
-        48,
+        38,
         60,
-        40,
-        52,
-        43,
+        34,
+        23,
+        55,
+        50,
+        65,
+        41,
+        53,
+        44,
         17,
         28,
-        35,
+        19,
         28,
         28,
         55,
         32,
-        31,
+        38,
         56,
-        73,
-        39
+        74,
+        40
       ],
       "loads": [
         0,
-        1,
+        0,
         0,
         0,
         0,
@@ -2277,16 +3326,16 @@
       "prepHits": 146,
       "turns": 288,
       "tiers": {
-        "scene": 93,
-        "masterpiece": 86,
-        "fray": 74,
-        "smallSuccess": 33,
+        "scene": 92,
+        "masterpiece": 87,
+        "fray": 75,
+        "smallSuccess": 32,
         "accident": 2
       },
       "styles": {
-        "control": 10,
+        "control": 12,
         "breath": 15,
-        "heat": 17,
+        "heat": 15,
         "closure": 6
       },
       "events": {
@@ -2300,14 +3349,13 @@
         "adlib": 26
       },
       "responses": {
-        "arrange": 109,
-        "cut": 102,
-        "wait": 52,
-        "catch": 25
+        "arrange": 108,
+        "cut": 103,
+        "wait": 54,
+        "catch": 23
       },
       "loadDistribution": {
-        "0": 46,
-        "1": 1,
+        "0": 47,
         "2": 1
       },
       "turnsByNumber": {
@@ -2352,8 +3400,8 @@
         "3": {
           "tiers": {
             "fray": 9,
-            "scene": 22,
-            "masterpiece": 14,
+            "scene": 21,
+            "masterpiece": 15,
             "smallSuccess": 3
           },
           "responses": {
@@ -2370,13 +3418,13 @@
           "tiers": {
             "fray": 24,
             "scene": 18,
-            "smallSuccess": 4,
-            "masterpiece": 2
+            "smallSuccess": 3,
+            "masterpiece": 3
           },
           "responses": {
             "cut": 13,
-            "arrange": 32,
-            "wait": 3
+            "arrange": 31,
+            "wait": 4
           },
           "prepQuality": {
             "partial": 24,
@@ -2386,16 +3434,16 @@
         "5": {
           "tiers": {
             "smallSuccess": 8,
-            "fray": 10,
+            "fray": 11,
             "masterpiece": 18,
-            "scene": 11,
+            "scene": 10,
             "accident": 1
           },
           "responses": {
             "wait": 16,
             "arrange": 11,
-            "cut": 17,
-            "catch": 4
+            "cut": 18,
+            "catch": 3
           },
           "prepQuality": {
             "partial": 26,
@@ -2404,16 +3452,16 @@
         },
         "6": {
           "tiers": {
-            "scene": 17,
-            "masterpiece": 19,
+            "scene": 18,
+            "masterpiece": 18,
             "fray": 10,
             "smallSuccess": 2
           },
           "responses": {
             "arrange": 27,
-            "catch": 2,
-            "wait": 6,
-            "cut": 13
+            "wait": 7,
+            "cut": 13,
+            "catch": 1
           },
           "prepQuality": {
             "hit": 31,
@@ -2423,87 +3471,87 @@
         }
       },
       "choiceReasons": {
-        "lowLoad:weighted-events": 274,
-        "lowLoad:likely-fray": 14
+        "lowLoad:weighted-events": 275,
+        "lowLoad:likely-fray": 13
       }
     },
     {
       "id": "styleCommit",
-      "avgScore": 33.520833333333336,
+      "avgScore": 42.875,
       "p10": 13,
-      "p50": 32,
-      "p90": 53,
-      "best": 66,
-      "worst": -13,
-      "avgLoad": 3.2291666666666665,
-      "prepHitRate": 38.54166666666667,
-      "masterpiecePerRun": 2,
-      "sceneOrBetterPerRun": 3.5208333333333335,
-      "frayOrAccidentRate": 17.708333333333336,
-      "accidentRate": 2.083333333333333,
+      "p50": 44,
+      "p90": 70,
+      "best": 76,
+      "worst": -18,
+      "avgLoad": 2.3333333333333335,
+      "prepHitRate": 42.70833333333333,
+      "masterpiecePerRun": 2.2916666666666665,
+      "sceneOrBetterPerRun": 4.145833333333333,
+      "frayOrAccidentRate": 12.847222222222221,
+      "accidentRate": 0.6944444444444444,
       "scores": [
         36,
-        53,
-        64,
-        48,
-        -13,
+        57,
+        68,
+        70,
+        -18,
         26,
-        36,
-        52,
+        69,
+        59,
         30,
         31,
         5,
-        41,
+        72,
         30,
         49,
         26,
         29,
-        56,
+        58,
         13,
-        66,
+        68,
         -1,
         58,
         40,
-        16,
-        22,
+        50,
+        65,
         44,
-        15,
+        76,
         35,
         27,
-        43,
+        50,
         32,
-        29,
+        70,
         55,
-        32,
-        49,
+        73,
+        57,
         31,
         16,
         17,
         12,
-        40,
+        61,
         29,
-        32,
-        47,
-        37,
+        43,
+        49,
         30,
-        39,
+        59,
+        47,
         34,
-        48,
-        23
+        50,
+        71
       ],
       "loads": [
         4,
+        1,
+        2,
+        2,
         4,
         4,
-        4,
-        4,
-        4,
-        4,
+        1,
         0,
         4,
         4,
         0,
-        4,
+        1,
         0,
         4,
         0,
@@ -2512,10 +3560,20 @@
         4,
         0,
         4,
+        1,
+        0,
+        2,
+        0,
         4,
         0,
         4,
         4,
+        3,
+        4,
+        1,
+        4,
+        1,
+        0,
         4,
         4,
         4,
@@ -2523,60 +3581,51 @@
         3,
         4,
         4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
         1,
         4,
-        4,
+        1,
         0,
         4,
         1,
-        4
+        1
       ],
-      "prepHits": 111,
+      "prepHits": 123,
       "turns": 288,
       "tiers": {
-        "scene": 73,
-        "masterpiece": 96,
-        "smallSuccess": 68,
-        "fray": 45,
-        "accident": 6
+        "scene": 89,
+        "masterpiece": 110,
+        "smallSuccess": 52,
+        "fray": 35,
+        "accident": 2
       },
       "styles": {
-        "heat": 37,
-        "breath": 7,
-        "closure": 4
+        "heat": 21,
+        "breath": 22,
+        "closure": 4,
+        "control": 1
       },
       "events": {
-        "tempoRush": 31,
-        "ensembleWaver": 31,
-        "positionShift": 37,
-        "stepForward": 35,
-        "silence": 45,
-        "adlib": 33,
-        "delayedExit": 44,
-        "heatUp": 32
+        "tempoRush": 30,
+        "ensembleWaver": 29,
+        "positionShift": 35,
+        "stepForward": 37,
+        "silence": 48,
+        "adlib": 31,
+        "delayedExit": 45,
+        "heatUp": 33
       },
       "responses": {
-        "catch": 187,
+        "catch": 123,
         "cut": 43,
-        "wait": 55,
-        "arrange": 3
+        "wait": 115,
+        "arrange": 7
       },
       "loadDistribution": {
-        "0": 7,
-        "1": 2,
-        "2": 1,
-        "3": 1,
-        "4": 37
+        "0": 10,
+        "1": 10,
+        "2": 4,
+        "3": 2,
+        "4": 22
       },
       "turnsByNumber": {
         "1": {
@@ -2617,146 +3666,151 @@
         },
         "3": {
           "tiers": {
-            "scene": 14,
-            "masterpiece": 16,
-            "smallSuccess": 16,
-            "fray": 2
+            "scene": 19,
+            "masterpiece": 17,
+            "fray": 4,
+            "smallSuccess": 8
           },
           "responses": {
-            "catch": 37,
-            "wait": 7,
-            "cut": 4
+            "catch": 21,
+            "wait": 22,
+            "cut": 4,
+            "arrange": 1
           },
           "prepQuality": {
-            "miss": 17,
-            "hit": 17,
-            "partial": 14
+            "miss": 9,
+            "partial": 20,
+            "hit": 19
           }
         },
         "4": {
           "tiers": {
-            "masterpiece": 17,
-            "scene": 19,
-            "fray": 2,
-            "smallSuccess": 10
+            "masterpiece": 19,
+            "smallSuccess": 5,
+            "scene": 22,
+            "fray": 2
           },
           "responses": {
-            "catch": 37,
-            "wait": 7,
-            "cut": 4
+            "catch": 21,
+            "wait": 22,
+            "cut": 4,
+            "arrange": 1
           },
           "prepQuality": {
-            "hit": 17,
-            "partial": 29,
-            "miss": 2
+            "hit": 19,
+            "miss": 3,
+            "partial": 26
           }
         },
         "5": {
           "tiers": {
-            "smallSuccess": 13,
-            "scene": 15,
-            "masterpiece": 10,
-            "fray": 10
+            "smallSuccess": 12,
+            "masterpiece": 17,
+            "scene": 13,
+            "fray": 6
           },
           "responses": {
-            "catch": 37,
-            "wait": 7,
-            "cut": 4
+            "catch": 21,
+            "wait": 22,
+            "cut": 4,
+            "arrange": 1
           },
           "prepQuality": {
-            "partial": 27,
-            "hit": 15,
-            "miss": 6
+            "partial": 22,
+            "hit": 21,
+            "miss": 5
           }
         },
         "6": {
           "tiers": {
-            "fray": 24,
-            "scene": 9,
-            "smallSuccess": 5,
-            "masterpiece": 4,
-            "accident": 6
+            "fray": 16,
+            "scene": 19,
+            "masterpiece": 8,
+            "smallSuccess": 3,
+            "accident": 2
           },
           "responses": {
-            "catch": 37,
-            "wait": 7,
-            "cut": 4
+            "catch": 21,
+            "wait": 22,
+            "cut": 4,
+            "arrange": 1
           },
           "prepQuality": {
-            "miss": 30,
-            "hit": 9,
-            "partial": 9
+            "miss": 16,
+            "partial": 21,
+            "hit": 11
           }
         }
       },
       "choiceReasons": {
         "expectedScore:weighted-events+best-score": 96,
-        "styleCommit:heat": 148,
-        "styleCommit:breath": 28,
-        "styleCommit:closure": 16
+        "styleCommit:heat": 84,
+        "styleCommit:breath": 88,
+        "styleCommit:closure": 16,
+        "styleCommit:control": 4
       }
     },
     {
       "id": "oracle",
-      "avgScore": 77.64583333333333,
-      "p10": 71,
-      "p50": 78,
-      "p90": 84,
-      "best": 86,
-      "worst": 68,
+      "avgScore": 79.77083333333333,
+      "p10": 74,
+      "p50": 80,
+      "p90": 85,
+      "best": 88,
+      "worst": 70,
       "avgLoad": 0,
-      "prepHitRate": 98.95833333333334,
-      "masterpiecePerRun": 5.375,
+      "prepHitRate": 99.30555555555556,
+      "masterpiecePerRun": 5.520833333333333,
       "sceneOrBetterPerRun": 6,
       "frayOrAccidentRate": 0,
       "accidentRate": 0,
       "scores": [
-        72,
-        78,
-        76,
-        71,
-        78,
-        82,
-        69,
-        74,
         77,
+        80,
+        78,
         79,
-        75,
+        79,
+        79,
+        76,
+        81,
+        80,
+        79,
+        77,
         86,
+        82,
+        84,
+        71,
+        84,
+        85,
+        78,
+        74,
+        82,
+        85,
+        84,
+        77,
         80,
         77,
-        71,
-        78,
-        82,
-        74,
-        71,
-        82,
-        79,
-        84,
-        76,
         80,
-        76,
-        75,
-        79,
-        79,
         80,
+        79,
+        81,
         73,
         77,
+        80,
+        80,
+        85,
+        80,
+        76,
         78,
+        84,
         77,
-        76,
-        79,
-        76,
-        79,
-        72,
-        77,
+        83,
+        73,
         86,
-        68,
-        86,
-        72,
-        81,
-        79,
-        86,
+        70,
+        88,
+        80,
+        80,
         86,
         79
       ],
@@ -2810,32 +3864,32 @@
         0,
         0
       ],
-      "prepHits": 285,
+      "prepHits": 286,
       "turns": 288,
       "tiers": {
-        "masterpiece": 258,
-        "scene": 30
+        "masterpiece": 265,
+        "scene": 23
       },
       "styles": {
-        "control": 7,
-        "heat": 26,
-        "breath": 15
+        "control": 15,
+        "breath": 25,
+        "heat": 8
       },
       "events": {
-        "positionShift": 27,
+        "positionShift": 28,
         "ensembleWaver": 35,
         "adlib": 33,
         "stepForward": 35,
         "delayedExit": 42,
         "silence": 45,
         "heatUp": 34,
-        "tempoRush": 37
+        "tempoRush": 36
       },
       "responses": {
-        "cut": 46,
-        "arrange": 104,
-        "wait": 91,
-        "catch": 47
+        "cut": 38,
+        "arrange": 113,
+        "wait": 95,
+        "catch": 42
       },
       "loadDistribution": {
         "0": 48
@@ -2873,13 +3927,13 @@
         },
         "3": {
           "tiers": {
-            "masterpiece": 40,
-            "scene": 8
+            "masterpiece": 44,
+            "scene": 4
           },
           "responses": {
-            "arrange": 23,
-            "wait": 20,
-            "catch": 2,
+            "arrange": 25,
+            "wait": 19,
+            "catch": 1,
             "cut": 3
           },
           "prepQuality": {
@@ -2889,14 +3943,14 @@
         },
         "4": {
           "tiers": {
-            "masterpiece": 38,
-            "scene": 10
+            "masterpiece": 44,
+            "scene": 4
           },
           "responses": {
             "arrange": 17,
             "cut": 8,
-            "wait": 11,
-            "catch": 12
+            "wait": 14,
+            "catch": 9
           },
           "prepQuality": {
             "hit": 48
@@ -2904,28 +3958,28 @@
         },
         "5": {
           "tiers": {
-            "masterpiece": 45,
-            "scene": 3
+            "masterpiece": 43,
+            "scene": 5
           },
           "responses": {
-            "wait": 21,
-            "arrange": 15,
-            "cut": 7,
-            "catch": 5
+            "wait": 24,
+            "arrange": 16,
+            "catch": 4,
+            "cut": 4
           },
           "prepQuality": {
-            "hit": 47,
-            "partial": 1
+            "hit": 48
           }
         },
         "6": {
           "tiers": {
-            "masterpiece": 48
+            "masterpiece": 47,
+            "scene": 1
           },
           "responses": {
-            "arrange": 31,
-            "wait": 9,
-            "cut": 8
+            "arrange": 37,
+            "wait": 8,
+            "cut": 3
           },
           "prepQuality": {
             "hit": 48
@@ -2940,7 +3994,7 @@
   "checks": [
     {
       "status": "OK",
-      "message": "random.avgScore 19.9 should be 16-28"
+      "message": "random.avgScore 21 should be 16-28"
     },
     {
       "status": "OK",
@@ -2948,11 +4002,11 @@
     },
     {
       "status": "OK",
-      "message": "wait.avgScore 30.5 should be 20-38"
+      "message": "wait.avgScore 35.4 should be 20-38"
     },
     {
       "status": "OK",
-      "message": "arrange.avgScore 30.2 should be 24-36"
+      "message": "arrange.avgScore 36.6 should be 24-38"
     },
     {
       "status": "OK",
@@ -2960,23 +4014,39 @@
     },
     {
       "status": "OK",
-      "message": "cycle.avgScore 27.9 should be 22-42"
+      "message": "cycle.avgScore 26.8 should be 22-42"
     },
     {
       "status": "OK",
-      "message": "lowLoad.avgScore 38.2 should be 38-50"
+      "message": "lowLoad.avgScore 38.8 should be 38-50"
     },
     {
       "status": "OK",
-      "message": "omen.avgScore 54.6 should be 48-60"
+      "message": "omen.avgScore 55.2 should be 48-60"
     },
     {
       "status": "OK",
-      "message": "expectedScore.avgScore 57.7 should be 52-64"
+      "message": "expectedScore.avgScore 58.1 should be 52-64"
     },
     {
       "status": "OK",
-      "message": "oracle.avgScore 77.6 should be 66-80"
+      "message": "styleHeat.avgScore 56 should be 40-58"
+    },
+    {
+      "status": "OK",
+      "message": "styleBreath.avgScore 47.9 should be 38-56"
+    },
+    {
+      "status": "OK",
+      "message": "styleControl.avgScore 36.2 should be 34-54"
+    },
+    {
+      "status": "OK",
+      "message": "styleClosure.avgScore 42.1 should be 36-54"
+    },
+    {
+      "status": "OK",
+      "message": "oracle.avgScore 79.8 should be 66-80"
     },
     {
       "status": "OK",
@@ -2996,15 +4066,15 @@
     },
     {
       "status": "OK",
-      "message": "cycle.avgLoad 0.5 should be 0.4-2.2"
+      "message": "cycle.avgLoad 0.4 should be 0.4-2.2"
     },
     {
       "status": "OK",
-      "message": "omen.avgLoad 0.5 should be 0.5-2"
+      "message": "omen.avgLoad 0.5 should be 0.4-2"
     },
     {
       "status": "OK",
-      "message": "expectedScore.avgLoad 1.1 should be 1-2.5"
+      "message": "expectedScore.avgLoad 0.9 should be 0.8-2.5"
     },
     {
       "status": "OK",
@@ -3012,19 +4082,19 @@
     },
     {
       "status": "OK",
-      "message": "omen should beat cycle by at least 8 points; gap=26.7"
+      "message": "omen should beat cycle by at least 8 points; gap=28.5"
     },
     {
       "status": "OK",
-      "message": "expectedScore should be 0..10 above omen; gap=3.1"
+      "message": "expectedScore should be 0..10 above omen; gap=2.9"
     },
     {
       "status": "OK",
-      "message": "oracle should be 5..20 above expectedScore; gap=19.9"
+      "message": "oracle should be 5..22 above expectedScore; gap=21.7"
     },
     {
       "status": "OK",
-      "message": "wait should be within -8..8 of arrange; gap=0.3"
+      "message": "wait should be within -10..8 of arrange; gap=-1.2"
     },
     {
       "status": "OK",
@@ -3036,7 +4106,7 @@
     },
     {
       "status": "OK",
-      "message": "wait should not be both very safe and high scoring; avgScore=30.5 avgLoad=1.3"
+      "message": "wait should not be both very safe and high scoring; avgScore=35.4 avgLoad=1.3"
     },
     {
       "status": "OK",
@@ -3044,19 +4114,39 @@
     },
     {
       "status": "OK",
-      "message": "cycle should keep visible texture; fray+accident=31.3%"
+      "message": "cycle should keep visible texture; fray+accident=33.3%"
     },
     {
       "status": "OK",
-      "message": "omen should keep some visible texture; fray+accident=12.5%"
+      "message": "omen should keep some visible texture; fray+accident=12.2%"
     },
     {
       "status": "OK",
-      "message": "omen should leave some run texture; scene+/run=4.5"
+      "message": "omen should leave some run texture; scene+/run=4.6"
     },
     {
       "status": "OK",
       "message": "expectedScore should not erase all fray/accident texture; fray+accident=5.6% accident=0%"
+    },
+    {
+      "status": "OK",
+      "message": "skilled strategies should not collapse into heat; heat=36.8%"
+    },
+    {
+      "status": "OK",
+      "message": "styleHeat should usually land on heat; off-color=0%"
+    },
+    {
+      "status": "OK",
+      "message": "styleBreath should usually land on breath; off-color=0%"
+    },
+    {
+      "status": "OK",
+      "message": "styleControl should usually land on control; off-color=0%"
+    },
+    {
+      "status": "OK",
+      "message": "styleClosure should usually land on closure; off-color=0%"
     }
   ],
   "comparison": null

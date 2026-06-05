@@ -104,7 +104,7 @@ test('a full performance is deterministic for the same seed and choices', () => 
     backstageLoad: 1,
     performanceStyle: 'breath',
     tiers: ['smallSuccess', 'scene', 'fray', 'scene', 'fray', 'accident'],
-    titles: ['小さく整った呼吸', '言葉を泳がせた一瞬', '揺れたまま進んだ拍', '静かに閉じた場面', '遅れた背中の見せ場', '散りかけた舞台'],
+    titles: ['小さく整った呼吸', '言葉を泳がせた一瞬', '揺れたまま進んだ拍', '静かに閉じた場面', '遅れた背中の見せ場', '照明の届かない一拍'],
   });
 });
 

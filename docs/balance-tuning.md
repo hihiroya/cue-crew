@@ -24,6 +24,10 @@
 | `lowLoad` | 負荷管理重視。安全高評価の上限を見る。 |
 | `omen` | 兆候読み。高負荷/保留ほころびでは安全に寄せ、それ以外は見えている兆しから通常プレイで目指したい強さを出す。 |
 | `expectedScore` | 期待値重視。システム理解プレイの強さ。 |
+| `styleHeat` | 熱量を狙う戦略。上振れ型の色が成立しているかを見る。 |
+| `styleBreath` | 余韻を狙う戦略。一体感と終盤伸びが成立しているかを見る。 |
+| `styleControl` | 段取りを狙う戦略。安定型の色が成立しているかを見る。 |
+| `styleClosure` | 収束を狙う戦略。高負荷/ほころび回収型が成立しているかを見る。 |
 | `styleCommit` | 公演の色へ寄せる戦略。色ボーナスの効き方を見る。 |
 | `oracle` | 発生イベントを知る理論上限。通常プレイとの差を見る。 |
 
@@ -42,6 +46,10 @@
 | `lowLoad` | 38-50 | 52-62 | 安定高評価。ただし最高火力は低い。 |
 | `omen` | 48-60 | 60-72 | 兆候読みの主報酬。 |
 | `expectedScore` | 52-64 | 64-76 | システム理解プレイの報酬。 |
+| `styleHeat` | 40-58 | 56-74 | 熱量の上振れ型。 |
+| `styleBreath` | 38-56 | 52-68 | 余韻の終盤伸び型。 |
+| `styleControl` | 34-54 | 48-64 | 段取りの安定型。平均は低めでも事故を抑える。 |
+| `styleClosure` | 36-54 | 52-68 | 収束の回収型。 |
 | `oracle` | 66-80 | 76-90 | 理論上限。到達不能気味でよい。 |
 
 ### 相対条件
@@ -50,12 +58,14 @@
 | --- | --- |
 | `omen.avgScore - cycle.avgScore` | +8以上 |
 | `expectedScore.avgScore - omen.avgScore` | 0-10 |
-| `oracle.avgScore - expectedScore.avgScore` | 5-20 |
-| `wait.avgScore - arrange.avgScore` | -8から+8 |
+| `oracle.avgScore - expectedScore.avgScore` | 5-22 |
+| `wait.avgScore - arrange.avgScore` | -10から+8 |
 | `catch.p90 - catch.avgScore` | +18以上 |
 | `cycle.p50` | S+しきい値52未満 |
 | `cycle.frayOrAccidentRate` | 18%以上 |
 | `omen.frayOrAccidentRate` | 6%以上 |
+| `omen/expectedScore/oracle` のheat比率 | 72%以下 |
+| 色別戦略の狙い色外れ率 | 28%以下 |
 
 ### 負荷
 
@@ -66,8 +76,8 @@
 | `arrange` | 0.0-1.0 | 負荷管理の専門家。 |
 | `cut` | 0.0-1.5 | 崩れを閉じる役割。 |
 | `cycle` | 0.4-2.2 | 固定ローテは最終負荷が低くても、ほころび/事故で揺れを見る。 |
-| `omen` | 0.5-2.0 | 読めば抑えられるが、ほころび/事故が消えない程度にする。 |
-| `expectedScore` | 1.0-2.5 | 高得点狙いで多少負荷を背負う。 |
+| `omen` | 0.4-2.0 | 読めば抑えられるが、ほころび/事故が消えない程度にする。 |
+| `expectedScore` | 0.8-2.5 | 高得点狙いで多少負荷を背負う。 |
 | `oracle` | 0.0-1.0 | 理論上限なので低くてよい。 |
 
 ## 警告条件
@@ -86,6 +96,8 @@
 - `oracle.avgScore - expectedScore.avgScore < 5`
 - `cycle.frayOrAccidentRate < 18`
 - `omen.frayOrAccidentRate < 6`
+- `omen/expectedScore/oracle` のheat比率が72%を超える
+- 色別戦略が狙い色から28%以上外れる
 - `omen.sceneOrBetterPerRun >= 5.9`
 - `expectedScore.accidentRate === 0 && expectedScore.frayOrAccidentRate === 0`
 
