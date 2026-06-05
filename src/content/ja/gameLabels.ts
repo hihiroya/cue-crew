@@ -11,9 +11,9 @@ import type {
 } from '../../game/types';
 
 export const ACTS = [
-  { act: 1, name: '1日目', role: '呼吸作り。準備と座組信頼が公演の型を作る' },
-  { act: 2, name: '2日目', role: '揺らぎ。型を活かして攻めるか、負荷を整える' },
-  { act: 3, name: '3日目', role: '千秋楽。残った信頼と負荷を回収して閉じる' },
+  { act: 1, name: '1日目', role: '土台作り。準備と一体感が公演の色を作る' },
+  { act: 2, name: '2日目', role: '揺らぎ。公演の色を活かして攻めるか、負荷を整える' },
+  { act: 3, name: '3日目', role: '千秋楽。残った一体感と負荷を回収して閉じる' },
 ] as const;
 
 export const FALLBACK_ACT_NAME = '千秋楽';
@@ -35,26 +35,26 @@ export function performanceLabelText(day: number, slot: PerformanceSlot) {
 
 export const PERFORMANCE_STYLE_DETAILS = {
   heat: {
-    label: '熱量で押す公演',
+    label: '熱量',
     short: '拾う判断は評判へつながりやすいが、裏方負荷も残りやすい。',
     strength: 'catch',
     cost: '攻めたぶん負荷が残りやすい',
   },
   breath: {
-    label: '間で残す公演',
-    short: '待つ判断で座組信頼が伸び、空振りでも大きく崩れにくい。',
+    label: '余韻',
+    short: '待つ判断で一体感が伸び、空振りでも大きく崩れにくい。',
     strength: 'wait',
     cost: '場面の伸びは控えめになりやすい',
   },
   control: {
-    label: '段取りで支える公演',
+    label: '段取り',
     short: '整える判断で負荷が抜けやすく、ほころびを抑えやすい。',
     strength: 'arrange',
     cost: '名場面狙いは少し控えめになる',
   },
   closure: {
-    label: '崩れを閉じる公演',
-    short: '切る判断で事故を小さくしやすいが、信頼は伸びにくい。',
+    label: '収束',
+    short: '切る判断で事故を小さくしやすいが、一体感は伸びにくい。',
     strength: 'cut',
     cost: '評判の伸びは控えめになりやすい',
   },
@@ -167,13 +167,13 @@ export const ACTOR_TRAITS = {
 
 export const ACT_RESPONSE_GUIDES = {
   1: {
-    catch: '1日目。初日の熱を評判に変えるが、型は攻め寄りになる。',
+    catch: '1日目。初日の熱を評判に変えるが、公演の色は攻め寄りになる。',
     arrange: '1日目。まず段取りを作り、以降の負荷を扱いやすくする。',
-    wait: '1日目。座組の呼吸を見て、信頼を残しやすい。',
+    wait: '1日目。座組の呼吸を見て、一体感を残しやすい。',
     cut: '1日目。崩れを小さく閉じるが、評判の伸びは控えめ。',
   },
   2: {
-    catch: '2日目。型を活かして攻めると評判が伸びるが、負荷も残る。',
+    catch: '2日目。公演の色を活かして攻めると評判が伸びるが、負荷も残る。',
     arrange: '2日目。揺らぎを段取りへ戻し、ソワレ後のほころびを抑える。',
     wait: '2日目。余韻を残せるが、攻めどころを逃すこともある。',
     cut: '2日目。高負荷なら崩れを早めに閉じられる。',
@@ -181,7 +181,7 @@ export const ACT_RESPONSE_GUIDES = {
   3: {
     catch: '3日目。低負荷なら千秋楽の評判を狙える。',
     arrange: '3日目。千秋楽前後の負荷を戻し、終演を安定させる。',
-    wait: '3日目。信頼が残っているほど、余韻として強く残る。',
+    wait: '3日目。一体感が残っているほど、余韻として強く残る。',
     cut: '3日目。高負荷の崩れを閉じ、事故化を抑える。',
   },
 } as const satisfies Record<number, Partial<Record<MainResponse, string>>>;

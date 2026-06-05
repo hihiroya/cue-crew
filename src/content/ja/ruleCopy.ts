@@ -30,7 +30,7 @@ export const ruleCopy = {
   frayRelationStrong: '舞台裏のほころびを拾える',
   frayRelationMatch: '舞台裏のほころびを整えられる',
   repeatedResponse: '同じ対応の連続使用',
-  trustScore: '公演全体の信頼補正',
+  trustScore: '公演全体の一体感補正',
   loadScore: '裏方負荷の重さ',
   dangerWarning: '危険: 事故の恐れ',
   accidentVisibleLow: 'ほころび',
@@ -59,8 +59,8 @@ export function finaleScoreCopy(kind: 'closeFray' | 'waitTrust' | 'attackLowLoad
   }
   if (kind === 'waitTrust') {
     return {
-      label: '千秋楽で信頼を待つ判断',
-      detail: '積み上げた信頼が、待つ間を支える。',
+      label: '千秋楽で一体感を待つ判断',
+      detail: '積み上げた一体感が、待つ間を支える。',
     };
   }
   return {
@@ -82,7 +82,7 @@ export function prepRelationCopy(kind: 'watchArrange' | 'spaceCatch' | 'flowCut'
   if (kind === 'spaceCatch') return { label: '△ 攻めの別筋', aim: '残した余白から熱を見せ場に変える' };
   if (kind === 'flowCut') return { label: '△ 守りの別筋', aim: '走った場面を早めに閉じ、崩れを小さくする' };
   if (kind === 'transitionWait') return { label: '△ 別筋', aim: '遅れや揺れを余韻として残す' };
-  if (kind === 'transitionArrange') return { label: '△ 別筋', aim: '遅れや揺れを舞台全体の流れに戻す' };
+  if (kind === 'transitionArrange') return { label: '△ 別筋', aim: '遅れや揺れを舞台全体の段取りに戻す' };
   if (kind === 'alternate') return { label: '△ 別筋' };
   return { label: '× 噛み合いにくい' };
 }
@@ -134,7 +134,7 @@ export function repeatAdjustmentCopy(response: MainResponse, count: number, succ
       return {
         label: '拾う判断が続いた',
         detail: '予定外を見せ場に変えるための負荷が残った。',
-        cardLabel: '連続使用: 負荷+2 / 流れ-1',
+        cardLabel: '連続使用: 負荷+2 / 段取り-1',
       };
     }
     return {
@@ -162,7 +162,7 @@ export function repeatAdjustmentCopy(response: MainResponse, count: number, succ
       return {
         label: '待つ判断が続いた',
         detail: '余韻は残ったが、次の場面への処理が滞った。',
-        cardLabel: '連続使用: 負荷+1 / 流れ-1',
+        cardLabel: '連続使用: 負荷+1 / 段取り-1',
       };
     }
     return {
@@ -174,14 +174,14 @@ export function repeatAdjustmentCopy(response: MainResponse, count: number, succ
   if (count >= 3) {
     return {
       label: '切る判断が続いた',
-      detail: '進行は守ったが、役者との信頼が削れた。',
-      cardLabel: '連続使用: 評判-1 / 流れ-1 / 信頼-2 / 負荷+1',
+        detail: '進行は守ったが、役者の気持ちは少し置き去りになった。',
+        cardLabel: '連続使用: 評判-1 / 段取り-1 / 一体感-1 / 負荷+1',
     };
   }
   return {
     label: '切る判断が続いた',
-    detail: '進行は守ったが、役者との信頼が削れた。',
-    cardLabel: '連続使用: 信頼-2',
+    detail: '進行は守ったが、役者の気持ちは少し置き去りになった。',
+    cardLabel: '連続使用: 一体感-1',
   };
 }
 
@@ -259,7 +259,7 @@ export function upsideLabel(response: MainResponse, highTier: ResultTier) {
 export function downsideLabel(response: MainResponse, lowTier: ResultTier, deltaLoad: number) {
   if (lowTier === 'accident') return '下振れると事故の恐れ';
   if (response === 'catch' && deltaLoad > 0) return '下振れると負荷が残る';
-  if (response === 'cut') return '場面は閉じるが信頼を削りやすい';
+  if (response === 'cut') return '場面は閉じるが一体感を削りやすい';
   if (lowTier === 'fray') return '下振れるとほころびが残る';
   return '下振れても大崩れはしにくい';
 }
@@ -267,8 +267,8 @@ export function downsideLabel(response: MainResponse, lowTier: ResultTier, delta
 export function effectLabel(target: ResponseEffectTarget, value: number) {
   const label = {
     scene: '評判',
-    flow: '流れ',
-    trust: '信頼',
+    flow: '段取り',
+    trust: '一体感',
     load: '負荷',
   }[target];
   if (value > 0) return `${label}+${value}`;
@@ -282,8 +282,8 @@ export function repeatEffectLabel(label: string) {
 
 export function sideEffectTargetFromLabel(part: string): ResponseEffectTarget {
   if (part.startsWith('評判') || part.startsWith('場面')) return 'scene';
-  if (part.startsWith('流れ')) return 'flow';
-  if (part.startsWith('信頼')) return 'trust';
+  if (part.startsWith('流れ') || part.startsWith('段取り')) return 'flow';
+  if (part.startsWith('信頼') || part.startsWith('一体感')) return 'trust';
   return 'load';
 }
 
@@ -308,7 +308,7 @@ export function cueKeyPoint(preview: Pick<ResultPreview, 'actorEventType' | 'mai
 export function cueCost(preview: Pick<ResultPreview, 'deltaLoad' | 'deltaFlow' | 'deltaTrust' | 'resultTier' | 'mainResponse'>) {
   if (preview.deltaLoad >= 2) return `評判は伸びたが、${RESPONSE_LABELS[preview.mainResponse]}の代償として裏方負荷が重く残った。`;
   if (preview.deltaFlow < 0) return '場面の揺れが進行へ残り、次の回で整える余地がある。';
-  if (preview.deltaTrust < 0) return '進行は守ったが、役者との信頼は少し削れた。';
+  if (preview.deltaTrust < 0) return '進行は守ったが、公演全体の一体感は少し削れた。';
   if (preview.resultTier === 'masterpiece') return '負荷は残るが、客席まで届く見せ場として回収できた。';
   if (preview.resultTier === 'fray' || preview.resultTier === 'accident') return '舞台裏に揺れが残り、次の判断で拾う余白になった。';
   return '大きな代償は抑えつつ、次の場面へ渡せた。';
@@ -327,9 +327,9 @@ export function cueHandoff(state: Pick<GameState, 'pendingFrayEvent' | 'backstag
     return `公演の色は「${style.label}」。${RESPONSE_LABELS[style.strength]}が次の軸になりやすい。`;
   }
   if (preview.mainResponse === 'catch') return '攻めの手応えがある。ソワレでは負荷との釣り合いを見る。';
-  if (preview.mainResponse === 'arrange') return '流れは戻った。次は場面を伸ばす余地を探す。';
+  if (preview.mainResponse === 'arrange') return '段取りは戻った。次は場面を伸ばす余地を探す。';
   if (preview.mainResponse === 'wait') return '余韻は残った。次は熱が来たら拾う判断も視野に入る。';
-  return '崩れは閉じた。次は信頼を戻す判断を置きたい。';
+  return '崩れは閉じた。次は一体感を戻す判断を置きたい。';
 }
 
 export function tacticalSummaryCopy(args: {
@@ -347,7 +347,7 @@ export function tacticalSummaryCopy(args: {
   if (args.transitionCutActive) return '次へ渡す';
   if (args.response === 'cut') return args.backstageLoad >= 3 ? '崩れを閉じる' : '早めに閉じる';
   if (args.response === 'arrange') return args.resultTier === 'masterpiece' ? '乱れを意味にする' : '安定させる';
-  if (args.response === 'wait') return args.trustScore >= 4 || args.act === 3 ? '余韻を伸ばす' : '信頼を残す';
+  if (args.response === 'wait') return args.trustScore >= 4 || args.act === 3 ? '余韻を伸ばす' : '一体感を残す';
   if (args.deltaLoad >= 2) return '負荷覚悟で伸ばす';
   if (args.prepRelationTone === 'primary') return '準備から攻める';
   return '見せ場を狙う';
@@ -374,8 +374,8 @@ export function cueLesson(preview: Pick<ResultPreview, 'prepQuality' | 'deltaLoa
   if (byId('cut-containment')) return '転換の備えから切ると、崩れを閉じて次の場面へ渡しやすい。';
   if (preview.deltaLoad >= 2) return '攻めた代償が重い。次の回は待つ・整える・切るで負荷を戻したい。';
   if (preview.prepQuality === 'miss') return '準備が外れると上限が下がる。注目役者の兆候と準備範囲をもう一度合わせたい。';
-  if (preview.deltaFlow < 0) return '場面の揺れが流れに残った。次は進行か負荷を整える判断を挟みたい。';
-  if (preview.deltaTrust < 0) return '閉じる判断は効くが、続けると信頼が削れる。次は信頼を戻す手を置きたい。';
+  if (preview.deltaFlow < 0) return '場面の揺れが段取りに残った。次は進行か負荷を整える判断を挟みたい。';
+  if (preview.deltaTrust < 0) return '閉じる判断は効くが、続けると一体感が削れる。次は一体感を戻す手を置きたい。';
   if (preview.resultTier === 'masterpiece') return '準備・出来事・対応が噛み合った形。似た兆候では同じ筋を再現できる。';
   return '大崩れは防げた。次は準備が活きた局面で、評判を伸ばす手も狙える。';
 }

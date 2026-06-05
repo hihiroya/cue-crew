@@ -141,7 +141,7 @@ test('prepared transition makes cut a strong single-use closure', () => {
   assert.equal(preview.scoreBreakdown.some((item) => item.id === 'prep-response-guard' && item.value === 2), true);
   assert.equal(preview.scoreBreakdown.some((item) => item.id === 'cut-containment' && item.value === 2), true);
   assert.equal(repeated.scoreBreakdown.find((item) => item.id === 'repeat')?.value, -1);
-  assert.equal(repeated.sideEffects.some((effect) => effect.target === 'trust' && effect.repeat && effect.value === -2), true);
+  assert.equal(repeated.sideEffects.some((effect) => effect.target === 'trust' && effect.repeat && effect.value === -1), true);
 });
 
 test('strong fray recovery adds a reward only when it changes the response rhythm', () => {

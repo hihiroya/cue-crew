@@ -24,7 +24,7 @@
 | `lowLoad` | 負荷管理重視。安全高評価の上限を見る。 |
 | `omen` | 兆候読み。通常プレイで目指したい強さ。 |
 | `expectedScore` | 期待値重視。システム理解プレイの強さ。 |
-| `styleCommit` | 公演の型へ寄せる戦略。型ボーナスの効き方を見る。 |
+| `styleCommit` | 公演の色へ寄せる戦略。色ボーナスの効き方を見る。 |
 | `oracle` | 発生イベントを知る理論上限。通常プレイとの差を見る。 |
 
 ## 目標レンジ
@@ -117,7 +117,7 @@ npm run balance:report -- --samples=48 --compare=tmp/balance-report.json
 npm run balance:report -- --samples=48 --fail-on-warn
 ```
 
-採点、イベント重み、日替わり補正、型ボーナス、称号/図鑑条件を変更した場合は、`npm run test:logic` とこのレポートを両方確認する。
+採点、イベント重み、日替わり補正、公演の色ボーナス、称号/図鑑条件を変更した場合は、`npm run test:logic` とこのレポートを両方確認する。
 
 ## レポートの見方
 

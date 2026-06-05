@@ -21,8 +21,8 @@ export function effectChangeLabel(value: number) {
 export function effectTargetLabel(icon: EffectIcon) {
   if (icon === 'scene') return '評判';
   if (icon === 'load') return '負荷';
-  if (icon === 'trust') return '信頼';
-  return '流れ';
+  if (icon === 'trust') return '一体感';
+  return '段取り';
 }
 
 export function effectTitle(icon: EffectIcon, value: number, repeat: boolean) {
@@ -42,16 +42,16 @@ export function effectPhrase(args: { raw: string; icon: EffectIcon; value: numbe
     return '負荷は変わらない';
   }
   if (args.icon === 'trust') {
-    if (args.value > 0) return `${repeatPrefix(args.repeat)}信頼が増える`;
-    if (args.value < 0) return `${repeatPrefix(args.repeat)}信頼が減る`;
-    return '信頼は変わらない';
+    if (args.value > 0) return `${repeatPrefix(args.repeat)}一体感が増える`;
+    if (args.value < 0) return `${repeatPrefix(args.repeat)}一体感が減る`;
+    return '一体感は変わらない';
   }
   if (args.icon === 'scene') {
     if (args.value > 0) return `${repeatPrefix(args.repeat)}評判が伸びる`;
     if (args.value < 0) return `${repeatPrefix(args.repeat)}評判が伸びにくい`;
     return '評判は変わらない';
   }
-  if (args.value > 0) return `${repeatPrefix(args.repeat)}流れが整う`;
-  if (args.value < 0) return `${repeatPrefix(args.repeat)}流れが乱れる`;
-  return '流れは変わらない';
+  if (args.value > 0) return `${repeatPrefix(args.repeat)}段取りが整う`;
+  if (args.value < 0) return `${repeatPrefix(args.repeat)}段取りが乱れる`;
+  return '段取りは変わらない';
 }

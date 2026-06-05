@@ -107,8 +107,8 @@ function performanceBuildLevelScoreItem(state: GameState, response: MainResponse
     if (state.performanceStyle === 'closure') value += log.deltaLoad <= 0 ? 1 : 0;
     return total + value;
   }, 0);
-  if (progress >= 9) return scoreItem('build-level', `${style.label} Lv.3`, 2, scoreRuleExtraCopy.buildLevel3);
-  if (progress >= 5) return scoreItem('build-level', `${style.label} Lv.2`, 1, scoreRuleExtraCopy.buildLevel2);
+  if (progress >= 9) return scoreItem('build-level', scoreRuleExtraCopy.buildLevelScoreLabel(style.label, 'strong'), 2, scoreRuleExtraCopy.buildLevel3);
+  if (progress >= 5) return scoreItem('build-level', scoreRuleExtraCopy.buildLevelScoreLabel(style.label, 'growing'), 1, scoreRuleExtraCopy.buildLevel2);
   return undefined;
 }
 
@@ -396,7 +396,7 @@ function repeatAdjustment(response: MainResponse, count: number, success: boolea
       deltaLoad: 1,
       deltaFlow: -1,
       deltaScene: -1,
-      deltaTrust: -2,
+      deltaTrust: -1,
       label: copy.label,
       detail: copy.detail,
       cardLabel: copy.cardLabel,
@@ -407,7 +407,7 @@ function repeatAdjustment(response: MainResponse, count: number, success: boolea
     deltaLoad: 0,
     deltaFlow: 0,
     deltaScene: 0,
-    deltaTrust: -2,
+    deltaTrust: -1,
     label: copy.label,
     detail: copy.detail,
     cardLabel: copy.cardLabel,
@@ -420,6 +420,10 @@ export function tierFromScore(score: number): ResultTier {
   if (score >= 2) return 'smallSuccess';
   if (score >= 0) return 'fray';
   return 'accident';
+}
+
+function eventIsOneOf(state: GameState, events: Array<NonNullable<GameState['currentActorEvent']>['type']>): boolean {
+  return Boolean(state.currentActorEvent && events.includes(state.currentActorEvent.type));
 }
 
 function deltasFor(tier: ResultTier, response: MainResponse, state: GameState, prepQuality: PrepPredictionQuality) {
@@ -437,7 +441,7 @@ function deltasFor(tier: ResultTier, response: MainResponse, state: GameState, p
   let deltaLoad = 0;
   if (response === 'catch') deltaLoad = tier === 'masterpiece' ? 2 : success ? 1 : 2;
   if (response === 'arrange') deltaLoad = success ? -1 : 1;
-  if (response === 'wait') deltaLoad = success ? -1 : 1;
+  if (response === 'wait') deltaLoad = success && eventIsOneOf(state, ['silence', 'delayedExit', 'adlib']) ? -1 : success ? 0 : 1;
   if (response === 'cut') deltaLoad = 0;
   if (state.act === 2 && response === 'catch') deltaLoad += 1;
   if (state.act === 3 && success && ['arrange', 'cut'].includes(response)) deltaLoad -= 1;
@@ -450,20 +454,30 @@ function deltasFor(tier: ResultTier, response: MainResponse, state: GameState, p
   if (state.performanceStyle === 'heat' && response === 'catch' && success) deltaLoad += 1;
   if (state.performanceStyle === 'control' && response === 'arrange' && success) deltaLoad -= 1;
   if (state.performanceStyle === 'closure' && response === 'cut' && deltaLoad > 0) deltaLoad -= 1;
+  if (response === 'cut' && success && state.backstageLoad >= 3) deltaLoad -= transitionCutGuardActive(state, response) ? 2 : 1;
   if (previousCutSetupActive(state) && deltaLoad > 0) deltaLoad -= 1;
   const loadPenalty = state.backstageLoad >= 4 && tier !== 'masterpiece' ? -1 : 0;
-  const waitTrustBonus = response === 'wait' && success ? 1 : 0;
+  const catchFlowPenalty = response === 'catch' && success && (state.backstageLoad >= 4 || eventIsOneOf(state, ['ensembleWaver'])) ? -1 : 0;
+  const catchUnityPenalty = response === 'catch' && success && eventIsOneOf(state, ['ensembleWaver']) ? -1 : 0;
+  const arrangeFlowBonus = response === 'arrange' && success && eventIsOneOf(state, ['positionShift', 'tempoRush', 'ensembleWaver']) ? 1 : 0;
+  const arrangeUnityPenalty = response === 'arrange' && success && state.backstageLoad <= 2 && eventIsOneOf(state, ['stepForward', 'adlib', 'heatUp']) ? -1 : 0;
+  const waitTrustBonus = response === 'wait' && success && eventIsOneOf(state, ['silence', 'delayedExit', 'adlib']) ? 1 : 0;
+  const waitFlowPenalty = response === 'wait' && eventIsOneOf(state, ['positionShift', 'tempoRush', 'ensembleWaver']) ? -1 : 0;
   const styleTrustBonus = state.performanceStyle === 'breath' && response === 'wait' && success ? 1 : 0;
-  const cutTrustPenalty = response === 'cut' && success && state.backstageLoad < 3 && !transitionCutGuardActive(state, response) ? -1 : 0;
+  const cutTrustPenalty = response === 'cut' && success && state.backstageLoad < 3 && eventIsOneOf(state, ['stepForward', 'adlib', 'heatUp', 'silence']) && !transitionCutGuardActive(state, response) ? -1 : 0;
+  const cutFlowBonus = response === 'cut' && success && (state.backstageLoad >= 3 || transitionCutGuardActive(state, response)) ? 1 : 0;
+  const cutFlowPenalty = response === 'cut' && success && state.backstageLoad <= 1 && eventIsOneOf(state, ['stepForward', 'adlib', 'heatUp', 'silence']) && !transitionCutGuardActive(state, response) ? -1 : 0;
+  const cutScenePenalty = response === 'cut' && success && state.backstageLoad <= 1 && eventIsOneOf(state, ['stepForward', 'adlib', 'heatUp', 'silence']) && !transitionCutGuardActive(state, response) ? -1 : 0;
   const styleSceneBonus = state.performanceStyle === 'heat' && response === 'catch' && success ? 1 : 0;
+  const catchHeatSceneBonus = response === 'catch' && success && eventIsOneOf(state, ['stepForward', 'adlib', 'heatUp']) ? 1 : 0;
   const repeatedFrayResponse = frayFit.status === 'strong' && state.lastResponses[state.lastResponses.length - 1] === response;
   const strongFraySceneBonus = frayFit.status === 'strong' && !repeatedFrayResponse && success ? 1 : 0;
   const strongFrayTrustBonus = frayFit.status === 'strong' && !repeatedFrayResponse && success ? 1 : 0;
   const strongFrayFlowBonus = frayFit.status === 'strong' && !repeatedFrayResponse && success ? 1 : 0;
   return {
-    deltaScene: base.scene + repeat.deltaScene + styleSceneBonus + strongFraySceneBonus,
-    deltaFlow: base.flow + loadPenalty + repeat.deltaFlow + frayFit.deltaFlow + strongFrayFlowBonus,
-    deltaTrust: base.trust + waitTrustBonus + styleTrustBonus + cutTrustPenalty + repeat.deltaTrust + strongFrayTrustBonus,
+    deltaScene: base.scene + repeat.deltaScene + styleSceneBonus + catchHeatSceneBonus + strongFraySceneBonus + cutScenePenalty,
+    deltaFlow: base.flow + loadPenalty + repeat.deltaFlow + frayFit.deltaFlow + strongFrayFlowBonus + catchFlowPenalty + arrangeFlowBonus + waitFlowPenalty + cutFlowBonus + cutFlowPenalty,
+    deltaTrust: base.trust + waitTrustBonus + styleTrustBonus + cutTrustPenalty + repeat.deltaTrust + strongFrayTrustBonus + catchUnityPenalty + arrangeUnityPenalty,
     deltaLoad: deltaLoad + repeat.deltaLoad + frayFit.deltaLoad,
     repeat,
     frayFit,
@@ -628,6 +642,7 @@ function repeatSideEffects(label?: string): ResponseEffect[] {
 
 function sideEffects(deltas: ReturnType<typeof deltasFor>): ResponseEffect[] {
   const effects = [
+    deltas.deltaScene < 0 || deltas.deltaScene > 3 ? responseEffect('scene', deltas.deltaScene) : undefined,
     responseEffect('load', deltas.deltaLoad),
     deltas.deltaTrust !== 0 ? responseEffect('trust', deltas.deltaTrust) : undefined,
     deltas.deltaFlow < 0 || deltas.deltaFlow > 1 ? responseEffect('flow', deltas.deltaFlow) : undefined,

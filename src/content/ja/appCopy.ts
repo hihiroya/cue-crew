@@ -59,7 +59,7 @@ export const appCopy = {
     historyTitle: '最近の公演',
     recentReplayTitle: 'すぐ再演',
     emptyHistory: 'まだ記録はない。初日のマチネを開けよう。',
-    historyStats: (item: PerformanceResult) => `ランク ${item.insight.rank} / 評判 ${item.sceneScore} / 段取り ${item.flowScore} / 座組信頼 ${item.trustScore}`,
+    historyStats: (item: PerformanceResult) => `ランク ${item.insight.rank} / 評判 ${item.sceneScore} / 段取り ${item.flowScore} / 一体感 ${item.trustScore}`,
     historyReplaySuffix: '同じ巡り合わせでやり直す',
     historyBadges: '公演バッジ',
     historyBadgeFilter: '公演バッジで履歴を絞り込む',
@@ -102,8 +102,13 @@ export const appCopy = {
     scoreNote: '足りない部分',
     challenge: '再演チャレンジ',
     performanceBadges: '今回の公演バッジ',
-    buildStyle: '今回のビルド',
-    buildLevel: (level: number) => `Lv.${level}`,
+    buildStyle: '公演の色',
+    buildLevel: (level: number) => {
+      if (level >= 3) return '濃く出た';
+      if (level >= 2) return '育っている';
+      if (level >= 1) return '芽が出た';
+      return '未確定';
+    },
     discovery: '発見',
     discoveryScore: (score: number) => `発見点 ${score}`,
     collectionScenes: (count: number) => `場面 ${count}`,
@@ -123,7 +128,7 @@ export const appCopy = {
     finalScoreLabels: {
       scene: '評判',
       flow: '段取り',
-      trust: '座組信頼',
+      trust: '一体感',
       load: '裏方負荷',
     },
     record: '進行記録',
@@ -199,8 +204,8 @@ export const appCopy = {
     deltaAria: '結果差分',
     deltaTitle: '結果差分',
     deltaLabels: {
-      flow: '流れ',
-      trust: '信頼',
+      flow: '段取り',
+      trust: '一体感',
       load: '負荷',
     },
     commitNext: 'この結果で次の回へ',
@@ -249,8 +254,8 @@ export function resultScoreNote(kind: 'scene' | 'flow' | 'trust', value: number)
     if (value >= 0) return '維持';
     return '乱れ多め';
   }
-  if (value >= 8) return '座組が強い';
-  if (value >= 3) return '信頼あり';
+  if (value >= 8) return '息が合った';
+  if (value >= 3) return '一体感あり';
   if (value >= 0) return '維持';
   return '削れ気味';
 }
@@ -272,11 +277,11 @@ export function nextChallengeCopy(result: PerformanceResult, swingTurn: Performa
   if (result.insight.frayOrAccidentCount >= 2) return 'ほころび1回以下で終演';
   if (result.backstageLoad >= 3) return '最終負荷2以下';
   if (result.insight.masterpieceCount < 2) return '名場面2回以上';
-  return `${RESPONSE_LABELS[result.insight.dominantResponse]}型の最高ランク更新`;
+  return `${RESPONSE_LABELS[result.insight.dominantResponse]}軸の最高ランク更新`;
 }
 
 export function sameSeedHintCopy(result: PerformanceResult, swingTurn: PerformanceResult['logs'][number] | null) {
-  if (result.insight.pointsToNextRank === null) return '最高ランク到達。同じ巡り合わせで別の型を狙える。';
+  if (result.insight.pointsToNextRank === null) return '最高ランク到達。同じ巡り合わせで別の公演の色を狙える。';
   if (swingTurn) {
     return `${swingTurn.act}日目${PERFORMANCE_SLOT_LABELS[swingTurn.turnInAct === 1 ? 'matinee' : 'soiree'].label}の「${swingTurn.sceneTitle}」が詰めどころ。あと${result.insight.pointsToNextRank}点を狙う。`;
   }
@@ -348,16 +353,16 @@ export function deltaImpact(kind: DeltaKind, value: number, maxLevel = 4): { lab
     return { label: '沈んだ', level, tone: 'negative' };
   }
   if (kind === 'flow') {
-    if (value >= 2) return { label: '呼吸が戻った', level: 2, tone: 'positive' };
+    if (value >= 2) return { label: '段取りが戻った', level: 2, tone: 'positive' };
     if (value > 0) return { label: '整った', level: 1, tone: 'positive' };
     if (value === 0) return { label: '維持', level: 0, tone: 'neutral' };
     return { label: value <= -2 ? '大きく乱れた' : '乱れた', level, tone: 'negative' };
   }
   if (kind === 'trust') {
     if (value >= 2) return { label: '強く残った', level: 2, tone: 'positive' };
-    if (value > 0) return { label: '深まった', level: 1, tone: 'positive' };
+    if (value > 0) return { label: '一体感が深まった', level: 1, tone: 'positive' };
     if (value === 0) return { label: '維持', level: 0, tone: 'neutral' };
-    return { label: value <= -2 ? '削れた' : '少し削れた', level, tone: 'negative' };
+    return { label: value <= -2 ? '一体感が削れた' : '一体感が少し削れた', level, tone: 'negative' };
   }
   if (value < 0) return { label: '軽くなった', level, tone: 'positive' };
   if (value === 0) return { label: '維持', level: 0, tone: 'neutral' };

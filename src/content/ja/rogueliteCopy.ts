@@ -19,7 +19,7 @@ export const performanceBadgeCopy = {
   lightLoad: { label: '負荷軽く終演', detail: '舞台裏を崩さず渡した' },
   cleanRun: { label: 'ほころびなし', detail: '三日間を安定して閉じた' },
   finaleScene: { label: '千秋楽で場面化', detail: '最後の一手が客席へ届いた' },
-  styleMax: { label: '型Lv.3到達', detail: '今回の公演の色を伸ばし切った' },
+  styleMax: { label: '公演の色が濃い', detail: '今回の公演の色を伸ばし切った' },
   manyDiscoveries: { label: '発見多め', detail: '図鑑と称号が大きく進んだ' },
   allCues: { label: '四つのキュー完走', detail: '全対応を使って場面を作った' },
   hotBackstage: { label: '負荷注意', detail: '再演では終盤の整えどころ' },
@@ -28,13 +28,13 @@ export const performanceBadgeCopy = {
 
 export const rogueliteProgressCopy = {
   unbuiltStyle: {
-    label: '未確立',
-    note: '初日ソワレ後に公演の型が決まる',
+    label: '色は未定',
+    note: '初日ソワレ後に公演の色が見えてくる',
   },
   styleNote: (label: string, level: number, toNext: number) => {
-    if (level >= 3) return `${label}が千秋楽フィニッシュ圏に入った`;
-    if (level >= 2) return `${label}が強化中。あと${toNext}で最大化`;
-    if (level >= 1) return `${label}が立ち上がった。あと${toNext}で伸びる`;
+    if (level >= 3) return `${label}が公演を引っぱっている`;
+    if (level >= 2) return `${label}が濃く出ている。あと${toNext}で芯になる`;
+    if (level >= 1) return `${label}の色が見えてきた。あと${toNext}で深まる`;
     return `${label}の芽がある。得意な対応で育つ`;
   },
   rankDelta: (delta: number) => {
@@ -61,7 +61,7 @@ export const rogueliteProgressCopy = {
     const load = comparison.loadDelta === 0 ? '負荷±0' : `負荷${comparison.loadDelta > 0 ? '+' : ''}${comparison.loadDelta}`;
     return `${score} / ${comparison.rankDeltaLabel} / 準備${signed(comparison.prepHitsDelta)} / 名場面${signed(comparison.masterpieceDelta)} / ${load}`;
   },
-  initialBuildCue: '初日ソワレで型が決まる',
+  initialBuildCue: '初日ソワレで色が見える',
   alternateBuildCue: (response: MainResponse) => `${RESPONSE_LABELS[response]}で別筋`,
   noNewAchievements: '新規称号なし',
 } as const;
@@ -86,8 +86,8 @@ export const nextChallengeCopy = {
   nearRankBody: '今回の読み筋は届きかけている。準備ヒットと最終負荷を少し詰めるだけで更新圏。',
   lockedSceneTitle: '未開放の場面を探す',
   lockedSceneBody: (hint: string) => `狙い目: ${hint}。別の巡り合わせで図鑑の空白を開ける。`,
-  dominantStyleTitle: (response: MainResponse) => `${RESPONSE_LABELS[response]}型を更新する`,
-  dominantStyleBody: '同じ癖に寄せず、次の巡り合わせで別の型や名場面を拾いにいく。',
+  dominantStyleTitle: (response: MainResponse) => `${RESPONSE_LABELS[response]}軸を更新する`,
+  dominantStyleBody: '同じ癖に寄せず、次の巡り合わせで別の公演の色や名場面を拾いにいく。',
   firstRunTitle: '初日のマチネを開ける',
   firstRunBody: 'まずは6ターンを通して、準備と対応がどう公演の色になるかを見る。',
   replaySuggestionBody: (suggestion: { prep: PrepAction; response: MainResponse; totalScoreDelta: number }) => (
@@ -100,7 +100,7 @@ export const nextChallengeCopy = {
   historyNearRankBody: '届きかけの公演がある。最終負荷と準備ヒットを詰めると更新しやすい。',
   collectionTitle: '図鑑の空白を開ける',
   collectionBody: (hint: string) => `狙い目: ${hint}。新しい巡り合わせでまだ見ていない場面を探す。`,
-  newStyleTitle: '新しい型を探す',
+  newStyleTitle: '新しい公演の色を探す',
   newStyleBody: '履歴とは違う巡り合わせで、別の役者・出来事・公演の色を拾いにいく。',
   dailyBody: (modifier: string, detail: string) => `${modifier}。${detail}。今日の固定公演で自己ベストを作る。`,
 } as const;
@@ -113,10 +113,10 @@ export const achievementCatalogCopy = [
   { id: 'light-backstage', label: '三日間を軽く渡した', detail: '最終負荷を低く抑える' },
   { id: 'read-the-room', label: '兆候読みの達人', detail: '準備を5回以上活かす' },
   { id: 'all-cue-run', label: '四つのキューを使い切った', detail: '全対応を使って場面を作る' },
-  { id: 'heat-finale', label: '熱量の千秋楽', detail: '熱量型Lv.3で千秋楽に場面以上を作る' },
-  { id: 'breath-finale', label: '余韻の千秋楽', detail: '余韻型Lv.3で千秋楽に場面以上を作る' },
-  { id: 'control-finale', label: '精度の千秋楽', detail: '精度型Lv.3で千秋楽に場面以上を作る' },
-  { id: 'closure-finale', label: '収束の千秋楽', detail: '収束型Lv.3で千秋楽に場面以上を作る' },
+  { id: 'heat-finale', label: '熱量の千秋楽', detail: '熱量の色が濃い状態で千秋楽に場面以上を作る' },
+  { id: 'breath-finale', label: '余韻の千秋楽', detail: '余韻の色が濃い状態で千秋楽に場面以上を作る' },
+  { id: 'control-finale', label: '段取りの千秋楽', detail: '段取りの色が濃い状態で千秋楽に場面以上を作る' },
+  { id: 'closure-finale', label: '収束の千秋楽', detail: '収束の色が濃い状態で千秋楽に場面以上を作る' },
 ] as const;
 
 export const sceneHintCatalogCopy = [
@@ -131,8 +131,11 @@ export const sceneHintCatalogCopy = [
 ] as const;
 
 export const scoreRuleExtraCopy = {
-  buildLevel3: '育った公演の型が千秋楽の伸びを押す',
-  buildLevel2: '育った公演の型が得意な対応を支える',
+  buildLevel3: '濃く出た公演の色が千秋楽の伸びを押す',
+  buildLevel2: '育った公演の色が得意な対応を支える',
+  buildLevelScoreLabel: (label: string, depth: 'strong' | 'growing') => (
+    depth === 'strong' ? `${label}が公演を引っぱる` : `${label}が濃く出ている`
+  ),
 } as const;
 
 function turnLabel(log: TurnLog) {

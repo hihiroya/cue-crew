@@ -20,8 +20,8 @@ export function performanceTitle(args: {
 
 export function dominantResponseReview(response: string) {
   if (response === RESPONSE_LABELS.catch) return '予定外を熱に変えて評判が伸びた。';
-  if (response === RESPONSE_LABELS.wait) return '余韻を残す判断が信頼を支えた。';
-  if (response === RESPONSE_LABELS.arrange) return '乱れを舞台の呼吸へ戻す判断が流れを守った。';
+  if (response === RESPONSE_LABELS.wait) return '余韻を残す判断が一体感を支えた。';
+  if (response === RESPONSE_LABELS.arrange) return '乱れを舞台の段取りへ戻す判断が安定を守った。';
   return '崩れを閉じて進行を守る判断が目立った。';
 }
 
@@ -43,7 +43,7 @@ export function reviewNotes(args: {
       ? `${args.earlyFray.act}日目${PERFORMANCE_SLOT_LABELS[args.earlyFray.turnInAct === 1 ? 'matinee' : 'soiree'].label}でほころびが出たため、以降は負荷管理が課題になった。`
       : '初日から2日目まで大きなほころびを抑え、判断の余裕を残せた。',
     args.lateRecovery
-      ? `${args.lateRecovery.act}日目${PERFORMANCE_SLOT_LABELS[args.lateRecovery.turnInAct === 1 ? 'matinee' : 'soiree'].label}で整えた判断により、千秋楽の流れは持ち直した。`
+      ? `${args.lateRecovery.act}日目${PERFORMANCE_SLOT_LABELS[args.lateRecovery.turnInAct === 1 ? 'matinee' : 'soiree'].label}で整えた判断により、千秋楽の段取りは持ち直した。`
       : args.backstageLoad >= 3
         ? '再演では2日目マチネか3日目マチネで一度待つか整えると、ソワレへ負荷を残しにくい。'
         : '再演では高負荷を恐れすぎず、噛み合った準備から強い本対応を狙うと名場面を増やせる。',

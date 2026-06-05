@@ -24,7 +24,7 @@ export const PERFORMANCE_COLOR_HUD: Record<PerformanceStyle, { label: string; hi
   },
   breath: {
     label: '余韻',
-    hint: '待つ↑ / 信頼残りやすい',
+    hint: '待つ↑ / 一体感残りやすい',
     tone: 'breath',
   },
   control: {

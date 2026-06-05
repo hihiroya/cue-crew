@@ -5,7 +5,7 @@ export const scoreBarCopy = {
   aria: '公演スコア',
   scene: '評判',
   flow: '段取り',
-  trust: '信頼',
+  trust: '一体感',
   load: '裏方負荷',
   fray: '舞台裏のほころび',
   likelyFray: '乱れそう',

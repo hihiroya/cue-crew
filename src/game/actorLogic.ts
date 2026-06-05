@@ -1,12 +1,12 @@
-import { ACTOR_WEIGHTS, EVENT_DESCRIPTIONS, EVENT_LABELS, STATE_WEIGHTS } from './constants';
+import { ACTOR_WEIGHTS, EVENT_COMPATIBILITY, EVENT_DESCRIPTIONS, EVENT_LABELS, STATE_WEIGHTS } from './constants';
 import { OMEN_INTENSITY_LABELS } from '../content/ja/gameLabels';
 import { applyDailyEventWeights, dailyVolatilityBonus } from './dailyRun';
 import { createRng, pickWeighted } from './rng';
-import type { Actor, ActorEvent, ActorEventType, ActorState, ActorType, GameState } from './types';
+import type { Actor, ActorEvent, ActorEventType, ActorState, ActorType, GameState, MainResponse, TurnLog } from './types';
 
-const stateCycle: ActorState[] = ['elated', 'contemplative', 'anxious', 'immersed', 'fatigued'];
 const focusOrder: ActorType[] = ['junior', 'lead', 'skilled', 'junior', 'lead', 'skilled', 'junior', 'skilled', 'lead', 'junior'];
 type EventWeightContext = { seed: string; totalTurn: number };
+type StateWeights = Record<ActorState, number>;
 
 export function pickFocusActor(seed: string, totalTurn: number): ActorType {
   const rng = createRng(`${seed}:focus:${totalTurn}`);
@@ -74,25 +74,88 @@ export function resolveActorEvent(state: GameState): ActorEvent {
   };
 }
 
+function responseFitsActor(actor: Actor, response: MainResponse): boolean {
+  if (actor.type === 'lead') return response === 'wait' || response === 'catch';
+  if (actor.type === 'junior') return response === 'catch' || response === 'arrange';
+  return response === 'arrange' || response === 'wait';
+}
+
+function isSuccessfulTier(tier: TurnLog['resultTier']) {
+  return tier === 'masterpiece' || tier === 'scene' || tier === 'smallSuccess';
+}
+
+function actorTrustDelta(actor: Actor, log: TurnLog | undefined): number {
+  if (!log || actor.id !== log.focusActorType) return 0;
+  const success = isSuccessfulTier(log.resultTier);
+  const compatibility = EVENT_COMPATIBILITY[log.actorEventType][log.mainResponse];
+  let delta = 0;
+  if (success && responseFitsActor(actor, log.mainResponse)) delta += 1;
+  if (success && compatibility >= 3) delta += 1;
+  if (success && log.prepQuality === 'hit') delta += 1;
+  if (log.prepQuality === 'miss' && compatibility <= 0) delta -= 1;
+  if (log.resultTier === 'fray') delta -= 1;
+  if (log.resultTier === 'accident') delta -= 2;
+  if (actor.state === 'fatigued' && log.mainResponse === 'catch') delta -= 1;
+  if (log.mainResponse === 'cut' && ['stepForward', 'adlib', 'heatUp', 'silence'].includes(log.actorEventType)) delta -= 1;
+  if (log.mainResponse === 'arrange' && actor.type !== 'skilled' && ['adlib', 'heatUp'].includes(log.actorEventType)) delta -= 1;
+  if (log.mainResponse === 'wait' && ['positionShift', 'tempoRush', 'ensembleWaver'].includes(log.actorEventType)) delta -= 1;
+  return Math.max(-2, Math.min(2, delta));
+}
+
+function stateWeightsFor(actor: Actor, log: TurnLog | undefined, backstageLoad: number): StateWeights {
+  const weights: StateWeights = {
+    elated: 3,
+    contemplative: 3,
+    anxious: 3,
+    immersed: 3,
+    fatigued: actor.fatigue >= 2 ? 5 : 2,
+  };
+  if (!log) return weights;
+
+  if (backstageLoad >= 4) {
+    weights.anxious += 4;
+    weights.fatigued += 5;
+  }
+  if (actor.id !== log.focusActorType) {
+    if (log.deltaTrust > 0) weights.immersed += 2;
+    if (log.deltaFlow < 0 || log.deltaLoad >= 2) weights.anxious += 2;
+    return weights;
+  }
+
+  if (log.resultTier === 'masterpiece' || log.deltaScene >= 3) {
+    weights.elated += 6;
+    weights.immersed += 4;
+  }
+  if (log.mainResponse === 'catch' && isSuccessfulTier(log.resultTier)) weights.elated += 4;
+  if (log.mainResponse === 'wait' && log.deltaTrust > 0) {
+    weights.contemplative += 5;
+    weights.immersed += 3;
+  }
+  if (log.mainResponse === 'arrange' && log.deltaFlow > 0) {
+    weights.contemplative += 4;
+    weights.immersed += 2;
+  }
+  if (log.mainResponse === 'cut') {
+    weights.contemplative += 3;
+    if (log.deltaTrust < 0) weights.anxious += 5;
+  }
+  if (log.resultTier === 'fray' || log.resultTier === 'accident' || log.deltaFlow < 0) weights.anxious += 6;
+  if (log.deltaLoad >= 2) weights.fatigued += 4;
+  return weights;
+}
+
 export function advanceActorStates(state: GameState): Actor[] {
   const rng = createRng(`${state.seed}:state:${state.totalTurn}:${state.logs.length}`);
-  const focus = state.currentFocusActorId;
   const latestLog = state.logs[state.logs.length - 1];
   return state.actors.map((actor) => {
-    const fatigue = Math.max(0, Math.min(3, actor.fatigue + (rng() < 0.26 ? -1 : 0)));
-    const focusTrustDelta = actor.id === focus && latestLog
-      ? latestLog.deltaTrust >= 2
-        ? 2
-        : latestLog.deltaTrust > 0
-          ? 1
-          : latestLog.deltaTrust < 0
-            ? -1
-            : 0
-      : 0;
-    const trust = Math.max(0, actor.trust + focusTrustDelta);
-    const shouldChange = actor.id === focus ? rng() < 0.72 : rng() < 0.34;
+    const trustDelta = actorTrustDelta(actor, latestLog);
+    const fatiguePressure = latestLog && (latestLog.deltaLoad >= 2 || latestLog.resultTier === 'accident') ? 1 : 0;
+    const fatigueRelief = rng() < (latestLog?.deltaLoad < 0 ? 0.42 : 0.26) ? -1 : 0;
+    const fatigue = Math.max(0, Math.min(3, actor.fatigue + fatiguePressure + fatigueRelief));
+    const trust = Math.max(0, actor.trust + trustDelta);
+    const shouldChange = actor.id === latestLog?.focusActorType ? rng() < 0.76 : rng() < 0.34;
     if (!shouldChange) return { ...actor, fatigue, trust };
-    const nextState = stateCycle[Math.floor(rng() * stateCycle.length)];
+    const nextState = pickWeighted(rng, stateWeightsFor({ ...actor, fatigue, trust }, latestLog, state.backstageLoad));
     return { ...actor, state: fatigue >= 3 ? 'fatigued' : nextState, fatigue, trust };
   });
 }
