@@ -40,6 +40,7 @@
     "test:e2e:ui": "playwright test --ui",
     "playwright:install": "playwright install chromium",
     "balance:report": "node scripts/balance-report.mjs",
+    "balance:report:stable": "node scripts/balance-report.mjs --stable",
     "images:actors": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/process-actor-images.ps1",
     "verify:ui": "npm run check:ui",
     "verify:ui:full": "npm run build && npm run screenshot:ui",
