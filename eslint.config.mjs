@@ -34,8 +34,29 @@ const nodeGlobals = {
 
 const gameLayerRestrictedImports = [
   {
-    group: ['../app/*', '../../app/*', '../components/*', '../../components/*'],
+    group: ['../app/*', '../../app/*', '../../../app/*', '../components/*', '../../components/*', '../../../components/*'],
     message: 'game層からapp/components層へ依存しないでください。依存方向は app/components -> game を維持してください。',
+  },
+];
+
+const componentLayerRestrictedImports = [
+  {
+    group: ['../app/*', '../../app/*', '../../../app/*'],
+    message: 'components層からapp層へ依存しないでください。画面接続はapp層に置き、components層はpropsで受け取ってください。',
+  },
+];
+
+const contentLayerRestrictedImports = [
+  {
+    group: ['../app/*', '../../app/*', '../../../app/*', '../components/*', '../../components/*', '../../../components/*'],
+    message: 'content層からapp/components層へ依存しないでください。文言は純粋なコピー/ラベルとして保ってください。',
+  },
+];
+
+const scoreCoreRestrictedImports = [
+  {
+    group: ['./responseInsight', './responseInsight.*', './resultPreview', './resultPreview.*', './scoreRules', './scoreRules.*', './scoring', './scoring.*'],
+    message: 'scoreRuleCoreは下位の共通計算層です。facadeや上位のinsight/preview実装へ依存しないでください。',
   },
 ];
 
@@ -95,6 +116,39 @@ export default tseslint.config(
         'error',
         {
           patterns: gameLayerRestrictedImports,
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/components/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: componentLayerRestrictedImports,
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/content/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: contentLayerRestrictedImports,
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/game/scoreRuleCore.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: scoreCoreRestrictedImports,
         },
       ],
     },

@@ -34,7 +34,7 @@ description: Use when working in the cue-crew repository, identified by package.
 - 共通 UI: `src/components/ui/`, `src/components/layout/`
 - 日本語コピー: `src/content/ja/`
 - 状態遷移: `src/game/gameReducer.ts`
-- 採点、対応結果、insight: `src/game/scoreRules.ts`, `src/game/scoreEngine.ts`, `src/game/scoring.ts`, `src/game/resultPreview.ts`, `src/game/responseInsight.ts`
+- 採点、対応 insight、結果プレビュー: `src/game/scoreRuleCore.ts`, `src/game/responseInsight.ts`, `src/game/resultPreview.ts`, 互換入口の `src/game/scoreRules.ts` / `src/game/scoring.ts`
 - 役者イベントと重み: `src/game/actorLogic.ts`, `src/game/ruleTables.ts`
 - ルール表、初期値、表示ラベルの入口: `src/game/ruleTables.ts`, `src/game/initialGameData.ts`, `src/game/gameSettings.ts`, `src/game/contentLabels.ts`, `src/game/constants.ts`
 - 日替わり、図鑑、称号、再演比較: `src/game/rogueliteProgress.ts`, `src/game/dailyRun.ts`
@@ -49,7 +49,7 @@ description: Use when working in the cue-crew repository, identified by package.
 
 ### 採点、イベント、バランス
 
-`src/game/scoreRules.ts`、`src/game/scoreEngine.ts`、`src/game/scoring.ts`、`src/game/resultPreview.ts`、`src/game/actorLogic.ts`、`src/game/ruleTables.ts`、`src/game/dailyRun.ts` を変更する場合は、仕様とテストへの波及を確認する。
+`src/game/scoreRuleCore.ts`、`src/game/responseInsight.ts`、`src/game/resultPreview.ts`、`src/game/scoreRules.ts`、`src/game/scoreEngine.ts`、`src/game/scoring.ts`、`src/game/actorLogic.ts`、`src/game/ruleTables.ts`、`src/game/dailyRun.ts` を変更する場合は、仕様とテストへの波及を確認する。
 
 - 確認: `npm run test:logic`
 - 追加確認: `npm run balance:report -- --samples=48`

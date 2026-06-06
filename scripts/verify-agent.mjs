@@ -58,7 +58,7 @@ function recommendVerification(files) {
   }
 
   if (touches(
-    /^src\/game\/(scoreRules|scoring|resultPreview|actorLogic|constants|dailyRun|rogueliteProgress)\.ts$/,
+    /^src\/game\/(scoreRuleCore|scoreRules|scoring|responseInsight|resultPreview|actorLogic|constants|dailyRun|rogueliteProgress)\.ts$/,
     /^scripts\/balance-report\.mjs$/,
   )) {
     commands.add('npm run balance:report -- --samples=48');

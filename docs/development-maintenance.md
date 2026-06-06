@@ -43,7 +43,7 @@ tests/                  Node標準テスト、網羅テスト
 | 変更対象 | 主なファイル |
 | --- | --- |
 | ターン進行、状態遷移 | `src/game/gameReducer.ts`、`src/game/domainTypes.ts` |
-| 採点、対応結果、公演の色ボーナス | `src/game/scoreRules.ts`、`src/game/scoreEngine.ts`、`src/game/scoring.ts`、`src/game/resultPreview.ts`、`src/game/responseInsight.ts` |
+| 採点、対応 insight、結果プレビュー、公演の色ボーナス | `src/game/scoreRuleCore.ts`、`src/game/responseInsight.ts`、`src/game/resultPreview.ts`、互換入口の `src/game/scoreRules.ts` / `src/game/scoring.ts` |
 | 役者イベント、イベント重み | `src/game/actorLogic.ts`、`src/game/ruleTables.ts` |
 | ルール表、初期値、表示ラベルの入口 | `src/game/ruleTables.ts`、`src/game/initialGameData.ts`、`src/game/gameSettings.ts`、`src/game/contentLabels.ts`、`src/game/constants.ts` |
 | 日替わりseed、日替わり補正 | `src/game/dailyRun.ts` |
@@ -84,7 +84,7 @@ tests/                  Node標準テスト、網羅テスト
 | `tests/roguelite-progress.test.ts` | 図鑑、称号、日替わりベスト、次回挑戦導線。 |
 | `tests/rule-coverage.test.ts` | ルール表、イベント重み、準備対応、称号、図鑑ヒントの参照先。 |
 | `tests/ui-scenario-coverage.test.ts` | UIシナリオ registry、preset、viewport、coverageタグ、builder整合性。 |
-| `eslint.config.mjs` | 未使用コード、React Hooks、game層の依存方向などの静的品質。 |
+| `eslint.config.mjs` | 未使用コード、React Hooks、game/components/content層の依存方向などの静的品質。 |
 
 新しいイベント、対応、準備、称号、図鑑ヒントを追加した場合は、`tests/rule-coverage.test.ts` の期待値を更新してください。
 
