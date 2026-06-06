@@ -95,8 +95,14 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
       <aside className={`cue-sheet cue-${inspectedTone} ${isApproving ? 'is-approving' : ''}`}>
         <div className="cue-paper">
           <div className="cue-sheet-head">
-            <span>{appCopy.prep.memo}</span>
-            <strong>{appCopy.prep.prepTitle(PREP_LABELS[inspected])}</strong>
+            <div className="cue-sheet-title">
+              <span>{appCopy.prep.memo}</span>
+              <strong>{appCopy.prep.prepTitle(PREP_LABELS[inspected])}</strong>
+            </div>
+            <div ref={approvalRef} className={`cue-approval-slot ${isApproving ? 'is-approved' : ''}`} aria-label={appCopy.prep.approvalLabel} aria-live="polite">
+              <span>{appCopy.prep.approvalLabel}</span>
+              <strong>{isApproving ? appCopy.prep.approved : appCopy.prep.pending}</strong>
+            </div>
           </div>
           <div className="cue-sheet-grid cue-sheet-focus">
             <section>
@@ -165,10 +171,6 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
             <ScoreMoodLine icon="flow" label={appCopy.prep.scoreLabels.flow} value={state.flowScore} body={scoreMoodMemo('flow', state.flowScore)} />
             <ScoreMoodLine icon="trust" label={appCopy.prep.scoreLabels.trust} value={state.trustScore} body={scoreMoodMemo('trust', state.trustScore)} />
           </section>
-          <div ref={approvalRef} className={`cue-approval-slot ${isApproving ? 'is-approved' : ''}`} aria-label={appCopy.prep.approvalLabel} aria-live="polite">
-            <span>{appCopy.prep.approvalLabel}</span>
-            <strong>{isApproving ? appCopy.prep.approved : appCopy.prep.pending}</strong>
-          </div>
         </div>
       </aside>
     </section>
