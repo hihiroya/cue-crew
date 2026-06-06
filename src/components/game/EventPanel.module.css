@@ -1,0 +1,11 @@
+.root {
+  composes: event-panel from global;
+}
+
+.hasEvent {
+  composes: has-event from global;
+}
+
+.frayNote {
+  composes: fray-note from global;
+}

@@ -3,7 +3,7 @@ import { RESPONSE_LABELS } from '../../game/constants';
 import type { GameState, MainResponse, ResponseInsight, TurnLog } from '../../game/types';
 import { Icon } from '../ui/Icon';
 import { classNames } from '../ui/classNames';
-import { effectDirection, effectIntensity, effectItems, effectLedSlots, effectSummary, effectTargetLabel, evaluationSign } from './responseEffectsView';
+import { effectDirection, effectIntensity, effectItems, effectLedSlots, effectSummary, effectTargetLabel, evaluationSign, type EffectTone } from './responseEffectsView';
 import {
   affinityLabels,
   decisionMemo,
@@ -65,7 +65,7 @@ export function ResponsePanel({ selected, disabled, state, previousTurnLog = nul
 
 function ResponseSelectionMarker({ visible }: { visible: boolean }) {
   return (
-    <em className={`selection-marker selection-marker--response ${visible ? 'is-visible' : ''}`} aria-hidden={!visible}>
+    <em className={classNames('selection-marker selection-marker--response', visible && 'is-visible')} aria-hidden={!visible}>
       {visible ? responsePanelCopy.marker : ''}
     </em>
   );
@@ -100,7 +100,7 @@ function ResponseChoiceCard({
       </div>
       <div className="outlook-summary" aria-label={responsePanelCopy.outlookAria(insight.successRangeLabel)}>
         <div className="outlook-head">
-          <em className={`response-prep-mark mark-${insight.prepRelationTone}`} aria-label={responsePanelCopy.prepRelationAria(insight.prepRelationLabel)}>
+          <em className={classNames('response-prep-mark', prepRelationMarkClass[insight.prepRelationTone])} aria-label={responsePanelCopy.prepRelationAria(insight.prepRelationLabel)}>
             {prepConnectionShortLabel(insight.prepRelationTone)}
           </em>
         </div>
@@ -123,7 +123,7 @@ function ResponseEffectSummary({ insight }: { insight: ResponseInsight }) {
       <span>{responsePanelCopy.effectSummaryTitle}</span>
       <div>
         {effects.map((item) => (
-          <em key={item.key} className={`response-effect-mini effect-${item.tone}`} title={item.title} aria-label={item.title}>
+          <em key={item.key} className={classNames('response-effect-mini', effectToneClass[item.tone])} title={item.title} aria-label={item.title}>
             {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
             <Icon name={item.icon} />
             <b>{evaluationSign(item)}</b>
@@ -230,7 +230,7 @@ function ResultRail({ insight, variant }: { insight: ResponseInsight; variant: '
       <div className="result-rail-head">
         {variant === 'console' ? <span>{responsePanelCopy.outlookTitle}</span> : null}
         {variant === 'console' ? (
-          <em className={`console-outlook-prep mark-${insight.prepRelationTone}`}>
+          <em className={classNames('console-outlook-prep', prepRelationMarkClass[insight.prepRelationTone])}>
             {prepConnectionLabel(insight.prepRelationTone)}
           </em>
         ) : null}
@@ -240,10 +240,10 @@ function ResultRail({ insight, variant }: { insight: ResponseInsight; variant: '
         {tiers.map((tier, index) => (
           <span
             key={tier}
-            className={[
-              index >= range.lowIndex && index <= range.highIndex ? 'is-in-range' : '',
-              index === currentIndex ? 'is-current' : '',
-            ].filter(Boolean).join(' ')}
+            className={classNames(
+              index >= range.lowIndex && index <= range.highIndex && 'is-in-range',
+              index === currentIndex && 'is-current',
+            )}
           />
         ))}
       </div>
@@ -291,7 +291,7 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
         </div>
         <div className="indicator-grid">
           {affinity.map((item) => (
-            <em key={item.id} className={`readout-chip affinity-${item.tone}`} title={item.title} aria-label={item.title}>
+            <em key={item.id} className={classNames('readout-chip', affinityToneClass[item.tone])} title={item.title} aria-label={item.title}>
               <span className="indicator-lamp" aria-hidden="true"><i /></span>
               <small>{item.label}</small>
               <strong><span>{item.rank}</span></strong>
@@ -307,7 +307,7 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
           {effects.map((item) => (
             <em
               key={item.key}
-              className={`effect-meter effect-${item.tone} direction-${effectDirection(item)} intensity-${effectIntensity(item)}`}
+              className={classNames('effect-meter', effectToneClass[item.tone], effectDirectionClass[effectDirection(item)], effectIntensityClass[effectIntensityLevel(item)])}
               title={item.title}
               aria-label={item.title}
             >
@@ -319,7 +319,7 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
               <span className="cue-meter" aria-hidden="true">
                 <b>-</b>
                 {effectLedSlots(item).map((isLit, index) => (
-                  <i key={index} className={`${isLit ? 'is-lit' : ''} ${index === 2 ? 'is-center' : ''}`} />
+                  <i key={index} className={classNames(isLit && 'is-lit', index === 2 && 'is-center')} />
                 ))}
                 <b>+</b>
               </span>
@@ -360,11 +360,19 @@ function symbolForValue(value: number) {
   return '△';
 }
 
-function toneForValue(value: number) {
+type AffinityTone = 'strong' | 'good' | 'bad' | 'neutral';
+type EffectDirection = ReturnType<typeof effectDirection>;
+type EffectIntensity = 0 | 1 | 2;
+
+function toneForValue(value: number): AffinityTone {
   if (value >= 3) return 'strong';
   if (value > 0) return 'good';
   if (value < 0) return 'bad';
   return 'neutral';
+}
+
+function effectIntensityLevel(item: Parameters<typeof effectIntensity>[0]): EffectIntensity {
+  return effectIntensity(item) as EffectIntensity;
 }
 
 const responseRangeToneClass: Record<ResponseInsight['rangeTone'], string> = {
@@ -380,6 +388,38 @@ const relationToneClass: Record<ResponseInsight['prepRelationTone'] | NonNullabl
   poor: 'relation-poor',
   recover: 'relation-recover',
   miss: 'relation-miss',
+};
+
+const prepRelationMarkClass: Record<ResponseInsight['prepRelationTone'], string> = {
+  primary: 'mark-primary',
+  alternate: 'mark-alternate',
+  poor: 'mark-poor',
+};
+
+const effectToneClass: Record<EffectTone, string> = {
+  good: 'effect-good',
+  watch: 'effect-watch',
+  bad: 'effect-bad',
+  neutral: 'effect-neutral',
+};
+
+const affinityToneClass: Record<AffinityTone, string> = {
+  strong: 'affinity-strong',
+  good: 'affinity-good',
+  bad: 'affinity-bad',
+  neutral: 'affinity-neutral',
+};
+
+const effectDirectionClass: Record<EffectDirection, string> = {
+  up: 'direction-up',
+  down: 'direction-down',
+  flat: 'direction-flat',
+};
+
+const effectIntensityClass: Record<EffectIntensity, string> = {
+  0: 'intensity-0',
+  1: 'intensity-1',
+  2: 'intensity-2',
 };
 
 const replayDeltaToneClass: Record<'up' | 'same' | 'down', string> = {

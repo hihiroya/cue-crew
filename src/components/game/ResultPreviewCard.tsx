@@ -2,6 +2,7 @@ import { ACTOR_LABELS, EVENT_LABELS, PREP_LABELS, RESPONSE_LABELS, RESULT_TIER_L
 import type { ResultPreview } from '../../game/types';
 import type { CollectionState } from '../../game/rogueliteProgress';
 import { Icon } from '../ui/Icon';
+import { classNames } from '../ui/classNames';
 import { appCopy, deltaImpact, prepQualityBanner, stripAudienceReactionPrefix, type DeltaKind } from '../../content/ja/appCopy';
 
 type Props = {
@@ -33,7 +34,7 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
     .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
     .slice(0, 3);
   return (
-    <section className={`result-preview cue-result-ticket tier-${preview.resultTier} result-mode-${preview.resultMode}`}>
+    <section className={classNames('result-preview cue-result-ticket', resultTierClass[preview.resultTier], resultModeClass[preview.resultMode])}>
       <div className="result-ticket-head">
         <div className="result-kicker">
           <span>{appCopy.resultPreview.ticket}</span>
@@ -52,7 +53,7 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
         <span><Icon name={preview.mainResponse} />{RESPONSE_LABELS[preview.mainResponse]}</span>
       </div>
       <DeltaTable preview={preview} />
-      <div className={`prep-hit-banner cue-stamp ${prepBanner.className}`}>
+      <div className={classNames('prep-hit-banner cue-stamp', prepQualityClass[preview.prepQuality])}>
         <span>{prepBanner.label}</span>
         <strong>{PREP_LABELS[preview.prepAction]} / {prepBanner.detail}</strong>
       </div>
@@ -92,7 +93,7 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
             <span>{appCopy.resultPreview.reasons}</span>
             <ul>
               {reasonItems.map((item) => (
-                <li key={item.id} className={`breakdown-${item.tone}`}>
+                <li key={item.id} className={breakdownToneClass[item.tone]}>
                   <strong>{item.value > 0 ? `+${item.value}` : item.value}</strong>
                   <p>{item.label}</p>
                 </li>
@@ -100,7 +101,7 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
             </ul>
           </div>
         ) : null}
-        <div className={`prep-recovery recovery-${preview.prepRecoveryTone}`}>
+        <div className={classNames('prep-recovery', prepRecoveryToneClass[preview.prepRecoveryTone])}>
           <div>
             <span>{preview.prepRecoveryLabel}</span>
             <strong>{preview.prepRecoveryTitle}</strong>
@@ -108,7 +109,7 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
           <p>{preview.prepRecoveryText}</p>
         </div>
         {preview.styleLabel ? (
-          <div className={`performance-style-note ${preview.styleIsNew ? 'is-new' : ''}`}>
+          <div className={classNames('performance-style-note', preview.styleIsNew && 'is-new')}>
             <span>{preview.styleIsNew ? appCopy.resultPreview.styleNew : appCopy.resultPreview.style}</span>
             <strong>{preview.styleLabel}</strong>
             {preview.styleText ? <p>{preview.styleText}</p> : null}
@@ -136,10 +137,56 @@ function Delta({ kind, label, value }: { kind: DeltaKind; label: string; value: 
   const sign = value > 0 ? '+' : '';
   const impact = deltaImpact(kind, value);
   return (
-    <div className={`delta-line delta-${kind} ${impact.tone}`} aria-label={`${label}: ${impact.label}, ${sign}${value}`}>
+    <div className={classNames('delta-line', deltaKindClass[kind], deltaImpactToneClass[impact.tone])} aria-label={`${label}: ${impact.label}, ${sign}${value}`}>
       <span className="delta-line-label"><Icon name={kind} />{label}</span>
       <b>{impact.label}</b>
       <strong>{sign}{value}</strong>
     </div>
   );
 }
+
+const resultTierClass: Record<ResultPreview['resultTier'], string> = {
+  accident: 'tier-accident',
+  fray: 'tier-fray',
+  smallSuccess: 'tier-smallSuccess',
+  scene: 'tier-scene',
+  masterpiece: 'tier-masterpiece',
+};
+
+const resultModeClass: Record<ResultPreview['resultMode'], string> = {
+  matinee: 'result-mode-matinee',
+  soiree: 'result-mode-soiree',
+  finale: 'result-mode-finale',
+};
+
+const prepQualityClass: Record<ResultPreview['prepQuality'], string> = {
+  hit: 'is-hit',
+  partial: 'is-partial',
+  miss: 'is-miss',
+};
+
+const breakdownToneClass: Record<ResultPreview['scoreBreakdown'][number]['tone'], string> = {
+  positive: 'breakdown-positive',
+  negative: 'breakdown-negative',
+  neutral: 'breakdown-neutral',
+};
+
+const prepRecoveryToneClass: Record<ResultPreview['prepRecoveryTone'], string> = {
+  matched: 'recovery-matched',
+  partial: 'recovery-partial',
+  thin: 'recovery-thin',
+  missed: 'recovery-missed',
+};
+
+const deltaKindClass: Record<DeltaKind, string> = {
+  scene: 'delta-scene',
+  flow: 'delta-flow',
+  trust: 'delta-trust',
+  load: 'delta-load',
+};
+
+const deltaImpactToneClass: Record<ReturnType<typeof deltaImpact>['tone'], string> = {
+  positive: 'positive',
+  neutral: 'neutral',
+  negative: 'negative',
+};

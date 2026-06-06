@@ -1,0 +1,85 @@
+/* Result screen decorative treatments layered after the structural result rules. */
+
+.result-hero {
+  border: 1px solid rgba(230, 190, 108, 0.24);
+  box-shadow: var(--shadow);
+}
+
+.result-hero::after {
+  content: "公演総括 / 観客アンケート\A外部評 / 進行記録";
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  max-width: 13.5rem;
+  color: rgba(255, 217, 138, 0.42);
+  font-size: 0.62rem;
+  font-weight: 900;
+  line-height: 1.4;
+  text-align: right;
+  white-space: pre-line;
+  z-index: 0;
+}
+
+.cue-note-panel {
+  background:
+    linear-gradient(3deg, transparent 0 76%, rgba(229, 189, 104, 0.06) 76%),
+    rgba(8, 9, 15, 0.78);
+}
+
+.best-cue-card {
+  border-color: rgba(255, 217, 138, 0.28);
+  background:
+    linear-gradient(180deg, rgba(255, 246, 210, 0.1), transparent 42%),
+    rgba(255, 255, 255, 0.06);
+}
+
+.best-cue-card::before {
+  content: "";
+  width: 5.2rem;
+  height: 0.42rem;
+  margin-bottom: 2px;
+  border-radius: 999px;
+  background: rgba(255, 217, 138, 0.42);
+}
+
+.next-note::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  right: 18px;
+  width: 58px;
+  height: 14px;
+  border-radius: 2px;
+  background: rgba(255, 246, 218, 0.24);
+  transform: rotate(2.5deg);
+}
+
+.survey-panel {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(255, 255, 255, 0.035) 31px 32px),
+    rgba(8, 9, 15, 0.78);
+}
+
+.media-review-panel {
+  background:
+    linear-gradient(180deg, rgba(255, 246, 218, 0.04), transparent),
+    rgba(8, 9, 15, 0.78);
+}
+
+.media-review::before {
+  content: "CLIP";
+  justify-self: start;
+  width: fit-content;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #191414;
+  background: var(--gold);
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.timeline-report-panel {
+  background:
+    linear-gradient(90deg, rgba(229, 189, 104, 0.08) 0 1px, transparent 1px),
+    rgba(8, 9, 15, 0.78);
+}

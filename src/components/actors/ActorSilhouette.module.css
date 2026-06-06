@@ -1,0 +1,15 @@
+.root {
+  composes: silhouette from global;
+}
+
+.lead {
+  composes: silhouette-lead from global;
+}
+
+.junior {
+  composes: silhouette-junior from global;
+}
+
+.skilled {
+  composes: silhouette-skilled from global;
+}
