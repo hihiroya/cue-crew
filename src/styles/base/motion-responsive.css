@@ -237,6 +237,7 @@
 @media (max-width: 679px) {
   .game-shell {
     gap: 10px;
+    padding-bottom: 24px;
   }
 
   .game-header {
@@ -394,6 +395,7 @@
   }
 
   .phase-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 4px;
     padding: 4px;
     border-radius: 8px;
@@ -403,10 +405,6 @@
     min-height: 24px;
     padding: 4px 5px;
     font-size: 0.7rem;
-  }
-
-  .game-shell {
-    padding-bottom: 24px;
   }
 
   .performance-color-chip,
@@ -419,10 +417,6 @@
   .performance-color-chip small,
   .daily-run-chip small {
     display: none;
-  }
-
-  .phase-strip {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .phase-strip span:not(.is-active) {

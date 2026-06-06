@@ -16,11 +16,9 @@ export default {
         ignoreFunctions: ['color-mix'],
       },
     ],
-    'import-notation': null,
     'keyframes-name-pattern': null,
     'media-feature-range-notation': null,
     'no-descending-specificity': null,
-    'no-duplicate-selectors': null,
     'property-no-unknown': [
       true,
       {

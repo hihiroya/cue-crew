@@ -86,7 +86,7 @@ function ResponseChoiceCard({
   return (
     <button
       aria-pressed={isInspected}
-      className={classNames(styles.responseChoice, `fit-${insight.rangeTone}`, isInspected && styles.selected)}
+      className={classNames(styles.responseChoice, responseRangeToneClass[insight.rangeTone], isInspected && styles.selected)}
       disabled={disabled}
       onClick={() => onInspect(response)}
       onFocus={() => onInspect(response)}
@@ -168,7 +168,7 @@ function ResponseConsole({
   const buildLevelItem = insight.scoreBreakdown.find((item) => item.id === 'build-level');
   const styleHud = getStyleHud(state.performanceStyle);
   return (
-    <aside className={`decision-note response-console relation-${insight.prepRelationTone}`}>
+    <aside className={classNames('decision-note response-console', relationToneClass[insight.prepRelationTone])}>
       <div className="console-head">
         <span>{responsePanelCopy.consoleTitle}</span>
         <div className="console-cue-strip" aria-label={responsePanelCopy.cueStripAria}>
@@ -200,13 +200,13 @@ function ResponseConsole({
         </div>
       ) : null}
       {replayDelta ? (
-        <div className={`console-fray replay-console-delta delta-${replayDelta.tone}`}>
+        <div className={classNames('console-fray replay-console-delta', replayDeltaToneClass[replayDelta.tone])}>
           <span>{responsePanelCopy.replayDelta}</span>
           <strong>{replayDelta.label}</strong>
         </div>
       ) : null}
       {insight.frayRelationLabel ? (
-        <div className={`console-fray relation-${insight.frayRelationTone}`}>
+        <div className={classNames('console-fray', insight.frayRelationTone ? relationToneClass[insight.frayRelationTone] : '')}>
           <span>{responsePanelCopy.frayTitle}</span>
           <strong>{insight.frayRelationLabel}</strong>
         </div>
@@ -226,7 +226,7 @@ function ResultRail({ insight, variant }: { insight: ResponseInsight; variant: '
   const tiers = resultTierOrder();
   const currentIndex = tiers.indexOf(insight.resultTier);
   return (
-    <div className={`result-rail-box result-rail-box--${variant}`} aria-label={`${responsePanelCopy.resultRailAria}: ${insight.successRangeLabel}`}>
+    <div className={classNames('result-rail-box', resultRailBoxVariantClass[variant])} aria-label={`${responsePanelCopy.resultRailAria}: ${insight.successRangeLabel}`}>
       <div className="result-rail-head">
         {variant === 'console' ? <span>{responsePanelCopy.outlookTitle}</span> : null}
         {variant === 'console' ? (
@@ -236,7 +236,7 @@ function ResultRail({ insight, variant }: { insight: ResponseInsight; variant: '
         ) : null}
         <strong>{insight.successRangeLabel}</strong>
       </div>
-      <div className={`result-rail has-${insight.rangeTone}`} aria-hidden="true">
+      <div className={classNames('result-rail', resultRailToneClass[insight.rangeTone])} aria-hidden="true">
         {tiers.map((tier, index) => (
           <span
             key={tier}
@@ -267,7 +267,7 @@ function ConsoleRunSheet({
 }) {
   return (
     <div className="console-run-sheet" aria-label={responsePanelCopy.runSheetAria}>
-      <span className={styleHud ? `style-${styleHud.tone}` : ''}>
+      <span className={state.performanceStyle ? performanceStyleClass[state.performanceStyle] : ''}>
         <small>STYLE</small>
         <strong>{styleHud?.label ?? responsePanelCopy.pendingStyle}</strong>
         <b>{buildCue}</b>
@@ -366,3 +366,43 @@ function toneForValue(value: number) {
   if (value < 0) return 'bad';
   return 'neutral';
 }
+
+const responseRangeToneClass: Record<ResponseInsight['rangeTone'], string> = {
+  best: 'fit-best',
+  good: 'fit-good',
+  thin: 'fit-risky',
+  danger: 'fit-danger',
+};
+
+const relationToneClass: Record<ResponseInsight['prepRelationTone'] | NonNullable<ResponseInsight['frayRelationTone']>, string> = {
+  primary: 'relation-primary',
+  alternate: 'relation-alternate',
+  poor: 'relation-poor',
+  recover: 'relation-recover',
+  miss: 'relation-miss',
+};
+
+const replayDeltaToneClass: Record<'up' | 'same' | 'down', string> = {
+  up: 'delta-up',
+  same: 'delta-same',
+  down: 'delta-down',
+};
+
+const resultRailBoxVariantClass: Record<'card' | 'console', string> = {
+  card: 'result-rail-box--card',
+  console: 'result-rail-box--console',
+};
+
+const resultRailToneClass: Record<ResponseInsight['rangeTone'], string> = {
+  best: 'has-best',
+  good: 'has-good',
+  thin: 'has-risky',
+  danger: 'has-danger',
+};
+
+const performanceStyleClass: Record<NonNullable<GameState['performanceStyle']>, string> = {
+  heat: 'style-heat',
+  breath: 'style-breath',
+  control: 'style-control',
+  closure: 'style-closure',
+};

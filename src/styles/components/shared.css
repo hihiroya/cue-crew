@@ -79,6 +79,12 @@
   color: #c9f2d6;
 }
 
+.performance-badge.badge-gold {
+  border-color: rgba(255, 217, 138, 0.42);
+  background: rgba(255, 217, 138, 0.14);
+  color: #fff0bd;
+}
+
 .performance-badge.badge-cool {
   border-color: rgba(139, 201, 213, 0.3);
   background: rgba(139, 201, 213, 0.1);

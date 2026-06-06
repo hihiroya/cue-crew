@@ -1,0 +1,29 @@
+/* Game shell controls and exit dialog class handles for staged CSS Modules migration. */
+
+.phaseStrip {
+  composes: phase-strip from global;
+}
+
+.active {
+  composes: is-active from global;
+}
+
+.done {
+  composes: is-done from global;
+}
+
+.exitControl {
+  composes: game-exit-control from global;
+}
+
+.dialogBackdrop {
+  composes: exit-dialog-backdrop from global;
+}
+
+.dialog {
+  composes: exit-dialog from global;
+}
+
+.dialogActions {
+  composes: exit-dialog-actions from global;
+}

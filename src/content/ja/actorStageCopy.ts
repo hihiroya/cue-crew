@@ -18,6 +18,7 @@ export const actorStageCopy = {
 export const omenIntensityCopy = {
   high: '高',
   medium: '中',
+  low: '低',
   strengthAria: (intensity: string) => `発生しやすさ ${intensity}`,
 } as const;
 

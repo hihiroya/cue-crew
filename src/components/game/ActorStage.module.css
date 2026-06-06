@@ -1,0 +1,221 @@
+/* ActorStage-owned class handles for staged CSS Modules migration. */
+
+.eventReveal {
+  composes: event-reveal from global;
+}
+
+.stage {
+  composes: actor-stage focus-stage from global;
+}
+
+.focusCard {
+  composes: actor-card focus-actor-card is-focus from global;
+}
+
+.figureWrap {
+  composes: actor-figure-wrap from global;
+}
+
+.actorFigureLead {
+  composes: actor-figure-lead from global;
+}
+
+.actorFigureJunior {
+  composes: actor-figure-junior from global;
+}
+
+.actorFigureSkilled {
+  composes: actor-figure-skilled from global;
+}
+
+.stateElated {
+  composes: figure-state-elated from global;
+}
+
+.stateContemplative {
+  composes: figure-state-contemplative from global;
+}
+
+.stateAnxious {
+  composes: figure-state-anxious from global;
+}
+
+.stateImmersed {
+  composes: figure-state-immersed from global;
+}
+
+.stateFatigued {
+  composes: figure-state-fatigued from global;
+}
+
+.eventStepForward {
+  composes: event-stepForward from global;
+}
+
+.eventAdlib {
+  composes: event-adlib from global;
+}
+
+.eventHeatUp {
+  composes: event-heatUp from global;
+}
+
+.eventSilence {
+  composes: event-silence from global;
+}
+
+.eventPositionShift {
+  composes: event-positionShift from global;
+}
+
+.eventTempoRush {
+  composes: event-tempoRush from global;
+}
+
+.eventDelayedExit {
+  composes: event-delayedExit from global;
+}
+
+.eventEnsembleWaver {
+  composes: event-ensembleWaver from global;
+}
+
+.motionHeat {
+  composes: event-motion-heat from global;
+}
+
+.motionPause {
+  composes: event-motion-pause from global;
+}
+
+.motionFlow {
+  composes: event-motion-flow from global;
+}
+
+.eventFigure {
+  composes: event-reveal-figure from global;
+}
+
+.eventBody {
+  composes: event-reveal-body from global;
+}
+
+.eventKicker {
+  composes: event-reveal-kicker from global;
+}
+
+.eventActorTags {
+  composes: event-actor-tags from global;
+}
+
+.titleLarge {
+  composes: title-large from global;
+}
+
+.titleMedium {
+  composes: title-medium from global;
+}
+
+.titleCompact {
+  composes: title-compact from global;
+}
+
+.eventTitle {
+  composes: event-title from global;
+}
+
+.stageMain {
+  composes: actor-stage-main from global;
+}
+
+.cardHead {
+  composes: actor-card-head from global;
+}
+
+.titleStack {
+  composes: actor-title-stack from global;
+}
+
+.identityLine {
+  composes: actor-identity-line from global;
+}
+
+.roleBadge {
+  composes: actor-role-badge from global;
+}
+
+.focusRole {
+  composes: focus-role from global;
+}
+
+.nextRole {
+  composes: next-role from global;
+}
+
+.metaLine {
+  composes: actor-meta-line from global;
+}
+
+.stateInline {
+  composes: actor-state-inline from global;
+}
+
+.trustPill {
+  composes: actor-trust-pill from global;
+}
+
+.trustGood {
+  composes: trust-good from global;
+}
+
+.trustStrong {
+  composes: trust-strong from global;
+}
+
+.supportPanel {
+  composes: support-actors-panel from global;
+}
+
+.supportNextCard {
+  composes: support-actor-chip support-next-card is-next from global;
+}
+
+.omenPanel {
+  composes: omen-chip-panel from global;
+}
+
+.omenList {
+  composes: omen-chip-list from global;
+}
+
+.omenChip {
+  composes: omen-chip from global;
+}
+
+.omenHigh {
+  composes: omen-高 from global;
+}
+
+.omenMedium {
+  composes: omen-中 from global;
+}
+
+.omenLow {
+  composes: omen-低 from global;
+}
+
+.omenStrength {
+  composes: omen-strength from global;
+}
+
+.strengthHigh {
+  composes: strength-high from global;
+}
+
+.strengthMedium {
+  composes: strength-medium from global;
+}
+
+.strengthLow {
+  composes: strength-low from global;
+}

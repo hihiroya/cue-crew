@@ -60,7 +60,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
             <button
               key={prep}
               aria-pressed={isInspected}
-              className={classNames(styles.choiceButton, `cue-${tone}`, isInspected && styles.selected)}
+              className={classNames(styles.choiceButton, prepToneClass[tone], isInspected && styles.selected)}
               disabled={disabled}
               onClick={() => setInspectedPrep(prep)}
               onFocus={() => setInspectedPrep(prep)}
@@ -91,7 +91,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
           {appCopy.prep.commit}
         </button>
       </div>
-      <aside className={classNames(isApproving ? styles.cueSheetApproving : styles.cueSheet, `cue-${inspected.tone}`)}>
+      <aside className={classNames(isApproving ? styles.cueSheetApproving : styles.cueSheet, prepToneClass[inspected.tone])}>
         <div className="cue-paper">
           <div className="cue-sheet-head">
             <div className="cue-sheet-title">
@@ -218,3 +218,10 @@ function PrepSelectionMarker({ visible }: { visible: boolean }) {
     </em>
   );
 }
+
+const prepToneClass: Record<PrepTone, string> = {
+  strong: 'cue-strong',
+  good: 'cue-good',
+  thin: 'cue-thin',
+  danger: 'cue-danger',
+};

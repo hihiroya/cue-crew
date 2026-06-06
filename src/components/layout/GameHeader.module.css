@@ -1,0 +1,53 @@
+/* GameHeader-owned class handles for staged CSS Modules migration. */
+
+.root {
+  composes: game-header from global;
+}
+
+.status {
+  composes: performance-status from global;
+}
+
+.label {
+  composes: performance-label from global;
+}
+
+.rightCluster {
+  composes: performance-right-cluster from global;
+}
+
+.styleInline {
+  composes: performance-style-inline from global;
+}
+
+.colorPending {
+  composes: color-pending from global;
+}
+
+.colorHeat {
+  composes: color-heat from global;
+}
+
+.colorBreath {
+  composes: color-breath from global;
+}
+
+.colorControl {
+  composes: color-control from global;
+}
+
+.colorClosure {
+  composes: color-closure from global;
+}
+
+.scoreMeters {
+  composes: header-score-meters from global;
+}
+
+.scoreChip {
+  composes: header-score-chip from global;
+}
+
+.dailyRunChip {
+  composes: daily-run-chip from global;
+}

@@ -131,10 +131,6 @@
     rgba(0, 0, 0, 0.26);
 }
 
-.console-outlook {
-  grid-column: auto;
-}
-
 .console-run-sheet span {
   min-width: 0;
   display: grid;
@@ -215,6 +211,7 @@
 .console-outlook {
   position: relative;
   z-index: 1;
+  grid-column: auto;
   display: grid;
   gap: 3px;
   padding: 10px 11px;

@@ -1,7 +1,7 @@
 /* Game action surfaces shared by prep, response, and result preview flows. */
-@import "./game-actions/details.css";
-@import "./game-actions/response-console-frame.css";
-@import "./game-actions/prep-panel.css";
-@import "./game-actions/response-panel.css";
-@import "./game-actions/choice-states.css";
-@import "./game-actions/result-preview.css";
+@import url("./game-actions/details.css");
+@import url("./game-actions/response-console-frame.css");
+@import url("./game-actions/prep-panel.css");
+@import url("./game-actions/response-panel.css");
+@import url("./game-actions/choice-states.css");
+@import url("./game-actions/result-preview.css");

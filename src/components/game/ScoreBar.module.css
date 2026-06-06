@@ -1,0 +1,49 @@
+/* ScoreBar-owned class handles for staged CSS Modules migration. */
+
+.root {
+  composes: score-rail from global;
+}
+
+.loadSafe {
+  composes: load-safe from global;
+}
+
+.loadCaution {
+  composes: load-caution from global;
+}
+
+.loadDanger {
+  composes: load-danger from global;
+}
+
+.loadFray {
+  composes: load-fray from global;
+}
+
+.loadConsole {
+  composes: backstage-load-console from global;
+}
+
+.loadHead {
+  composes: backstage-load-head from global;
+}
+
+.scoreIcon {
+  composes: score-icon from global;
+}
+
+.loadLights {
+  composes: load-light-row from global;
+}
+
+.lit {
+  composes: is-lit from global;
+}
+
+.frayRibbon {
+  composes: fray-ribbon from global;
+}
+
+.frayWarning {
+  composes: fray-ribbon--warning from global;
+}

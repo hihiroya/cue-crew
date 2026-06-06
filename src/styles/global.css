@@ -1,6 +1,6 @@
-@import "./screens/title.css";
-@import "./base/layout.css";
-@import "./components/shared.css";
-@import "./components/game-actions.css";
-@import "./screens/result.css";
-@import "./base/motion-responsive.css";
+@import url("./screens/title.css");
+@import url("./base/layout.css");
+@import url("./components/shared.css");
+@import url("./components/game-actions.css");
+@import url("./screens/result.css");
+@import url("./base/motion-responsive.css");

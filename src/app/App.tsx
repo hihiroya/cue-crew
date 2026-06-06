@@ -4,6 +4,7 @@ import { ActorStage } from '../components/game/ActorStage';
 import { ResultPreviewCard } from '../components/game/ResultPreviewCard';
 import { ScoreBar } from '../components/game/ScoreBar';
 import { GameHeader } from '../components/layout/GameHeader';
+import { ExitConfirmDialog, GameExitControl, PhaseStrip } from './GameShellControls';
 import { ResultScreen } from './ResultScreen';
 import { TitleScreen } from './TitleScreen';
 import { useExitConfirm } from './useExitConfirm';
@@ -17,8 +18,6 @@ import { finishPerformance, gameReducer, titleState } from '../game/gameReducer'
 import { dailyRunFor } from '../game/rogueliteProgress';
 import { makeSeed } from '../game/rng';
 import { previewResult } from '../game/resultPreview';
-import type { GameStatus } from '../game/types';
-import { appCopy } from '../content/ja/appCopy';
 
 export function App() {
   const [state, dispatch] = useReducer(gameReducer, titleState);
@@ -91,11 +90,7 @@ export function App() {
     <main className="game-shell">
       <GameHeader state={displayState} />
       <ScoreBar state={displayState} />
-      <div className="phase-strip">
-        <span className={phaseStepClass(displayState.status, 'prep')}><i aria-hidden="true" />{appCopy.phase.prep}</span>
-        <span className={phaseStepClass(displayState.status, 'response')}><i aria-hidden="true" />{appCopy.phase.response}</span>
-        <span className={phaseStepClass(displayState.status, 'result')}><i aria-hidden="true" />{appCopy.phase.result}</span>
-      </div>
+      <PhaseStrip status={displayState.status} />
       {displayState.status !== 'result' ? (
         <ActorStage
           actors={displayState.actors}
@@ -159,44 +154,5 @@ export function App() {
         />
       ) : null}
     </main>
-  );
-}
-
-function phaseStepClass(status: GameStatus, step: 'prep' | 'response' | 'result') {
-  const order = { prep: 0, response: 1, result: 2 };
-  if (status === step) return 'is-active';
-  if (status in order && order[status as keyof typeof order] > order[step]) return 'is-done';
-  return '';
-}
-
-function GameExitControl({ disabled, onRequestExit }: { disabled: boolean; onRequestExit: () => void }) {
-  return (
-    <div className="game-exit-control">
-      <button type="button" disabled={disabled} onClick={onRequestExit}>{appCopy.exit.action}</button>
-    </div>
-  );
-}
-
-function ExitConfirmDialog({ onCancel, onConfirm }: { onCancel: () => void; onConfirm: () => void }) {
-  return (
-    <div className="exit-dialog-backdrop" role="presentation" onClick={onCancel}>
-      <section
-        className="exit-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="exit-dialog-title"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div>
-          <p>{appCopy.exit.kicker}</p>
-          <h2 id="exit-dialog-title">{appCopy.exit.title}</h2>
-          <span>{appCopy.exit.body}</span>
-        </div>
-        <div className="exit-dialog-actions">
-          <button type="button" className="primary-action" onClick={onCancel}>{appCopy.exit.cancel}</button>
-          <button type="button" className="danger-outline-action" onClick={onConfirm}>{appCopy.exit.confirm}</button>
-        </div>
-      </section>
-    </div>
   );
 }

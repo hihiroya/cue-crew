@@ -1,9 +1,11 @@
 import { EVENT_LABELS, STATE_LABELS } from '../../game/constants';
 import { topOmenEvents } from '../../game/actorLogic';
-import type { Actor, ActorEvent, ActorType, PrepAction } from '../../game/types';
+import type { Actor, ActorEvent, ActorEventType, ActorState, ActorType, PrepAction } from '../../game/types';
 import { ActorSilhouette } from '../actors/ActorSilhouette';
+import { classNames } from '../ui/classNames';
 import { Icon } from '../ui/Icon';
 import { actorPassiveLabel, actorStageCopy, omenIntensityCopy, supportActorSummary } from '../../content/ja/actorStageCopy';
+import styles from './ActorStage.module.css';
 
 type Props = {
   actors: Actor[];
@@ -23,41 +25,41 @@ export function ActorStage({ actors, focusActorId, nextFocusActorId, backstageLo
 
   if (event) {
     return (
-      <section className={`event-reveal actor-figure-${focusActor.type} figure-state-${focusActor.state} event-${event.type} event-motion-${eventMotionType(event.type)}`} aria-label={actorStageCopy.eventAria}>
-        <div className="event-reveal-figure">
+      <section className={classNames(styles.eventReveal, actorTypeClass[focusActor.type], actorStateClass[focusActor.state], eventTypeClass[event.type], eventMotionClass[eventMotionType(event.type)])} aria-label={actorStageCopy.eventAria}>
+        <div className={styles.eventFigure}>
           <ActorSilhouette type={focusActor.type} />
         </div>
-        <div className="event-reveal-body">
-          <div className="event-reveal-kicker">
+        <div className={styles.eventBody}>
+          <div className={styles.eventKicker}>
             <span>{actorStageCopy.eventKicker}</span>
-            <div className="event-actor-tags" aria-label={actorStageCopy.eventActorAria(focusActor.name, STATE_LABELS[focusActor.state])}>
+            <div className={styles.eventActorTags} aria-label={actorStageCopy.eventActorAria(focusActor.name, STATE_LABELS[focusActor.state])}>
               <em>{focusActor.name}</em>
               <em><small>{actorStageCopy.stateLabel}</small>{STATE_LABELS[focusActor.state]}</em>
             </div>
           </div>
-          <h2 className={`event-title title-${eventTitleSize(event.title)}`}>{event.title}</h2>
+          <h2 className={classNames(styles.eventTitle, eventTitleSizeClass[eventTitleSize(event.title)])}>{event.title}</h2>
           <p>{event.description}</p>
         </div>
       </section>
     );
   }
   return (
-    <section className="actor-stage focus-stage" aria-label={actorStageCopy.stageAria}>
-      <article className="actor-card focus-actor-card is-focus">
-        <div className={`actor-figure-wrap actor-figure-${focusActor.type} figure-state-${focusActor.state}`}>
+    <section className={styles.stage} aria-label={actorStageCopy.stageAria}>
+      <article className={styles.focusCard}>
+        <div className={classNames(styles.figureWrap, actorTypeClass[focusActor.type], actorStateClass[focusActor.state])}>
           <ActorSilhouette type={focusActor.type} />
         </div>
-        <div className="actor-stage-main">
-          <div className="actor-card-head">
-            <div className="actor-title-stack">
-              <div className="actor-identity-line">
-                <span className="actor-role-badge focus-role">{actorStageCopy.focusRole}</span>
+        <div className={styles.stageMain}>
+          <div className={styles.cardHead}>
+            <div className={styles.titleStack}>
+              <div className={styles.identityLine}>
+                <span className={classNames(styles.roleBadge, styles.focusRole)}>{actorStageCopy.focusRole}</span>
                 <h3>{focusActor.name}</h3>
               </div>
-              <div className="actor-meta-line">
-                <span className="actor-state-inline"><small>{actorStageCopy.stateLabel}</small>{STATE_LABELS[focusActor.state]}</span>
+              <div className={styles.metaLine}>
+                <span className={styles.stateInline}><small>{actorStageCopy.stateLabel}</small>{STATE_LABELS[focusActor.state]}</span>
                 {focusPassive ? (
-                  <small className={`actor-trust-pill trust-${trustLevel(focusActor)}`}>{focusPassive}</small>
+                  <small className={classNames(styles.trustPill, trustLevelClass[trustLevel(focusActor)])}>{focusPassive}</small>
                 ) : null}
               </div>
             </div>
@@ -86,9 +88,9 @@ function SupportActors({
   if (!actors.length || !nextFocusActorId) return null;
   const nextActor = actors.find((actor) => actor.id === nextFocusActorId) ?? actors[0];
   return (
-    <section className="support-actors-panel" aria-label={actorStageCopy.nextRole}>
-      <div className="support-actor-chip support-next-card is-next">
-        <span className="actor-role-badge next-role">{actorStageCopy.nextRole}</span>
+    <section className={styles.supportPanel} aria-label={actorStageCopy.nextRole}>
+      <div className={styles.supportNextCard}>
+        <span className={classNames(styles.roleBadge, styles.nextRole)}>{actorStageCopy.nextRole}</span>
         <strong>{nextActor.name}</strong>
         <em>{supportActorSummary(nextActor, true, backstageLoad, actorPassiveLabel(nextActor))}</em>
       </div>
@@ -111,11 +113,11 @@ function eventMotionType(event: ActorEvent['type']) {
 function OmenList({ actor, seed, totalTurn }: { actor: Actor; seed: string; totalTurn: number }) {
   const sorted = topOmenEvents(actor, 3, { seed, totalTurn });
   return (
-    <div className="omen-chip-panel" aria-label={actorStageCopy.visibleOmens}>
+    <div className={styles.omenPanel} aria-label={actorStageCopy.visibleOmens}>
       <span>{actorStageCopy.visibleOmens}</span>
-      <div className="omen-chip-list">
+      <div className={styles.omenList}>
         {sorted.map(({ event, intensity }) => (
-          <em key={event} className={`omen-chip omen-${intensity}`}>
+          <em key={event} className={classNames(styles.omenChip, omenIntensityClass[intensity])}>
             <Icon name={event} />
             <b>{EVENT_LABELS[event]}</b>
             <OmenStrength intensity={intensity} />
@@ -129,7 +131,7 @@ function OmenList({ actor, seed, totalTurn }: { actor: Actor; seed: string; tota
 function OmenStrength({ intensity }: { intensity: string }) {
   const level = intensity === omenIntensityCopy.high ? 'high' : intensity === omenIntensityCopy.medium ? 'medium' : 'low';
   return (
-    <span className={`omen-strength strength-${level}`} aria-label={omenIntensityCopy.strengthAria(intensity)}>
+    <span className={classNames(styles.omenStrength, omenStrengthClass[level])} aria-label={omenIntensityCopy.strengthAria(intensity)}>
       <i />
     </span>
   );
@@ -140,3 +142,63 @@ function trustLevel(actor: Actor) {
   if (actor.trust >= 3) return 'good';
   return 'thin';
 }
+
+type EventMotion = ReturnType<typeof eventMotionType>;
+type EventTitleSize = ReturnType<typeof eventTitleSize>;
+type TrustLevel = ReturnType<typeof trustLevel>;
+type OmenStrengthLevel = 'high' | 'medium' | 'low';
+
+const actorTypeClass: Record<ActorType, string> = {
+  lead: styles.actorFigureLead,
+  junior: styles.actorFigureJunior,
+  skilled: styles.actorFigureSkilled,
+};
+
+const actorStateClass: Record<ActorState, string> = {
+  elated: styles.stateElated,
+  contemplative: styles.stateContemplative,
+  anxious: styles.stateAnxious,
+  immersed: styles.stateImmersed,
+  fatigued: styles.stateFatigued,
+};
+
+const eventTypeClass: Record<ActorEventType, string> = {
+  stepForward: styles.eventStepForward,
+  adlib: styles.eventAdlib,
+  heatUp: styles.eventHeatUp,
+  silence: styles.eventSilence,
+  positionShift: styles.eventPositionShift,
+  tempoRush: styles.eventTempoRush,
+  delayedExit: styles.eventDelayedExit,
+  ensembleWaver: styles.eventEnsembleWaver,
+};
+
+const eventMotionClass: Record<EventMotion, string> = {
+  heat: styles.motionHeat,
+  pause: styles.motionPause,
+  flow: styles.motionFlow,
+};
+
+const eventTitleSizeClass: Record<EventTitleSize, string> = {
+  large: styles.titleLarge,
+  medium: styles.titleMedium,
+  compact: styles.titleCompact,
+};
+
+const trustLevelClass: Record<TrustLevel, string> = {
+  strong: styles.trustStrong,
+  good: styles.trustGood,
+  thin: '',
+};
+
+const omenIntensityClass: Record<string, string> = {
+  [omenIntensityCopy.high]: styles.omenHigh,
+  [omenIntensityCopy.medium]: styles.omenMedium,
+  [omenIntensityCopy.low]: styles.omenLow,
+};
+
+const omenStrengthClass: Record<OmenStrengthLevel, string> = {
+  high: styles.strengthHigh,
+  medium: styles.strengthMedium,
+  low: styles.strengthLow,
+};
