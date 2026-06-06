@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { assignActorRoles, pickFocusActor } from '../src/game/actorLogic';
 import { INITIAL_ACTORS, INITIAL_LOAD_STRAIN } from '../src/game/constants';
-import { gameReducer, readPerformanceHistory } from '../src/game/gameReducer';
+import { readPerformanceHistory } from '../src/app/storage/performanceHistoryStorage';
+import { gameReducer } from '../src/game/gameReducer';
 import type { GameState, MainResponse, PrepAction } from '../src/game/types';
 
 function resultState(overrides: Partial<GameState> = {}): GameState {
@@ -35,7 +36,7 @@ function resultState(overrides: Partial<GameState> = {}): GameState {
     logs: [],
     status: 'result',
     ...overrides,
-  };
+  } as GameState;
 }
 
 test('opening focus actors are varied and the first day does not repeat the same actor', () => {

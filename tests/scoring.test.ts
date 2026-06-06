@@ -38,7 +38,7 @@ function gameState(overrides: Partial<GameState> = {}): GameState {
     logs: [],
     status: 'result',
     ...overrides,
-  };
+  } as GameState;
 }
 
 test('tierFromScore keeps the documented result thresholds', () => {

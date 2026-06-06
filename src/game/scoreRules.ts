@@ -14,7 +14,6 @@ import {
   RESPONSE_BIAS,
   RESULT_TIER_LABELS,
   STATE_LABELS,
-  TURNS_PER_ACT,
 } from './constants';
 import * as ruleText from '../content/ja/ruleCopy';
 import { scoreRuleExtraCopy } from '../content/ja/rogueliteCopy';
@@ -22,8 +21,11 @@ import { topOmenEvents } from './actorLogic';
 import { createRng } from './rng';
 import { frayFitFor, guardTierForFrayRecovery } from './fray';
 import { flavorText, prepRecovery, sceneTitle } from './sceneTemplates';
+import { determinePerformanceStyle, stylePreviewFor, tierFromScore } from './scoreEngine';
 import { performanceLabel, slotForTurnInAct } from './turnCalendar';
-import type { Actor, CueResultSummary, GameState, LoadBias, MainResponse, PerformanceStyle, PrepPredictionQuality, ResponseEffect, ResponseEffectTarget, ResponseInsight, ResultPreview, ResultTier, ScoreBreakdownItem, TurnLog } from './types';
+import type { Actor, CueResultSummary, GameState, LoadBias, MainResponse, PrepPredictionQuality, ResponseEffect, ResponseEffectTarget, ResponseInsight, ResultPreview, ResultTier, ScoreBreakdownItem } from './types';
+
+export { clampLoad, determinePerformanceStyle, tierFromScore, toTurnLog } from './scoreEngine';
 
 function actorResponseBonus(actor: Actor, response: MainResponse): number {
   if (actor.type === 'lead' && ['wait', 'catch', 'arrange'].includes(response)) return 1;
@@ -428,14 +430,6 @@ function repeatAdjustment(response: MainResponse, count: number, success: boolea
   };
 }
 
-export function tierFromScore(score: number): ResultTier {
-  if (score >= 7) return 'masterpiece';
-  if (score >= 4) return 'scene';
-  if (score >= 2) return 'smallSuccess';
-  if (score >= 0) return 'fray';
-  return 'accident';
-}
-
 function eventIsOneOf(state: GameState, events: Array<NonNullable<GameState['currentActorEvent']>['type']>): boolean {
   return Boolean(state.currentActorEvent && events.includes(state.currentActorEvent.type));
 }
@@ -731,46 +725,6 @@ function cueResultSummary(state: GameState, preview: ResultPreview): CueResultSu
   };
 }
 
-type StyleSource = Pick<TurnLog, 'mainResponse' | 'deltaScene' | 'deltaFlow' | 'deltaTrust' | 'deltaLoad'>;
-
-function performanceStyleScores(logs: StyleSource[]): Array<[PerformanceStyle, number]> {
-  const scores: Record<PerformanceStyle, number> = {
-    heat: 0,
-    breath: 0,
-    control: 0,
-    closure: 0,
-  };
-  logs.forEach((log) => {
-    if (log.mainResponse === 'catch') scores.heat += 4;
-    if (log.mainResponse === 'wait') scores.breath += 4;
-    if (log.mainResponse === 'arrange') scores.control += 4;
-    if (log.mainResponse === 'cut') scores.closure += 4;
-    if (log.mainResponse === 'catch') scores.heat += Math.min(2, Math.max(0, log.deltaScene));
-    if (log.mainResponse === 'wait') scores.breath += Math.min(3, Math.max(0, log.deltaTrust));
-    if (log.mainResponse === 'arrange') scores.control += Math.min(3, Math.max(0, log.deltaFlow) + Math.max(0, -log.deltaLoad));
-    if (log.mainResponse === 'cut') scores.closure += Math.min(3, Math.max(0, -log.deltaFlow) + (log.deltaLoad <= 0 ? 1 : 0));
-  });
-  return (Object.entries(scores) as Array<[PerformanceStyle, number]>).sort((a, b) => b[1] - a[1]);
-}
-
-export function determinePerformanceStyle(logs: StyleSource[]): PerformanceStyle {
-  return performanceStyleScores(logs)[0][0];
-}
-
-function committedPerformanceStyle(logs: StyleSource[]): PerformanceStyle | null {
-  const ranked = performanceStyleScores(logs);
-  const [topStyle, topScore] = ranked[0];
-  const secondScore = ranked[1]?.[1] ?? 0;
-  return topScore - secondScore >= 4 ? topStyle : null;
-}
-
-function stylePreviewFor(state: GameState, preview: StyleSource): { style: PerformanceStyle | null; isNew: boolean } {
-  if (state.performanceStyle) return { style: state.performanceStyle, isNew: false };
-  if (state.totalTurn < TURNS_PER_ACT) return { style: null, isNew: false };
-  const style = committedPerformanceStyle([...state.logs, preview]);
-  return { style, isNew: Boolean(style) };
-}
-
 export function responseInsight(state: GameState, response: MainResponse): ResponseInsight {
   if (!state.currentActorEvent || !state.selectedPrep || !state.currentFocusActorId) {
     throw new Error('Cannot inspect response before event and prep are selected.');
@@ -926,34 +880,5 @@ export function previewResult(state: GameState): ResultPreview {
   return {
     ...preview,
     cueSummary: cueResultSummary(state, preview),
-  };
-}
-
-export function clampLoad(load: number): number {
-  return Math.max(0, Math.min(MAX_LOAD, load));
-}
-
-export function toTurnLog(state: GameState, preview: ResultPreview): TurnLog {
-  return {
-    act: state.act,
-    turnInAct: state.turnInAct,
-    totalTurn: state.totalTurn,
-    focusActorType: preview.focusActorType,
-    actorState: preview.actorState,
-    actorEventType: preview.actorEventType,
-    prepAction: preview.prepAction,
-    mainResponse: preview.mainResponse,
-    resultTier: preview.resultTier,
-    performanceStyle: preview.performanceStyle,
-    score: preview.score,
-    prepMatched: preview.prepMatched,
-    prepQuality: preview.prepQuality,
-    sceneTitle: preview.sceneTitle,
-    flavorText: preview.flavorText,
-    deltaScene: preview.deltaScene,
-    deltaFlow: preview.deltaFlow,
-    deltaTrust: preview.deltaTrust,
-    deltaLoad: preview.deltaLoad,
-    loadBias: preview.loadBias,
   };
 }

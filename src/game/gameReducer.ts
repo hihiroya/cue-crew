@@ -7,7 +7,7 @@ import { makeSeed } from './rng';
 import { previewResult } from './resultPreview';
 import { clampLoad, determinePerformanceStyle, toTurnLog } from './scoring';
 import { actForTurn } from './turnCalendar';
-import type { GameState, MainResponse, PerformanceResult, PrepAction } from './types';
+import type { GameState, MainResponse, PerformanceResult, PrepAction, PrepGameState } from './types';
 
 export type GameAction =
   | { type: 'START'; seed?: string }
@@ -16,9 +16,7 @@ export type GameAction =
   | { type: 'COMMIT_RESULT' }
   | { type: 'RESET_TO_TITLE' };
 
-const HISTORY_KEY = 'honban.performance.history.v1';
-
-export function createInitialGame(seed = makeSeed()): GameState {
+export function createInitialGame(seed = makeSeed()): PrepGameState {
   const totalTurn = 1;
   const focus = pickFocusActor(seed, totalTurn);
   return {
@@ -47,6 +45,9 @@ export function createInitialGame(seed = makeSeed()): GameState {
 export const titleState: GameState = {
   ...createInitialGame('title-preview'),
   currentFocusActorId: null,
+  currentActorEvent: null,
+  selectedPrep: null,
+  selectedResponse: null,
   status: 'title',
 };
 
@@ -78,54 +79,6 @@ export function finishPerformance(state: GameState): PerformanceResult {
     mediaReview,
     logs: state.logs,
     highlights,
-  };
-}
-
-export function savePerformanceResult(result: PerformanceResult) {
-  const current = readPerformanceHistory();
-  const next = [result, ...current].slice(0, 8);
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
-}
-
-export function readPerformanceHistory(): PerformanceResult[] {
-  try {
-    const raw = localStorage.getItem(HISTORY_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as Partial<PerformanceResult>[];
-    const normalized = parsed.map(normalizePerformanceResult);
-    if (JSON.stringify(parsed) !== JSON.stringify(normalized)) {
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(normalized));
-    }
-    return normalized;
-  } catch {
-    return [];
-  }
-}
-
-function normalizePerformanceResult(result: Partial<PerformanceResult>): PerformanceResult {
-  const logs = result.logs ?? [];
-  const sceneScore = result.sceneScore ?? 0;
-  const flowScore = result.flowScore ?? 0;
-  const trustScore = result.trustScore ?? 0;
-  const backstageLoad = result.backstageLoad ?? 0;
-  const fallbackReview = createPerformanceReview(logs, sceneScore, flowScore, trustScore, backstageLoad);
-  const fallbackInsight = createPerformanceInsight(logs, sceneScore, flowScore, trustScore, backstageLoad);
-  return {
-    seed: result.seed ?? 'unknown-seed',
-    finishedAt: result.finishedAt ?? new Date(0).toISOString(),
-    sceneScore,
-    flowScore,
-    trustScore,
-    backstageLoad,
-    performanceStyle: result.performanceStyle ?? null,
-    title: result.title ?? fallbackReview.title,
-    review: result.review ?? fallbackReview.review,
-    reviewNotes: result.reviewNotes ?? fallbackReview.reviewNotes,
-    insight: { ...fallbackInsight, ...result.insight },
-    audienceSurvey: result.audienceSurvey ?? createAudienceSurvey(logs, sceneScore, flowScore, trustScore, backstageLoad),
-    mediaReview: result.mediaReview ?? createMediaReview(logs, sceneScore, flowScore, trustScore, backstageLoad),
-    logs,
-    highlights: result.highlights ?? logs.slice(0, 5),
   };
 }
 

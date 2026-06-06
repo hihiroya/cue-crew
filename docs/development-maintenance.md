@@ -16,17 +16,20 @@
 
 | 変更対象 | 主なファイル |
 | --- | --- |
-| ターン進行、状態遷移 | `src/game/gameReducer.ts` |
-| 採点、対応結果、公演の色ボーナス | `src/game/scoreRules.ts` |
-| 役者イベント、イベント重み | `src/game/actorLogic.ts` |
+| ターン進行、状態遷移 | `src/game/gameReducer.ts`、`src/game/domainTypes.ts` |
+| 採点、対応結果、公演の色ボーナス | `src/game/scoreRules.ts`、`src/game/scoreEngine.ts` |
+| 役者イベント、イベント重み | `src/game/actorLogic.ts`、`src/game/ruleTables.ts` |
 | 日替わりseed、日替わり補正 | `src/game/dailyRun.ts` |
 | 図鑑、称号、発見点、再演比較 | `src/game/rogueliteProgress.ts` |
-| 履歴、図鑑、日替わり自己ベスト保存 | `src/app/usePerformanceHistory.ts` |
+| ルール表、初期値、表示ラベルの入口 | `src/game/ruleTables.ts`、`src/game/initialGameData.ts`、`src/game/gameSettings.ts`、`src/game/contentLabels.ts`、`src/game/constants.ts` |
+| 履歴、図鑑、日替わり自己ベスト保存 | `src/app/usePerformanceHistory.ts`、`src/app/storage/performanceHistoryStorage.ts`、`src/game/rogueliteProgress.ts` |
 | タイトル、図鑑、日替わり導線 | `src/app/TitleScreen.tsx` |
 | 終演報告、ポスター、発見表示 | `src/app/ResultScreen.tsx` |
-| ゲーム画面の準備/対応/結果UI | `src/components/game/` |
-| 固定UIシナリオ | `src/game/uiScenarios.ts` |
+| ゲーム画面の準備/対応/結果UI | `src/components/game/`、対応UIの部品は `src/components/game/ResponsePanelParts.tsx` |
+| 固定UIシナリオ | `src/game/uiScenarioRegistry.json`、`src/game/uiScenarios.ts`、`src/game/uiScenarioBuilders.ts` |
+| UI確認、スクリーンショットpreset | `src/game/uiScenarioRegistry.json`、`scripts/ui-scenario-registry.mjs`、`scripts/check-ui-layout.mjs`、`scripts/capture-screenshot.mjs` |
 | バランス集計 | `scripts/balance-report.mjs` |
+| 変更範囲から確認コマンドを推定 | `scripts/verify-agent.mjs` |
 
 ## 変更別の確認
 
@@ -37,6 +40,8 @@
 | UIレイアウト、文言密度、カード表示 | `npm run check:ui` |
 | 準備/対応/結果の一部だけの軽微なUI変更 | `npm run check:ui:prep`、`npm run check:ui:response`、`npm run check:ui:result` の該当範囲 |
 | PR前、共通レイアウト大改修、レスポンシブ全体変更 | 必要な場合のみ `npm run verify:ui:full` |
+
+確認コマンドに迷う場合は `npm run verify:agent` で、作業ツリーとステージ済み差分から推奨確認を表示できます。比較対象を明示したい場合は `npm run verify:agent -- --base=<ref>` を使ってください。
 
 ## 保存データ
 

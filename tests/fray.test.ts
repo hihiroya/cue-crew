@@ -20,14 +20,19 @@ function gameState(overrides: Partial<GameState> = {}): GameState {
     loadStrain: { ...INITIAL_LOAD_STRAIN },
     actors: INITIAL_ACTORS,
     currentFocusActorId: 'lead',
-    currentActorEvent: null,
-    selectedPrep: null,
+    currentActorEvent: {
+      type: 'silence',
+      actorId: 'lead',
+      title: '沈黙する',
+      description: 'test event',
+    },
+    selectedPrep: 'makeSpace',
     selectedResponse: null,
     lastResponses: [],
     logs: [],
     status: 'response',
     ...overrides,
-  };
+  } as GameState;
 }
 
 function resultPreview(overrides: Partial<ResultPreview> = {}): ResultPreview {

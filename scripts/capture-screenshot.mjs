@@ -7,6 +7,7 @@ import { connect } from 'node:net';
 import { tmpdir } from 'node:os';
 import { dirname, extname, join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
+import { knownPresetNames, presetJobsFor } from './ui-scenario-registry.mjs';
 
 const args = new Map(
   process.argv.slice(2).map((arg) => {
@@ -25,44 +26,6 @@ const scenario = args.get('scenario') ?? 'title';
 const preset = args.get('preset');
 const checkPage = args.get('check') !== 'false';
 let captureIndex = 0;
-
-const presetJobs = {
-  'prep-panel': [
-    ['prep-default', 360, 780],
-    ['prep-default', 440, 956],
-    ['prep-selected-space', 360, 780],
-    ['prep-selected-space', 440, 956],
-  ],
-  'response-panel': [
-    ['response-primary', 360, 780],
-    ['response-primary', 440, 956],
-    ['response-alternate', 360, 780],
-    ['response-alternate', 440, 956],
-    ['response-danger', 360, 780],
-    ['response-danger', 440, 956],
-    ['response-many-effects', 360, 780],
-    ['response-many-effects', 440, 956],
-    ['response-long-label', 360, 780],
-    ['response-long-label', 440, 956],
-    ['response-fray', 360, 780],
-    ['response-fray', 440, 956],
-  ],
-  'result-panel': [
-    ['result-preview', 360, 900],
-    ['result-preview', 440, 1040],
-    ['result-fray', 360, 960],
-    ['result-fray', 440, 1100],
-    ['finished-heat', 360, 1500],
-    ['finished-heat', 440, 1500],
-    ['finished-rough', 360, 1500],
-    ['finished-rough', 440, 1500],
-  ],
-};
-presetJobs['ui-critical'] = [
-  ...presetJobs['prep-panel'],
-  ...presetJobs['response-panel'],
-  ...presetJobs['result-panel'],
-];
 
 await main();
 
@@ -94,9 +57,9 @@ async function main() {
 }
 
 async function runPreset(name) {
-  const jobs = presetJobs[name];
+  const jobs = presetJobsFor('screenshot', name);
   if (!jobs) {
-    throw new Error(`Unknown screenshot preset: ${name}. Known presets: ${Object.keys(presetJobs).join(', ')}`);
+    throw new Error(`Unknown screenshot preset: ${name}. Known presets: ${knownPresetNames().join(', ')}`);
   }
 
   const outDir = resolve(args.get('outDir') ?? join('tmp', 'screenshots', name));

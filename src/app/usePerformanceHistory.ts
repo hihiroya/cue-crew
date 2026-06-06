@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { finishPerformance, readPerformanceHistory, savePerformanceResult } from '../game/gameReducer';
+import { finishPerformance } from '../game/gameReducer';
 import { readCollectionState, readDailyBestResults, saveCollectionForResult, saveDailyBestForResult } from '../game/rogueliteProgress';
+import { readPerformanceHistory, savePerformanceResult } from './storage/performanceHistoryStorage';
 import type { GameState } from '../game/types';
 
 export function usePerformanceHistory(displayState: GameState, disabled = false) {

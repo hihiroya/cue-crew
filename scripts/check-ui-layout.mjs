@@ -7,6 +7,7 @@ import { connect } from 'node:net';
 import { tmpdir } from 'node:os';
 import { extname, join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
+import { knownPresetNames, presetJobsFor } from './ui-scenario-registry.mjs';
 
 const args = new Map(
   process.argv.slice(2).map((arg) => {
@@ -14,56 +15,6 @@ const args = new Map(
     return [key, rest.join('=') || 'true'];
   }),
 );
-
-const presetJobs = {
-  'title-panel': [
-    ['title-default', 360, 780],
-    ['title-default', 440, 956],
-    ['title-history-legacy', 360, 780],
-    ['title-history-legacy', 440, 956],
-    ['title-collection', 360, 900],
-    ['title-collection', 440, 1040],
-  ],
-  'prep-panel': [
-    ['prep-default', 360, 780],
-    ['prep-default', 390, 844],
-    ['prep-default', 440, 956],
-    ['prep-selected-space', 360, 780],
-    ['prep-selected-space', 440, 956],
-  ],
-  'response-panel': [
-    ['response-primary', 360, 780],
-    ['response-primary', 390, 844],
-    ['response-primary', 440, 956],
-    ['response-alternate', 360, 780],
-    ['response-alternate', 440, 956],
-    ['response-danger', 360, 780],
-    ['response-danger', 440, 956],
-    ['response-many-effects', 360, 780],
-    ['response-many-effects', 440, 956],
-    ['response-long-label', 360, 780],
-    ['response-long-label', 440, 956],
-    ['response-fray', 360, 780],
-    ['response-fray', 440, 956],
-  ],
-  'result-panel': [
-    ['result-preview', 360, 900],
-    ['result-preview', 390, 900],
-    ['result-preview', 440, 1040],
-    ['result-fray', 360, 960],
-    ['result-fray', 440, 1100],
-    ['finished-heat', 360, 1500],
-    ['finished-heat', 440, 1500],
-    ['finished-rough', 360, 1500],
-    ['finished-rough', 440, 1500],
-  ],
-};
-presetJobs['ui-critical'] = [
-  ...presetJobs['title-panel'],
-  ...presetJobs['prep-panel'],
-  ...presetJobs['response-panel'],
-  ...presetJobs['result-panel'],
-];
 
 const defaultWidth = Number(args.get('width') ?? 440);
 const defaultHeight = Number(args.get('height') ?? 956);
@@ -77,10 +28,10 @@ await main();
 async function main() {
   const jobs = scenario
     ? [[scenario.replace(/^ui:/, ''), defaultWidth, defaultHeight]]
-    : presetJobs[preset];
+    : presetJobsFor('check', preset);
 
   if (!jobs) {
-    throw new Error(`Unknown UI check preset: ${preset}. Known presets: ${Object.keys(presetJobs).join(', ')}`);
+    throw new Error(`Unknown UI check preset: ${preset}. Known presets: ${knownPresetNames().join(', ')}`);
   }
 
   const env = await createCheckEnvironment({

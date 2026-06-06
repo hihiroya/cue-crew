@@ -9,16 +9,22 @@ import type {
   ActorState,
   ActorType,
   FrayEvent,
-  GameState,
+  FinishedGameState,
   LoadBias,
   LoadStrain,
   MainResponse,
   PerformanceStyle,
+  PrepGameState,
   PrepAction,
   PrepPredictionQuality,
+  ResponseGameState,
   ResultTier,
   TurnLog,
 } from './types';
+
+type InspectedResponseScenario = ResponseGameState & {
+  selectedResponse: MainResponse;
+};
 
 export type ResponseScenarioOptions = {
   prep: PrepAction;
@@ -48,7 +54,7 @@ type FinishedScenarioOptions = {
   performanceStyle?: PerformanceStyle;
 };
 
-export function prepScenario(selectedPrep: PrepAction): GameState {
+export function prepScenario(selectedPrep: PrepAction): PrepGameState {
   const focus = 'junior';
   const base = createInitialGame('ui-prep-selected-space');
   return {
@@ -60,7 +66,7 @@ export function prepScenario(selectedPrep: PrepAction): GameState {
   };
 }
 
-export function responseScenario(name: string, options: ResponseScenarioOptions): GameState {
+export function responseScenario(name: string, options: ResponseScenarioOptions): InspectedResponseScenario {
   const totalTurn = options.totalTurn ?? 1;
   const focus = options.focus ?? 'junior';
   const base = createInitialGame(`ui-${name}`);
@@ -85,13 +91,20 @@ export function responseScenario(name: string, options: ResponseScenarioOptions)
   };
 }
 
-export function finishedScenario(name: string, options: FinishedScenarioOptions = {}): GameState {
+export function finishedScenario(name: string, options: FinishedScenarioOptions = {}): FinishedGameState {
   const base = createInitialGame(`ui-${name}`);
   const performanceStyle = options.performanceStyle ?? 'control';
+  const focus = 'skilled';
+  const event = scenarioEvent('ensembleWaver', focus);
   return {
     ...base,
     ...actForTurn(6),
     totalTurn: 6,
+    actors: scenarioActors(focus, 'fatigued', 1),
+    currentFocusActorId: focus,
+    currentActorEvent: event,
+    selectedPrep: 'tightenFlow',
+    selectedResponse: 'arrange',
     performanceStyle,
     sceneScore: options.sceneScore ?? 18,
     flowScore: options.flowScore ?? 7,

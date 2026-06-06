@@ -1,8 +1,3 @@
-@import url("./screens/title.css");
-@import url("./base/layout.css");
-@import url("./components/performance-badges.css");
-@import url("./components/shared.css");
-@import url("./components/game-actions.css");
-@import url("./screens/result.css");
-@import url("./screens/result/polish.css");
-@import url("./base/motion-responsive.css");
+@import url("./base/index.css");
+@import url("./components/index.css");
+@import url("./screens/index.css");

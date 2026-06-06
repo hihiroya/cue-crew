@@ -84,7 +84,7 @@ export type TurnLog = {
   loadBias: LoadBias;
 };
 
-export type GameState = {
+export type GameStateBase = {
   seed: string;
   act: number;
   turnInAct: number;
@@ -105,5 +105,51 @@ export type GameState = {
   lastResponses: MainResponse[];
   pendingFrayEvent?: FrayEvent;
   logs: TurnLog[];
-  status: GameStatus;
 };
+
+export type TitleGameState = GameStateBase & {
+  status: 'title';
+  currentFocusActorId: null;
+  currentActorEvent: null;
+  selectedPrep: null;
+  selectedResponse: null;
+};
+
+export type PrepGameState = GameStateBase & {
+  status: 'prep';
+  currentFocusActorId: ActorType;
+  currentActorEvent: null;
+  selectedPrep: PrepAction | null;
+  selectedResponse: null;
+};
+
+export type ResponseGameState = GameStateBase & {
+  status: 'response';
+  currentFocusActorId: ActorType;
+  currentActorEvent: ActorEvent;
+  selectedPrep: PrepAction;
+  selectedResponse: MainResponse | null;
+};
+
+export type ResultGameState = GameStateBase & {
+  status: 'result';
+  currentFocusActorId: ActorType;
+  currentActorEvent: ActorEvent;
+  selectedPrep: PrepAction;
+  selectedResponse: MainResponse;
+};
+
+export type FinishedGameState = GameStateBase & {
+  status: 'finished';
+  currentFocusActorId: ActorType;
+  currentActorEvent: ActorEvent;
+  selectedPrep: PrepAction;
+  selectedResponse: MainResponse;
+};
+
+export type GameState =
+  | TitleGameState
+  | PrepGameState
+  | ResponseGameState
+  | ResultGameState
+  | FinishedGameState;
