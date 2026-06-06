@@ -1,3 +1,5 @@
+/* ResponsePanel-owned class handles. Global composes preserve existing cascade while JSX stops depending on raw class strings. */
+
 .responseRoot {
   composes: choice-panel response-panel from global;
 }

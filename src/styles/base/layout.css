@@ -1,4 +1,10 @@
 
+/* Base document styles, app shells, and shared layout primitives. */
+
+* {
+  box-sizing: border-box;
+}
+
 
 body {
   min-width: 320px;

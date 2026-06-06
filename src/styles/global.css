@@ -1,6 +1,6 @@
-@import "./legacy/title-home.css";
-@import "./legacy/base-shell.css";
-@import "./legacy/shared-panels.css";
-@import "./legacy/action-panels.css";
-@import "./legacy/title-result.css";
-@import "./legacy/animations-responsive.css";
+@import "./screens/title.css";
+@import "./base/layout.css";
+@import "./components/shared.css";
+@import "./components/game-actions.css";
+@import "./screens/result.css";
+@import "./base/motion-responsive.css";

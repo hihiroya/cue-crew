@@ -1,3 +1,5 @@
+/* PrepPanel-owned class handles. Global composes preserve existing cascade while JSX stops depending on raw class strings. */
+
 .root {
   composes: choice-panel prep-panel from global;
 }
