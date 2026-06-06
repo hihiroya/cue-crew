@@ -1,0 +1,37 @@
+.root {
+  composes: choice-panel prep-panel from global;
+}
+
+.rootApproving {
+  composes: root;
+  composes: is-approving from global;
+}
+
+.choiceGrid {
+  composes: choice-grid from global;
+}
+
+.choiceButton {
+  composes: choice-button prep-choice from global;
+}
+
+.selected {
+  composes: is-selected from global;
+}
+
+.commitBar {
+  composes: prep-commit-bar from global;
+}
+
+.commitAction {
+  composes: primary-action prep-commit-action from global;
+}
+
+.cueSheet {
+  composes: cue-sheet from global;
+}
+
+.cueSheetApproving {
+  composes: cueSheet;
+  composes: is-approving from global;
+}

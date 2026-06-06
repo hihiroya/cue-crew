@@ -26,12 +26,14 @@ const presetJobs = {
   ],
   'prep-panel': [
     ['prep-default', 360, 780],
+    ['prep-default', 390, 844],
     ['prep-default', 440, 956],
     ['prep-selected-space', 360, 780],
     ['prep-selected-space', 440, 956],
   ],
   'response-panel': [
     ['response-primary', 360, 780],
+    ['response-primary', 390, 844],
     ['response-primary', 440, 956],
     ['response-alternate', 360, 780],
     ['response-alternate', 440, 956],
@@ -46,6 +48,7 @@ const presetJobs = {
   ],
   'result-panel': [
     ['result-preview', 360, 900],
+    ['result-preview', 390, 900],
     ['result-preview', 440, 1040],
     ['result-fray', 360, 960],
     ['result-fray', 440, 1100],
@@ -201,8 +204,39 @@ async function checkInEnvironment(env, options) {
     awaitPromise: true,
   });
 
+  await runScenarioInteraction(env.client, options.scenario);
+  await env.client.send('Runtime.evaluate', {
+    expression: 'new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))',
+    awaitPromise: true,
+  });
+
   const layoutFailures = await assertPageHealth(env.client, options.scenario);
   return { failures: [...env.runtimeFailures, ...layoutFailures] };
+}
+
+async function runScenarioInteraction(client, scenario) {
+  const expression = `
+    (() => {
+      const click = (selector) => {
+        const element = document.querySelector(selector);
+        if (!(element instanceof HTMLElement)) return false;
+        element.click();
+        return true;
+      };
+      if (${JSON.stringify(scenario)}.startsWith('prep-')) {
+        click('.prep-choice:not([disabled])');
+        click('.prep-commit-action:not([disabled])');
+      }
+      if (${JSON.stringify(scenario)}.startsWith('response-')) {
+        click('.response-choice:not([disabled])');
+      }
+      if (${JSON.stringify(scenario)}.startsWith('finished-')) {
+        click('.result-record-details > summary');
+      }
+      return true;
+    })()
+  `;
+  await client.send('Runtime.evaluate', { expression, awaitPromise: true });
 }
 
 async function startStaticServer(staticPort) {
@@ -563,6 +597,18 @@ async function assertPageHealth(client, name) {
       document.querySelectorAll('.response-choice').forEach((card) => {
         const rect = visibleRect(card);
         if (rect && rect.height < 120) failures.push(\`response card is shorter than expected: \${label(card)}\`);
+      });
+      document.querySelectorAll('details[open]').forEach((details) => {
+        const rect = visibleRect(details);
+        if (!rect) return;
+        if (details.scrollWidth > details.clientWidth + 2) {
+          failures.push(\`open details horizontal overflow: \${label(details)}\`);
+        }
+        const content = Array.from(details.children).find((child) => child.tagName.toLowerCase() !== 'summary');
+        const contentRect = content ? visibleRect(content) : null;
+        if (content && !contentRect) {
+          failures.push(\`open details content is not visible: \${label(details)}\`);
+        }
       });
       if (${JSON.stringify(name)}.startsWith('prep-') && document.querySelector('.selection-marker--response.is-visible')) {
         failures.push('response selection marker is visible in prep scenario');

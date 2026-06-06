@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useMemo, useReducer } from 'react';
 import { PrepPanel, ResponsePanel } from '../components/game/ActionPanel';
 import { ActorStage } from '../components/game/ActorStage';
 import { ResultPreviewCard } from '../components/game/ResultPreviewCard';
@@ -6,28 +6,24 @@ import { ScoreBar } from '../components/game/ScoreBar';
 import { GameHeader } from '../components/layout/GameHeader';
 import { ResultScreen } from './ResultScreen';
 import { TitleScreen } from './TitleScreen';
+import { useExitConfirm } from './useExitConfirm';
+import { useGameViewState } from './useGameViewState';
 import { usePerformanceHistory } from './usePerformanceHistory';
+import { usePendingPrepCue } from './usePendingPrepCue';
+import { useScrollResetOnPhaseChange } from './useScrollResetOnPhaseChange';
 import { pickFocusActor, topOmenEvents } from '../game/actorLogic';
 import { TOTAL_TURNS } from '../game/constants';
 import { finishPerformance, gameReducer, titleState } from '../game/gameReducer';
 import { dailyRunFor } from '../game/rogueliteProgress';
 import { makeSeed } from '../game/rng';
 import { previewResult } from '../game/resultPreview';
-import type { GameStatus, PrepAction } from '../game/types';
-import { getUiScenarioStateFromLocation } from '../game/uiScenarios';
+import type { GameStatus } from '../game/types';
 import { appCopy } from '../content/ja/appCopy';
-
-type PendingPrepCue = {
-  prep: PrepAction;
-};
 
 export function App() {
   const [state, dispatch] = useReducer(gameReducer, titleState);
-  const uiScenarioState = useMemo(() => getUiScenarioStateFromLocation(), []);
-  const displayState = uiScenarioState ?? state;
-  const isUiScenario = Boolean(uiScenarioState);
-  const [pendingPrepCue, setPendingPrepCue] = useState<PendingPrepCue | null>(null);
-  const [showExitConfirm, setShowExitConfirm] = useState(false);
+  const { displayState, isUiScenario } = useGameViewState(state);
+  const { showExitConfirm, openExitConfirm, closeExitConfirm } = useExitConfirm();
   const { history, collection, dailyBests, finishedResult, refreshHistory } = usePerformanceHistory(displayState, isUiScenario);
 
   const resultPreview = useMemo(() => {
@@ -45,44 +41,19 @@ export function App() {
     () => history.find((entry) => entry.seed === displayState.seed) ?? null,
     [history, displayState.seed],
   );
+  const { pendingPrepCue, beginPrepCue } = usePendingPrepCue({
+    dispatch,
+    previousSameSeedRun,
+    stateStatus: state.status,
+  });
   const previousTurnLog = previousSameSeedRun?.logs.find((log) => log.totalTurn === displayState.totalTurn) ?? null;
   const dailyRun = useMemo(() => dailyRunFor(), []);
 
-  useEffect(() => {
-    if (!pendingPrepCue) return;
-    if (state.status !== 'prep') {
-      setPendingPrepCue(null);
-      return;
-    }
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const delay = prefersReducedMotion ? 120 : previousSameSeedRun ? 260 : 1200;
-    const timer = window.setTimeout(() => {
-      dispatch({ type: 'SELECT_PREP', prep: pendingPrepCue.prep });
-      setPendingPrepCue(null);
-    }, delay);
-    return () => window.clearTimeout(timer);
-  }, [pendingPrepCue, previousSameSeedRun, state.status]);
-
-  useEffect(() => {
-    if (isUiScenario) return;
-    window.requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    });
-  }, [displayState.status, displayState.totalTurn, isUiScenario]);
-
-  useEffect(() => {
-    if (!showExitConfirm) return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setShowExitConfirm(false);
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [showExitConfirm]);
-
-  const beginPrepCue = (prep: PrepAction) => {
-    if (pendingPrepCue) return;
-    setPendingPrepCue({ prep });
-  };
+  useScrollResetOnPhaseChange({
+    disabled: isUiScenario,
+    status: displayState.status,
+    totalTurn: displayState.totalTurn,
+  });
 
   if (displayState.status === 'title') {
     return (
@@ -176,13 +147,13 @@ export function App() {
       </div>
       <GameExitControl
         disabled={isUiScenario}
-        onRequestExit={() => setShowExitConfirm(true)}
+        onRequestExit={openExitConfirm}
       />
       {showExitConfirm ? (
         <ExitConfirmDialog
-          onCancel={() => setShowExitConfirm(false)}
+          onCancel={closeExitConfirm}
           onConfirm={() => {
-            setShowExitConfirm(false);
+            closeExitConfirm();
             dispatch({ type: 'RESET_TO_TITLE' });
           }}
         />

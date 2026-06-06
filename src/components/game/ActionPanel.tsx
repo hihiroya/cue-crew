@@ -1,10 +1,9 @@
 import { useMemo, useState } from 'react';
 import { RESPONSE_LABELS } from '../../game/constants';
-import { responseInsight } from '../../game/responseInsight';
 import type { GameState, MainResponse, ResponseInsight, TurnLog } from '../../game/types';
 import { Icon } from '../ui/Icon';
+import { classNames } from '../ui/classNames';
 import { effectDirection, effectIntensity, effectItems, effectLedSlots, effectSummary, effectTargetLabel, evaluationSign } from './responseEffectsView';
-import { buildStyleSummary, replayDeltaForResponse, responseBuildCue } from '../../game/rogueliteProgress';
 import {
   affinityLabels,
   decisionMemo,
@@ -19,10 +18,10 @@ import {
 } from '../../content/ja/responsePanelCopy';
 import { PERFORMANCE_COLOR_HUD } from '../../content/ja/gameHeaderCopy';
 import { RESULT_TIER_LABELS } from '../../content/ja/gameLabels';
+import styles from './ActionPanel.module.css';
+import { buildResponsePanelViewModel } from './responsePanelViewModel';
 
 export { PrepPanel } from './PrepPanel';
-
-const responses: MainResponse[] = ['catch', 'arrange', 'wait', 'cut'];
 
 type ResponseProps = {
   selected: MainResponse | null;
@@ -33,20 +32,17 @@ type ResponseProps = {
 };
 
 export function ResponsePanel({ selected, disabled, state, previousTurnLog = null, onSelect }: ResponseProps) {
-  const insights = useMemo(
-    () => responses.map((response) => responseInsight(state, response)),
-    [state],
-  );
-  const buildStyle = useMemo(() => buildStyleSummary(state.logs, state.performanceStyle), [state.logs, state.performanceStyle]);
+  const viewModel = useMemo(() => buildResponsePanelViewModel(state, previousTurnLog), [state, previousTurnLog]);
   const [inspectedResponse, setInspectedResponse] = useState<MainResponse>(selected ?? 'catch');
-  const inspected = insights.find((insight) => insight.response === inspectedResponse) ?? insights[0];
+  const inspected = viewModel.insights.find((insight) => insight.response === inspectedResponse) ?? viewModel.insights[0];
+  const inspectedDetails = viewModel.detailsByResponse[inspected.response];
   return (
-    <section className="choice-panel response-panel">
+    <section className={styles.responseRoot}>
       <div className="section-heading">
         <h2>{responsePanelCopy.heading}</h2>
       </div>
-      <div className="choice-grid response-grid">
-        {insights.map((insight) => (
+      <div className={styles.responseGrid}>
+        {viewModel.insights.map((insight) => (
           <ResponseChoiceCard
             key={insight.response}
             disabled={disabled}
@@ -60,8 +56,8 @@ export function ResponsePanel({ selected, disabled, state, previousTurnLog = nul
       <ResponseConsole
         insight={inspected}
         state={state}
-        buildCue={responseBuildCue(inspected.response, buildStyle)}
-        replayDelta={replayDeltaForResponse({ currentTier: inspected.resultTier, currentLoad: inspected.deltaLoad, previous: previousTurnLog })}
+        buildCue={inspectedDetails.buildCue}
+        replayDelta={inspectedDetails.replayDelta}
       />
     </section>
   );
@@ -90,7 +86,7 @@ function ResponseChoiceCard({
   return (
     <button
       aria-pressed={isInspected}
-      className={`choice-button response-choice fit-${insight.rangeTone} ${isInspected ? 'is-selected' : ''}`}
+      className={classNames(styles.responseChoice, `fit-${insight.rangeTone}`, isInspected && styles.selected)}
       disabled={disabled}
       onClick={() => onInspect(response)}
       onFocus={() => onInspect(response)}
@@ -148,8 +144,8 @@ function ResponseSendBar({
   onSelect: (response: MainResponse) => void;
 }) {
   return (
-    <div className="response-send-bar" aria-label={responseSendAria(response)}>
-      <button className="primary-action decision-action cue-send-action" disabled={disabled} onClick={() => onSelect(response)}>
+    <div className={styles.sendBar} aria-label={responseSendAria(response)}>
+      <button className={styles.decisionAction} disabled={disabled} onClick={() => onSelect(response)}>
         <span className="cue-lamp-face cue-lamp-ready" aria-hidden="true" />
         <span className="cue-send-label">{responsePanelCopy.sendButton}</span>
         <span className="cue-lamp-face cue-lamp-send" aria-hidden="true" />
@@ -167,7 +163,7 @@ function ResponseConsole({
   insight: ResponseInsight;
   state: GameState;
   buildCue: string;
-  replayDelta: ReturnType<typeof replayDeltaForResponse>;
+  replayDelta: ReturnType<typeof buildResponsePanelViewModel>['detailsByResponse'][MainResponse]['replayDelta'];
 }) {
   const buildLevelItem = insight.scoreBreakdown.find((item) => item.id === 'build-level');
   const styleHud = getStyleHud(state.performanceStyle);

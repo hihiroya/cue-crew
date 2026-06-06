@@ -1,0 +1,23 @@
+.responseRoot {
+  composes: choice-panel response-panel from global;
+}
+
+.responseGrid {
+  composes: choice-grid response-grid from global;
+}
+
+.responseChoice {
+  composes: choice-button response-choice from global;
+}
+
+.selected {
+  composes: is-selected from global;
+}
+
+.sendBar {
+  composes: response-send-bar from global;
+}
+
+.decisionAction {
+  composes: primary-action decision-action cue-send-action from global;
+}
