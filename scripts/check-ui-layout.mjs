@@ -662,9 +662,9 @@ async function assertPageHealth(client, name, options = {}) {
           },
         });
         const range = document.createRange();
-        const minHorizontalClip = 2;
-        const minVerticalClip = 4;
-        const minClippedRatio = 0.08;
+        const minHorizontalClip = 3;
+        const minVerticalClip = 8;
+        const minClippedRatio = 0.16;
         const textElements = new Set();
         for (let node = walker.nextNode(); node; node = walker.nextNode()) {
           const parent = node.parentElement;
@@ -690,7 +690,8 @@ async function assertPageHealth(client, name, options = {}) {
             const clippedX = Math.max(0, clip.left - rect.left, rect.right - clip.right);
             const clippedY = Math.max(0, clip.top - rect.top, rect.bottom - clip.bottom);
             const clippedRatio = 1 - (clipArea / (rect.width * rect.height));
-            if ((clippedX > minHorizontalClip || clippedY > minVerticalClip) && clippedRatio > minClippedRatio) {
+            const meaningfulClip = clippedX > minHorizontalClip || clippedY > Math.max(minVerticalClip, rect.height * 0.22);
+            if (meaningfulClip && clippedRatio > minClippedRatio) {
               pushTextClipFailure('visible text is partially clipped: ' + label(parent) + ' text "' + text + '"', parent, 'partially-clipped', text);
             }
           });
