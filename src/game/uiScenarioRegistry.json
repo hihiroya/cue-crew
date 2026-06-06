@@ -87,10 +87,24 @@
       "screenshotViewports": [[360, 780], [440, 956]]
     },
     {
+      "name": "response-wait-impact",
+      "group": "response",
+      "coverage": ["response", "many-effects", "long-label", "repeat", "performance-style"],
+      "checkViewports": [[360, 640], [375, 667], [390, 844], [440, 956]],
+      "screenshotViewports": [[360, 780], [440, 956]]
+    },
+    {
       "name": "result-preview",
       "group": "result",
       "coverage": ["result", "preview"],
       "checkViewports": [[360, 900], [390, 900], [440, 1040]],
+      "screenshotViewports": [[360, 900], [440, 1040]]
+    },
+    {
+      "name": "result-wait-impact",
+      "group": "result",
+      "coverage": ["result", "many-effects", "long-label", "repeat", "performance-style"],
+      "checkViewports": [[360, 640], [375, 667], [390, 844], [440, 956]],
       "screenshotViewports": [[360, 900], [440, 1040]]
     },
     {

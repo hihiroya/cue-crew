@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import { existsSync } from 'node:fs';
-import { rm } from 'node:fs/promises';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { connect } from 'node:net';
 import { tmpdir } from 'node:os';
@@ -23,6 +23,8 @@ const servePort = Number(args.get('servePort') ?? 4175);
 const preset = args.get('preset') ?? 'ui-critical';
 const scenario = args.get('scenario');
 const textClip = args.get('textClip') === 'true' || preset === 'mobile-fullscreen';
+const failureScreenshotArg = args.get('failureScreenshots') || args.get('failureScreenshotDir');
+const failureScreenshots = failureScreenshotArg === 'true' ? join('tmp', 'screenshots', 'ui-text-clips') : failureScreenshotArg;
 
 await main();
 
@@ -46,12 +48,13 @@ async function main() {
   const failures = [];
   try {
     for (const [jobScenario, width, height] of jobs) {
-      const result = await checkInEnvironment(env, { scenario: jobScenario, width, height, textClip });
+      const result = await checkInEnvironment(env, { scenario: jobScenario, width, height, textClip, failureScreenshots });
       if (result.failures.length) {
         failures.push({ scenario: jobScenario, width, height, failures: result.failures });
       }
       const label = result.failures.length ? 'FAIL' : 'ok';
       console.log(`${label} ${jobScenario} ${width}x${height}`);
+      result.screenshots.forEach((screenshot) => console.log(`  screenshot ${screenshot}`));
     }
   } finally {
     await env.close();
@@ -163,7 +166,57 @@ async function checkInEnvironment(env, options) {
   });
 
   const layoutFailures = await assertPageHealth(env.client, options.scenario, { textClip: options.textClip });
-  return { failures: [...env.runtimeFailures, ...layoutFailures] };
+  const screenshots = options.failureScreenshots && layoutFailures.length
+    ? await captureFailureScreenshots(env.client, {
+      outDir: options.failureScreenshots,
+      scenario: options.scenario,
+      width: options.width,
+      height: options.height,
+    })
+    : [];
+  return { failures: [...env.runtimeFailures, ...layoutFailures], screenshots };
+}
+
+async function captureFailureScreenshots(client, { outDir, scenario, width, height }) {
+  await mkdir(outDir, { recursive: true });
+  const targetsResult = await client.send('Runtime.evaluate', {
+    expression: 'Array.isArray(window.__uiCheckFailureTargets) ? window.__uiCheckFailureTargets.slice(0, 40) : []',
+    returnByValue: true,
+  });
+  const targets = targetsResult.result.value ?? [];
+  const saved = [];
+  for (let index = 0; index < targets.length; index += 1) {
+    const target = targets[index];
+    if (!target?.id) continue;
+    await client.send('Runtime.evaluate', {
+      expression: `
+        (() => {
+          const element = document.querySelector('[data-ui-check-shot-id="${escapeJsString(target.id)}"]');
+          if (!(element instanceof HTMLElement)) return false;
+          document.documentElement.style.scrollBehavior = 'auto';
+          element.scrollIntoView({ block: 'center', inline: 'center' });
+          element.style.outline = '3px solid #ff3366';
+          element.style.outlineOffset = '3px';
+          element.style.boxShadow = '0 0 0 6px rgba(255, 51, 102, 0.22), 0 0 22px rgba(255, 51, 102, 0.72)';
+          element.style.position = getComputedStyle(element).position === 'static' ? 'relative' : element.style.position;
+          element.style.zIndex = '999';
+          element.setAttribute('data-ui-check-highlighted', 'true');
+          return true;
+        })()
+      `,
+      awaitPromise: true,
+    });
+    await client.send('Runtime.evaluate', {
+      expression: 'new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))',
+      awaitPromise: true,
+    });
+    const image = await client.send('Page.captureScreenshot', { format: 'png', fromSurface: true });
+    const fileName = `${safeFileName(scenario)}-${width}x${height}-${String(index + 1).padStart(2, '0')}-${safeFileName(target.text || target.kind || 'target')}.png`;
+    const filePath = join(outDir, fileName);
+    await writeFile(filePath, Buffer.from(image.data, 'base64'));
+    saved.push(filePath);
+  }
+  return saved;
 }
 
 async function runScenarioInteraction(client, scenario) {
@@ -255,6 +308,21 @@ function withSearchParam(targetUrl, key, value) {
   const next = new URL(targetUrl);
   next.searchParams.set(key, value);
   return next.toString();
+}
+
+function safeFileName(value) {
+  return String(value)
+    .normalize('NFKC')
+    .replace(/[<>:"/\\|?*]/g, '-')
+    .replace(/./g, (character) => (character.charCodeAt(0) < 32 ? '-' : character))
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .slice(0, 64)
+    || 'target';
+}
+
+function escapeJsString(value) {
+  return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
 }
 
 function findChrome() {
@@ -506,13 +574,46 @@ async function assertPageHealth(client, name, options = {}) {
         return className ? \`\${element.tagName.toLowerCase()}.\${className.replace(/\\s+/g, '.')}: "\${text}"\` : \`\${element.tagName.toLowerCase()}: "\${text}"\`;
       };
       const viewportRect = { left: 0, top: 0, right: innerWidth, bottom: innerHeight, width: innerWidth, height: innerHeight };
+      const pageRect = {
+        left: 0,
+        top: 0,
+        right: Math.max(document.documentElement.scrollWidth, innerWidth),
+        bottom: Math.max(document.documentElement.scrollHeight, innerHeight),
+        width: Math.max(document.documentElement.scrollWidth, innerWidth),
+        height: Math.max(document.documentElement.scrollHeight, innerHeight),
+      };
       const clipsRenderedText = (style) => {
         const clips = new Set(['auto', 'clip', 'hidden', 'scroll']);
         return clips.has(style.overflowX) || clips.has(style.overflowY);
       };
       const isTextClipAllowed = (element) => Boolean(element.closest('[data-ui-allow-truncate="true"], [data-ui-ignore-text-clip="true"]'));
+      const contentWidth = (element, style) => (
+        element.getBoundingClientRect().width -
+        Number.parseFloat(style.paddingLeft || '0') -
+        Number.parseFloat(style.paddingRight || '0')
+      );
+      const canvasContext = document.createElement('canvas').getContext('2d');
+      const textWidth = (text, style) => {
+        if (!canvasContext) return 0;
+        canvasContext.font = [
+          style.fontStyle,
+          style.fontVariant,
+          style.fontWeight,
+          style.fontSize,
+          style.fontFamily,
+        ].filter(Boolean).join(' ');
+        const letterSpacing = Number.parseFloat(style.letterSpacing || '0') || 0;
+        return canvasContext.measureText(text).width + Math.max(0, text.length - 1) * letterSpacing;
+      };
+      const directText = (element) => Array.from(element.childNodes)
+        .filter((node) => node.nodeType === Node.TEXT_NODE)
+        .map((node) => node.textContent ?? '')
+        .join('')
+        .trim()
+        .replace(/\\s+/g, ' ');
       const clipRectForText = (element) => {
-        let clip = viewportRect;
+        const elementRect = visibleRect(element);
+        let clip = elementRect && intersectionArea(elementRect, viewportRect) > 0 ? viewportRect : pageRect;
         for (let current = element; current instanceof HTMLElement; current = current.parentElement) {
           const style = getComputedStyle(current);
           if (style.display === 'none' || style.visibility === 'hidden') return null;
@@ -526,7 +627,20 @@ async function assertPageHealth(client, name, options = {}) {
       };
       const textClipFailures = [];
       let textClipOmitted = 0;
-      const pushTextClipFailure = (message) => {
+      const failureTargets = [];
+      let nextFailureTargetId = 1;
+      const markFailureElement = (element, kind, text) => {
+        if (!(element instanceof HTMLElement)) return null;
+        const existing = element.getAttribute('data-ui-check-shot-id');
+        const id = existing || 'ui-check-shot-' + nextFailureTargetId++;
+        element.setAttribute('data-ui-check-shot-id', id);
+        if (!failureTargets.some((target) => target.id === id)) {
+          failureTargets.push({ id, kind, text, label: label(element) });
+        }
+        return id;
+      };
+      const pushTextClipFailure = (message, element, kind, text) => {
+        markFailureElement(element, kind, text);
         if (textClipFailures.length < 40) textClipFailures.push(message);
         else textClipOmitted += 1;
       };
@@ -540,6 +654,10 @@ async function assertPageHealth(client, name, options = {}) {
               return NodeFilter.FILTER_REJECT;
             }
             if (isTextClipAllowed(parent)) return NodeFilter.FILTER_REJECT;
+            const style = getComputedStyle(parent);
+            if (clipsRenderedText(style) && ['nowrap', 'pre'].includes(style.whiteSpace)) {
+              return NodeFilter.FILTER_REJECT;
+            }
             return NodeFilter.FILTER_ACCEPT;
           },
         });
@@ -552,7 +670,7 @@ async function assertPageHealth(client, name, options = {}) {
           const parent = node.parentElement;
           if (!(parent instanceof HTMLElement)) continue;
           const parentRect = visibleRect(parent);
-          if (!parentRect || intersectionArea(parentRect, viewportRect) <= 0) continue;
+          if (!parentRect) continue;
           const clip = clipRectForText(parent);
           if (!clip) continue;
           textElements.add(parent);
@@ -562,17 +680,18 @@ async function assertPageHealth(client, name, options = {}) {
             const rect = rectFromDomRect(domRect);
             if (!hasArea(rect)) return;
             const viewportArea = intersectionArea(rect, viewportRect);
+            const pageArea = intersectionArea(rect, pageRect);
             const clipArea = intersectionArea(rect, clip);
-            if (viewportArea <= 0 && clipArea <= 0) return;
+            if (pageArea <= 0 && viewportArea <= 0 && clipArea <= 0) return;
             if (clipArea <= 0 && viewportArea > 0) {
-              pushTextClipFailure('visible text is fully clipped by an overflow container: ' + label(parent) + ' text "' + text + '"');
+              pushTextClipFailure('visible text is fully clipped by an overflow container: ' + label(parent) + ' text "' + text + '"', parent, 'fully-clipped', text);
               return;
             }
             const clippedX = Math.max(0, clip.left - rect.left, rect.right - clip.right);
             const clippedY = Math.max(0, clip.top - rect.top, rect.bottom - clip.bottom);
             const clippedRatio = 1 - (clipArea / (rect.width * rect.height));
             if ((clippedX > minHorizontalClip || clippedY > minVerticalClip) && clippedRatio > minClippedRatio) {
-              pushTextClipFailure('visible text is partially clipped: ' + label(parent) + ' text "' + text + '"');
+              pushTextClipFailure('visible text is partially clipped: ' + label(parent) + ' text "' + text + '"', parent, 'partially-clipped', text);
             }
           });
         }
@@ -582,10 +701,29 @@ async function assertPageHealth(client, name, options = {}) {
           const style = getComputedStyle(element);
           if (!clipsRenderedText(style) || isTextClipAllowed(element)) return;
           if (element.scrollWidth > element.clientWidth + 2) {
-            pushTextClipFailure('text container horizontal overflow: ' + label(element));
+            pushTextClipFailure('text container horizontal overflow: ' + label(element), element, 'horizontal-overflow', element.textContent?.trim().replace(/\\s+/g, ' ').slice(0, 48) ?? '');
           }
           if (element.scrollHeight > element.clientHeight + 2) {
-            pushTextClipFailure('text container vertical overflow: ' + label(element));
+            pushTextClipFailure('text container vertical overflow: ' + label(element), element, 'vertical-overflow', element.textContent?.trim().replace(/\\s+/g, ' ').slice(0, 48) ?? '');
+          }
+        });
+      };
+      const assertSingleLineTextFits = () => {
+        document.querySelectorAll('*').forEach((element) => {
+          if (!(element instanceof HTMLElement)) return;
+          if (isTextClipAllowed(element)) return;
+          if (element.closest('script, style, noscript, template, svg, [hidden], [aria-hidden="true"]')) return;
+          const rect = visibleRect(element);
+          if (!rect) return;
+          const style = getComputedStyle(element);
+          if (!clipsRenderedText(style)) return;
+          if (!['nowrap', 'pre'].includes(style.whiteSpace)) return;
+          const text = directText(element);
+          if (!text) return;
+          const availableWidth = contentWidth(element, style);
+          if (availableWidth <= 0) return;
+          if (textWidth(text, style) > availableWidth + 2) {
+            pushTextClipFailure('single-line text does not fit: ' + label(element) + ' text "' + text.slice(0, 48) + '"', element, 'single-line-fit', text.slice(0, 48));
           }
         });
       };
@@ -612,6 +750,8 @@ async function assertPageHealth(client, name, options = {}) {
 
       if (${JSON.stringify(Boolean(options.textClip))}) {
         assertVisibleTextNodesFit();
+        assertSingleLineTextFits();
+        window.__uiCheckFailureTargets = failureTargets;
         failures.push(...textClipFailures);
         if (textClipOmitted > 0) {
           failures.push('additional text clipping failures omitted: ' + textClipOmitted);
