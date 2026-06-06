@@ -22,12 +22,10 @@ export const responsePanelCopy = {
   replayDelta: '前回比',
   unknownEvent: '未定',
   runSheetAria: '進行表',
-  resultRailAria: '結果レンジ',
+  resultRailAria: '場面の見通し',
   readoutAria: '選択中の相性と影響',
   affinityBoardTitle: '相性盤',
-  affinityBoardSub: '判定ランプ',
   effectBoardTitle: 'キュー後の影響',
-  effectBoardSub: '影響ゲージ',
 } as const;
 
 export function responseSendAria(response: MainResponse) {

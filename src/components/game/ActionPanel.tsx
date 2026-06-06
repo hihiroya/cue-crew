@@ -170,7 +170,7 @@ function ResponseConsole({
   replayDelta: ReturnType<typeof replayDeltaForResponse>;
 }) {
   const buildLevelItem = insight.scoreBreakdown.find((item) => item.id === 'build-level');
-  const styleHud = state.performanceStyle ? PERFORMANCE_COLOR_HUD[state.performanceStyle] : null;
+  const styleHud = getStyleHud(state.performanceStyle);
   return (
     <aside className={`decision-note response-console relation-${insight.prepRelationTone}`}>
       <div className="console-head">
@@ -181,27 +181,16 @@ function ResponseConsole({
             <strong>No.{String(state.totalTurn).padStart(2, '0')}</strong>
           </em>
           <em>
+            <small>ACT</small>
+            <strong>{runSheetActLabel(state)}</strong>
+          </em>
+          <em>
             <small>CALL</small>
             <strong>{RESPONSE_LABELS[insight.response]}</strong>
           </em>
-          <em className={styleHud ? `style-${styleHud.tone}` : ''}>
-            <small>STYLE</small>
-            <strong>{styleHud?.label ?? responsePanelCopy.pendingStyle}</strong>
-            <b>{buildCue}</b>
-          </em>
         </div>
       </div>
-      <ConsoleRunSheet state={state} />
-      <div className="console-outlook">
-        <span>{responsePanelCopy.outlookTitle}</span>
-        <div className="console-outlook-line">
-          <em className={`console-outlook-prep mark-${insight.prepRelationTone}`}>
-            {prepConnectionLabel(insight.prepRelationTone)}
-          </em>
-          <strong>{insight.successRangeLabel}</strong>
-        </div>
-        <small>{insight.responseAimLabel}</small>
-      </div>
+      <ConsoleRunSheet state={state} styleHud={styleHud} buildCue={buildCue} />
       <ResultRail insight={insight} variant="console" />
       <ReadoutHud insight={insight} />
       <div className="console-log">
@@ -243,7 +232,12 @@ function ResultRail({ insight, variant }: { insight: ResponseInsight; variant: '
   return (
     <div className={`result-rail-box result-rail-box--${variant}`} aria-label={`${responsePanelCopy.resultRailAria}: ${insight.successRangeLabel}`}>
       <div className="result-rail-head">
-        {variant === 'console' ? <span>{responsePanelCopy.resultRailAria}</span> : null}
+        {variant === 'console' ? <span>{responsePanelCopy.outlookTitle}</span> : null}
+        {variant === 'console' ? (
+          <em className={`console-outlook-prep mark-${insight.prepRelationTone}`}>
+            {prepConnectionLabel(insight.prepRelationTone)}
+          </em>
+        ) : null}
         <strong>{insight.successRangeLabel}</strong>
       </div>
       <div className={`result-rail has-${insight.rangeTone}`} aria-hidden="true">
@@ -266,14 +260,23 @@ function ResultRail({ insight, variant }: { insight: ResponseInsight; variant: '
   );
 }
 
-function ConsoleRunSheet({ state }: { state: GameState }) {
+function ConsoleRunSheet({
+  state,
+  styleHud,
+  buildCue,
+}: {
+  state: GameState;
+  styleHud: ReturnType<typeof getStyleHud>;
+  buildCue: string;
+}) {
   return (
     <div className="console-run-sheet" aria-label={responsePanelCopy.runSheetAria}>
-      <span>
-        <small>ACT</small>
-        <strong>{runSheetActLabel(state)}</strong>
+      <span className={styleHud ? `style-${styleHud.tone}` : ''}>
+        <small>STYLE</small>
+        <strong>{styleHud?.label ?? responsePanelCopy.pendingStyle}</strong>
+        <b>{buildCue}</b>
       </span>
-      <span>
+      <span className="console-scene-cell">
         <small>SCENE</small>
         <strong>{runSheetEventLabel(state)}</strong>
       </span>
@@ -289,7 +292,6 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
       <section className="affinity-board">
         <div className="console-module-head">
           <span>{responsePanelCopy.affinityBoardTitle}</span>
-          <small>{responsePanelCopy.affinityBoardSub}</small>
         </div>
         <div className="indicator-grid">
           {affinity.map((item) => (
@@ -304,7 +306,6 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
       <section className="effect-board">
         <div className="console-module-head">
           <span>{responsePanelCopy.effectBoardTitle}</span>
-          <small>{responsePanelCopy.effectBoardSub}</small>
         </div>
         <div className="effect-meter-grid">
           {effects.map((item) => (
@@ -332,6 +333,10 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
       </section>
     </div>
   );
+}
+
+function getStyleHud(style: GameState['performanceStyle']) {
+  return style ? PERFORMANCE_COLOR_HUD[style] : null;
 }
 
 function resultTierOrder(): ResponseInsight['resultTier'][] {

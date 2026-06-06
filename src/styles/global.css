@@ -2838,9 +2838,16 @@ button:disabled {
 }
 
 .result-rail-box--console .result-rail-head strong {
+  justify-self: end;
   color: var(--gold-strong);
   font-family: var(--font-display);
   font-size: 0.96rem;
+}
+
+.result-rail-box--console .result-rail-head {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  justify-content: start;
 }
 
 .result-rail {
@@ -3692,9 +3699,9 @@ button:disabled {
   z-index: 1;
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: minmax(116px, 0.95fr) minmax(0, 1.35fr);
+  grid-template-columns: 1fr;
   gap: 6px 8px;
-  align-items: center;
+  align-items: stretch;
   padding: 7px;
   border: 1px solid rgba(255, 217, 138, 0.14);
   border-radius: 7px;
@@ -3707,7 +3714,7 @@ button:disabled {
 }
 
 .console-head span {
-  grid-column: 1 / 2;
+  grid-column: 1 / -1;
   justify-self: start;
   align-self: start;
   padding: 3px 8px;
@@ -3727,9 +3734,9 @@ button:disabled {
 }
 
 .console-cue-strip {
-  grid-column: 2 / 3;
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(54px, 0.55fr) minmax(118px, 1.25fr) minmax(70px, 0.8fr);
   gap: 6px;
   min-width: 0;
 }
@@ -3808,6 +3815,7 @@ button:disabled {
 .console-run-sheet {
   position: relative;
   z-index: 1;
+  grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 5px;
@@ -3867,6 +3875,37 @@ button:disabled {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.console-run-sheet b {
+  min-width: 0;
+  color: rgba(217, 209, 191, 0.72);
+  font-size: 0.58rem;
+  font-weight: 900;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.console-run-sheet .style-heat strong,
+.console-run-sheet .style-heat b {
+  color: #ffd982;
+}
+
+.console-run-sheet .style-breath strong,
+.console-run-sheet .style-breath b {
+  color: #a9dce5;
+}
+
+.console-run-sheet .style-control strong,
+.console-run-sheet .style-control b {
+  color: #c6e7b5;
+}
+
+.console-run-sheet .style-closure strong,
+.console-run-sheet .style-closure b {
+  color: #ffc0b9;
 }
 
 .console-outlook {
@@ -7003,14 +7042,17 @@ button:disabled {
     padding: 13px 10px;
   }
 
-  .console-head,
-  .console-run-sheet {
+  .console-head {
     grid-template-columns: 1fr;
+  }
+
+  .console-run-sheet {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .console-cue-strip {
     grid-column: 1 / -1;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(54px, 0.55fr) minmax(118px, 1.25fr) minmax(70px, 0.8fr);
   }
 
   .indicator-grid,
