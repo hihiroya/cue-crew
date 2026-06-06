@@ -82,7 +82,8 @@ function recommendVerification(files) {
     notes.add('AGENTS.md、docs/development-maintenance.md、repo 専用 skill の整合性を確認する。');
   }
 
-  if (touches(/^src\//, /^scripts\//, /^tests\//, /^vite\.config\.ts$/, /^tsconfig/)) {
+  if (touches(/^src\//, /^scripts\//, /^tests\//, /^eslint\.config\.mjs$/, /^vite\.config\.ts$/, /^tsconfig/)) {
+    commands.add('npm run check:lint');
     commands.add('npm run build');
   }
 

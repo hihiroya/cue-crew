@@ -62,6 +62,7 @@ tests/                  Node標準テスト、網羅テスト
 
 | 変更 | 標準確認 |
 | --- | --- |
+| TypeScript/React/スクリプト/設定ファイルの静的品質 | `npm run check:lint` |
 | 採点、イベント重み、日替わり補正、公演の色ボーナス | `npm run test:logic` と `npm run balance:report -- --samples=48` |
 | Reducer、ターン進行、保存処理 | `npm run test:logic` |
 | ルール表、称号、図鑑ヒント | `npm run test:logic` |
@@ -83,6 +84,7 @@ tests/                  Node標準テスト、網羅テスト
 | `tests/roguelite-progress.test.ts` | 図鑑、称号、日替わりベスト、次回挑戦導線。 |
 | `tests/rule-coverage.test.ts` | ルール表、イベント重み、準備対応、称号、図鑑ヒントの参照先。 |
 | `tests/ui-scenario-coverage.test.ts` | UIシナリオ registry、preset、viewport、coverageタグ、builder整合性。 |
+| `eslint.config.mjs` | 未使用コード、React Hooks、game層の依存方向などの静的品質。 |
 
 新しいイベント、対応、準備、称号、図鑑ヒントを追加した場合は、`tests/rule-coverage.test.ts` の期待値を更新してください。
 

@@ -31,6 +31,7 @@
     "screenshot:ui": "node scripts/capture-screenshot.mjs --preset=ui-critical --outDir=tmp/screenshots/ui-critical",
     "check:copy": "node scripts/check-copy-literals.mjs",
     "check:css": "stylelint \"src/**/*.css\"",
+    "check:lint": "eslint .",
     "check:ui": "npm run build && node scripts/check-ui-layout.mjs",
     "check:ui:prep": "npm run build && node scripts/check-ui-layout.mjs --preset=prep-panel",
     "check:ui:response": "npm run build && node scripts/check-ui-layout.mjs --preset=response-panel",
@@ -47,7 +48,7 @@
     "verify:ui:full": "npm run build && npm run screenshot:ui",
     "verify:agent": "node scripts/verify-agent.mjs",
     "test:logic": "tsc -p tsconfig.test.json && node scripts/fix-test-imports.mjs tmp/test-build && node --test \"tmp/test-build/tests/*.test.js\"",
-    "verify": "npm audit signatures && npm run check:copy && npm run check:css && npm run build",
+    "verify": "npm audit signatures && npm run check:copy && npm run check:css && npm run check:lint && npm run build",
     "cf:preview": "npm run build && wrangler pages dev dist --compatibility-date=2026-05-30",
     "cf:deploy": "npm run build && wrangler pages deploy dist --project-name=cue-crew"
   },
@@ -56,13 +57,17 @@
     "react-dom": "19.2.6"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
     "@playwright/test": "1.60.0",
     "@types/react": "19.2.15",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.2",
+    "eslint": "10.4.1",
+    "eslint-plugin-react-hooks": "7.1.1",
     "stylelint": "17.12.0",
     "stylelint-config-standard": "40.0.0",
     "typescript": "6.0.3",
+    "typescript-eslint": "8.60.0",
     "vite": "8.0.14",
     "wrangler": "4.94.0"
   }

@@ -8,15 +8,15 @@ export function usePerformanceHistory(displayState: GameState, disabled = false)
   const [historyVersion, setHistoryVersion] = useState(0);
   const savedFinishedStateRef = useRef<GameState | null>(null);
   const history = useMemo(() => {
-    historyVersion;
+    void historyVersion;
     return readPerformanceHistory();
   }, [historyVersion]);
   const collection = useMemo(() => {
-    historyVersion;
+    void historyVersion;
     return readCollectionState();
   }, [historyVersion]);
   const dailyBests = useMemo(() => {
-    historyVersion;
+    void historyVersion;
     return readDailyBestResults();
   }, [historyVersion]);
   const finishedResult = useMemo(() => (

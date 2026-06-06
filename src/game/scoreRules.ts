@@ -3,16 +3,12 @@ import {
   ACT_RESPONSE_GUIDES,
   EVENT_COMPATIBILITY,
   EVENT_LABELS,
-  MAX_LOAD,
   PERFORMANCE_STYLE_DETAILS,
-  PREP_LABELS,
   PREP_MATCHES,
   PREP_PRIMARY_RESPONSE,
   PREP_RESPONSE_HINTS,
   RESPONSE_DESCRIPTIONS,
-  RESPONSE_LABELS,
   RESPONSE_BIAS,
-  RESULT_TIER_LABELS,
   STATE_LABELS,
 } from './constants';
 import * as ruleText from '../content/ja/ruleCopy';
@@ -21,9 +17,9 @@ import { topOmenEvents } from './actorLogic';
 import { createRng } from './rng';
 import { frayFitFor, guardTierForFrayRecovery } from './fray';
 import { flavorText, prepRecovery, sceneTitle } from './sceneTemplates';
-import { determinePerformanceStyle, stylePreviewFor, tierFromScore } from './scoreEngine';
+import { stylePreviewFor, tierFromScore } from './scoreEngine';
 import { performanceLabel, slotForTurnInAct } from './turnCalendar';
-import type { Actor, CueResultSummary, GameState, LoadBias, MainResponse, PrepPredictionQuality, ResponseEffect, ResponseEffectTarget, ResponseInsight, ResultPreview, ResultTier, ScoreBreakdownItem } from './types';
+import type { Actor, CueResultSummary, GameState, MainResponse, PrepPredictionQuality, ResponseEffect, ResponseEffectTarget, ResponseInsight, ResultPreview, ResultTier, ScoreBreakdownItem } from './types';
 
 export { clampLoad, determinePerformanceStyle, tierFromScore, toTurnLog } from './scoreEngine';
 

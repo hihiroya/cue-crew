@@ -1,5 +1,5 @@
 import type { ResponseEffect, ResponseInsight } from '../../game/types';
-import { effectChangeLabel, effectPhrase as effectPhraseCopy, effectTargetLabel, effectTitle, responseEffectsCopy } from '../../content/ja/responseEffectsCopy';
+import { effectPhrase as effectPhraseCopy, effectTargetLabel, effectTitle, responseEffectsCopy } from '../../content/ja/responseEffectsCopy';
 
 export type EffectIcon = ResponseEffect['target'];
 export type EffectTone = 'good' | 'watch' | 'bad' | 'neutral';
