@@ -31,5 +31,8 @@ jobs:
       - name: Verify npm registry signatures
         run: npm audit signatures
 
+      - name: Test logic
+        run: npm run test:logic
+
       - name: Build
         run: npm run build
