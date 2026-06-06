@@ -1,7 +1,6 @@
 import { createInitialGame } from './gameReducer';
 import { uiScenarioCopy } from '../content/ja/uiScenarioCopy';
 import { finishedScenario, prepScenario, responseScenario } from './uiScenarioBuilders';
-import uiScenarioRegistry from './uiScenarioRegistry.json';
 import { seedUiScenarioStorage } from './uiScenarioStorage';
 import type { GameState } from './types';
 
@@ -13,8 +12,6 @@ export function getUiScenarioStateFromLocation(search = globalThis.location?.sea
   seedUiScenarioStorage(name);
   return uiScenarioState(name);
 }
-
-const registeredScenarioNames = new Set(uiScenarioRegistry.scenarios.map((scenario) => scenario.name));
 
 const scenarioBuilders: Record<string, () => GameState> = {
   'title-default': () => titleScenario('ui-title-default'),
@@ -130,7 +127,6 @@ const scenarioBuilders: Record<string, () => GameState> = {
 };
 
 export function uiScenarioState(name: string): GameState | null {
-  if (!registeredScenarioNames.has(name)) return null;
   return scenarioBuilders[name]?.() ?? null;
 }
 

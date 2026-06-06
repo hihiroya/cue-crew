@@ -43,6 +43,7 @@ description: Use when working in the cue-crew repository, identified by package.
 - UI確認スクリプト: `scripts/ui-scenario-registry.mjs`, `scripts/check-ui-layout.mjs`, `scripts/capture-screenshot.mjs`
 - バランス集計: `scripts/balance-report.mjs`
 - 確認コマンド推定: `scripts/verify-agent.mjs`
+- ルール表、カタログ、UIシナリオ網羅テスト: `tests/rule-coverage.test.ts`, `tests/ui-scenario-coverage.test.ts`
 
 ## 変更別ワークフロー
 
@@ -53,6 +54,7 @@ description: Use when working in the cue-crew repository, identified by package.
 - 確認: `npm run test:logic`
 - 追加確認: `npm run balance:report -- --samples=48`
 - 見る観点: 主要戦略の偏り、イベント分布、型分布、裏方負荷、日替わり補正の漏れ、図鑑/称号/ヒントへの波及。
+- 新しいイベント、対応、準備、称号、図鑑ヒントを追加した場合は `tests/rule-coverage.test.ts` の期待値を更新する。
 
 ### 保存データ
 
@@ -75,6 +77,8 @@ UI変更では、対象 component、CSS、copy、固定 UI シナリオの更新
 PNG は通常生成しない。`tmp/screenshots/` は作業用キャッシュであり、原則コミットしない。
 
 固定 UI シナリオの名前、preset、viewport は `src/game/uiScenarioRegistry.json` を正本とする。`scripts/check-ui-layout.mjs` と `scripts/capture-screenshot.mjs` に同じ一覧を直書きしない。
+
+シナリオの狙いは registry の `coverage` タグに書く。長文、危険状態、多効果、保存データ互換、日替わり、図鑑/称号などの網羅性は `tests/ui-scenario-coverage.test.ts` で守る。
 
 ### 文言変更
 

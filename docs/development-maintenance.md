@@ -30,6 +30,7 @@
 | UI確認、スクリーンショットpreset | `src/game/uiScenarioRegistry.json`、`scripts/ui-scenario-registry.mjs`、`scripts/check-ui-layout.mjs`、`scripts/capture-screenshot.mjs` |
 | バランス集計 | `scripts/balance-report.mjs` |
 | 変更範囲から確認コマンドを推定 | `scripts/verify-agent.mjs` |
+| ルール表、カタログ、UIシナリオ網羅テスト | `tests/rule-coverage.test.ts`、`tests/ui-scenario-coverage.test.ts` |
 
 ## 変更別の確認
 
@@ -38,6 +39,7 @@
 | 採点、イベント重み、日替わり補正、公演の色ボーナス | `npm run test:logic` と `npm run balance:report -- --samples=48` |
 | Reducer、ターン進行、保存処理 | `npm run test:logic` |
 | UIレイアウト、文言密度、カード表示 | `npm run check:ui` |
+| UI固定シナリオ名、preset、viewport、coverageタグ | `npm run test:logic` と必要に応じて `npm run check:ui` |
 | 準備/対応/結果の一部だけの軽微なUI変更 | `npm run check:ui:prep`、`npm run check:ui:response`、`npm run check:ui:result` の該当範囲 |
 | PR前、共通レイアウト大改修、レスポンシブ全体変更 | 必要な場合のみ `npm run verify:ui:full` |
 
@@ -64,6 +66,10 @@
 - 日替わり補正が通常seedへ漏れていないか。
 - 型分布が追加した報酬に引っ張られすぎていないか。
 - 新しいイベントや称号が、図鑑/ヒント/UI固定シナリオに反映されているか。
+
+`tests/rule-coverage.test.ts` は、ルール表、イベント重み、準備対応、称号、図鑑ヒントの参照先が欠けていないかを守ります。新しいイベント、対応、準備、称号、図鑑ヒントを追加した場合は、このテストの期待値も更新してください。
+
+`tests/ui-scenario-coverage.test.ts` は、`src/game/uiScenarioRegistry.json` のシナリオ名、preset、viewport、coverageタグ、builder の整合性を守ります。固定 UI シナリオを追加・削除する場合は、registry の coverage タグも更新してください。
 
 ## 公平性ルール
 

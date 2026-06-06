@@ -10,90 +10,105 @@
     {
       "name": "title-default",
       "group": "title",
+      "coverage": ["title", "default"],
       "checkViewports": [[360, 780], [440, 956]],
       "screenshotViewports": []
     },
     {
       "name": "title-history-legacy",
       "group": "title",
+      "coverage": ["title", "history", "legacy-storage"],
       "checkViewports": [[360, 780], [440, 956]],
       "screenshotViewports": []
     },
     {
       "name": "title-collection",
       "group": "title",
+      "coverage": ["title", "collection", "achievements", "scene-hints"],
       "checkViewports": [[360, 900], [440, 1040]],
       "screenshotViewports": []
     },
     {
       "name": "prep-default",
       "group": "prep",
+      "coverage": ["prep", "default"],
       "checkViewports": [[360, 780], [390, 844], [440, 956]],
       "screenshotViewports": [[360, 780], [440, 956]]
     },
     {
       "name": "prep-selected-space",
       "group": "prep",
+      "coverage": ["prep", "selected-prep"],
       "checkViewports": [[360, 780], [440, 956]],
       "screenshotViewports": [[360, 780], [440, 956]]
     },
     {
       "name": "response-primary",
       "group": "response",
+      "coverage": ["response", "primary"],
       "checkViewports": [[360, 780], [390, 844], [440, 956]],
       "screenshotViewports": [[360, 780], [440, 956]]
     },
     {
       "name": "response-alternate",
       "group": "response",
+      "coverage": ["response", "alternate", "performance-style"],
       "checkViewports": [[360, 780], [440, 956]],
       "screenshotViewports": [[360, 780], [440, 956]]
     },
     {
       "name": "response-danger",
       "group": "response",
+      "coverage": ["response", "danger", "repeat", "high-load"],
       "checkViewports": [[360, 780], [440, 956]],
       "screenshotViewports": [[360, 780], [440, 956]]
     },
     {
       "name": "response-many-effects",
       "group": "response",
+      "coverage": ["response", "many-effects", "repeat", "performance-style"],
       "checkViewports": [[360, 780], [440, 956]],
       "screenshotViewports": [[360, 780], [440, 956]]
     },
     {
       "name": "response-long-label",
       "group": "response",
+      "coverage": ["response", "long-label", "fatigue"],
       "checkViewports": [[360, 780], [440, 956]],
       "screenshotViewports": [[360, 780], [440, 956]]
     },
     {
       "name": "response-fray",
       "group": "response",
+      "coverage": ["response", "fray", "load-strain"],
       "checkViewports": [[360, 780], [440, 956]],
       "screenshotViewports": [[360, 780], [440, 956]]
     },
     {
       "name": "result-preview",
       "group": "result",
+      "coverage": ["result", "preview"],
       "checkViewports": [[360, 900], [390, 900], [440, 1040]],
       "screenshotViewports": [[360, 900], [440, 1040]]
     },
     {
       "name": "result-fray",
       "group": "result",
+      "coverage": ["result", "fray", "load-strain"],
       "checkViewports": [[360, 960], [440, 1100]],
       "screenshotViewports": [[360, 960], [440, 1100]]
     },
     {
       "name": "finished-heat",
       "group": "result",
+      "coverage": ["finished", "heat", "achievements", "scene-hints"],
       "checkViewports": [[360, 1500], [440, 1500]],
       "screenshotViewports": [[360, 1500], [440, 1500]]
     },
     {
       "name": "finished-rough",
       "group": "result",
+      "coverage": ["finished", "rough", "high-load"],
       "checkViewports": [[360, 1500], [440, 1500]],
       "screenshotViewports": [[360, 1500], [440, 1500]]
     }
