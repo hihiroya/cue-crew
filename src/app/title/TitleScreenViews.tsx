@@ -5,10 +5,11 @@ import type { PerformanceResult } from '../../game/types';
 import { ACHIEVEMENT_CATALOG, lockedSceneHints, resultTierShort, type CollectionState, type NextChallengeRecommendation } from '../../game/rogueliteProgress';
 import { appCopy, titleHistoryMeta } from '../../content/ja/appCopy';
 import type { TitleView } from './titleViewState';
+import styles from './TitleScreenViews.module.css';
 
 export function TitleHero() {
   return (
-    <section className="title-panel title-panel--compact">
+    <section className={styles.hero}>
       <div className="title-ghost-stage" aria-hidden="true">
         <img src={titlePosterImage} alt="" draggable={false} />
       </div>
@@ -34,7 +35,7 @@ export function TitleNav({ activeView, onSelect }: { activeView: TitleView; onSe
     { view: 'howTo', label: appCopy.title.nav.howTo },
   ];
   return (
-    <nav className="title-view-nav" aria-label={appCopy.title.logoLabel}>
+    <nav className={styles.nav} aria-label={appCopy.title.logoLabel}>
       {items.map((item) => (
         <button key={item.view} type="button" className={activeView === item.view ? 'is-active' : ''} onClick={() => onSelect(item.view)}>
           {item.label}
@@ -56,7 +57,7 @@ export function HomeView({
   const hasDistinctRecommendation = recommendation.kind !== 'newSeed';
   return (
     <>
-      <section className="home-action-panel" aria-label={appCopy.title.nav.home}>
+      <section className={styles.homeActions} aria-label={appCopy.title.nav.home}>
         <button type="button" className="primary-action" onClick={onStart}>{appCopy.title.startNew}</button>
         {hasDistinctRecommendation ? (
           <button type="button" className="secondary-action" onClick={onStartRecommendation}>
@@ -65,7 +66,7 @@ export function HomeView({
         ) : null}
       </section>
       {hasDistinctRecommendation ? (
-        <section className="home-goal-panel" aria-label={recommendation.kicker}>
+        <section className={styles.homeGoal} aria-label={recommendation.kicker}>
           <span>{recommendation.kicker}</span>
           <h2>{recommendation.title}</h2>
           <p>{recommendation.body}</p>
@@ -93,7 +94,7 @@ export function RecordsView({
   onReplay: (seed: string) => void;
 }) {
   return (
-    <section className="history-panel title-subpage">
+    <section className={styles.historyPanel}>
       <div className="section-heading">
         <p><Icon name="history" /> {appCopy.title.historyKicker}</p>
         <h2>{appCopy.title.historyTitle}</h2>
@@ -140,7 +141,7 @@ export function RecordsView({
 
 export function CollectionView({ collection, onReplay }: { collection: CollectionState; onReplay: (seed: string) => void }) {
   return (
-    <section className="collection-panel title-subpage">
+    <section className={styles.collectionPanel}>
       <div className="section-heading">
         <p><Icon name="history" /> {appCopy.title.collectionKicker}</p>
         <h2>{appCopy.title.collectionTitle}</h2>
@@ -164,7 +165,7 @@ export function CollectionView({ collection, onReplay }: { collection: Collectio
 
 export function HowToView({ onStart }: { onStart: () => void }) {
   return (
-    <section className="howto-page title-subpage">
+    <section className={styles.howToPage}>
       <div className="section-heading">
         <p><Icon name="spark" /> {appCopy.title.howTo}</p>
         <h2>{appCopy.title.catchphrase}</h2>

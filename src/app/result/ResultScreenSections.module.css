@@ -1,0 +1,17 @@
+/* Result screen section-owned class handles for staged CSS Modules migration. */
+
+.hero {
+  composes: result-hero from global;
+}
+
+.cueNotePanel {
+  composes: packet-panel cue-note-panel from global;
+}
+
+.recordDetails {
+  composes: result-record-details from global;
+}
+
+.actions {
+  composes: result-actions from global;
+}

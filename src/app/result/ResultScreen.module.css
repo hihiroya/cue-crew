@@ -1,0 +1,5 @@
+/* Result screen-owned class handles. Global composes keep existing screen CSS while the container owns its root class. */
+
+.root {
+  composes: result-screen from global;
+}

@@ -3,6 +3,7 @@ import { PERFORMANCE_STYLE_DETAILS, RESPONSE_LABELS } from '../../game/constants
 import type { PerformanceResult } from '../../game/types';
 import { achievementListLabel, compareWithPrevious, comparisonLabel, type DailyRun } from '../../game/rogueliteProgress';
 import { appCopy, bestCueBody, bestCueMeta, resultLoadNote, resultScoreNote, timelineBody, timelineMeta } from '../../content/ja/appCopy';
+import styles from './ResultScreenSections.module.css';
 
 export function ResultHeroSection({
   previousSameSeed,
@@ -15,7 +16,7 @@ export function ResultHeroSection({
   const comparison = compareWithPrevious(result, previousSameSeed);
   const buildMeterMax = result.insight.buildStyle.next ?? Math.max(1, result.insight.buildStyle.progress);
   return (
-    <section className="result-hero">
+    <section className={styles.hero}>
       <div className="stage-mark"><Icon name="spark" /></div>
       <p>{appCopy.result.heroKicker}</p>
       <h1>{result.title}</h1>
@@ -89,7 +90,7 @@ export function ResultHeroSection({
 
 export function ResultCueNotePanel({ result }: { result: PerformanceResult }) {
   return (
-    <section className="packet-panel cue-note-panel">
+    <section className={styles.cueNotePanel}>
       <div className="section-heading">
         <p>{appCopy.result.record}</p>
         <h2>{appCopy.result.bestCue}</h2>
@@ -113,7 +114,7 @@ export function ResultRecordDetails({ result }: { result: PerformanceResult }) {
   const timelineLogs = result.logs?.length ? result.logs : result.highlights;
   const maxDecisionCount = Math.max(1, ...result.insight.decisionDistribution.map((item) => item.count));
   return (
-    <details className="result-record-details">
+    <details className={styles.recordDetails}>
       <summary>{appCopy.result.recordDetails}</summary>
       <div className="result-record-stack">
         <section className="packet-panel survey-panel">
@@ -188,7 +189,7 @@ export function ResultActions({
   onTitle: () => void;
 }) {
   return (
-    <div className="result-actions">
+    <div className={styles.actions}>
       <button className="primary-action" onClick={onReplayNew}>{appCopy.result.replayNew}</button>
       <button className="secondary-action" onClick={onReplaySame}>{appCopy.result.replaySame}</button>
       <button className="secondary-action" onClick={() => onReplayDaily(dailyRun.seed)} title={`${dailyRun.title}: ${dailyRun.modifier}`}>{dailyRun.title}</button>

@@ -13,6 +13,7 @@ import {
   historyBests,
 } from './title/TitleScreenViews';
 import { initialTitleView, updateTitleViewParam, type TitleView } from './title/titleViewState';
+import styles from './title/TitleScreen.module.css';
 
 type Props = {
   history: PerformanceResult[];
@@ -53,7 +54,7 @@ export function TitleScreen({ history, collection, dailyBests, onStart, onStartD
     updateTitleViewParam(view);
   };
   return (
-    <main className="title-screen">
+    <main className={styles.root}>
       <TitleHero />
       <TitleNav activeView={titleView} onSelect={showView} />
       {titleView === 'home' ? (

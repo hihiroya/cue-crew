@@ -1,6 +1,7 @@
 import type { PerformanceResult } from '../game/types';
 import type { CollectionState, DailyRun } from '../game/rogueliteProgress';
 import { ResultActions, ResultCueNotePanel, ResultHeroSection, ResultRecordDetails } from './result/ResultScreenSections';
+import styles from './result/ResultScreen.module.css';
 
 type Props = {
   result: PerformanceResult;
@@ -16,7 +17,7 @@ type Props = {
 
 export function ResultScreen({ result, previousSameSeed, dailyRun, onTitle, onReplaySame, onReplayNew, onReplayDaily }: Props) {
   return (
-    <main className="result-screen">
+    <main className={styles.root}>
       <ResultHeroSection result={result} previousSameSeed={previousSameSeed} />
       <ResultCueNotePanel result={result} />
       <ResultRecordDetails result={result} />

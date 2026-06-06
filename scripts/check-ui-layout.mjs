@@ -217,23 +217,38 @@ async function checkInEnvironment(env, options) {
 async function runScenarioInteraction(client, scenario) {
   const expression = `
     (() => {
+      const failures = [];
       const click = (selector) => {
         const element = document.querySelector(selector);
         if (!(element instanceof HTMLElement)) return false;
         element.click();
         return true;
       };
+      const firstActiveButton = document.querySelector('button:not([disabled])');
+      if (firstActiveButton instanceof HTMLElement) {
+        firstActiveButton.focus();
+        if (document.activeElement !== firstActiveButton) {
+          failures.push('first active button could not receive focus');
+        }
+      }
+      const exitButton = document.querySelector('.game-exit-control button');
+      if (exitButton && !exitButton.disabled) {
+        failures.push('exit button should stay disabled in fixed UI scenarios');
+      }
       if (${JSON.stringify(scenario)}.startsWith('prep-')) {
         click('.prep-choice:not([disabled])');
         click('.prep-commit-action:not([disabled])');
+        click('.prep-commit-action:not([disabled])');
       }
       if (${JSON.stringify(scenario)}.startsWith('response-')) {
+        click('.response-choice:not([disabled])');
         click('.response-choice:not([disabled])');
       }
       if (${JSON.stringify(scenario)}.startsWith('finished-')) {
         click('.result-record-details > summary');
       }
-      return true;
+      window.__uiCheckInteractionFailures = failures;
+      return failures;
     })()
   `;
   await client.send('Runtime.evaluate', { expression, awaitPromise: true });
@@ -531,6 +546,16 @@ async function assertPageHealth(client, name) {
       }
       if (/vite|webpack|runtime error|failed to fetch/i.test(document.body?.innerText ?? '') && document.querySelector('[plugin], vite-error-overlay')) {
         failures.push('framework error overlay text detected');
+      }
+      if (Array.isArray(window.__uiCheckInteractionFailures)) {
+        failures.push(...window.__uiCheckInteractionFailures);
+      }
+      if (document.activeElement instanceof HTMLElement && document.activeElement !== document.body) {
+        const activeRect = visibleRect(document.activeElement);
+        if (!activeRect) failures.push(\`focused element is not visible: \${label(document.activeElement)}\`);
+        else if (activeRect.left < -1 || activeRect.right > innerWidth + 1) {
+          failures.push(\`focused element extends outside viewport: \${label(document.activeElement)}\`);
+        }
       }
 
       document.querySelectorAll('button').forEach((button) => {

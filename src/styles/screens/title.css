@@ -89,47 +89,6 @@
   min-height: 38px;
 }
 
-.performance-badge-strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  min-width: 0;
-}
-
-.performance-badge {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  max-width: 100%;
-  border: 1px solid rgba(236, 196, 105, 0.24);
-  border-radius: 999px;
-  background: rgba(236, 196, 105, 0.08);
-  padding: 4px 8px;
-  color: #fff3d3;
-  font-size: 0.68rem;
-  font-style: normal;
-  font-weight: 900;
-  line-height: 1.2;
-}
-
-.performance-badge.badge-good {
-  border-color: rgba(119, 211, 154, 0.28);
-  background: rgba(119, 211, 154, 0.1);
-  color: #c9f2d6;
-}
-
-.performance-badge.badge-cool {
-  border-color: rgba(139, 201, 213, 0.3);
-  background: rgba(139, 201, 213, 0.1);
-  color: #d1f2f7;
-}
-
-.performance-badge.badge-risk {
-  border-color: rgba(213, 106, 106, 0.32);
-  background: rgba(213, 106, 106, 0.1);
-  color: #ffd4d4;
-}
-
 .history-badge-filter {
   display: flex;
   flex-wrap: wrap;

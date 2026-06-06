@@ -1,0 +1,17 @@
+
+/* Game action surfaces shared by prep, response, and result preview flows. */
+
+
+.cue-sheet-details,
+.response-console-details,
+.result-preview-details {
+  display: grid;
+  min-width: 0;
+}
+
+.cue-sheet-details > summary,
+.response-console-details > summary,
+.result-preview-details > summary {
+  display: none;
+}
+

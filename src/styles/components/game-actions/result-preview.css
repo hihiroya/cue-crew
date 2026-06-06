@@ -1,0 +1,21 @@
+.result-preview {
+  display: grid;
+  gap: 9px;
+  overflow: hidden;
+  position: relative;
+}
+
+.result-preview-detail-stack {
+  display: grid;
+  gap: 9px;
+}
+
+.result-preview::before,
+.title-panel::before,
+.result-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 217, 138, 0.16), transparent 16rem);
+}

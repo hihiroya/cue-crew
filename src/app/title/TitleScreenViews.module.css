@@ -1,0 +1,36 @@
+/* Title screen section-owned class handles for staged CSS Modules migration. */
+
+.hero {
+  composes: title-panel title-panel--compact from global;
+}
+
+.nav {
+  composes: title-view-nav from global;
+}
+
+.homeActions {
+  composes: home-action-panel from global;
+}
+
+.homeGoal {
+  composes: home-goal-panel from global;
+}
+
+.subpage {
+  composes: title-subpage from global;
+}
+
+.historyPanel {
+  composes: history-panel from global;
+  composes: subpage;
+}
+
+.collectionPanel {
+  composes: collection-panel from global;
+  composes: subpage;
+}
+
+.howToPage {
+  composes: howto-page from global;
+  composes: subpage;
+}

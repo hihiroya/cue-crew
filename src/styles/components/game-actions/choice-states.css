@@ -1,0 +1,229 @@
+.choice-button .icon {
+  color: var(--gold);
+}
+
+.choice-button span {
+  font-weight: 800;
+}
+
+.choice-button small {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
+.prep-plan,
+.prep-relation,
+.prep-relation-result {
+  display: grid;
+  gap: 4px;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.prep-plan,
+.prep-relation {
+  grid-column: 1 / -1;
+  padding: 7px 8px;
+}
+
+.prep-plan strong {
+  color: var(--gold-strong);
+  font-size: 0.76rem;
+}
+
+.prep-plan small {
+  padding: 0;
+  font-size: 0.7rem;
+}
+
+.prep-relation span,
+.prep-relation-result span {
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.prep-relation small,
+.prep-relation-result p {
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.42;
+}
+
+.prep-relation-result {
+  position: relative;
+  padding: 9px;
+}
+
+.prep-relation-result strong {
+  color: #f3e6c9;
+  font-size: 0.94rem;
+}
+
+.prep-relation-result p {
+  margin: 0;
+}
+
+.performance-style-note {
+  position: relative;
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(139, 201, 213, 0.28);
+  background: rgba(139, 201, 213, 0.08);
+}
+
+.performance-style-note.is-new {
+  border-color: rgba(255, 217, 138, 0.5);
+  background:
+    linear-gradient(90deg, rgba(229, 189, 104, 0.16), rgba(255, 255, 255, 0.035)),
+    rgba(229, 189, 104, 0.08);
+}
+
+.performance-style-note span {
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.performance-style-note strong {
+  color: var(--gold-strong);
+  font-size: 1rem;
+}
+
+.performance-style-note p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.48;
+}
+
+.relation-primary {
+  border-color: rgba(255, 217, 138, 0.44);
+}
+
+.relation-primary .console-cue-strip strong {
+  color: var(--gold-strong);
+}
+
+.relation-alternate {
+  border-color: rgba(139, 201, 213, 0.32);
+}
+
+.relation-alternate .console-cue-strip strong {
+  color: #a9dce5;
+}
+
+.relation-poor {
+  border-color: rgba(255, 119, 111, 0.26);
+}
+
+.relation-poor .console-cue-strip strong {
+  color: #ffc0b9;
+}
+
+.reason-grid {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  margin: 2px 0 0;
+}
+
+.reason-grid div {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 6px;
+  align-items: baseline;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.reason-grid dt,
+.reason-grid dd {
+  margin: 0;
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+.reason-grid dt {
+  color: var(--muted);
+}
+
+.reason-grid dd {
+  color: #f3e6c9;
+  font-weight: 800;
+}
+
+.range-copy {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 4px;
+  padding: 7px 8px;
+  border-radius: 7px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.range-copy span {
+  color: #f3e6c9;
+  font-size: 0.76rem;
+}
+
+.range-copy small {
+  padding: 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.danger-warning {
+  grid-column: 1 / -1;
+  width: fit-content;
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: #ffc0b9;
+  background: rgba(255, 119, 111, 0.14);
+  font-size: 0.68rem;
+}
+
+.choice-button:hover,
+.choice-button.is-selected {
+  transform: translateY(-1px);
+  border-color: var(--gold-strong);
+  background: rgba(229, 189, 104, 0.13);
+}
+
+.choice-button:disabled {
+  opacity: 0.38;
+}
+
+.choice-button:disabled.is-selected {
+  opacity: 0.92;
+}
+
+.choice-button.is-selected {
+  box-shadow: inset 0 0 0 1px rgba(255, 217, 138, 0.22), 0 0 20px rgba(229, 189, 104, 0.14);
+}
+
+.choice-button.response-choice.is-selected {
+  border-color: rgba(255, 217, 138, 0.78);
+  background:
+    linear-gradient(180deg, rgba(229, 189, 104, 0.14), rgba(229, 189, 104, 0.055)),
+    rgba(255, 255, 255, 0.055);
+  box-shadow: inset 0 0 0 1px rgba(255, 217, 138, 0.34), 0 0 22px rgba(229, 189, 104, 0.16);
+}
+
+.choice-button.response-choice.is-selected::before {
+  background: var(--gold-strong);
+  box-shadow: 0 0 14px rgba(229, 189, 104, 0.44);
+}
+
+.choice-button.response-choice.fit-best:not(.is-selected) {
+  border-color: rgba(230, 190, 108, 0.24);
+  background: rgba(255, 255, 255, 0.055);
+}
+
