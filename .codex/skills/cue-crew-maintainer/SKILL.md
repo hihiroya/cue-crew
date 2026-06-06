@@ -69,6 +69,7 @@ description: Use when working in the cue-crew repository, identified by package.
 UI変更では、対象 component、CSS、copy、固定 UI シナリオの更新要否をセットで考える。
 
 - 通常確認: `npm run check:ui`
+- スマホ縦全画面の文字見切れ重点確認: `npm run check:ui:mobile`
 - 軽微な準備UI: `npm run check:ui:prep`
 - 軽微な対応UI: `npm run check:ui:response`
 - 軽微な結果UI: `npm run check:ui:result`

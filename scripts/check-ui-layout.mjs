@@ -22,6 +22,7 @@ const port = Number(args.get('port') ?? 9224);
 const servePort = Number(args.get('servePort') ?? 4175);
 const preset = args.get('preset') ?? 'ui-critical';
 const scenario = args.get('scenario');
+const textClip = args.get('textClip') === 'true' || preset === 'mobile-fullscreen';
 
 await main();
 
@@ -45,7 +46,7 @@ async function main() {
   const failures = [];
   try {
     for (const [jobScenario, width, height] of jobs) {
-      const result = await checkInEnvironment(env, { scenario: jobScenario, width, height });
+      const result = await checkInEnvironment(env, { scenario: jobScenario, width, height, textClip });
       if (result.failures.length) {
         failures.push({ scenario: jobScenario, width, height, failures: result.failures });
       }
@@ -161,7 +162,7 @@ async function checkInEnvironment(env, options) {
     awaitPromise: true,
   });
 
-  const layoutFailures = await assertPageHealth(env.client, options.scenario);
+  const layoutFailures = await assertPageHealth(env.client, options.scenario, { textClip: options.textClip });
   return { failures: [...env.runtimeFailures, ...layoutFailures] };
 }
 
@@ -469,7 +470,7 @@ function createCdpClient(wsUrl) {
   };
 }
 
-async function assertPageHealth(client, name) {
+async function assertPageHealth(client, name, options = {}) {
   const expression = `
     (() => {
       const failures = [];
@@ -483,10 +484,110 @@ async function assertPageHealth(client, name) {
         Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left)) *
         Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top))
       );
+      const intersectionRect = (a, b) => {
+        const left = Math.max(a.left, b.left);
+        const top = Math.max(a.top, b.top);
+        const right = Math.min(a.right, b.right);
+        const bottom = Math.min(a.bottom, b.bottom);
+        return { left, top, right, bottom, width: Math.max(0, right - left), height: Math.max(0, bottom - top) };
+      };
+      const rectFromDomRect = (rect) => ({
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+      });
+      const hasArea = (rect) => rect.width > 0.5 && rect.height > 0.5;
       const label = (element) => {
         const className = typeof element.className === 'string' ? element.className : '';
         const text = element.textContent?.trim().replace(/\\s+/g, ' ').slice(0, 48) || element.tagName.toLowerCase();
         return className ? \`\${element.tagName.toLowerCase()}.\${className.replace(/\\s+/g, '.')}: "\${text}"\` : \`\${element.tagName.toLowerCase()}: "\${text}"\`;
+      };
+      const viewportRect = { left: 0, top: 0, right: innerWidth, bottom: innerHeight, width: innerWidth, height: innerHeight };
+      const clipsRenderedText = (style) => {
+        const clips = new Set(['auto', 'clip', 'hidden', 'scroll']);
+        return clips.has(style.overflowX) || clips.has(style.overflowY);
+      };
+      const isTextClipAllowed = (element) => Boolean(element.closest('[data-ui-allow-truncate="true"], [data-ui-ignore-text-clip="true"]'));
+      const clipRectForText = (element) => {
+        let clip = viewportRect;
+        for (let current = element; current instanceof HTMLElement; current = current.parentElement) {
+          const style = getComputedStyle(current);
+          if (style.display === 'none' || style.visibility === 'hidden') return null;
+          if (!clipsRenderedText(style)) continue;
+          const rect = visibleRect(current);
+          if (!rect) return null;
+          clip = intersectionRect(clip, rect);
+          if (!hasArea(clip)) return clip;
+        }
+        return clip;
+      };
+      const textClipFailures = [];
+      let textClipOmitted = 0;
+      const pushTextClipFailure = (message) => {
+        if (textClipFailures.length < 40) textClipFailures.push(message);
+        else textClipOmitted += 1;
+      };
+      const assertVisibleTextNodesFit = () => {
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+          acceptNode(node) {
+            if (!node.textContent || !node.textContent.trim()) return NodeFilter.FILTER_REJECT;
+            const parent = node.parentElement;
+            if (!(parent instanceof HTMLElement)) return NodeFilter.FILTER_REJECT;
+            if (parent.closest('script, style, noscript, template, svg, [hidden], [aria-hidden="true"]')) {
+              return NodeFilter.FILTER_REJECT;
+            }
+            if (isTextClipAllowed(parent)) return NodeFilter.FILTER_REJECT;
+            return NodeFilter.FILTER_ACCEPT;
+          },
+        });
+        const range = document.createRange();
+        const minHorizontalClip = 2;
+        const minVerticalClip = 4;
+        const minClippedRatio = 0.08;
+        const textElements = new Set();
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          const parent = node.parentElement;
+          if (!(parent instanceof HTMLElement)) continue;
+          const parentRect = visibleRect(parent);
+          if (!parentRect || intersectionArea(parentRect, viewportRect) <= 0) continue;
+          const clip = clipRectForText(parent);
+          if (!clip) continue;
+          textElements.add(parent);
+          range.selectNodeContents(node);
+          const text = node.textContent.trim().replace(/\\s+/g, ' ').slice(0, 48);
+          Array.from(range.getClientRects()).forEach((domRect) => {
+            const rect = rectFromDomRect(domRect);
+            if (!hasArea(rect)) return;
+            const viewportArea = intersectionArea(rect, viewportRect);
+            const clipArea = intersectionArea(rect, clip);
+            if (viewportArea <= 0 && clipArea <= 0) return;
+            if (clipArea <= 0 && viewportArea > 0) {
+              pushTextClipFailure('visible text is fully clipped by an overflow container: ' + label(parent) + ' text "' + text + '"');
+              return;
+            }
+            const clippedX = Math.max(0, clip.left - rect.left, rect.right - clip.right);
+            const clippedY = Math.max(0, clip.top - rect.top, rect.bottom - clip.bottom);
+            const clippedRatio = 1 - (clipArea / (rect.width * rect.height));
+            if ((clippedX > minHorizontalClip || clippedY > minVerticalClip) && clippedRatio > minClippedRatio) {
+              pushTextClipFailure('visible text is partially clipped: ' + label(parent) + ' text "' + text + '"');
+            }
+          });
+        }
+        range.detach();
+
+        textElements.forEach((element) => {
+          const style = getComputedStyle(element);
+          if (!clipsRenderedText(style) || isTextClipAllowed(element)) return;
+          if (element.scrollWidth > element.clientWidth + 2) {
+            pushTextClipFailure('text container horizontal overflow: ' + label(element));
+          }
+          if (element.scrollHeight > element.clientHeight + 2) {
+            pushTextClipFailure('text container vertical overflow: ' + label(element));
+          }
+        });
       };
       const html = document.documentElement;
       if (html.scrollWidth > html.clientWidth + 1) {
@@ -506,6 +607,14 @@ async function assertPageHealth(client, name) {
         if (!activeRect) failures.push(\`focused element is not visible: \${label(document.activeElement)}\`);
         else if (activeRect.left < -1 || activeRect.right > innerWidth + 1) {
           failures.push(\`focused element extends outside viewport: \${label(document.activeElement)}\`);
+        }
+      }
+
+      if (${JSON.stringify(Boolean(options.textClip))}) {
+        assertVisibleTextNodesFit();
+        failures.push(...textClipFailures);
+        if (textClipOmitted > 0) {
+          failures.push('additional text clipping failures omitted: ' + textClipOmitted);
         }
       }
 

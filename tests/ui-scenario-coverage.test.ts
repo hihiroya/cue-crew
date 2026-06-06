@@ -7,6 +7,7 @@ type UiScenarioGroup = 'title' | 'prep' | 'response' | 'result';
 
 type UiScenarioRegistry = {
   presets: Record<string, UiScenarioGroup[]>;
+  mobileFullscreenCheckViewports: Array<[number, number]>;
   scenarios: Array<{
     name: string;
     group: UiScenarioGroup;
@@ -27,6 +28,8 @@ test('UI scenario registry has unique scenarios, valid presets, and usable build
     for (const group of presetGroups) assert.equal(groups.includes(group), true, `${group} should be a known UI scenario group`);
   }
   assert.deepEqual(sorted(registry.presets['ui-critical']), sorted(groups));
+  assert.deepEqual(sorted(registry.presets['mobile-fullscreen']), sorted(groups));
+  assert.deepEqual(registry.mobileFullscreenCheckViewports, [[360, 640], [375, 667], [390, 844], [440, 956]]);
 
   for (const scenario of registry.scenarios) {
     const state = uiScenarioState(scenario.name);

@@ -33,6 +33,7 @@
     "check:css": "stylelint \"src/**/*.css\"",
     "check:lint": "eslint .",
     "check:ui": "npm run build && node scripts/check-ui-layout.mjs",
+    "check:ui:mobile": "npm run build && node scripts/check-ui-layout.mjs --preset=mobile-fullscreen",
     "check:ui:prep": "npm run build && node scripts/check-ui-layout.mjs --preset=prep-panel",
     "check:ui:response": "npm run build && node scripts/check-ui-layout.mjs --preset=response-panel",
     "check:ui:result": "npm run build && node scripts/check-ui-layout.mjs --preset=result-panel",

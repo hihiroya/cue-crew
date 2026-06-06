@@ -4,8 +4,10 @@
     "prep-panel": ["prep"],
     "response-panel": ["response"],
     "result-panel": ["result"],
-    "ui-critical": ["title", "prep", "response", "result"]
+    "ui-critical": ["title", "prep", "response", "result"],
+    "mobile-fullscreen": ["title", "prep", "response", "result"]
   },
+  "mobileFullscreenCheckViewports": [[360, 640], [375, 667], [390, 844], [440, 956]],
   "scenarios": [
     {
       "name": "title-default",

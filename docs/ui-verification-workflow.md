@@ -27,6 +27,14 @@ npm run build
 node scripts/check-ui-layout.mjs --scenario=ui:response-primary --width=440 --height=956
 ```
 
+スマホ縦画面の全画面パターンで文字見切れを重点確認する場合は以下を実行します。
+
+```bash
+npm run check:ui:mobile
+```
+
+このコマンドは `mobile-fullscreen` プリセットを使い、全固定シナリオを `360x640`、`375x667`、`390x844`、`440x956` で確認します。小型端末の一画面内で発生しやすい、見出し・本文・ラベルの途中切れを検出するための追加ゲートです。
+
 軽微なCSS/文言/余白修正では、変更箇所に対応するパネル別チェックまたは個別シナリオチェックで十分です。`verify:ui:full` は通常使いません。
 
 ## 固定シナリオ
@@ -69,6 +77,8 @@ node scripts/check-ui-layout.mjs --scenario=ui:response-primary --width=440 --he
 - 準備/本番の選択マーカー混入
 
 このチェックは画像比較ではありません。人間の目視を完全に代替するものではなく、頻出するレイアウト事故を高速に落とすための通常ゲートです。
+
+`npm run check:ui:mobile` と `node scripts/check-ui-layout.mjs --textClip=true ...` では、追加で表示中テキストの途中切れ、overflow 祖先や viewport による部分クリップも検査します。文字見切れ検出は、DOM の text node に `Range.getClientRects()` を当て、実際に描画された行矩形が viewport と `overflow: hidden|clip|auto|scroll` を持つ祖先要素の内側に収まっているかを検査します。意図的な省略を許容する必要がある箇所は、対象要素か祖先に `data-ui-allow-truncate="true"` を付けて明示してください。互換用に `data-ui-ignore-text-clip="true"` も同じ扱いにします。
 
 ## スクリーンショット確認
 

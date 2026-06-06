@@ -67,6 +67,7 @@ tests/                  Node標準テスト、網羅テスト
 | Reducer、ターン進行、保存処理 | `npm run test:logic` |
 | ルール表、称号、図鑑ヒント | `npm run test:logic` |
 | UIレイアウト、文言密度、カード表示 | `npm run check:ui` |
+| スマホ縦全画面の文字見切れ重点確認 | `npm run check:ui:mobile` |
 | UI固定シナリオ名、preset、viewport、coverageタグ | `npm run test:logic` と必要に応じて `npm run check:ui` |
 | 準備/対応/結果の一部だけの軽微なUI変更 | `npm run check:ui:prep`、`npm run check:ui:response`、`npm run check:ui:result` の該当範囲 |
 | PR前、共通レイアウト大改修、レスポンシブ全体変更 | 必要な場合のみ `npm run verify:ui:full` |
@@ -104,6 +105,8 @@ coverageタグは「なぜそのシナリオが必要か」を示します。例
 - `fray` / `load-strain`: ほころび、内部負荷。
 
 通常のUI変更では `npm run check:ui` を標準確認にしてください。PNGを生成する `npm run verify:ui:full` は、大きな共通レイアウト変更、レスポンシブ全体変更、状態分岐の大改修、PR前に明示的に必要な場合、またはユーザーが指示した場合だけ使います。
+
+スマホ縦画面での文字見切れを重点確認する場合は `npm run check:ui:mobile` を使います。`mobile-fullscreen` preset は全固定シナリオを小型端末を含む縦画面 viewport で開き、DOM の text node の実描画矩形が viewport と overflow 祖先に収まっているかを検査します。意図的な省略を許容する箇所は `data-ui-allow-truncate="true"` を明示してください。
 
 ## 保存データ
 
