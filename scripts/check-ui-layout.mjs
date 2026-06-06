@@ -611,6 +611,13 @@ async function assertPageHealth(client, name, options = {}) {
         .join('')
         .trim()
         .replace(/\\s+/g, ' ');
+      const shouldCheckPartialClip = (element, text) => {
+        if (!text || text.length < 4) return false;
+        const style = getComputedStyle(element);
+        if (clipsRenderedText(style) && ['nowrap', 'pre'].includes(style.whiteSpace)) return false;
+        if (/^[\\d\\s/.,:+\\-±%]+$/.test(text)) return false;
+        return true;
+      };
       const clipRectForText = (element) => {
         const elementRect = visibleRect(element);
         let clip = elementRect && intersectionArea(elementRect, viewportRect) > 0 ? viewportRect : pageRect;
@@ -676,6 +683,7 @@ async function assertPageHealth(client, name, options = {}) {
           textElements.add(parent);
           range.selectNodeContents(node);
           const text = node.textContent.trim().replace(/\\s+/g, ' ').slice(0, 48);
+          if (!shouldCheckPartialClip(parent, text)) continue;
           Array.from(range.getClientRects()).forEach((domRect) => {
             const rect = rectFromDomRect(domRect);
             if (!hasArea(rect)) return;

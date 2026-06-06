@@ -222,12 +222,15 @@ function ConsoleRunSheet({
   styleHud: ReturnType<typeof getStyleHud>;
   buildCue: string;
 }) {
+  const styleBuildBadge = styleHud ? compactStyleBuildCue(styleHud.label, buildCue) : buildCue;
   return (
     <div className="console-run-sheet" aria-label={responsePanelCopy.runSheetAria}>
       <span className={state.performanceStyle ? performanceStyleClass[state.performanceStyle] : ''}>
         <small>STYLE</small>
-        <strong>{styleHud?.label ?? responsePanelCopy.pendingStyle}</strong>
-        <b>{buildCue}</b>
+        <span className="style-value-line">
+          <strong>{styleHud?.label ?? responsePanelCopy.pendingStyle}</strong>
+          {styleBuildBadge ? <b>{styleBuildBadge}</b> : null}
+        </span>
       </span>
       <span className="console-scene-cell">
         <small>SCENE</small>
@@ -269,9 +272,11 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
               aria-label={item.title}
             >
               <span className="effect-meter-label">
-                {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
-                <Icon name={item.icon} />
                 <small>{effectTargetLabel(item.icon)}</small>
+                <span className="effect-meter-icons" aria-hidden="true">
+                  {item.repeat ? <Icon name="repeat" className="repeat-icon" /> : null}
+                  <Icon name={item.icon} />
+                </span>
               </span>
               <span className="cue-meter" aria-hidden="true">
                 <b>-</b>
@@ -290,6 +295,12 @@ function ReadoutHud({ insight }: { insight: ResponseInsight }) {
 
 function getStyleHud(style: GameState['performanceStyle']) {
   return style ? PERFORMANCE_COLOR_HUD[style] : null;
+}
+
+function compactStyleBuildCue(styleLabel: string, buildCue: string) {
+  const repeatedStyleCue = `${styleLabel} +`;
+  if (buildCue === repeatedStyleCue) return '+';
+  return buildCue;
 }
 
 function resultTierOrder(): ResponseInsight['resultTier'][] {
