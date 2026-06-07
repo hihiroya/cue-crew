@@ -346,13 +346,11 @@
 }
 
 .affinity-board .readout-chip {
-  grid-template-columns: auto minmax(0, 1fr);
-  grid-template-areas:
-    "lamp rank"
-    "label label";
-  gap: 5px;
-  min-height: 54px;
-  padding: 7px 6px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "lamp label rank";
+  gap: 6px;
+  min-height: 40px;
+  padding: 6px 7px;
   border-color: rgba(255, 255, 255, 0.12);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(0, 0, 0, 0.16)),
@@ -397,6 +395,7 @@
 .affinity-board .readout-chip small {
   grid-area: label;
   justify-self: start;
+  align-self: center;
   width: auto;
   min-width: 0;
   max-width: 100%;
@@ -419,6 +418,7 @@
 .affinity-board .readout-chip strong {
   grid-area: rank;
   justify-self: end;
+  align-self: center;
   padding: 3px 6px;
   border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.08);

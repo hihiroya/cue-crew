@@ -74,7 +74,7 @@ export function rankForValue(value: number) {
   if (value >= 3) return '強い';
   if (value > 0) return '合う';
   if (value < 0) return '注意';
-  return '普通';
+  return '中立';
 }
 
 export function decisionMemo(insight: ResponseInsight, effectSummaryText: string) {
