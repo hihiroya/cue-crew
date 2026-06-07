@@ -65,7 +65,7 @@ export function affinityLabels() {
   return [
     { id: 'event', icon: 'event' as const, label: '出来事' },
     { id: 'actor', icon: 'actor' as const, label: '役者傾向' },
-    { id: 'state', icon: 'state' as const, label: '状態' },
+    { id: 'state', icon: 'state' as const, label: '役者状態' },
     { id: 'act', icon: 'act' as const, label: '公演回' },
   ];
 }
