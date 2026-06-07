@@ -3,7 +3,7 @@ import type { ResultPreview } from '../../game/types';
 import type { CollectionState } from '../../game/rogueliteProgress';
 import { Icon } from '../ui/Icon';
 import { classNames } from '../ui/classNames';
-import { appCopy, deltaImpact, prepQualityBanner, stripAudienceReactionPrefix, type DeltaKind } from '../../content/ja/appCopy';
+import { appCopy, deltaImpact, prepQualityBanner, type DeltaKind } from '../../content/ja/appCopy';
 
 type Props = {
   preview: ResultPreview | null;
@@ -70,7 +70,10 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
         <span><Icon name={preview.actorEventType} />{EVENT_LABELS[preview.actorEventType]}</span>
         <span><Icon name={preview.mainResponse} />{RESPONSE_LABELS[preview.mainResponse]}</span>
       </div>
-      <DeltaTable preview={preview} />
+      <article className="scene-record-note">
+        <span>{appCopy.resultPreview.sceneRecord}</span>
+        <p>{preview.flavorText}</p>
+      </article>
       <div className={classNames('prep-hit-banner cue-stamp', prepQualityClass[preview.prepQuality])}>
         <span>{prepBanner.label}</span>
         <strong>{PREP_LABELS[preview.prepAction]} / {prepBanner.detail}</strong>
@@ -92,27 +95,31 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
           <span>{appCopy.resultPreview.lesson}</span>
           <p>{preview.cueSummary.lesson}</p>
         </div>
-        <div className="cue-summary-grid">
-          <article className="cue-summary-card is-key">
-            <span>{appCopy.resultPreview.key}</span>
-            <p>{preview.cueSummary.keyPoint}</p>
-          </article>
-          <article className="cue-summary-card">
-            <span>{appCopy.resultPreview.cost}</span>
-            <p>{preview.cueSummary.cost}</p>
-          </article>
-        </div>
-        <div className="cue-subnote-line">
-          <span>{isFinale ? appCopy.resultPreview.finalHandoff : appCopy.resultPreview.handoff}: {preview.cueSummary.handoff}</span>
-          <span>{appCopy.resultPreview.audience}: {stripAudienceReactionPrefix(preview.cueSummary.audienceReaction)}</span>
-        </div>
-        <div className={classNames('prep-recovery', prepRecoveryToneClass[preview.prepRecoveryTone])}>
-          <div>
-            <span>{preview.prepRecoveryLabel}</span>
-            <strong>{preview.prepRecoveryTitle}</strong>
+        <div className="scoring-memo">
+          <span>{appCopy.resultPreview.scoringMemo}</span>
+          <DeltaTable preview={preview} />
+          <div className="cue-summary-grid">
+            <article className="cue-summary-card is-key">
+              <span>{appCopy.resultPreview.key}</span>
+              <p>{preview.cueSummary.keyPoint}</p>
+            </article>
+            {shouldShowCost(preview) ? (
+              <article className="cue-summary-card">
+                <span>{appCopy.resultPreview.cost}</span>
+                <p>{preview.cueSummary.cost}</p>
+              </article>
+            ) : null}
           </div>
-          <p>{preview.prepRecoveryText}</p>
         </div>
+        {shouldShowPrepRecovery(preview) ? (
+          <div className={classNames('prep-recovery', prepRecoveryToneClass[preview.prepRecoveryTone])}>
+            <div>
+              <span>{preview.prepRecoveryLabel}</span>
+              <strong>{preview.prepRecoveryTitle}</strong>
+            </div>
+            <p>{preview.prepRecoveryText}</p>
+          </div>
+        ) : null}
         {preview.styleLabel ? (
           <div className={classNames('performance-style-note', preview.styleIsNew && 'is-new')}>
             <span>{preview.styleIsNew ? appCopy.resultPreview.styleNew : appCopy.resultPreview.style}</span>
@@ -124,6 +131,14 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
       <button className="primary-action result-preview-commit" disabled={!canCommit} onClick={onCommit}>{isFinale ? appCopy.resultPreview.commitFinale : appCopy.resultPreview.commitNext}</button>
     </section>
   );
+}
+
+function shouldShowCost(preview: ResultPreview) {
+  return preview.deltaLoad > 0 || preview.deltaFlow < 0 || preview.deltaTrust < 0 || ['fray', 'accident'].includes(preview.resultTier);
+}
+
+function shouldShowPrepRecovery(preview: ResultPreview) {
+  return preview.prepQuality !== 'hit' || preview.resultTier === 'fray' || preview.resultTier === 'accident';
 }
 
 function TierRail({ preview }: { preview: ResultPreview }) {

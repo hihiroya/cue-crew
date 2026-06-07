@@ -103,6 +103,8 @@ export function flavorText(args: {
   if (args.recoveredFray) {
     return `舞台裏のほころびを見つめ直したことで、袖で起きた乱れが意味を持った。${actor}の「${event}」は、裏方の${response}によって本番だけの輪郭を得た。`;
   }
+  const specific = specificFlavorText(args, { actor, event, response });
+  if (specific) return specific;
   if (args.tier === 'masterpiece') {
     return `${actor}の「${event}」を、裏方が見逃さなかった。予定外の揺れが客席まで届く名場面に変わった。`;
   }
@@ -116,6 +118,75 @@ export function flavorText(args: {
     return `${actor}の「${event}」に舞台が少し追いつかなかった。場面は揺れたが、その揺れは次に拾える余白として残っている。`;
   }
   return `${actor}の「${event}」が流れから離れ、裏方の判断も一拍遅れた。舞台は散ったが、客席には生の熱が残った。`;
+}
+
+function specificFlavorText(
+  args: {
+    actor: ActorType;
+    event: ActorEventType;
+    response: MainResponse;
+    tier: ResultTier;
+    prepMatched: boolean;
+  },
+  labels: { actor: string; event: string; response: string },
+) {
+  if (!['masterpiece', 'scene'].includes(args.tier)) return '';
+  const { actor, event, response } = labels;
+  const isMasterpiece = args.tier === 'masterpiece';
+  const prepLine = args.prepMatched
+    ? '本番前の備えが、その一瞬に追いついていた。'
+    : '備えとは少し違う流れだったが、袖の判断が遅れなかった。';
+
+  if (args.event === 'stepForward' && args.response === 'catch') {
+    return isMasterpiece
+      ? `${actor}が一歩前へ出た瞬間、袖はその熱を止めなかった。${prepLine}予定外の前進が、客席まで届く見せ場に変わった。`
+      : `${actor}の一歩を、袖がそのまま受け止めた。少し荒さは残ったが、舞台には前へ進む空気が生まれた。`;
+  }
+  if (args.event === 'adlib' && args.response === 'catch') {
+    return isMasterpiece
+      ? `こぼれた一言を、袖がすぐに場面へ乗せた。${actor}の「${event}」は予定外のまま、拍手の残る芯になった。`
+      : `こぼれた一言は危うかったが、${response}判断で場面から外れずに済んだ。客席には生の手触りが残った。`;
+  }
+  if (args.event === 'silence' && args.response === 'wait') {
+    return isMasterpiece
+      ? `${actor}の沈黙に、誰も先回りしなかった。待った一拍で客席の息が揃い、沈黙そのものが台詞になった。`
+      : `${actor}の「${event}」を急がず待った。間は伸びきらなかったが、舞台の呼吸は途切れなかった。`;
+  }
+  if (args.event === 'delayedExit' && args.response === 'wait') {
+    return isMasterpiece
+      ? `${actor}の退場が遅れた。その遅れを急かさず待ったことで、背中に余韻が宿った。`
+      : `${actor}の「${event}」に、袖は一拍の余白を残した。場面は静かに閉じ、次へ渡る間が生まれた。`;
+  }
+  if (args.event === 'positionShift' && args.response === 'arrange') {
+    return isMasterpiece
+      ? `${actor}の立ち位置が一拍ずれた。袖の調整で乱れは構図になり、場面の輪郭だけが強く残った。`
+      : `${actor}の「${event}」を整え、視線の流れを戻した。危うさは残ったが、舞台は形を失わなかった。`;
+  }
+  if (args.event === 'ensembleWaver' && args.response === 'arrange') {
+    return isMasterpiece
+      ? `群像が揺れた瞬間、袖は流れを束ね直した。ばらついた呼吸が一つのうねりに変わり、場面に厚みが出た。`
+      : `群像の揺れを整えたことで、崩れは場面の範囲に留まった。客席には乱れよりも流れが残った。`;
+  }
+  if (args.event === 'tempoRush' && args.response === 'cut') {
+    return isMasterpiece
+      ? `走り出した拍を、袖が鮮やかに閉じた。切った一拍が場面の温度を残し、次の沈黙まで効いた。`
+      : `速くなった拍を早めに閉じた。熱は伸びきらなかったが、次の場面へ渡す余白は守れた。`;
+  }
+  if (args.event === 'heatUp' && args.response === 'catch') {
+    return isMasterpiece
+      ? `${actor}の熱が上がった瞬間、袖はそれを拾い切った。舞台上の熱量が客席へ渡り、場面が一段明るくなった。`
+      : `${actor}の「${event}」を拾い、場面の熱を逃がさなかった。負荷は残るが、客席には温度が届いた。`;
+  }
+  if (args.response === 'arrange') {
+    return `${actor}の「${event}」に生まれた乱れを、袖が意味のある形へ戻した。${prepLine}`;
+  }
+  if (args.response === 'wait') {
+    return `${actor}の「${event}」を急がず見守った。待った一拍が、場面に余韻を残した。`;
+  }
+  if (args.response === 'cut') {
+    return `${actor}の「${event}」を長引かせず閉じた。熱は短く残り、次の場面へ渡る線が見えた。`;
+  }
+  return '';
 }
 
 const recoveryTitles: Record<PrepAction, string> = {

@@ -218,6 +218,8 @@ export const appCopy = {
     reasonChips: '効いた理由',
     scoreReached: (tierLabel: string) => `${tierLabel}到達`,
     pointsToTier: (points: number, tierLabel: string) => `${tierLabel}まであと${points}点`,
+    sceneRecord: '場面記録',
+    scoringMemo: '採点メモ',
     frayRecovery: 'ほころび回収',
     frayRecoveryBody: '失敗の余白が場面の材料になった',
     newScene: '新場面候補',
