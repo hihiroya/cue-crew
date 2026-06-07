@@ -28,6 +28,7 @@ export function ResultHeroSection({
       <div className="review-notes">
         {(result.reviewNotes?.length ? result.reviewNotes.slice(0, 3) : [result.review]).map((note) => <p key={note}>{note}</p>)}
       </div>
+      <ResultSpotlightStrip result={result} comparison={comparison} />
       <div className="report-section-label">
         <span>{appCopy.result.totalReview}</span>
         <small>{appCopy.result.allResults}</small>
@@ -89,6 +90,33 @@ export function ResultHeroSection({
   );
 }
 
+function ResultSpotlightStrip({
+  comparison,
+  result,
+}: {
+  comparison: ReturnType<typeof compareWithPrevious>;
+  result: PerformanceResult;
+}) {
+  const spotlights = resultSpotlights(result, comparison);
+  return (
+    <section className="result-spotlight-strip" aria-label={appCopy.result.spotlight}>
+      <div className="report-section-label result-spotlight-heading">
+        <span>{appCopy.result.spotlight}</span>
+        <small>{appCopy.result.spotlightSub}</small>
+      </div>
+      <div className="result-spotlight-grid">
+        {spotlights.map((item) => (
+          <article key={item.label} className={classNames('result-spotlight-card', item.tone && `is-${item.tone}`)}>
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <small>{item.note}</small>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function PerformancePoster({ result, styleLabel }: { result: PerformanceResult; styleLabel: string }) {
   const bestCue = result.insight.bestCue;
   return (
@@ -116,6 +144,64 @@ function FinalScore({ label, value, note }: { label: string; value: number | str
 
 function performanceStyleLabel(result: PerformanceResult) {
   return result.performanceStyle ? PERFORMANCE_STYLE_DETAILS[result.performanceStyle].label : appCopy.result.unsetStyle;
+}
+
+type ResultSpotlightItem = {
+  label: string;
+  note: string;
+  tone: 'gold' | 'good' | 'neutral' | 'risk';
+  value: string;
+};
+
+function resultSpotlights(result: PerformanceResult, comparison: ReturnType<typeof compareWithPrevious>): ResultSpotlightItem[] {
+  const items: ResultSpotlightItem[] = [
+    {
+      label: appCopy.result.spotlightMasterpiece,
+      value: String(result.insight.masterpieceCount),
+      note: appCopy.result.spotlightSceneUnit,
+      tone: result.insight.masterpieceCount >= 2 ? 'gold' : 'neutral',
+    },
+    {
+      label: appCopy.result.spotlightPrep,
+      value: `${result.insight.prepHits}/6`,
+      note: `${result.insight.prepHitRate}%`,
+      tone: result.insight.prepHits >= 5 ? 'good' : 'neutral',
+    },
+  ];
+  if (comparison) {
+    items.push({
+      label: appCopy.result.spotlightPrevious,
+      value: appCopy.result.spotlightScoreDelta(comparison.totalScoreDelta),
+      note: comparison.rankDeltaLabel,
+      tone: comparison.totalScoreDelta > 0 ? 'good' : comparison.totalScoreDelta < 0 ? 'risk' : 'neutral',
+    });
+    return items;
+  }
+  if (result.insight.unlockedAchievements.length) {
+    items.push({
+      label: appCopy.result.spotlightAchievement,
+      value: appCopy.result.spotlightAchievementCount(result.insight.unlockedAchievements.length),
+      note: result.insight.unlockedAchievements[0]?.label ?? appCopy.result.achievements,
+      tone: 'gold',
+    });
+    return items;
+  }
+  if (result.insight.performanceBadges.length) {
+    items.push({
+      label: appCopy.result.spotlightBadge,
+      value: appCopy.result.spotlightBadgeCount(result.insight.performanceBadges.length),
+      note: result.insight.performanceBadges[0]?.label ?? appCopy.result.performanceBadges,
+      tone: 'good',
+    });
+    return items;
+  }
+  items.push({
+    label: appCopy.result.spotlightDiscovery,
+    value: String(result.insight.discoveryScore),
+    note: appCopy.result.discovery,
+    tone: 'neutral',
+  });
+  return items;
 }
 
 function rankClass(rank: PerformanceResult['insight']['rank']) {

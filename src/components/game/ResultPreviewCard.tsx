@@ -40,13 +40,31 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
           <span>{appCopy.resultPreview.ticket}</span>
           <span>{preview.performanceLabel}{isFinale ? ` / ${appCopy.resultPreview.finale}` : ''}</span>
         </div>
-        <h2>{preview.sceneTitle}</h2>
-        <div className="scene-rating" aria-label={appCopy.resultPreview.ratingAria(RESULT_TIER_LABELS[preview.resultTier])}>
-          <span>{appCopy.resultPreview.ratingLabel}</span>
-          <strong>{RESULT_TIER_LABELS[preview.resultTier]}</strong>
-          <em>{RESULT_TIER_STARS[preview.resultTier]}</em>
+        <div className="cue-verdict-panel" aria-label={appCopy.resultPreview.ratingAria(RESULT_TIER_LABELS[preview.resultTier])}>
+          <div className="cue-verdict-stamp">
+            <span>{appCopy.resultPreview.ratingLabel}</span>
+            <strong>{RESULT_TIER_LABELS[preview.resultTier]}</strong>
+            <em>{RESULT_TIER_STARS[preview.resultTier]}</em>
+          </div>
+          <div className="cue-score-position">
+            <span>{appCopy.resultPreview.scoreLabel}</span>
+            <strong>{preview.score}{appCopy.resultPreview.scoreUnit}</strong>
+            <p>{scorePositionLabel(preview)}</p>
+          </div>
         </div>
+        <TierRail preview={preview} />
+        <h2>{preview.sceneTitle}</h2>
       </div>
+      {reasonItems.length > 0 ? (
+        <div className="cue-reason-chips" aria-label={appCopy.resultPreview.reasonChips}>
+          {reasonItems.map((item) => (
+            <span key={item.id} className={classNames('cue-reason-chip', breakdownToneClass[item.tone])}>
+              <strong>{item.value > 0 ? `+${item.value}` : item.value}</strong>
+              <small>{item.label}</small>
+            </span>
+          ))}
+        </div>
+      ) : null}
       <div className="cue-route">
         <span><Icon name="actor" />{ACTOR_LABELS[preview.focusActorType]}</span>
         <span><Icon name={preview.actorEventType} />{EVENT_LABELS[preview.actorEventType]}</span>
@@ -88,19 +106,6 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
           <span>{isFinale ? appCopy.resultPreview.finalHandoff : appCopy.resultPreview.handoff}: {preview.cueSummary.handoff}</span>
           <span>{appCopy.resultPreview.audience}: {stripAudienceReactionPrefix(preview.cueSummary.audienceReaction)}</span>
         </div>
-        {reasonItems.length > 0 ? (
-          <div className="cue-reason-list">
-            <span>{appCopy.resultPreview.reasons}</span>
-            <ul>
-              {reasonItems.map((item) => (
-                <li key={item.id} className={breakdownToneClass[item.tone]}>
-                  <strong>{item.value > 0 ? `+${item.value}` : item.value}</strong>
-                  <p>{item.label}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
         <div className={classNames('prep-recovery', prepRecoveryToneClass[preview.prepRecoveryTone])}>
           <div>
             <span>{preview.prepRecoveryLabel}</span>
@@ -118,6 +123,25 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
       </div>
       <button className="primary-action result-preview-commit" disabled={!canCommit} onClick={onCommit}>{isFinale ? appCopy.resultPreview.commitFinale : appCopy.resultPreview.commitNext}</button>
     </section>
+  );
+}
+
+function TierRail({ preview }: { preview: ResultPreview }) {
+  return (
+    <div className="cue-tier-rail" aria-label={appCopy.resultPreview.tierRail}>
+      {tierSteps.map((step) => (
+        <span
+          key={step.tier}
+          className={classNames(
+            preview.score >= step.minScore && 'is-reached',
+            preview.resultTier === step.tier && 'is-current',
+          )}
+        >
+          <i />
+          <b>{RESULT_TIER_LABELS[step.tier]}</b>
+        </span>
+      ))}
+    </div>
   );
 }
 
@@ -144,6 +168,22 @@ function Delta({ kind, label, value }: { kind: DeltaKind; label: string; value: 
     </div>
   );
 }
+
+function scorePositionLabel(preview: ResultPreview) {
+  const nextStep = tierTargets.find((step) => preview.score < step.minScore);
+  if (!nextStep) return appCopy.resultPreview.scoreReached(RESULT_TIER_LABELS[preview.resultTier]);
+  return appCopy.resultPreview.pointsToTier(nextStep.minScore - preview.score, RESULT_TIER_LABELS[nextStep.tier]);
+}
+
+const tierSteps: Array<{ tier: ResultPreview['resultTier']; minScore: number }> = [
+  { tier: 'accident', minScore: Number.NEGATIVE_INFINITY },
+  { tier: 'fray', minScore: 0 },
+  { tier: 'smallSuccess', minScore: 2 },
+  { tier: 'scene', minScore: 4 },
+  { tier: 'masterpiece', minScore: 7 },
+];
+
+const tierTargets = tierSteps.filter((step) => Number.isFinite(step.minScore));
 
 const resultTierClass: Record<ResultPreview['resultTier'], string> = {
   accident: 'tier-accident',
