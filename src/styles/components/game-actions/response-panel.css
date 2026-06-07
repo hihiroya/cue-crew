@@ -319,6 +319,10 @@
   gap: 5px;
 }
 
+.affinity-board .indicator-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .readout-hud section > p {
   margin: -1px 0 0;
   color: var(--muted);
