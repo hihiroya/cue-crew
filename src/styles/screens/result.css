@@ -251,31 +251,49 @@
 
 .backstage-log-note {
   display: grid;
-  gap: 5px;
-  padding: 10px 11px;
+  gap: 6px;
+  padding: 11px 12px;
   border-radius: var(--radius);
-  border: 1px dashed rgba(230, 190, 108, 0.2);
+  border: 1px solid rgba(230, 190, 108, 0.32);
   background:
-    linear-gradient(90deg, rgba(139, 201, 213, 0.055), transparent 48%),
-    rgba(0, 0, 0, 0.16);
+    linear-gradient(90deg, rgba(139, 201, 213, 0.075), transparent 52%),
+    rgba(255, 255, 255, 0.055);
 }
 
 .backstage-log-note span {
-  color: var(--gold);
-  font-size: 0.68rem;
+  color: var(--gold-strong);
+  font-size: 0.7rem;
   font-weight: 900;
 }
 
 .backstage-log-note p {
   margin: 0;
-  color: var(--muted);
-  font-size: 0.76rem;
+  color: #f3e6c9;
+  font-size: 0.78rem;
   line-height: 1.58;
 }
 
 .backstage-log-note--console {
-  border-color: rgba(139, 201, 213, 0.24);
-  background: rgba(139, 201, 213, 0.06);
+  grid-column: 1 / -1;
+  border-color: rgba(139, 201, 213, 0.34);
+  background:
+    linear-gradient(90deg, rgba(139, 201, 213, 0.1), transparent 52%),
+    rgba(255, 255, 255, 0.052);
+}
+
+.cue-paper .backstage-log-note {
+  border-color: rgba(126, 74, 37, 0.34);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent),
+    rgba(255, 250, 231, 0.54);
+}
+
+.cue-paper .backstage-log-note span {
+  color: #7e4a25;
+}
+
+.cue-paper .backstage-log-note p {
+  color: #2d2020;
 }
 
 .prep-hit-banner {
@@ -1553,8 +1571,9 @@
 }
 
 .cue-result-ticket .backstage-log-note {
-  border-style: dashed;
-  background: rgba(255, 250, 231, 0.42);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.26), transparent),
+    rgba(255, 250, 231, 0.56);
 }
 
 .cue-result-ticket .scene-record-note {

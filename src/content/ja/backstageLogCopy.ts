@@ -119,12 +119,18 @@ function selectLog(criteria: {
 function matchScore(log: BackstageLog, criteria: Omit<Parameters<typeof selectLog>[0], 'seedKey'>) {
   let score = 0;
   score += fieldScore(log.actorType, criteria.actorType, 8);
-  score += fieldScore(log.actorState, criteria.actorState, 3);
+  score += softFieldScore(log.actorState, criteria.actorState, 3);
   score += fieldScore(log.event, criteria.event, 8);
   score += fieldScore(log.prep, criteria.prep, 6);
   score += fieldScore(log.response, criteria.response, 6);
   score += fieldScore(log.resultTier, criteria.resultTier, 7);
   return score;
+}
+
+function softFieldScore(actual: string | null, expected: string | null, exactScore: number) {
+  if (actual === expected) return exactScore;
+  if (actual === 'any') return 1;
+  return 0;
 }
 
 function fieldScore(actual: string | null, expected: string | null, exactScore: number) {

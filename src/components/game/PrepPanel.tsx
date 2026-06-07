@@ -42,7 +42,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
     prep: inspected.prep,
     seed: state.seed,
     totalTurn: state.totalTurn,
-    visibleOmens,
+    visibleOmens: inspected.coveredOmens.length ? inspected.coveredOmens : visibleOmens,
   });
   const isApproving = approvingPrep === inspected.prep;
   const approvalRef = useRef<HTMLDivElement | null>(null);
