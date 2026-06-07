@@ -137,7 +137,7 @@ function fieldScore(actual: string | null, expected: string | null, exactScore: 
   if (actual === expected) return exactScore;
   if (actual === 'any') return 1;
   if (actual === null && expected === null) return exactScore;
-  return Number.NEGATIVE_INFINITY;
+  return 0;
 }
 
 function stableHash(value: string) {
