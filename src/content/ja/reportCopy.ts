@@ -1,4 +1,5 @@
 import { PERFORMANCE_SLOT_LABELS, PERFORMANCE_STYLE_DETAILS, RESPONSE_LABELS } from './gameLabels';
+import { displayScore } from '../../game/scoreDisplay';
 import type { MainResponse, PerformanceInsight, PerformanceStyle, TurnLog } from '../../game/types';
 
 export function performanceTitle(args: {
@@ -79,12 +80,17 @@ export function scoreNote(args: {
   masterpieceCount: number;
   backstageLoad: number;
   prepHitRate: number;
+  blockedByConditions?: boolean;
+  capReasons?: string[];
 }) {
+  const visiblePoints = args.pointsToNextRank === null ? null : displayScore(args.pointsToNextRank);
+  const capReason = args.capReasons?.[0];
   if (args.pointsToNextRank === null) return '最高ランク。同じ巡り合わせで安定再現を狙える。';
-  if (args.masterpieceCount === 0) return `${args.nextRank}まであと${args.pointsToNextRank}点。名場面を1回作ると大きく伸びる。`;
-  if (args.backstageLoad >= 4) return `${args.nextRank}まであと${args.pointsToNextRank}点。終盤の負荷を抑えると届きやすい。`;
-  if (args.prepHitRate < 67) return `${args.nextRank}まであと${args.pointsToNextRank}点。準備の噛み合いを増やすと底上げできる。`;
-  return `${args.nextRank}まであと${args.pointsToNextRank}点。場面化以上をもう1回増やしたい。`;
+  if (args.blockedByConditions && capReason) return `${args.nextRank}条件まで点数は届いている。次は「${capReason}」を解消したい。`;
+  if (args.masterpieceCount === 0) return `${args.nextRank}まであと${visiblePoints}点。名場面を1回作ると大きく伸びる。`;
+  if (args.backstageLoad >= 4) return `${args.nextRank}まであと${visiblePoints}点。終盤の負荷を抑えると届きやすい。`;
+  if (args.prepHitRate < 67) return `${args.nextRank}まであと${visiblePoints}点。準備の噛み合いを増やすと底上げできる。`;
+  return `${args.nextRank}まであと${visiblePoints}点。場面化以上をもう1回増やしたい。`;
 }
 
 export function mediaHeadline(args: {

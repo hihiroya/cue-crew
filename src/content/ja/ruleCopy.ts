@@ -25,13 +25,13 @@ import type {
 } from '../../game/types';
 
 export const ruleCopy = {
-  frayMiss: '舞台裏のほころびは残りそう',
-  frayRecover: '舞台裏のほころびを拾った',
+  frayMiss: 'ほころびは残りそう',
+  frayRecover: 'ほころびを拾った',
   frayRelationStrong: '舞台裏のほころびを拾える',
   frayRelationMatch: '舞台裏のほころびを整えられる',
-  repeatedResponse: '同じ対応の連続使用',
-  trustScore: '公演全体の一体感補正',
-  loadScore: '裏方負荷の重さ',
+  repeatedResponse: '同じ手が読まれた',
+  trustScore: '座組の呼吸が合った',
+  loadScore: '裏方の負荷が響いた',
   dangerWarning: '危険: 事故の恐れ',
   accidentVisibleLow: 'ほころび',
   repeatPrefix: '連続使用:',
@@ -45,7 +45,7 @@ export function actorTrustPassiveLabel(trust: number) {
 export function actorTrustScoreCopy(actor: Actor, response: MainResponse) {
   const passiveLabel = actorTrustPassiveLabel(actor.trust);
   return {
-    label: `${passiveLabel}が働いた`,
+    label: '信頼が背中を押した',
     detail: `${passiveLabel}: ${ACTOR_LABELS[actor.type]}の得意対応が${RESPONSE_LABELS[response]}の下振れを支える。`,
   };
 }
@@ -53,24 +53,24 @@ export function actorTrustScoreCopy(actor: Actor, response: MainResponse) {
 export function finaleScoreCopy(kind: 'closeFray' | 'waitTrust' | 'attackLowLoad') {
   if (kind === 'closeFray') {
     return {
-      label: '千秋楽で崩れを閉じる判断',
+      label: '千秋楽を締めた',
       detail: '最終公演では、重い負荷を残さない判断が客席の余韻を守る。',
     };
   }
   if (kind === 'waitTrust') {
     return {
-      label: '千秋楽で一体感を待つ判断',
+      label: '千秋楽の間を信じた',
       detail: '積み上げた一体感が、待つ間を支える。',
     };
   }
   return {
-    label: '千秋楽で攻め切る判断',
+    label: '千秋楽で攻め切った',
     detail: '低負荷で迎えた最終公演では、予定外を評判に変えやすい。',
   };
 }
 
-export function performanceStyleScoreLabel(styleLabel: string, response: MainResponse) {
-  return `${styleLabel}に${RESPONSE_LABELS[response]}が沿った`;
+export function performanceStyleScoreLabel(styleLabel: string, _response: MainResponse) {
+  return `${styleLabel}の色が伸びた`;
 }
 
 export function prepRelationPrimaryLabel(prep: PrepAction) {
@@ -92,7 +92,7 @@ export function alternatePrepAim(prep: PrepAction, response: MainResponse) {
 }
 
 export function prepResponseGuardCopy(quality: PrepPredictionQuality) {
-  const label = '転換の備えが切る判断を支えた';
+  const label = '仕込みが効いた';
   if (quality === 'hit') return { label, detail: '崩れを閉じるだけでなく、次へ渡す場面の切れ味になった。' };
   if (quality === 'partial') return { label, detail: '読みの一部を使い、崩れを小さく閉じた。' };
   return { label, detail: '場面の伸びより、崩れを小さく閉じる。' };
@@ -101,12 +101,12 @@ export function prepResponseGuardCopy(quality: PrepPredictionQuality) {
 export function prepResponseCopy(prep: PrepAction, response: MainResponse, quality: Extract<PrepPredictionQuality, 'hit' | 'partial'>) {
   if (quality === 'hit') {
     return {
-      label: `${PREP_LABELS[prep]}の準備が活きた`,
+      label: '仕込みが効いた',
       detail: `${RESPONSE_LABELS[response]}の上振れを少し広げた。`,
     };
   }
   return {
-    label: `${PREP_LABELS[prep]}の準備を受けた`,
+    label: '読みの余白を活かした',
     detail: '見えていた兆候には沿っているため、判断が安定する。',
   };
 }
@@ -114,13 +114,13 @@ export function prepResponseCopy(prep: PrepAction, response: MainResponse, quali
 export function prepPivotPenaltyCopy(quality: Exclude<PrepPredictionQuality, 'hit'>) {
   if (quality === 'partial') {
     return {
-      label: '準備とは別筋で受けた',
+      label: '仕込みから少し外れた',
       value: -1,
       detail: '兆候の一部は読めていたが、本番対応への切り替えに一拍使った。',
     };
   }
   return {
-    label: '準備外から切り替えた',
+    label: '仕込みから外れた',
     value: -2,
     detail: '本番前の備えと違う筋で受けたため、場面化までに余白を失った。',
   };
@@ -128,17 +128,17 @@ export function prepPivotPenaltyCopy(quality: Exclude<PrepPredictionQuality, 'hi
 
 export function cutContainmentCopy(kind: 'transitionHighLoad' | 'transition' | 'highLoad') {
   if (kind === 'transitionHighLoad') {
-    return { label: '転換で高負荷を閉じた', detail: '場面を伸ばすより、崩れを次へ持ち越さない判断。' };
+    return { label: '早めに幕を引いた', detail: '場面を伸ばすより、崩れを次へ持ち越さない判断。' };
   }
   if (kind === 'transition') {
-    return { label: '転換の備えで閉じた', detail: '次の場面へ渡すために崩れを小さくした。' };
+    return { label: '早めに幕を引いた', detail: '次の場面へ渡すために崩れを小さくした。' };
   }
-  return { label: '高負荷を早めに閉じた', detail: '負荷が重い局面では、閉じる判断が事故を抑える。' };
+  return { label: '早めに幕を引いた', detail: '負荷が重い局面では、閉じる判断が事故を抑える。' };
 }
 
 export function frayRecoveryRewardCopy() {
   return {
-    label: 'ほころびを場面の材料に変えた',
+    label: '崩れかけを名場面に変えた',
     detail: '舞台裏の揺れを、次の場面の意味として回収した。',
   };
 }
@@ -147,13 +147,13 @@ export function repeatAdjustmentCopy(response: MainResponse, count: number, succ
   if (response === 'catch') {
     if (count >= 3) {
       return {
-        label: '拾う判断が続いた',
+        label: '同じ手が読まれた',
         detail: '予定外を見せ場に変えるための負荷が残った。',
         cardLabel: '連続使用: 負荷+2 / 段取り-1',
       };
     }
     return {
-      label: '拾う判断が続いた',
+      label: '同じ手が読まれた',
       detail: '攻め続けるぶん負荷が残った。',
       cardLabel: '連続使用: 負荷+1',
     };
@@ -161,13 +161,13 @@ export function repeatAdjustmentCopy(response: MainResponse, count: number, succ
   if (response === 'arrange') {
     if (count >= 3) {
       return {
-        label: '整える判断が続いた',
+        label: '同じ手が読まれた',
         detail: '舞台は安定したが、同じ調整では場面の伸びが鈍った。',
         cardLabel: '連続使用: 負荷+1 / 評判-1',
       };
     }
     return {
-      label: success ? '整える判断が続いた' : undefined,
+      label: success ? '同じ手が読まれた' : undefined,
       detail: success ? '舞台は安定したが、同じ調整では負荷が抜けきらなかった。' : undefined,
       cardLabel: '連続使用: 負荷回復なし',
     };
@@ -175,26 +175,26 @@ export function repeatAdjustmentCopy(response: MainResponse, count: number, succ
   if (response === 'wait') {
     if (count >= 3) {
       return {
-        label: '待つ判断が続いた',
+        label: '同じ手が読まれた',
         detail: '余韻は残ったが、次の場面への処理が滞った。',
         cardLabel: '連続使用: 負荷+1 / 段取り-1',
       };
     }
     return {
-      label: success ? '待つ判断が続いた' : undefined,
+      label: success ? '同じ手が読まれた' : undefined,
       detail: success ? '余韻は残ったが、同じ待ちでは負荷が抜けきらなかった。' : undefined,
       cardLabel: '連続使用: 負荷回復なし',
     };
   }
   if (count >= 3) {
     return {
-      label: '切る判断が続いた',
+      label: '同じ手が読まれた',
         detail: '進行は守ったが、役者の気持ちは少し置き去りになった。',
         cardLabel: '連続使用: 評判-1 / 段取り-1 / 一体感-1 / 負荷+1',
     };
   }
   return {
-    label: '切る判断が続いた',
+    label: '同じ手が読まれた',
     detail: '進行は守ったが、役者の気持ちは少し置き去りになった。',
     cardLabel: '連続使用: 一体感-1',
   };
@@ -202,7 +202,7 @@ export function repeatAdjustmentCopy(response: MainResponse, count: number, succ
 
 export function diffuseRhythmPenaltyCopy() {
   return {
-    label: '判断の軸が散った',
+    label: '狙いが散った',
     value: -3,
     detail: '四つのキューを順番に散らすだけでは、公演全体の狙いが薄くなる。',
   };
@@ -210,25 +210,25 @@ export function diffuseRhythmPenaltyCopy() {
 
 export function actorResponseLabel(actor: Actor, response: MainResponse, value: number) {
   if (actor.type === 'junior' && response === 'wait' && actor.state === 'elated') return '高揚した若手に待つは噛み合いにくい';
-  if (value > 0) return `${ACTOR_LABELS[actor.type]}に${RESPONSE_LABELS[response]}が合っていた`;
+  if (value > 0) return '役者に合った受け方';
   return `${ACTOR_LABELS[actor.type]}との相性は通常`;
 }
 
 export function stateResponseLabel(actor: Actor, response: MainResponse, value: number) {
-  if (value > 0) return `${STATE_LABELS[actor.state]}に${RESPONSE_LABELS[response]}が合っていた`;
+  if (value > 0) return '今の状態を読んだ対応';
   if (value < 0) return `${STATE_LABELS[actor.state]}に${RESPONSE_LABELS[response]}は負担が大きい`;
   return `${STATE_LABELS[actor.state]}との相性は通常`;
 }
 
 export function actLabel(state: GameState, response: MainResponse, value: number) {
   const label = performanceLabel(state.act, slotForTurnInAct(state.turnInAct));
-  if (value > 0) return `${label}に${RESPONSE_LABELS[response]}が合っていた`;
+  if (value > 0) return '今日の流れに乗った';
   return `${label}との相性は通常`;
 }
 
 export function prepScoreCopy(quality: PrepPredictionQuality) {
-  if (quality === 'hit') return { id: 'prep-hit', label: '準備が活きた', value: 1, detail: '上振れ幅が広がり、副作用を抑えやすくなる。' };
-  if (quality === 'partial') return { id: 'prep-partial', label: '準備が一部活きた', value: 0, detail: '見えている兆候には備えていたため、崩れにくい。' };
+  if (quality === 'hit') return { id: 'prep-hit', label: '仕込みが効いた', value: 1, detail: '上振れ幅が広がり、副作用を抑えやすくなる。' };
+  if (quality === 'partial') return { id: 'prep-partial', label: '読みの余白を活かした', value: 0, detail: '見えている兆候には備えていたため、崩れにくい。' };
   return { id: 'prep-miss', label: '別の備えだった', value: -1, detail: '上限が下がり、攻めるほど負荷が残りやすい。' };
 }
 
@@ -241,7 +241,7 @@ export function arrangeCapCopy() {
 
 export function eventScoreCopy(eventType: ResultPreview['actorEventType'], response: MainResponse, eventValue: number) {
   return {
-    label: `${EVENT_LABELS[eventType]}と${RESPONSE_LABELS[response]}の相性`,
+    label: '兆候どおりの一手',
     detail: eventValue >= 3
       ? '出来事に強く噛み合う対応。'
       : eventValue > 0

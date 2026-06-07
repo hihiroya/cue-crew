@@ -46,26 +46,95 @@ function clampPercent(value: number) {
 }
 
 const PERFORMANCE_RANKS: Array<{ rank: PerformanceInsight['rank']; threshold: number }> = [
-  { rank: 'S+', threshold: 52 },
-  { rank: 'S', threshold: 44 },
-  { rank: 'A', threshold: 34 },
-  { rank: 'B', threshold: 24 },
-  { rank: 'C', threshold: 14 },
+  { rank: 'S+', threshold: 66 },
+  { rank: 'S', threshold: 54 },
+  { rank: 'A', threshold: 42 },
+  { rank: 'B', threshold: 30 },
+  { rank: 'C', threshold: 18 },
   { rank: 'D', threshold: Number.NEGATIVE_INFINITY },
 ];
 
+const RANK_ORDER: PerformanceInsight['rank'][] = ['D', 'C', 'B', 'A', 'S', 'S+'];
+
+function rankValue(rank: PerformanceInsight['rank']) {
+  return RANK_ORDER.indexOf(rank);
+}
+
+function lowerRank(a: PerformanceInsight['rank'], b: PerformanceInsight['rank']): PerformanceInsight['rank'] {
+  return rankValue(a) <= rankValue(b) ? a : b;
+}
+
+function rankAbove(rank: PerformanceInsight['rank']): PerformanceInsight['nextRank'] {
+  const next = RANK_ORDER[rankValue(rank) + 1];
+  return next === 'D' ? null : (next ?? null) as PerformanceInsight['nextRank'];
+}
+
+function rankForScore(totalScore: number): PerformanceInsight['rank'] {
+  return PERFORMANCE_RANKS.find((item) => totalScore >= item.threshold)?.rank ?? 'D';
+}
+
+function sPlusConditionMisses(args: {
+  logs: TurnLog[];
+  totalScore: number;
+  backstageLoad: number;
+  prepHits: number;
+  sceneOrBetterCount: number;
+  frayOrAccidentCount: number;
+}): string[] {
+  const finale = args.logs.find((log) => log.act === 3 && log.turnInAct === 2);
+  return [
+    args.totalScore < 66 ? '総合評価点660以上' : null,
+    args.backstageLoad > 1 ? '最終負荷1以下' : null,
+    args.frayOrAccidentCount > 0 ? 'ほころび/事故なし' : null,
+    args.prepHits < 4 ? '準備的中4回以上' : null,
+    args.sceneOrBetterCount < 5 ? '場面化以上5回以上' : null,
+    !finale || !['masterpiece', 'scene'].includes(finale.resultTier) ? '千秋楽ソワレを場面化以上' : null,
+  ].filter((item): item is string => Boolean(item));
+}
+
+function rankCapForPerformance(args: {
+  logs: TurnLog[];
+  backstageLoad: number;
+  prepHits: number;
+  frayOrAccidentCount: number;
+}): { maxRank: PerformanceInsight['rank']; reasons: string[] } {
+  let maxRank: PerformanceInsight['rank'] = 'S+';
+  const reasons: string[] = [];
+  const accidentCount = args.logs.filter((log) => log.resultTier === 'accident').length;
+  const finale = args.logs.find((log) => log.act === 3 && log.turnInAct === 2);
+  const applyCap = (rank: PerformanceInsight['rank'], reason: string) => {
+    maxRank = lowerRank(maxRank, rank);
+    reasons.push(reason);
+  };
+
+  if (accidentCount >= 2) applyCap('B', '事故2回以上');
+  else if (accidentCount >= 1) applyCap('A', '事故あり');
+  if (args.backstageLoad >= 5) applyCap('C', '最終負荷5');
+  else if (args.backstageLoad >= 4) applyCap('B', '最終負荷4以上');
+  if (args.frayOrAccidentCount >= 3) applyCap('B', 'ほころび/事故3回以上');
+  if (args.prepHits <= 1) applyCap('A', '準備的中1回以下');
+  if (finale?.resultTier === 'accident') applyCap('B', '千秋楽ソワレが事故');
+
+  return { maxRank, reasons };
+}
+
 export function createPerformanceInsight(logs: TurnLog[], sceneScore = 0, flowScore = 0, trustScore = 0, backstageLoad = 0): PerformanceInsight {
   const totalScore = sceneScore * 2 + flowScore + trustScore - backstageLoad * 2 - (backstageLoad >= 4 ? 3 : 0);
-  const rankIndex = PERFORMANCE_RANKS.findIndex((item) => totalScore >= item.threshold);
-  const rank = PERFORMANCE_RANKS[rankIndex]?.rank ?? 'D';
-  const nextRankEntry = rankIndex > 0 ? PERFORMANCE_RANKS[rankIndex - 1] : null;
-  const nextRank = (nextRankEntry?.rank ?? null) as PerformanceInsight['nextRank'];
-  const pointsToNextRank = nextRankEntry ? Math.max(0, nextRankEntry.threshold - totalScore) : null;
   const prepHits = logs.filter((log) => log.prepMatched).length;
   const prepHitRate = logs.length > 0 ? Math.round((prepHits / logs.length) * 100) : 0;
   const masterpieceCount = logs.filter((log) => log.resultTier === 'masterpiece').length;
   const sceneOrBetterCount = logs.filter((log) => log.resultTier === 'masterpiece' || log.resultTier === 'scene').length;
   const frayOrAccidentCount = logs.filter((log) => log.resultTier === 'fray' || log.resultTier === 'accident').length;
+  const baseRank = rankForScore(totalScore);
+  const sPlusMisses = sPlusConditionMisses({ logs, totalScore, backstageLoad, prepHits, sceneOrBetterCount, frayOrAccidentCount });
+  const sPlusMaxRank: PerformanceInsight['rank'] = sPlusMisses.length ? 'S' : 'S+';
+  const cap = rankCapForPerformance({ logs, backstageLoad, prepHits, frayOrAccidentCount });
+  const maxRank = lowerRank(sPlusMaxRank, cap.maxRank);
+  const rank = lowerRank(baseRank, maxRank);
+  const nextRank = rankAbove(rank);
+  const nextRankEntry = nextRank ? PERFORMANCE_RANKS.find((item) => item.rank === nextRank) : null;
+  const blockedByConditions = nextRank !== null && totalScore >= (nextRankEntry?.threshold ?? Number.POSITIVE_INFINITY);
+  const pointsToNextRank = nextRankEntry ? Math.max(0, nextRankEntry.threshold - totalScore) : null;
   const decisionDistribution = (['catch', 'arrange', 'wait', 'cut'] as MainResponse[]).map((response) => ({
     response,
     count: logs.filter((log) => log.mainResponse === response).length,
@@ -81,7 +150,7 @@ export function createPerformanceInsight(logs: TurnLog[], sceneScore = 0, flowSc
   const buildStyle = buildStyleSummary(logs, style);
   const discovery = discoverySummary(logs, backstageLoad);
   const nextNote = reportCopy.nextNote({ frayOrAccidentCount, backstageLoad, prepHitRate, sceneOrBetterCount });
-  const scoreNote = reportCopy.scoreNote({ pointsToNextRank, nextRank, masterpieceCount, backstageLoad, prepHitRate });
+  const scoreNote = reportCopy.scoreNote({ pointsToNextRank, nextRank, masterpieceCount, backstageLoad, prepHitRate, blockedByConditions, capReasons: [...sPlusMisses, ...cap.reasons] });
   const performanceBadges = createPerformanceBadges({ logs, backstageLoad, prepHits, masterpieceCount, sceneOrBetterCount, frayOrAccidentCount, buildLevel: buildStyle.level, discoveryScore: discovery.score });
   return {
     totalScore,

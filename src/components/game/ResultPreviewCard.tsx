@@ -1,4 +1,5 @@
 import { ACTOR_LABELS, EVENT_LABELS, PREP_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS, RESULT_TIER_STARS } from '../../game/constants';
+import { displayScore, signedDisplayScore } from '../../game/scoreDisplay';
 import type { ResultPreview } from '../../game/types';
 import type { CollectionState } from '../../game/rogueliteProgress';
 import { Icon } from '../ui/Icon';
@@ -50,7 +51,7 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
           </div>
           <div className="cue-score-position">
             <span>{appCopy.resultPreview.scoreLabel}</span>
-            <strong>{preview.score}{appCopy.resultPreview.scoreUnit}</strong>
+            <strong>{displayScore(preview.score)}{appCopy.resultPreview.scoreUnit}</strong>
             <p>{scorePositionLabel(preview)}</p>
           </div>
         </div>
@@ -61,7 +62,7 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
         <div className="cue-reason-chips" aria-label={appCopy.resultPreview.reasonChips}>
           {reasonItems.map((item) => (
             <span key={item.id} className={classNames('cue-reason-chip', breakdownToneClass[item.tone])}>
-              <strong>{item.value > 0 ? `+${item.value}` : item.value}</strong>
+              <strong>{signedDisplayScore(item.value)}</strong>
               <small>{item.label}</small>
             </span>
           ))}

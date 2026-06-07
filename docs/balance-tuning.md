@@ -61,7 +61,13 @@
 | `oracle.avgScore - expectedScore.avgScore` | 5-22 |
 | `wait.avgScore - arrange.avgScore` | -10から+8 |
 | `catch.p90 - catch.avgScore` | +18以上 |
-| `cycle.p50` | S+しきい値52未満 |
+| `cycle.p50` | S+スコアしきい値66未満 |
+| `random.sPlusRate` | 5%以下 |
+| `cycle.sPlusRate` | 5%以下 |
+| `lowLoad.sPlusRate` | 10%以下 |
+| `omen.sPlusRate` | 25%以下 |
+| `expectedScore.sPlusRate` | 35%以下 |
+| `oracle.sPlusRate` | 100%以下 |
 | `cycle.frayOrAccidentRate` | 18%以上 |
 | `omen.frayOrAccidentRate` | 6%以上 |
 | `omen/expectedScore/oracle` のheat比率 | 72%以下 |
@@ -90,6 +96,10 @@
 
 - `cycle.avgScore >= 50`
 - `cycle.avgScore >= omen.avgScore - 5`
+- `cycle.p50 >= 66`
+- `random` または `cycle` のS+率が5%を超える
+- `omen` のS+率が25%を超える
+- `expectedScore` のS+率が35%を超える
 - `wait.avgLoad < 0.8 && wait.avgScore > 34`
 - `cut.avgScore < 12`
 - `catch.p90 < 40`
@@ -147,6 +157,7 @@ npm run balance:report -- --samples=48 --fail-on-warn
 | `masterpiece/run` | 1公演あたりの名場面数。 |
 | `scene+/run` | 1公演あたりの場面化以上の数。高すぎると揺れが弱い。 |
 | `fray+accident` | ほころび/事故率。高すぎても低すぎても問題。 |
+| `ranks` / `sPlus` | 終演ランク分布とS+率。高評価選択だけでS+が安定していないかを見る。 |
 | `final load` | 終演時の負荷分布。安全戦略が0に寄りすぎていないかを見る。 |
 | `turns` | ターン別の上位結果ランク。特定ターンだけ強すぎ/弱すぎを確認する。 |
 | `choice reasons` | 戦略が準備/対応を選んだ理由の簡易集計。戦略実装の偏りを見る。 |

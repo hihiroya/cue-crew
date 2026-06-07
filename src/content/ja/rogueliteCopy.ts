@@ -1,4 +1,5 @@
 import { RESPONSE_LABELS, RESULT_TIER_LABELS } from './gameLabels';
+import { displayScore, signedDisplayScore } from '../../game/scoreDisplay';
 import type { MainResponse, PerformanceResult, PrepAction, TurnLog } from '../../game/types';
 
 export const dailyRunCopy = {
@@ -57,7 +58,7 @@ export const rogueliteProgressCopy = {
     masterpieceDelta: number;
     loadDelta: number;
   }) => {
-    const score = comparison.totalScoreDelta === 0 ? '総合±0' : `総合${comparison.totalScoreDelta > 0 ? '+' : ''}${comparison.totalScoreDelta}`;
+    const score = `総合${signedDisplayScore(comparison.totalScoreDelta)}`;
     const load = comparison.loadDelta === 0 ? '負荷±0' : `負荷${comparison.loadDelta > 0 ? '+' : ''}${comparison.loadDelta}`;
     return `${score} / ${comparison.rankDeltaLabel} / 準備${signed(comparison.prepHitsDelta)} / 名場面${signed(comparison.masterpieceDelta)} / ${load}`;
   },
@@ -76,13 +77,15 @@ export const nextChallengeCopy = {
   dailyCta: '今日の巡り合わせへ',
   suggestionTitle: (totalTurn: number, response: MainResponse) => `${turnLabelByNumber(totalTurn)}で${RESPONSE_LABELS[response]}を試す`,
   suggestionBody: (suggestion: { prep: PrepAction; response: MainResponse; resultTier: TurnLog['resultTier']; totalScoreDelta: number; loadDelta: number }) => (
-    `候補: ${prepLabel(suggestion.prep)} -> ${RESPONSE_LABELS[suggestion.response]}。${RESULT_TIER_LABELS[suggestion.resultTier]}見込みで総合${signed(suggestion.totalScoreDelta)}、負荷${signed(suggestion.loadDelta)}。`
+    `候補: ${prepLabel(suggestion.prep)} -> ${RESPONSE_LABELS[suggestion.response]}。${RESULT_TIER_LABELS[suggestion.resultTier]}見込みで総合${signedDisplayScore(suggestion.totalScoreDelta)}、負荷${signed(suggestion.loadDelta)}。`
   ),
   titleWithTurn: (log: TurnLog) => `${turnLabel(log)}を詰める`,
   fallbackSwingBody: (targetTurn: TurnLog | null) => (
     `「${targetTurn?.sceneTitle ?? '詰めどころ'}」が伸びしろ。${targetTurn ? improvementReason(targetTurn) : ''}同じ巡り合わせで差分を取りにいく。`
   ),
-  nearRankTitle: (rank: PerformanceResult['insight']['nextRank'], points: number) => `${rank}まであと${points}点`,
+  nearRankTitle: (rank: PerformanceResult['insight']['nextRank'], points: number) => (
+    points <= 0 ? `${rank}条件を満たす` : `${rank}まであと${displayScore(points)}点`
+  ),
   nearRankBody: '今回の読み筋は届きかけている。準備ヒットと最終負荷を少し詰めるだけで更新圏。',
   lockedSceneTitle: '未開放の場面を探す',
   lockedSceneBody: (hint: string) => `狙い目: ${hint}。別の巡り合わせで図鑑の空白を開ける。`,
@@ -91,7 +94,7 @@ export const nextChallengeCopy = {
   firstRunTitle: '初日のマチネを開ける',
   firstRunBody: 'まずは6ターンを通して、準備と対応がどう公演の色になるかを見る。',
   replaySuggestionBody: (suggestion: { prep: PrepAction; response: MainResponse; totalScoreDelta: number }) => (
-    `候補: ${prepLabel(suggestion.prep)} -> ${RESPONSE_LABELS[suggestion.response]}。総合${signed(suggestion.totalScoreDelta)}を狙える。`
+    `候補: ${prepLabel(suggestion.prep)} -> ${RESPONSE_LABELS[suggestion.response]}。総合${signedDisplayScore(suggestion.totalScoreDelta)}を狙える。`
   ),
   replayTurnTitle: (log: TurnLog) => `${turnLabel(log)}を再演で詰める`,
   replayFallbackTitle: '同じ巡り合わせを詰める',
@@ -134,7 +137,7 @@ export const scoreRuleExtraCopy = {
   buildLevel3: '濃く出た公演の色が千秋楽の伸びを押す',
   buildLevel2: '育った公演の色が得意な対応を支える',
   buildLevelScoreLabel: (label: string, depth: 'strong' | 'growing') => (
-    depth === 'strong' ? `${label}が公演を引っぱる` : `${label}が濃く出ている`
+    depth === 'strong' ? '積み上げが形になった' : `${label}の積み上げが効いた`
   ),
 } as const;
 

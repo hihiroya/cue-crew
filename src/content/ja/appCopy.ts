@@ -1,5 +1,6 @@
 import { ACTOR_LABELS, ACTOR_TRAITS, EVENT_LABELS, PERFORMANCE_SLOT_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS, RESULT_TIER_STARS, STATE_LABELS } from './gameLabels';
 import { STATE_HINTS } from './actorStageCopy';
+import { displayScore, signedDisplayScore } from '../../game/scoreDisplay';
 import type { Actor, GameState, MainResponse, PerformanceResult, PrepAction, PrepPredictionQuality, ResultTier } from '../../game/types';
 
 export const appCopy = {
@@ -43,7 +44,7 @@ export const appCopy = {
     },
     homeDailyLabel: '今日の巡り合わせ',
     homeDailyFresh: '本日未挑戦',
-    homeDailyBest: (rank: string, score: number) => `本日ベスト ${rank} / ${score}点`,
+    homeDailyBest: (rank: string, score: number) => `本日ベスト ${rank} / ${displayScore(score)}点`,
     homeCollectionSummary: (scenes: number, achievements: number) => `図鑑 ${scenes}場面 / 称号 ${achievements}`,
     recordsLead: '再演したい公演や、公演バッジから過去の公演を選ぶ。',
     collectionLead: '未開放の場面と称号から、次に狙う公演を探す。',
@@ -68,7 +69,7 @@ export const appCopy = {
     dailyKicker: '日替わり挑戦',
     dailyStart: '今日の巡り合わせへ',
     dailyFresh: '本日未記録',
-    dailyBest: (rank: string, score: number) => `本日ベスト ${rank} / ${score}点`,
+    dailyBest: (rank: string, score: number) => `本日ベスト ${rank} / ${displayScore(score)}点`,
     collectionKicker: '図鑑',
     collectionTitle: '場面図鑑と称号',
     collectionScenes: '場面',
@@ -97,9 +98,11 @@ export const appCopy = {
     totalReview: '総合評価欄',
     allResults: '全公演結果',
     rank: '公演ランク',
-    totalScore: (score: number) => `総合評価点 ${score}`,
+    totalScore: (score: number) => `総合評価点 ${displayScore(score)}`,
     maxRank: '最高ランク到達',
-    pointsToNext: (points: number, rank: string | null) => `あと${points}点で ${rank ?? ''}`,
+    pointsToNext: (points: number, rank: string | null) => (
+      points <= 0 ? `${rank ?? '次ランク'}条件を満たすと昇格` : `あと${displayScore(points)}点で ${rank ?? ''}`
+    ),
     scoreNote: '足りない部分',
     challenge: '再演チャレンジ',
     spotlight: '今回の見どころ',
@@ -111,7 +114,7 @@ export const appCopy = {
     spotlightBadge: '公演バッジ',
     spotlightDiscovery: '発見',
     spotlightSceneUnit: '場面',
-    spotlightScoreDelta: (value: number) => `${value > 0 ? '+' : ''}${value}`,
+    spotlightScoreDelta: (value: number) => signedDisplayScore(value),
     spotlightAchievementCount: (count: number) => `${count}件`,
     spotlightBadgeCount: (count: number) => `${count}個`,
     performanceBadges: '今回の公演バッジ',
@@ -217,7 +220,7 @@ export const appCopy = {
     tierRail: '仕上がりの段階',
     reasonChips: '効いた理由',
     scoreReached: (tierLabel: string) => `${tierLabel}到達`,
-    pointsToTier: (points: number, tierLabel: string) => `${tierLabel}まであと${points}点`,
+    pointsToTier: (points: number, tierLabel: string) => `${tierLabel}まであと${displayScore(points)}点`,
     sceneRecord: '場面記録',
     scoringMemo: '採点メモ',
     frayRecovery: 'ほころび回収',
@@ -314,13 +317,14 @@ export function nextChallengeCopy(result: PerformanceResult, swingTurn: Performa
 
 export function sameSeedHintCopy(result: PerformanceResult, swingTurn: PerformanceResult['logs'][number] | null) {
   if (result.insight.pointsToNextRank === null) return '最高ランク到達。同じ巡り合わせで別の公演の色を狙える。';
+  if (result.insight.pointsToNextRank <= 0) return `${result.insight.nextRank}条件は点数以外が詰めどころ。同じ巡り合わせで負荷、準備、終盤を整えたい。`;
   if (swingTurn) {
-    return `${swingTurn.act}日目${PERFORMANCE_SLOT_LABELS[swingTurn.turnInAct === 1 ? 'matinee' : 'soiree'].label}の「${swingTurn.sceneTitle}」が詰めどころ。あと${result.insight.pointsToNextRank}点を狙う。`;
+    return `${swingTurn.act}日目${PERFORMANCE_SLOT_LABELS[swingTurn.turnInAct === 1 ? 'matinee' : 'soiree'].label}の「${swingTurn.sceneTitle}」が詰めどころ。あと${displayScore(result.insight.pointsToNextRank)}点を狙う。`;
   }
   if (result.insight.bestCue) {
-    return `${result.insight.bestCue.act}日目${PERFORMANCE_SLOT_LABELS[result.insight.bestCue.turnInAct === 1 ? 'matinee' : 'soiree'].label}を基準に、あと${result.insight.pointsToNextRank}点を詰めたい。`;
+    return `${result.insight.bestCue.act}日目${PERFORMANCE_SLOT_LABELS[result.insight.bestCue.turnInAct === 1 ? 'matinee' : 'soiree'].label}を基準に、あと${displayScore(result.insight.pointsToNextRank)}点を詰めたい。`;
   }
-  return `あと${result.insight.pointsToNextRank}点。準備と負荷管理を詰める。`;
+  return `あと${displayScore(result.insight.pointsToNextRank)}点。準備と負荷管理を詰める。`;
 }
 
 export function bestCueMeta(cue: NonNullable<PerformanceResult['insight']['bestCue']>) {

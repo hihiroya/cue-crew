@@ -1,4 +1,5 @@
 import { RESPONSE_LABELS } from '../../game/constants';
+import { signedDisplayScore } from '../../game/scoreDisplay';
 import type { GameState, MainResponse, ResponseInsight } from '../../game/types';
 import type { ResponseReplayDelta } from '../../game/rogueliteProgress';
 import { Icon } from '../ui/Icon';
@@ -130,7 +131,7 @@ export function ResponseConsole({
       {buildLevelItem ? (
         <div className="console-fray relation-recover">
           <span>{responsePanelCopy.buildLevel}</span>
-          <strong>{buildLevelItem.label} {buildLevelItem.value > 0 ? `+${buildLevelItem.value}` : buildLevelItem.value}</strong>
+          <strong>{buildLevelItem.label} {signedDisplayScore(buildLevelItem.value)}</strong>
         </div>
       ) : null}
       {replayDelta ? (

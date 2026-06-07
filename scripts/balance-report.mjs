@@ -74,7 +74,7 @@ const BALANCE_TARGETS = {
     oracleExpectedGap: [5, 22],
     waitArrangeGap: [-10, 8],
     minCatchUpside: 18,
-    cycleMedianSPlusCap: 52,
+    cycleMedianSPlusCap: 66,
     waitSafetyLoad: 0.8,
     waitSafetyScore: 34,
     minCatchP90: 40,
@@ -83,6 +83,14 @@ const BALANCE_TARGETS = {
     minOmenFrayOrAccidentRate: 6,
     maxSkilledHeatShare: 72,
     maxStyleStrategyWrongColorShare: 28,
+  },
+  maxSPlusRate: {
+    random: 5,
+    cycle: 5,
+    lowLoad: 10,
+    omen: 25,
+    expectedScore: 35,
+    oracle: 100,
   },
 };
 
@@ -155,6 +163,7 @@ function runStrategy(strategy, count, context) {
     prepHits: 0,
     turns: 0,
     tiers: {},
+    ranks: {},
     styles: {},
     events: {},
     responses: {},
@@ -179,6 +188,7 @@ function runStrategy(strategy, count, context) {
     totals.scores.push(result.insight.totalScore);
     totals.loads.push(result.backstageLoad);
     increment(totals.loadDistribution, result.backstageLoad);
+    increment(totals.ranks, result.insight.rank);
     result.logs.forEach((log, logIndex) => {
       totals.turns += 1;
       if (log.prepMatched) totals.prepHits += 1;
@@ -205,6 +215,7 @@ function runStrategy(strategy, count, context) {
     sceneOrBetterPerRun: ((totals.tiers.masterpiece ?? 0) + (totals.tiers.scene ?? 0)) / count,
     frayOrAccidentRate: totals.turns ? (((totals.tiers.fray ?? 0) + (totals.tiers.accident ?? 0)) / totals.turns) * 100 : 0,
     accidentRate: totals.turns ? ((totals.tiers.accident ?? 0) / totals.turns) * 100 : 0,
+    sPlusRate: count ? ((totals.ranks['S+'] ?? 0) / count) * 100 : 0,
     ...totals,
   };
 }
@@ -434,6 +445,7 @@ function printReport(report, context, oracle) {
   console.log('');
   console.log(`[${report.id}] avgScore=${round(report.avgScore)} p10=${round(report.p10)} p50=${round(report.p50)} p90=${round(report.p90)} best=${round(report.best)} worst=${round(report.worst)}${gap}`);
   console.log(`  avgLoad=${round(report.avgLoad)} prepHit=${round(report.prepHitRate)}% masterpiece/run=${round(report.masterpiecePerRun)} scene+/run=${round(report.sceneOrBetterPerRun)} fray+accident=${round(report.frayOrAccidentRate)}% accident=${round(report.accidentRate)}%`);
+  console.log(`  ranks: ${formatCounts(report.ranks, {}, 99)} sPlus=${round(report.sPlusRate)}%`);
   console.log(`  final load: ${formatCounts(report.loadDistribution, {}, 99)}`);
   console.log(`  tiers: ${formatCounts(report.tiers, context.RESULT_TIER_LABELS)}`);
   console.log(`  turns: ${formatTurnDistribution(report.turnsByNumber, context.RESULT_TIER_LABELS)}`);
@@ -481,7 +493,10 @@ function balanceChecks(reports) {
   const catchUpside = byId.catch.p90 - byId.catch.avgScore;
   add(catchUpside >= BALANCE_TARGETS.relative.minCatchUpside, `catch should have visible upside; p90-avg=${round(catchUpside)}`);
 
-  add(byId.cycle.p50 < BALANCE_TARGETS.relative.cycleMedianSPlusCap, `cycle median should stay below S+ threshold ${BALANCE_TARGETS.relative.cycleMedianSPlusCap}; p50=${round(byId.cycle.p50)}`);
+  add(byId.cycle.p50 < BALANCE_TARGETS.relative.cycleMedianSPlusCap, `cycle median should stay below S+ score threshold ${BALANCE_TARGETS.relative.cycleMedianSPlusCap}; p50=${round(byId.cycle.p50)}`);
+  Object.entries(BALANCE_TARGETS.maxSPlusRate).forEach(([id, max]) => {
+    add(byId[id].sPlusRate <= max, `${id}.sPlusRate should be <= ${max}%; actual=${round(byId[id].sPlusRate)}%`);
+  });
   add(!(byId.wait.avgLoad < BALANCE_TARGETS.relative.waitSafetyLoad && byId.wait.avgScore > BALANCE_TARGETS.relative.waitSafetyScore), `wait should not be both very safe and high scoring; avgScore=${round(byId.wait.avgScore)} avgLoad=${round(byId.wait.avgLoad)}`);
   add(byId.catch.p90 >= BALANCE_TARGETS.relative.minCatchP90, `catch p90 should reach at least ${BALANCE_TARGETS.relative.minCatchP90}; p90=${round(byId.catch.p90)}`);
   add(byId.cycle.frayOrAccidentRate >= BALANCE_TARGETS.relative.minCycleFrayOrAccidentRate, `cycle should keep visible texture; fray+accident=${round(byId.cycle.frayOrAccidentRate)}%`);
@@ -531,6 +546,7 @@ async function loadComparison(targetPath, reports) {
         prepHitRate: delta(report.prepHitRate, before.prepHitRate),
         frayOrAccidentRate: delta(report.frayOrAccidentRate, before.frayOrAccidentRate),
         accidentRate: delta(report.accidentRate, before.accidentRate),
+        sPlusRate: delta(report.sPlusRate, before.sPlusRate ?? 0),
       };
     });
 }
@@ -539,7 +555,7 @@ function printComparison(comparison) {
   console.log('');
   console.log('Comparison:');
   comparison.forEach((item) => {
-    console.log(`  ${item.id}: avgScore ${signed(item.avgScore)}, p50 ${signed(item.p50)}, p90 ${signed(item.p90)}, avgLoad ${signed(item.avgLoad)}, prepHit ${signed(item.prepHitRate)}%, fray+accident ${signed(item.frayOrAccidentRate)}%, accident ${signed(item.accidentRate)}%`);
+    console.log(`  ${item.id}: avgScore ${signed(item.avgScore)}, p50 ${signed(item.p50)}, p90 ${signed(item.p90)}, avgLoad ${signed(item.avgLoad)}, prepHit ${signed(item.prepHitRate)}%, fray+accident ${signed(item.frayOrAccidentRate)}%, accident ${signed(item.accidentRate)}%, S+ ${signed(item.sPlusRate)}%`);
   });
 }
 
