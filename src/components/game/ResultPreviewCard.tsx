@@ -4,6 +4,7 @@ import type { CollectionState } from '../../game/rogueliteProgress';
 import { Icon } from '../ui/Icon';
 import { classNames } from '../ui/classNames';
 import { appCopy, deltaImpact, prepQualityBanner, type DeltaKind } from '../../content/ja/appCopy';
+import { backstageLogCopy, backstageResultLog } from '../../content/ja/backstageLogCopy';
 
 type Props = {
   preview: ResultPreview | null;
@@ -33,6 +34,7 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
     .filter((item) => item.value !== 0)
     .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
     .slice(0, 3);
+  const backstageNote = backstageResultLog(preview);
   return (
     <section className={classNames('result-preview cue-result-ticket', resultTierClass[preview.resultTier], resultModeClass[preview.resultMode])}>
       <div className="result-ticket-head">
@@ -74,6 +76,10 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
         <span>{appCopy.resultPreview.sceneRecord}</span>
         <p>{preview.flavorText}</p>
       </article>
+      <aside className="backstage-log-note">
+        <span>{backstageLogCopy.label}</span>
+        <p>{backstageNote}</p>
+      </aside>
       <div className={classNames('prep-hit-banner cue-stamp', prepQualityClass[preview.prepQuality])}>
         <span>{prepBanner.label}</span>
         <strong>{PREP_LABELS[preview.prepAction]} / {prepBanner.detail}</strong>

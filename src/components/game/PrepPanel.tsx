@@ -15,6 +15,7 @@ import {
   prepPerformanceMemo,
   scoreMoodMemo,
 } from '../../content/ja/appCopy';
+import { backstageLogCopy, backstagePrepLog } from '../../content/ja/backstageLogCopy';
 import styles from './PrepPanel.module.css';
 import { buildPrepPanelViewModel, type PrepTone } from './prepPanelViewModel';
 
@@ -36,6 +37,13 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
     [inspectedPrep, previousPrep, visibleOmens],
   );
   const { inspected } = viewModel;
+  const backstageNote = backstagePrepLog({
+    actor: focusActor,
+    prep: inspected.prep,
+    seed: state.seed,
+    totalTurn: state.totalTurn,
+    visibleOmens,
+  });
   const isApproving = approvingPrep === inspected.prep;
   const approvalRef = useRef<HTMLDivElement | null>(null);
 
@@ -164,6 +172,10 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
               <p>{actorBreathMemo(focusActor)}</p>
             </div>
           </div>
+          <aside className="backstage-log-note">
+            <span>{backstageLogCopy.label}</span>
+            <p>{backstageNote}</p>
+          </aside>
           <section className="cue-performance-mood" aria-label={appCopy.prep.scoreMood}>
             <span>{appCopy.prep.scoreMood}</span>
             <ScoreMoodLine icon="scene" label={appCopy.prep.scoreLabels.scene} value={state.sceneScore} body={scoreMoodMemo('scene', state.sceneScore)} />

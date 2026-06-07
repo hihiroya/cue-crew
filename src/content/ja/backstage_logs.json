@@ -1,0 +1,1803 @@
+[
+  {
+    "id": "prep_junior_stepForward_watch_01",
+    "phase": "prep",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "stepForward",
+    "prep": "watch",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "若手が袖で台詞を早めに回している。舞台監督は前へ出る可能性を台本に書き、照明卓へ前明かりの残しを確認した。"
+  },
+  {
+    "id": "prep_junior_adlib_watch_02",
+    "phase": "prep",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "adlib",
+    "prep": "watch",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "wingStaff"
+    ],
+    "text": "若手が袖で台本にない相づちを試している。音響は入りを急がず、袖スタッフは返しの呼び込みを一つ後ろへ置いた。"
+  },
+  {
+    "id": "prep_junior_tempoRush_tightenFlow_03",
+    "phase": "prep",
+    "actorType": "junior",
+    "actorState": "anxious",
+    "event": "tempoRush",
+    "prep": "tightenFlow",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "wingStaff"
+    ],
+    "text": "若手の返事が短く、台詞の頭だけ先に出ている。音響は入りを一拍確認し、袖スタッフは出る順番を紙片に書いた。"
+  },
+  {
+    "id": "prep_junior_heatUp_makeSpace_04",
+    "phase": "prep",
+    "actorType": "junior",
+    "actorState": "fatigued",
+    "event": "heatUp",
+    "prep": "makeSpace",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "wingStaff",
+      "props"
+    ],
+    "text": "疲れた若手が水を置いたまま声だけ大きくしている。袖スタッフは待機位置を空け、小道具卓の受け渡しを奥へずらした。"
+  },
+  {
+    "id": "prep_junior_stepForward_prepareTransition_05",
+    "phase": "prep",
+    "actorType": "junior",
+    "actorState": "immersed",
+    "event": "stepForward",
+    "prep": "prepareTransition",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "wingStaff",
+      "props"
+    ],
+    "text": "若手が返事をしないまま出の位置だけ前に寄っている。袖スタッフは呼び込みを見直し、小道具卓は導線を細く空けた。"
+  },
+  {
+    "id": "prep_junior_heatUp_watch_06",
+    "phase": "prep",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "heatUp",
+    "prep": "watch",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "若手の声が袖の奥まで届いている。舞台監督は拾う合図を台本の端に移し、照明は前明かりをすぐ残せるよう手を置いた。"
+  },
+  {
+    "id": "prep_junior_positionShift_tightenFlow_07",
+    "phase": "prep",
+    "actorType": "junior",
+    "actorState": "anxious",
+    "event": "positionShift",
+    "prep": "tightenFlow",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "若手が立ち位置の白テープを二度見している。照明はスポットの中心を確認し、袖スタッフは出る足の向きを小声で戻した。"
+  },
+  {
+    "id": "prep_junior_delayedExit_prepareTransition_08",
+    "phase": "prep",
+    "actorType": "junior",
+    "actorState": "fatigued",
+    "event": "delayedExit",
+    "prep": "prepareTransition",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "costume"
+    ],
+    "text": "若手の退場確認がいつもより遅い。舞台監督は暗転の合図を手前に置き、衣装係は裾が引っかからないか袖で見た。"
+  },
+  {
+    "id": "prep_lead_silence_makeSpace_09",
+    "phase": "prep",
+    "actorType": "lead",
+    "actorState": "contemplative",
+    "event": "silence",
+    "prep": "makeSpace",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "lighting"
+    ],
+    "text": "主演が台詞前の間を長く取っている。音響は次の音を入れ急がず、照明は明かりを動かさない位置を確認した。"
+  },
+  {
+    "id": "prep_lead_delayedExit_makeSpace_10",
+    "phase": "prep",
+    "actorType": "lead",
+    "actorState": "immersed",
+    "event": "delayedExit",
+    "prep": "makeSpace",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "主演が退場口を見ず、相手役の目線を追っている。照明は明かりの残しを見直し、袖スタッフは呼び込みを遅らせた。"
+  },
+  {
+    "id": "prep_lead_silence_watch_11",
+    "phase": "prep",
+    "actorType": "lead",
+    "actorState": "anxious",
+    "event": "silence",
+    "prep": "watch",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "wingStaff",
+      "stageManager"
+    ],
+    "text": "主演が袖で同じ台詞を小さく確認している。袖スタッフは出の合図を声にせず、舞台監督は沈黙が長引く箇所を見ている。"
+  },
+  {
+    "id": "prep_lead_delayedExit_prepareTransition_12",
+    "phase": "prep",
+    "actorType": "lead",
+    "actorState": "fatigued",
+    "event": "delayedExit",
+    "prep": "prepareTransition",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "costume",
+      "stageManager"
+    ],
+    "text": "主演の歩幅がいつもより小さい。衣装係は裾を直し、舞台監督は退場が遅れた場合の暗転位置を台本に書き足した。"
+  },
+  {
+    "id": "prep_lead_heatUp_makeSpace_13",
+    "phase": "prep",
+    "actorType": "lead",
+    "actorState": "contemplative",
+    "event": "heatUp",
+    "prep": "makeSpace",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "sound"
+    ],
+    "text": "主演が静かなまま声量だけ上げている。照明は前明かりを落とし切らず、音響は次の入りまで間を残す準備をした。"
+  },
+  {
+    "id": "prep_lead_adlib_watch_14",
+    "phase": "prep",
+    "actorType": "lead",
+    "actorState": "immersed",
+    "event": "adlib",
+    "prep": "watch",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "wingStaff"
+    ],
+    "text": "主演が台詞の前後を少し替えて読んでいる。音響は入りを固定せず、袖スタッフは呼び込みを急がないで待った。"
+  },
+  {
+    "id": "prep_lead_positionShift_tightenFlow_15",
+    "phase": "prep",
+    "actorType": "lead",
+    "actorState": "fatigued",
+    "event": "positionShift",
+    "prep": "tightenFlow",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "costume"
+    ],
+    "text": "主演の立ち位置が白テープより半歩内側に寄っている。照明はスポットの端を確認し、衣装係は袖の引っかかりを直した。"
+  },
+  {
+    "id": "prep_lead_tempoRush_tightenFlow_16",
+    "phase": "prep",
+    "actorType": "lead",
+    "actorState": "anxious",
+    "event": "tempoRush",
+    "prep": "tightenFlow",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "sound"
+    ],
+    "text": "主演が確認の返事を食い気味に返している。舞台監督は会話の頭を囲み、音響は次の キュー を早く出しすぎない位置に置いた。"
+  },
+  {
+    "id": "prep_skilled_positionShift_tightenFlow_17",
+    "phase": "prep",
+    "actorType": "skilled",
+    "actorState": "immersed",
+    "event": "positionShift",
+    "prep": "tightenFlow",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "技巧派が白テープを見ずに立ち位置を取っている。照明は中心線を確認し、袖スタッフは群像の並びを紙片に直した。"
+  },
+  {
+    "id": "prep_skilled_ensembleWaver_tightenFlow_18",
+    "phase": "prep",
+    "actorType": "skilled",
+    "actorState": "anxious",
+    "event": "ensembleWaver",
+    "prep": "tightenFlow",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "wingStaff",
+      "props"
+    ],
+    "text": "技巧派が周囲の出はけを一人ずつ確認している。袖スタッフは待機列を一本にまとめ、小道具卓は通路側を空けた。"
+  },
+  {
+    "id": "prep_skilled_delayedExit_prepareTransition_19",
+    "phase": "prep",
+    "actorType": "skilled",
+    "actorState": "fatigued",
+    "event": "delayedExit",
+    "prep": "prepareTransition",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "props",
+      "stageManager"
+    ],
+    "text": "技巧派の退場後に使う小道具が卓の端に寄っている。小道具係は予備を手前に出し、舞台監督は暗転後の呼び込みを確認した。"
+  },
+  {
+    "id": "prep_skilled_silence_makeSpace_20",
+    "phase": "prep",
+    "actorType": "skilled",
+    "actorState": "immersed",
+    "event": "silence",
+    "prep": "makeSpace",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "stageManager"
+    ],
+    "text": "技巧派が相手の台詞後にすぐ返さず、立ったまま間を測っている。音響は無音のまま待つ位置を決め、舞台監督は次の合図を保留にした。"
+  },
+  {
+    "id": "prep_skilled_positionShift_watch_21",
+    "phase": "prep",
+    "actorType": "skilled",
+    "actorState": "contemplative",
+    "event": "positionShift",
+    "prep": "watch",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "技巧派が白テープを避けるように足を置いている。照明は端の見え方を見直し、袖スタッフは出の直前に位置を小さく確認する。"
+  },
+  {
+    "id": "prep_skilled_tempoRush_prepareTransition_22",
+    "phase": "prep",
+    "actorType": "skilled",
+    "actorState": "anxious",
+    "event": "tempoRush",
+    "prep": "prepareTransition",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "props"
+    ],
+    "text": "技巧派の段取り確認が早口になっている。舞台監督は転換 キュー を前倒し候補に入れ、小道具係は片付け順を札で分けた。"
+  },
+  {
+    "id": "prep_skilled_ensembleWaver_prepareTransition_23",
+    "phase": "prep",
+    "actorType": "skilled",
+    "actorState": "fatigued",
+    "event": "ensembleWaver",
+    "prep": "prepareTransition",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "wingStaff",
+      "props"
+    ],
+    "text": "疲れた技巧派の周りで待機列が詰まり始めている。袖スタッフは呼び込みを一人ずつに戻し、小道具卓は通路側を空けた。"
+  },
+  {
+    "id": "prep_skilled_heatUp_makeSpace_24",
+    "phase": "prep",
+    "actorType": "skilled",
+    "actorState": "immersed",
+    "event": "heatUp",
+    "prep": "makeSpace",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "sound"
+    ],
+    "text": "技巧派が細かい段取りを保ったまま声を強めている。照明は動かす幅を残し、音響は次の音を入れずに待つ準備をした。"
+  },
+  {
+    "id": "prep_any_positionShift_tightenFlow_25",
+    "phase": "prep",
+    "actorType": "any",
+    "actorState": "anxious",
+    "event": "positionShift",
+    "prep": "tightenFlow",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "舞台上の白テープを見る回数が増えている。照明は中心の見え方を確認し、袖スタッフは出る足の向きを小声でそろえた。"
+  },
+  {
+    "id": "prep_any_heatUp_watch_26",
+    "phase": "prep",
+    "actorType": "any",
+    "actorState": "elated",
+    "event": "heatUp",
+    "prep": "watch",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "sound"
+    ],
+    "text": "袖の会話がいつもより大きい。照明は前明かりの残しを二つに絞り、音響は残響を切らずに待つ位置へ手を置いた。"
+  },
+  {
+    "id": "prep_any_tempoRush_prepareTransition_27",
+    "phase": "prep",
+    "actorType": "any",
+    "actorState": "fatigued",
+    "event": "tempoRush",
+    "prep": "prepareTransition",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "props"
+    ],
+    "text": "転換前の確認が短くなり、返事だけが先に飛んでいる。舞台監督は暗転 キュー を近くへ寄せ、小道具係は回収箱を通路側に置いた。"
+  },
+  {
+    "id": "prep_any_silence_makeSpace_28",
+    "phase": "prep",
+    "actorType": "any",
+    "actorState": "contemplative",
+    "event": "silence",
+    "prep": "makeSpace",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "lighting"
+    ],
+    "text": "台詞前の止まり方が長い。音響は次の音を入れない手順を確認し、照明は明かりを動かさず残す位置を合わせた。"
+  },
+  {
+    "id": "prep_junior_delayedExit_makeSpace_29",
+    "phase": "prep",
+    "actorType": "junior",
+    "actorState": "contemplative",
+    "event": "delayedExit",
+    "prep": "makeSpace",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "wingStaff",
+      "costume"
+    ],
+    "text": "若手が退場口を見てから一拍置いて返事をした。袖スタッフは呼び込みを遅らせ、衣装係は通路に出た裾を内側へ戻した。"
+  },
+  {
+    "id": "prep_lead_stepForward_watch_30",
+    "phase": "prep",
+    "actorType": "lead",
+    "actorState": "elated",
+    "event": "stepForward",
+    "prep": "watch",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "主演が珍しく立ち位置より前で相手を見ている。舞台監督は前へ出る可能性に印を付け、照明は顔の残り方を確認した。"
+  },
+  {
+    "id": "prep_skilled_adlib_watch_31",
+    "phase": "prep",
+    "actorType": "skilled",
+    "actorState": "elated",
+    "event": "adlib",
+    "prep": "watch",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "sound"
+    ],
+    "text": "技巧派が段取り確認の合間に別の言い回しを試している。舞台監督は拾う行を細く囲み、音響は入りを固定しないで待った。"
+  },
+  {
+    "id": "prep_any_ensembleWaver_tightenFlow_32",
+    "phase": "prep",
+    "actorType": "any",
+    "actorState": "immersed",
+    "event": "ensembleWaver",
+    "prep": "tightenFlow",
+    "response": null,
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "wingStaff"
+    ],
+    "text": "群像の待機列で一人だけ足の向きが違う。舞台監督は並び順を確認し、袖スタッフは呼び込みの順番を紙片に書き直した。"
+  },
+  {
+    "id": "response_junior_stepForward_catch_01",
+    "phase": "response",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "stepForward",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "若手が予定より早く前へ出た。舞台監督は台本から目を上げ、照明卓へ拾う合図を一拍早く送っている。"
+  },
+  {
+    "id": "response_junior_adlib_catch_02",
+    "phase": "response",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "adlib",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "wingStaff"
+    ],
+    "text": "アドリブが台詞の隙間に入った。音響は入らずに言葉の行き先を見て、袖スタッフは呼び込みを半拍だけ止めている。"
+  },
+  {
+    "id": "response_any_heatUp_catch_03",
+    "phase": "response",
+    "actorType": "any",
+    "actorState": "elated",
+    "event": "heatUp",
+    "prep": "makeSpace",
+    "response": "catch",
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "sound"
+    ],
+    "text": "声量が上がり、前明かりの端まで場面が膨らむ。照明は明かりを残し、音響は足さずに余白を保っている。"
+  },
+  {
+    "id": "response_lead_delayedExit_catch_04",
+    "phase": "response",
+    "actorType": "lead",
+    "actorState": "immersed",
+    "event": "delayedExit",
+    "prep": "makeSpace",
+    "response": "catch",
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "主演の退場が遅れている。舞台監督は暗転を止め、照明は背中の明かりを残して次の合図を待っている。"
+  },
+  {
+    "id": "response_skilled_positionShift_catch_05",
+    "phase": "response",
+    "actorType": "skilled",
+    "actorState": "immersed",
+    "event": "positionShift",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "sound"
+    ],
+    "text": "技巧派の立ち位置が少し外へ出た。照明は中心を追いすぎず、音響も入らずに、そのズレの扱いを見ている。"
+  },
+  {
+    "id": "response_junior_tempoRush_catch_06",
+    "phase": "response",
+    "actorType": "junior",
+    "actorState": "anxious",
+    "event": "tempoRush",
+    "prep": "tightenFlow",
+    "response": "catch",
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "wingStaff"
+    ],
+    "text": "若手の台詞が前へ走った。音響は次の音を半拍だけ待ち、袖スタッフは呼び込みを止めずに待機列を詰めている。"
+  },
+  {
+    "id": "response_lead_silence_catch_07",
+    "phase": "response",
+    "actorType": "lead",
+    "actorState": "contemplative",
+    "event": "silence",
+    "prep": "makeSpace",
+    "response": "catch",
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "sound"
+    ],
+    "text": "主演の沈黙が長いが、目線は客席へ残っている。舞台監督は拾う合図を伏せたまま、音響の入りを止めている。"
+  },
+  {
+    "id": "response_skilled_ensembleWaver_catch_08",
+    "phase": "response",
+    "actorType": "skilled",
+    "actorState": "anxious",
+    "event": "ensembleWaver",
+    "prep": "tightenFlow",
+    "response": "catch",
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "群像の輪が外へ揺れた。照明は全体を少し広く残し、袖スタッフは次の出を止めずに待機列だけ詰めている。"
+  },
+  {
+    "id": "response_junior_stepForward_arrange_09",
+    "phase": "response",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "stepForward",
+    "prep": "watch",
+    "response": "arrange",
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "若手が半歩前に出た。舞台監督は戻す合図を強く出さず、照明は中心を少し残して立ち位置を整えている。"
+  },
+  {
+    "id": "response_junior_adlib_arrange_10",
+    "phase": "response",
+    "actorType": "junior",
+    "actorState": "anxious",
+    "event": "adlib",
+    "prep": "watch",
+    "response": "arrange",
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "wingStaff"
+    ],
+    "text": "アドリブのあと、相手役の返しが遅れている。舞台監督は次の台詞位置を示し、袖スタッフは呼び込みを一つ後ろへ下げた。"
+  },
+  {
+    "id": "response_any_heatUp_arrange_11",
+    "phase": "response",
+    "actorType": "any",
+    "actorState": "elated",
+    "event": "heatUp",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "lighting"
+    ],
+    "text": "場面の熱が上がり、拍が広がり始めた。音響は次の入りを基準に戻し、照明は明かりの広がりを抑えている。"
+  },
+  {
+    "id": "response_lead_silence_arrange_12",
+    "phase": "response",
+    "actorType": "lead",
+    "actorState": "contemplative",
+    "event": "silence",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "主演が長く黙ったまま立ち位置を少し変えた。舞台監督は次の立ち位置を示し、照明は明かりの中心を戻している。"
+  },
+  {
+    "id": "response_skilled_positionShift_arrange_13",
+    "phase": "response",
+    "actorType": "skilled",
+    "actorState": "immersed",
+    "event": "positionShift",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "技巧派の足が白テープから半歩外れた。照明はスポットを動かしすぎず、袖スタッフは群像の基準位置を確認した。"
+  },
+  {
+    "id": "response_junior_tempoRush_arrange_14",
+    "phase": "response",
+    "actorType": "junior",
+    "actorState": "anxious",
+    "event": "tempoRush",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "stageManager"
+    ],
+    "text": "台詞の拍が先に走っている。音響は次の キュー を動かさず、舞台監督は相手役の入りでテンポを戻す合図を構えた。"
+  },
+  {
+    "id": "response_lead_delayedExit_arrange_15",
+    "phase": "response",
+    "actorType": "lead",
+    "actorState": "fatigued",
+    "event": "delayedExit",
+    "prep": "prepareTransition",
+    "response": "arrange",
+    "resultTier": null,
+    "staff": [
+      "wingStaff",
+      "stageManager"
+    ],
+    "text": "主演の退場が遅れ、袖の呼び込みが詰まりかけている。袖スタッフは待機列を一歩下げ、舞台監督は次の出を整えている。"
+  },
+  {
+    "id": "response_skilled_ensembleWaver_arrange_16",
+    "phase": "response",
+    "actorType": "skilled",
+    "actorState": "anxious",
+    "event": "ensembleWaver",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "群像の輪郭がゆっくり崩れた。照明は広がった位置を見せすぎないよう絞り、袖スタッフは次の出を一人ずつ戻す。"
+  },
+  {
+    "id": "response_junior_stepForward_wait_17",
+    "phase": "response",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "stepForward",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "若手が前へ出たが、すぐには戻さない。舞台監督は次の キュー を保留し、照明は前明かりを動かさず待っている。"
+  },
+  {
+    "id": "response_junior_adlib_wait_18",
+    "phase": "response",
+    "actorType": "junior",
+    "actorState": "immersed",
+    "event": "adlib",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "stageManager"
+    ],
+    "text": "台本にない一言のあと、相手役が目を上げた。音響は入らず、舞台監督は返しの台詞まで合図を遅らせている。"
+  },
+  {
+    "id": "response_any_heatUp_wait_19",
+    "phase": "response",
+    "actorType": "any",
+    "actorState": "elated",
+    "event": "heatUp",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "sound"
+    ],
+    "text": "場面の熱が上がったまま止まらない。照明は残しを維持し、音響は次の音を入れずに客席側の反応を待っている。"
+  },
+  {
+    "id": "response_lead_silence_wait_20",
+    "phase": "response",
+    "actorType": "lead",
+    "actorState": "contemplative",
+    "event": "silence",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "wingStaff"
+    ],
+    "text": "主演の沈黙が続いている。音響は入らず、袖スタッフは呼び込みを動かさずに、返しの台詞まで待っている。"
+  },
+  {
+    "id": "response_skilled_positionShift_wait_21",
+    "phase": "response",
+    "actorType": "skilled",
+    "actorState": "immersed",
+    "event": "positionShift",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "stageManager"
+    ],
+    "text": "技巧派の位置が半歩ずれたが、相手役の視線がそこへ向いた。照明は中心を戻さず、舞台監督は一拍待っている。"
+  },
+  {
+    "id": "response_junior_tempoRush_wait_22",
+    "phase": "response",
+    "actorType": "junior",
+    "actorState": "anxious",
+    "event": "tempoRush",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "stageManager"
+    ],
+    "text": "若手の台詞が前へ走った。音響は入りを止め、舞台監督は相手役が拍を取り直すまで次の キュー を出さない。"
+  },
+  {
+    "id": "response_lead_delayedExit_wait_23",
+    "phase": "response",
+    "actorType": "lead",
+    "actorState": "immersed",
+    "event": "delayedExit",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "主演が退場口で止まった。照明は背中の明かりを残し、袖スタッフは次の呼び込みを小声で止めている。"
+  },
+  {
+    "id": "response_skilled_ensembleWaver_wait_24",
+    "phase": "response",
+    "actorType": "skilled",
+    "actorState": "fatigued",
+    "event": "ensembleWaver",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "wingStaff"
+    ],
+    "text": "群像の動きが揺れたまま、誰も先に直せない。舞台監督は整える キュー を出さず、袖の待機列だけ動かさずに置いた。"
+  },
+  {
+    "id": "response_junior_stepForward_cut_25",
+    "phase": "response",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "stepForward",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "若手が大きく前へ出た。舞台監督は拾わず暗転 キュー を構え、照明は前明かりを閉じる位置まで指を戻している。"
+  },
+  {
+    "id": "response_junior_adlib_cut_26",
+    "phase": "response",
+    "actorType": "junior",
+    "actorState": "anxious",
+    "event": "adlib",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "lighting"
+    ],
+    "text": "アドリブの余白が広がる前に、音響は入りを短く構えた。照明も閉じる位置へ手を戻し、沈黙を長く残さない。"
+  },
+  {
+    "id": "response_any_heatUp_cut_27",
+    "phase": "response",
+    "actorType": "any",
+    "actorState": "elated",
+    "event": "heatUp",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "props"
+    ],
+    "text": "熱が上がりすぎる前に、照明は暗転位置へ手を置いた。小道具卓では次の受け渡しを止めず、舞台監督の キュー を待つ。"
+  },
+  {
+    "id": "response_lead_silence_cut_28",
+    "phase": "response",
+    "actorType": "lead",
+    "actorState": "contemplative",
+    "event": "silence",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "lighting"
+    ],
+    "text": "主演の沈黙が長くなり、次場面の音が近い。音響は短い入りだけ残し、照明は切る位置へ手を戻して待っている。"
+  },
+  {
+    "id": "response_skilled_positionShift_cut_29",
+    "phase": "response",
+    "actorType": "skilled",
+    "actorState": "fatigued",
+    "event": "positionShift",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": null,
+    "staff": [
+      "lighting",
+      "props"
+    ],
+    "text": "技巧派の位置が転換口に近づいた。照明は暗転を早める構えを取り、小道具係は回収の手順を一つ前へ詰めている。"
+  },
+  {
+    "id": "response_junior_tempoRush_cut_30",
+    "phase": "response",
+    "actorType": "junior",
+    "actorState": "anxious",
+    "event": "tempoRush",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": null,
+    "staff": [
+      "sound",
+      "lighting"
+    ],
+    "text": "台詞のテンポが転換前まで走ってきた。音響は終わりの音を早めに構え、照明は暗転の位置へ指を戻している。"
+  },
+  {
+    "id": "response_lead_delayedExit_cut_31",
+    "phase": "response",
+    "actorType": "lead",
+    "actorState": "fatigued",
+    "event": "delayedExit",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": null,
+    "staff": [
+      "wingStaff",
+      "lighting"
+    ],
+    "text": "主演の退場が遅れ、袖の出が詰まり始めた。照明は暗転を近づけ、袖スタッフは次の役者を一歩奥で止めている。"
+  },
+  {
+    "id": "response_skilled_ensembleWaver_cut_32",
+    "phase": "response",
+    "actorType": "skilled",
+    "actorState": "anxious",
+    "event": "ensembleWaver",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": null,
+    "staff": [
+      "stageManager",
+      "props"
+    ],
+    "text": "群像の動きが戻り切らない。舞台監督は次場面へ切る キュー を構え、小道具卓は渡す物だけを手前に残した。"
+  },
+  {
+    "id": "result_junior_stepForward_watch_catch_masterpiece_01",
+    "phase": "result",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "stepForward",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "masterpiece",
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "台本の印どおり、若手が半歩前へ出た。照明は前明かりを残し、客席には予定された見せ場のように届いた。"
+  },
+  {
+    "id": "result_junior_adlib_watch_catch_masterpiece_02",
+    "phase": "result",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "adlib",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "masterpiece",
+    "staff": [
+      "stageManager",
+      "sound"
+    ],
+    "text": "アドリブに袖では一瞬だけ手が止まった。舞台監督の拾う合図が間に合い、客席には伏線の回収に見えた。"
+  },
+  {
+    "id": "result_lead_silence_makeSpace_wait_masterpiece_03",
+    "phase": "result",
+    "actorType": "lead",
+    "actorState": "contemplative",
+    "event": "silence",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": "masterpiece",
+    "staff": [
+      "sound",
+      "lighting"
+    ],
+    "text": "沈黙の行に付けた印が効いた。音響は入らず、照明も明かりを動かさなかったため、主演の間が場面の中心に残った。"
+  },
+  {
+    "id": "result_skilled_positionShift_tightenFlow_arrange_masterpiece_04",
+    "phase": "result",
+    "actorType": "skilled",
+    "actorState": "immersed",
+    "event": "positionShift",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": "masterpiece",
+    "staff": [
+      "lighting",
+      "stageManager"
+    ],
+    "text": "技巧派の足は白テープから外れたが、照明は戻しすぎなかった。客席には相手役を避けた構図として見えていた。"
+  },
+  {
+    "id": "result_any_heatUp_makeSpace_catch_masterpiece_05",
+    "phase": "result",
+    "actorType": "any",
+    "actorState": "elated",
+    "event": "heatUp",
+    "prep": "makeSpace",
+    "response": "catch",
+    "resultTier": "masterpiece",
+    "staff": [
+      "lighting",
+      "sound"
+    ],
+    "text": "余白を空けていた導線に、熱の上がった動きがそのまま入った。音響は足さず、明かりだけが場面を大きく見せた。"
+  },
+  {
+    "id": "result_lead_delayedExit_makeSpace_wait_masterpiece_06",
+    "phase": "result",
+    "actorType": "lead",
+    "actorState": "immersed",
+    "event": "delayedExit",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": "masterpiece",
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "退場は遅れたが、袖の呼び込みを止めていた。照明が背中を残したことで、客席には別れを惜しむ間に見えた。"
+  },
+  {
+    "id": "result_skilled_ensembleWaver_tightenFlow_arrange_masterpiece_07",
+    "phase": "result",
+    "actorType": "skilled",
+    "actorState": "anxious",
+    "event": "ensembleWaver",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": "masterpiece",
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "群像は大きく揺れたが、戻す相手を一人に絞った。照明も追いすぎず、ズレは群像のうねりとして残った。"
+  },
+  {
+    "id": "result_junior_tempoRush_tightenFlow_arrange_masterpiece_08",
+    "phase": "result",
+    "actorType": "junior",
+    "actorState": "anxious",
+    "event": "tempoRush",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": "masterpiece",
+    "staff": [
+      "sound",
+      "stageManager"
+    ],
+    "text": "若手の台詞は先に走ったが、音響の入りは動かなかった。相手役の返しで拍が戻り、急ぎ足は勢いに見えた。"
+  },
+  {
+    "id": "result_lead_adlib_watch_catch_masterpiece_09",
+    "phase": "result",
+    "actorType": "lead",
+    "actorState": "immersed",
+    "event": "adlib",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "masterpiece",
+    "staff": [
+      "stageManager",
+      "wingStaff"
+    ],
+    "text": "主演の一言で袖の呼び込み表が一行ずれた。舞台監督が拾う合図を出し、客席には沈黙前の含みとして受け取られた。"
+  },
+  {
+    "id": "result_skilled_silence_makeSpace_wait_masterpiece_10",
+    "phase": "result",
+    "actorType": "skilled",
+    "actorState": "immersed",
+    "event": "silence",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": "masterpiece",
+    "staff": [
+      "sound",
+      "lighting"
+    ],
+    "text": "技巧派が返さないまま立った。音響は無音を保ち、照明も残したため、止まった時間が段取りに見えた。"
+  },
+  {
+    "id": "result_any_tempoRush_prepareTransition_cut_masterpiece_11",
+    "phase": "result",
+    "actorType": "any",
+    "actorState": "fatigued",
+    "event": "tempoRush",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": "masterpiece",
+    "staff": [
+      "lighting",
+      "props"
+    ],
+    "text": "転換 キュー を近くに置いていたため、走ったテンポを暗転で受けられた。小道具卓も詰まらず、場面は鋭く閉じた。"
+  },
+  {
+    "id": "result_junior_heatUp_watch_catch_masterpiece_12",
+    "phase": "result",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "heatUp",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "masterpiece",
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "若手の声が予想より大きく跳ねた。照明卓は用意していた前明かりを残し、客席には初日から狙った山に見えた。"
+  },
+  {
+    "id": "result_lead_stepForward_watch_catch_scene_13",
+    "phase": "result",
+    "actorType": "lead",
+    "actorState": "elated",
+    "event": "stepForward",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "scene",
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "主演が前へ出た瞬間、台本上では少し早かった。舞台監督が拾う キュー を出し、照明は残せたため場面として成立した。"
+  },
+  {
+    "id": "result_junior_adlib_makeSpace_wait_scene_14",
+    "phase": "result",
+    "actorType": "junior",
+    "actorState": "immersed",
+    "event": "adlib",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": "scene",
+    "staff": [
+      "sound",
+      "wingStaff"
+    ],
+    "text": "若手のアドリブに、音響は入らず待った。袖スタッフも呼び込みを止め、客席には言葉を選んだように見えた。"
+  },
+  {
+    "id": "result_skilled_positionShift_watch_arrange_scene_15",
+    "phase": "result",
+    "actorType": "skilled",
+    "actorState": "contemplative",
+    "event": "positionShift",
+    "prep": "watch",
+    "response": "arrange",
+    "resultTier": "scene",
+    "staff": [
+      "lighting",
+      "stageManager"
+    ],
+    "text": "注視していた位置とは少し違うズレだった。舞台監督は段取りを組み替え、照明も中心を浅く戻して場面にした。"
+  },
+  {
+    "id": "result_any_heatUp_tightenFlow_arrange_scene_16",
+    "phase": "result",
+    "actorType": "any",
+    "actorState": "elated",
+    "event": "heatUp",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": "scene",
+    "staff": [
+      "sound",
+      "lighting"
+    ],
+    "text": "締める準備は熱を消しすぎなかった。音響の入りを基準に戻し、照明も残したことで場面は少し大きいまま収まった。"
+  },
+  {
+    "id": "result_lead_delayedExit_prepareTransition_cut_scene_17",
+    "phase": "result",
+    "actorType": "lead",
+    "actorState": "fatigued",
+    "event": "delayedExit",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": "scene",
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "退場が遅れたが、暗転 キュー は近くにあった。袖スタッフが次の出を止め、照明が閉じたため進行は崩れなかった。"
+  },
+  {
+    "id": "result_skilled_ensembleWaver_prepareTransition_arrange_scene_18",
+    "phase": "result",
+    "actorType": "skilled",
+    "actorState": "fatigued",
+    "event": "ensembleWaver",
+    "prep": "prepareTransition",
+    "response": "arrange",
+    "resultTier": "scene",
+    "staff": [
+      "stageManager",
+      "props"
+    ],
+    "text": "転換用に空けた通路は直接使わなかった。だが袖が詰まらず、舞台監督は群像の戻しを落ち着いて出せた。"
+  },
+  {
+    "id": "result_junior_tempoRush_watch_catch_scene_19",
+    "phase": "result",
+    "actorType": "junior",
+    "actorState": "anxious",
+    "event": "tempoRush",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "scene",
+    "staff": [
+      "sound",
+      "wingStaff"
+    ],
+    "text": "走った台詞を拾うには少し荒かった。音響が待ち、袖スタッフも呼び込みを保留したため、勢いだけは客席まで残った。"
+  },
+  {
+    "id": "result_lead_silence_watch_wait_scene_20",
+    "phase": "result",
+    "actorType": "lead",
+    "actorState": "anxious",
+    "event": "silence",
+    "prep": "watch",
+    "response": "wait",
+    "resultTier": "scene",
+    "staff": [
+      "stageManager",
+      "sound"
+    ],
+    "text": "注視していた沈黙が来たが、主演の確認癖も残っていた。音響は入らず、舞台監督は返しの台詞まで待って場面を守った。"
+  },
+  {
+    "id": "result_skilled_adlib_watch_catch_scene_21",
+    "phase": "result",
+    "actorType": "skilled",
+    "actorState": "elated",
+    "event": "adlib",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "scene",
+    "staff": [
+      "wingStaff",
+      "sound"
+    ],
+    "text": "技巧派のアドリブで袖の呼び込みが半拍迷った。音響が入らず待ったため、客席には軽い目配せとして届いた。"
+  },
+  {
+    "id": "result_any_positionShift_prepareTransition_cut_scene_22",
+    "phase": "result",
+    "actorType": "any",
+    "actorState": "fatigued",
+    "event": "positionShift",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": "scene",
+    "staff": [
+      "lighting",
+      "props"
+    ],
+    "text": "立ち位置のズレは直さず、転換で切った。照明の閉じが早く、小道具卓も受け渡しを保てたため、余計な揺れは残らなかった。"
+  },
+  {
+    "id": "result_junior_heatUp_makeSpace_catch_scene_23",
+    "phase": "result",
+    "actorType": "junior",
+    "actorState": "fatigued",
+    "event": "heatUp",
+    "prep": "makeSpace",
+    "response": "catch",
+    "resultTier": "scene",
+    "staff": [
+      "lighting",
+      "props"
+    ],
+    "text": "疲れた若手の熱を拾ったため、次の転換まで余裕は減った。小道具卓は札を入れ替えたが、場面の膨らみは残せた。"
+  },
+  {
+    "id": "result_lead_tempoRush_tightenFlow_arrange_scene_24",
+    "phase": "result",
+    "actorType": "lead",
+    "actorState": "anxious",
+    "event": "tempoRush",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": "scene",
+    "staff": [
+      "sound",
+      "stageManager"
+    ],
+    "text": "主演の返しが早く、会話の頭が詰まった。音響は基準 キュー を動かさず、舞台監督が相手役の入りで整えた。"
+  },
+  {
+    "id": "result_junior_stepForward_prepareTransition_cut_smallSuccess_25",
+    "phase": "result",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "stepForward",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": "smallSuccess",
+    "staff": [
+      "lighting",
+      "stageManager"
+    ],
+    "text": "若手は前へ出たが、転換準備が近かった。舞台監督は暗転で早めに閉じ、見せ場には伸びないまま次へ渡した。"
+  },
+  {
+    "id": "result_lead_delayedExit_tightenFlow_arrange_smallSuccess_26",
+    "phase": "result",
+    "actorType": "lead",
+    "actorState": "fatigued",
+    "event": "delayedExit",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": "smallSuccess",
+    "staff": [
+      "wingStaff",
+      "costume"
+    ],
+    "text": "退場の遅れは大きくならなかった。袖スタッフが待機列を下げ、衣装も裾を直したため、次場面には詰まらず渡せた。"
+  },
+  {
+    "id": "result_skilled_positionShift_makeSpace_wait_smallSuccess_27",
+    "phase": "result",
+    "actorType": "skilled",
+    "actorState": "immersed",
+    "event": "positionShift",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": "smallSuccess",
+    "staff": [
+      "lighting",
+      "stageManager"
+    ],
+    "text": "位置のズレを待ったが、意味が大きく伸びるほどではなかった。照明は動かさず、舞台監督は次の キュー だけ静かに戻した。"
+  },
+  {
+    "id": "result_any_silence_watch_arrange_smallSuccess_28",
+    "phase": "result",
+    "actorType": "any",
+    "actorState": "anxious",
+    "event": "silence",
+    "prep": "watch",
+    "response": "arrange",
+    "resultTier": "smallSuccess",
+    "staff": [
+      "sound",
+      "lighting"
+    ],
+    "text": "沈黙を整える判断で、長い間は短く収まった。音響の入りも遅れず、照明の戻しも客席には強く見えなかった。"
+  },
+  {
+    "id": "result_junior_adlib_tightenFlow_arrange_smallSuccess_29",
+    "phase": "result",
+    "actorType": "junior",
+    "actorState": "anxious",
+    "event": "adlib",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": "smallSuccess",
+    "staff": [
+      "stageManager",
+      "wingStaff"
+    ],
+    "text": "アドリブは大きく拾わず、段取りへ戻した。袖の呼び込み表は一度だけ直され、場面は派手にならず次へ進んだ。"
+  },
+  {
+    "id": "result_skilled_ensembleWaver_prepareTransition_cut_smallSuccess_30",
+    "phase": "result",
+    "actorType": "skilled",
+    "actorState": "fatigued",
+    "event": "ensembleWaver",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": "smallSuccess",
+    "staff": [
+      "props",
+      "lighting"
+    ],
+    "text": "群像の揺れは切って閉じた。照明の暗転が少し早く、小道具卓は回収を先に済ませ、次場面の負担を抑えた。"
+  },
+  {
+    "id": "result_junior_tempoRush_makeSpace_wait_fray_31",
+    "phase": "result",
+    "actorType": "junior",
+    "actorState": "anxious",
+    "event": "tempoRush",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": "fray",
+    "staff": [
+      "sound",
+      "stageManager"
+    ],
+    "text": "走ったテンポに待つ判断が追いつかなかった。音響は入りを止めたが、台詞だけが先へ進み、次の キュー に余裕が残らない。"
+  },
+  {
+    "id": "result_lead_heatUp_prepareTransition_cut_fray_32",
+    "phase": "result",
+    "actorType": "lead",
+    "actorState": "elated",
+    "event": "heatUp",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": "fray",
+    "staff": [
+      "lighting",
+      "sound"
+    ],
+    "text": "熱の上がった場面を早く切ったため、客席の視線だけが残った。照明は閉じたが、音響の入りは反応を拾い損ねた。"
+  },
+  {
+    "id": "result_skilled_positionShift_makeSpace_wait_fray_33",
+    "phase": "result",
+    "actorType": "skilled",
+    "actorState": "anxious",
+    "event": "positionShift",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": "fray",
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "立ち位置のズレを待ったが、照明の中心だけが外れた。袖スタッフは呼び込みを止め、次の出の確認が一つ増えた。"
+  },
+  {
+    "id": "result_any_delayedExit_watch_catch_fray_34",
+    "phase": "result",
+    "actorType": "any",
+    "actorState": "fatigued",
+    "event": "delayedExit",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "fray",
+    "staff": [
+      "stageManager",
+      "props"
+    ],
+    "text": "退場の遅れを拾おうとして場面が伸びた。小道具卓は受け渡しを組み替えたが、次の転換には手が足りない。"
+  },
+  {
+    "id": "result_skilled_ensembleWaver_watch_catch_fray_35",
+    "phase": "result",
+    "actorType": "skilled",
+    "actorState": "fatigued",
+    "event": "ensembleWaver",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "fray",
+    "staff": [
+      "lighting",
+      "stageManager"
+    ],
+    "text": "群像の揺れを拾ったが、中心が決まらないまま広がった。照明は全体を残し、舞台監督は次の戻しを急ぐことになった。"
+  },
+  {
+    "id": "result_junior_adlib_prepareTransition_cut_accident_36",
+    "phase": "result",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "adlib",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": "accident",
+    "staff": [
+      "sound",
+      "stageManager"
+    ],
+    "text": "アドリブが先に出たところで切る キュー が重なった。音響は入らず、舞台監督の合図も遅れて場面だけが先へ進んだ。"
+  },
+  {
+    "id": "result_lead_silence_tightenFlow_arrange_accident_37",
+    "phase": "result",
+    "actorType": "lead",
+    "actorState": "contemplative",
+    "event": "silence",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": "accident",
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "主演の沈黙に整える合図が早く入った。照明は中心を戻したが、間が切れて、袖の呼び込みも一拍迷った。"
+  },
+  {
+    "id": "result_skilled_tempoRush_makeSpace_wait_accident_38",
+    "phase": "result",
+    "actorType": "skilled",
+    "actorState": "anxious",
+    "event": "tempoRush",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": "accident",
+    "staff": [
+      "sound",
+      "stageManager"
+    ],
+    "text": "走るテンポに待つ判断を重ねたため、音響の入りだけが遅れた。舞台監督は次の キュー を出し直し、段取りが崩れた。"
+  },
+  {
+    "id": "result_any_positionShift_watch_catch_accident_39",
+    "phase": "result",
+    "actorType": "any",
+    "actorState": "fatigued",
+    "event": "positionShift",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "accident",
+    "staff": [
+      "lighting",
+      "props"
+    ],
+    "text": "立ち位置のズレを拾おうとしたが、照明も小道具の受け渡しも追いつかなかった。次場面の通路まで詰まっている。"
+  },
+  {
+    "id": "result_lead_delayedExit_watch_catch_accident_40",
+    "phase": "result",
+    "actorType": "lead",
+    "actorState": "fatigued",
+    "event": "delayedExit",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "accident",
+    "staff": [
+      "wingStaff",
+      "stageManager"
+    ],
+    "text": "退場の遅れを拾う合図が遅れた。袖スタッフは次の役者を止めたが、舞台監督の キュー は場面の後ろに残った。"
+  },
+  {
+    "id": "finished_heat_catch_masterpiece_01",
+    "phase": "finished",
+    "actorType": "any",
+    "actorState": "any",
+    "event": "heatUp",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "masterpiece",
+    "staff": [
+      "stageManager",
+      "lighting"
+    ],
+    "text": "三日間を通して、前明かりを残す判断が多い公演だった。袖では台本の余白が増え、若手の前進が何度も見せ場になった。"
+  },
+  {
+    "id": "finished_breath_wait_masterpiece_02",
+    "phase": "finished",
+    "actorType": "any",
+    "actorState": "any",
+    "event": "silence",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": "masterpiece",
+    "staff": [
+      "sound",
+      "stageManager"
+    ],
+    "text": "沈黙を急がない公演だった。音響は入らない キュー を何度も確認し、舞台監督の台本には丸で囲まれた間が残った。"
+  },
+  {
+    "id": "finished_control_arrange_scene_03",
+    "phase": "finished",
+    "actorType": "any",
+    "actorState": "any",
+    "event": "positionShift",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": "scene",
+    "staff": [
+      "lighting",
+      "stageManager"
+    ],
+    "text": "立ち位置を戻しすぎない判断が目立った。白テープは増えたが、照明と進行はズレを構図として扱い続けた。"
+  },
+  {
+    "id": "finished_closure_cut_scene_04",
+    "phase": "finished",
+    "actorType": "any",
+    "actorState": "any",
+    "event": "tempoRush",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": "scene",
+    "staff": [
+      "props",
+      "lighting"
+    ],
+    "text": "転換で閉じる場面が多い公演だった。小道具卓の札は何度も入れ替わり、暗転の早さが進行を支えた。"
+  },
+  {
+    "id": "finished_happy_accident_masterpiece_05",
+    "phase": "finished",
+    "actorType": "any",
+    "actorState": "any",
+    "event": "adlib",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "masterpiece",
+    "staff": [
+      "wingStaff",
+      "lighting"
+    ],
+    "text": "袖では何度か台本から目が上がったが、前明かりは残せた。客席には、予定外の一言が最初から仕込まれていたように見えた。"
+  },
+  {
+    "id": "finished_low_load_scene_06",
+    "phase": "finished",
+    "actorType": "any",
+    "actorState": "any",
+    "event": "delayedExit",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": "scene",
+    "staff": [
+      "wingStaff",
+      "costume"
+    ],
+    "text": "待機位置を空ける確認が効いた公演だった。退場が遅れても袖は詰まらず、衣装直しも次の キュー までに戻せた。"
+  },
+  {
+    "id": "finished_high_load_scene_07",
+    "phase": "finished",
+    "actorType": "any",
+    "actorState": "any",
+    "event": "heatUp",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "scene",
+    "staff": [
+      "props",
+      "stageManager"
+    ],
+    "text": "拾う判断で評判は伸びたが、袖の確認は毎回増えた。小道具卓では、片付けた札を戻す作業が終盤まで続いた。"
+  },
+  {
+    "id": "finished_many_marks_masterpiece_08",
+    "phase": "finished",
+    "actorType": "any",
+    "actorState": "any",
+    "event": "any",
+    "prep": "any",
+    "response": "any",
+    "resultTier": "masterpiece",
+    "staff": [
+      "sound",
+      "lighting"
+    ],
+    "text": "台本の余白に印が多い公演だった。音響は何度も入る手を止め、照明の残しが客席には落ち着いた間として届いた。"
+  },
+  {
+    "id": "finished_ensemble_arrange_scene_09",
+    "phase": "finished",
+    "actorType": "skilled",
+    "actorState": "any",
+    "event": "ensembleWaver",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": "scene",
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "群像の揺れを整える場面が多かった。袖の待機列は何度も並び直され、照明は中心を追いすぎない癖で支えた。"
+  },
+  {
+    "id": "finished_junior_heat_masterpiece_10",
+    "phase": "finished",
+    "actorType": "junior",
+    "actorState": "elated",
+    "event": "stepForward",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "masterpiece",
+    "staff": [
+      "lighting",
+      "wingStaff"
+    ],
+    "text": "若手が前へ出るたび、袖では呼び込みの手が止まった。照明の前明かりが残り、勢いは公演の色になった。"
+  },
+  {
+    "id": "finished_lead_silence_scene_11",
+    "phase": "finished",
+    "actorType": "lead",
+    "actorState": "contemplative",
+    "event": "silence",
+    "prep": "makeSpace",
+    "response": "wait",
+    "resultTier": "scene",
+    "staff": [
+      "sound",
+      "lighting"
+    ],
+    "text": "主演の沈黙を残す公演だった。音響は入らずに待つ場面が多く、照明も明かりを落とし切らない判断を重ねた。"
+  },
+  {
+    "id": "finished_skilled_tape_masterpiece_12",
+    "phase": "finished",
+    "actorType": "skilled",
+    "actorState": "immersed",
+    "event": "positionShift",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": "masterpiece",
+    "staff": [
+      "lighting",
+      "stageManager"
+    ],
+    "text": "白テープの印が最後には三種類になっていた。舞台監督は一番古い印を残し、技巧派のズレを公演の形にした。"
+  },
+  {
+    "id": "finished_clean_smallSuccess_13",
+    "phase": "finished",
+    "actorType": "any",
+    "actorState": "fatigued",
+    "event": "delayedExit",
+    "prep": "prepareTransition",
+    "response": "cut",
+    "resultTier": "smallSuccess",
+    "staff": [
+      "props",
+      "wingStaff"
+    ],
+    "text": "大きな山は少なかったが、次へ渡す作業は崩れなかった。小道具卓と袖の呼び込みが、疲れた終盤を細かく支えた。"
+  },
+  {
+    "id": "finished_fray_recovery_scene_14",
+    "phase": "finished",
+    "actorType": "any",
+    "actorState": "anxious",
+    "event": "tempoRush",
+    "prep": "tightenFlow",
+    "response": "arrange",
+    "resultTier": "scene",
+    "staff": [
+      "stageManager",
+      "sound"
+    ],
+    "text": "走るテンポを整え直す公演だった。音響の入りを動かさない判断が多く、舞台監督は毎回 キュー を一つずつ戻した。"
+  },
+  {
+    "id": "finished_hot_backstage_scene_15",
+    "phase": "finished",
+    "actorType": "any",
+    "actorState": "elated",
+    "event": "heatUp",
+    "prep": "watch",
+    "response": "catch",
+    "resultTier": "scene",
+    "staff": [
+      "props",
+      "costume"
+    ],
+    "text": "評判は伸びたが、裏方の手数も増えた。小道具の受け渡しと衣装直しが終盤まで詰まり、袖の紙片が増えていった。"
+  },
+  {
+    "id": "finished_finale_masterpiece_16",
+    "phase": "finished",
+    "actorType": "any",
+    "actorState": "any",
+    "event": "any",
+    "prep": "any",
+    "response": "any",
+    "resultTier": "masterpiece",
+    "staff": [
+      "lighting",
+      "sound",
+      "wingStaff"
+    ],
+    "text": "千秋楽は、外れたはずの準備まで場面に回った。袖の保留、照明の残し、音響の無音が同じ方向を向いた。"
+  }
+]

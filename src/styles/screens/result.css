@@ -249,6 +249,35 @@
   background: rgba(0, 0, 0, 0.14);
 }
 
+.backstage-log-note {
+  display: grid;
+  gap: 5px;
+  padding: 10px 11px;
+  border-radius: var(--radius);
+  border: 1px dashed rgba(230, 190, 108, 0.2);
+  background:
+    linear-gradient(90deg, rgba(139, 201, 213, 0.055), transparent 48%),
+    rgba(0, 0, 0, 0.16);
+}
+
+.backstage-log-note span {
+  color: var(--gold);
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.backstage-log-note p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.58;
+}
+
+.backstage-log-note--console {
+  border-color: rgba(139, 201, 213, 0.24);
+  background: rgba(139, 201, 213, 0.06);
+}
+
 .prep-hit-banner {
   position: relative;
   display: grid;
@@ -1493,6 +1522,7 @@
 .cue-result-ticket .cue-verdict-stamp,
 .cue-result-ticket .cue-score-position,
 .cue-result-ticket .scene-record-note,
+.cue-result-ticket .backstage-log-note,
 .cue-result-ticket .cue-route span,
 .cue-result-ticket .cue-summary-card,
 .cue-result-ticket .cue-reason-list,
@@ -1517,8 +1547,14 @@
 
 .cue-result-ticket .cue-score-position p,
 .cue-result-ticket .cue-reason-chip small,
-.cue-result-ticket .scene-record-note p {
+.cue-result-ticket .scene-record-note p,
+.cue-result-ticket .backstage-log-note p {
   color: #2d2020;
+}
+
+.cue-result-ticket .backstage-log-note {
+  border-style: dashed;
+  background: rgba(255, 250, 231, 0.42);
 }
 
 .cue-result-ticket .scene-record-note {
@@ -1613,6 +1649,7 @@
 .cue-result-ticket .cue-summary-card span,
 .cue-result-ticket .cue-reason-list > span,
 .cue-result-ticket .scene-record-note span,
+.cue-result-ticket .backstage-log-note span,
 .cue-result-ticket .scoring-memo > span,
 .cue-result-ticket .result-lesson-note span {
   color: #7e4a25;

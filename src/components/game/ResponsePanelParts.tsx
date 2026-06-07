@@ -18,6 +18,7 @@ import {
 } from '../../content/ja/responsePanelCopy';
 import { PERFORMANCE_COLOR_HUD } from '../../content/ja/gameHeaderCopy';
 import { RESULT_TIER_LABELS } from '../../content/ja/gameLabels';
+import { backstageLogCopy, backstageResponseLog } from '../../content/ja/backstageLogCopy';
 import styles from './ActionPanel.module.css';
 
 export function ResponseChoiceCard({
@@ -95,6 +96,7 @@ export function ResponseConsole({
 }) {
   const buildLevelItem = insight.scoreBreakdown.find((item) => item.id === 'build-level');
   const styleHud = getStyleHud(state.performanceStyle);
+  const backstageNote = backstageResponseLog(state, insight.response);
   return (
     <aside className={classNames('decision-note response-console', relationToneClass[insight.prepRelationTone])}>
       <div className="console-head">
@@ -121,6 +123,10 @@ export function ResponseConsole({
         <span>{responsePanelCopy.logTitle}</span>
         <p>{decisionMemo(insight, effectSummary(insight))}</p>
       </div>
+      <aside className="backstage-log-note backstage-log-note--console">
+        <span>{backstageLogCopy.label}</span>
+        <p>{backstageNote}</p>
+      </aside>
       {buildLevelItem ? (
         <div className="console-fray relation-recover">
           <span>{responsePanelCopy.buildLevel}</span>
