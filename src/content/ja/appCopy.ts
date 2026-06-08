@@ -222,7 +222,7 @@ export const appCopy = {
     scoreReached: (tierLabel: string) => `${tierLabel}到達`,
     pointsToTier: (points: number, tierLabel: string) => `${tierLabel}まであと${displayScore(points)}点`,
     sceneRecord: '場面記録',
-    scoringMemo: '判定理由',
+    scoringMemo: 'キューの効き方',
     frayRecovery: 'ほころび回収',
     frayRecoveryBody: '失敗の余白が場面の材料になった',
     newScene: '新場面候補',
