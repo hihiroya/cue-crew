@@ -940,6 +940,15 @@
     grid-template-columns: 1fr;
   }
 
+  .delta-line {
+    grid-template-columns: minmax(4.2rem, auto) minmax(0, 1fr) auto;
+    gap: 4px 8px;
+  }
+
+  .delta-line em {
+    grid-column: 2 / 4;
+  }
+
   .cue-route,
   .cue-summary-grid,
   .packet-metrics,

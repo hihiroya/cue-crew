@@ -27,6 +27,13 @@ export type CueResultSummary = {
   lesson: string;
 };
 
+export type ResultStateImpact = {
+  scene: { before: number; after: number; delta: number };
+  flow: { before: number; after: number; delta: number };
+  trust: { before: number; after: number; delta: number };
+  load: { before: number; after: number; delta: number };
+};
+
 export type ResponseInsight = {
   response: MainResponse;
   score: number;
@@ -73,6 +80,7 @@ export type ResultPreview = Omit<TurnLog, 'act' | 'turnInAct' | 'totalTurn'> & {
   prepRecoveryTitle: string;
   prepRecoveryText: string;
   cueSummary: CueResultSummary;
+  stateImpact: ResultStateImpact;
   scoreBreakdown: ScoreBreakdownItem[];
   focusActorType: ActorType;
   actorState: ActorState;

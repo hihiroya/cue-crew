@@ -2,7 +2,7 @@ import { PERFORMANCE_STYLE_DETAILS, RESPONSE_BIAS } from './constants';
 import { createRng } from './rng';
 import { frayFitFor } from './fray';
 import { flavorText, prepRecovery, sceneTitle } from './sceneTemplates';
-import { stylePreviewFor } from './scoreEngine';
+import { clampLoad, stylePreviewFor } from './scoreEngine';
 import { performanceLabel, slotForTurnInAct } from './turnCalendar';
 import { responseInsight } from './responseInsight';
 import {
@@ -26,6 +26,9 @@ export function previewResult(state: GameState): ResultPreview {
 
   const tier = insight.resultTier;
   const deltas = deltasFor(tier, response, state, prepQuality);
+  const loadAfterResult = clampLoad(state.backstageLoad + deltas.deltaLoad);
+  const actBreakRelief = state.turnInAct === 2 && state.act < 3 ? -1 : 0;
+  const backstageLoadAfter = clampLoad(loadAfterResult + actBreakRelief);
   const stylePreview = stylePreviewFor(state, { mainResponse: response, deltaScene: deltas.deltaScene, deltaFlow: deltas.deltaFlow, deltaTrust: deltas.deltaTrust, deltaLoad: deltas.deltaLoad });
   const slot = slotForTurnInAct(state.turnInAct);
   const resultMode = state.act === 3 && slot === 'soiree' ? 'finale' : slot;
@@ -102,6 +105,12 @@ export function previewResult(state: GameState): ResultPreview {
       handoff: '',
       audienceReaction: '',
       lesson: '',
+    },
+    stateImpact: {
+      scene: { before: state.sceneScore, after: state.sceneScore + deltas.deltaScene, delta: deltas.deltaScene },
+      flow: { before: state.flowScore, after: state.flowScore + deltas.deltaFlow, delta: deltas.deltaFlow },
+      trust: { before: state.trustScore, after: state.trustScore + deltas.deltaTrust, delta: deltas.deltaTrust },
+      load: { before: state.backstageLoad, after: backstageLoadAfter, delta: backstageLoadAfter - state.backstageLoad },
     },
     scoreBreakdown,
     loadBias: RESPONSE_BIAS[response],

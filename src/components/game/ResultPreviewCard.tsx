@@ -171,24 +171,45 @@ function DeltaTable({ preview }: { preview: ResultPreview }) {
   return (
     <div className="delta-table delta-table--summary" aria-label={appCopy.resultPreview.deltaAria}>
       <span className="delta-table-title">{appCopy.resultPreview.deltaTitle}</span>
-      <Delta kind="scene" label={appCopy.result.finalScoreLabels.scene} value={preview.deltaScene} />
-      <Delta kind="flow" label={appCopy.resultPreview.deltaLabels.flow} value={preview.deltaFlow} />
-      <Delta kind="trust" label={appCopy.resultPreview.deltaLabels.trust} value={preview.deltaTrust} />
-      <Delta kind="load" label={appCopy.resultPreview.deltaLabels.load} value={preview.deltaLoad} />
+      <small className="delta-table-subtitle">{appCopy.resultPreview.deltaSub}</small>
+      <Delta kind="scene" label={appCopy.result.finalScoreLabels.scene} impact={preview.stateImpact.scene} />
+      <Delta kind="flow" label={appCopy.resultPreview.deltaLabels.flow} impact={preview.stateImpact.flow} />
+      <Delta kind="trust" label={appCopy.resultPreview.deltaLabels.trust} impact={preview.stateImpact.trust} />
+      <Delta kind="load" label={appCopy.resultPreview.deltaLabels.load} impact={preview.stateImpact.load} />
     </div>
   );
 }
 
-function Delta({ kind, label, value }: { kind: DeltaKind; label: string; value: number }) {
-  const sign = value > 0 ? '+' : '';
-  const impact = deltaImpact(kind, value);
+function Delta({
+  impact,
+  kind,
+  label,
+}: {
+  impact: ResultPreview['stateImpact'][DeltaKind];
+  kind: DeltaKind;
+  label: string;
+}) {
+  const change = signedValue(impact.delta);
+  const tone = deltaImpact(kind, impact.delta);
+  const before = formatStateValue(kind, impact.before);
+  const after = formatStateValue(kind, impact.after);
   return (
-    <div className={classNames('delta-line', deltaKindClass[kind], deltaImpactToneClass[impact.tone])} aria-label={`${label}: ${impact.label}, ${sign}${value}`}>
+    <div className={classNames('delta-line', deltaKindClass[kind], deltaImpactToneClass[tone.tone])} aria-label={`${label}: ${before}から${after}、${tone.label}、${change}`}>
       <span className="delta-line-label"><Icon name={kind} />{label}</span>
-      <b>{impact.label}</b>
-      <strong>{sign}{value}</strong>
+      <b className="delta-transition"><span>{before}</span><i aria-hidden="true">-&gt;</i><span>{after}</span></b>
+      <em>{tone.label}</em>
+      <strong>{change}</strong>
     </div>
   );
+}
+
+function signedValue(value: number) {
+  if (value === 0) return '±0';
+  return `${value > 0 ? '+' : ''}${value}`;
+}
+
+function formatStateValue(kind: DeltaKind, value: number) {
+  return kind === 'load' ? `${value}/5` : String(value);
 }
 
 function scorePositionLabel(preview: ResultPreview) {

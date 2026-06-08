@@ -75,6 +75,12 @@ function resultPreview(overrides: Partial<ResultPreview> = {}): ResultPreview {
       audienceReaction: 'テスト',
       lesson: 'テスト',
     },
+    stateImpact: {
+      scene: { before: 0, after: 3, delta: 3 },
+      flow: { before: 0, after: 1, delta: 1 },
+      trust: { before: 0, after: 1, delta: 1 },
+      load: { before: 4, after: 5, delta: 1 },
+    },
     ...overrides,
   };
 }

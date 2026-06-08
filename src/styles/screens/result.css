@@ -529,15 +529,22 @@
 }
 
 .delta-table-title {
-  margin-bottom: 4px;
   color: var(--gold);
   font-size: 0.72rem;
   font-weight: 900;
 }
 
+.delta-table-subtitle {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
 .delta-line {
   display: grid;
-  grid-template-columns: minmax(4.5rem, auto) 1fr auto;
+  grid-template-columns: minmax(4.5rem, auto) minmax(4.8rem, auto) minmax(0, 1fr) auto;
   gap: 8px;
   align-items: baseline;
   min-width: 0;
@@ -563,8 +570,29 @@
 .delta-line b {
   min-width: 0;
   color: #f3e6c9;
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   line-height: 1.35;
+}
+
+.delta-transition {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.delta-transition i,
+.delta-line em {
+  color: var(--muted);
+  font-style: normal;
+}
+
+.delta-line em {
+  min-width: 0;
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .delta-line strong {
@@ -1735,7 +1763,10 @@
 }
 
 .cue-result-ticket .delta-table-title,
-.cue-result-ticket .delta-line-label {
+.cue-result-ticket .delta-table-subtitle,
+.cue-result-ticket .delta-line-label,
+.cue-result-ticket .delta-transition i,
+.cue-result-ticket .delta-line em {
   color: rgba(32, 23, 25, 0.62);
 }
 
