@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { assignActorRoles } from '../src/game/actorLogic';
 import { INITIAL_ACTORS } from '../src/game/constants';
 import { previewResult, responseInsight, tierFromScore } from '../src/game/scoring';
+import { decisionMemo } from '../src/content/ja/responsePanelCopy';
 import type { ActorEvent, GameState } from '../src/game/types';
 
 function event(type: ActorEvent['type'], actorId: ActorEvent['actorId']): ActorEvent {
@@ -93,6 +94,17 @@ test('responseInsight exposes repeated response penalties before committing', ()
   assert.equal(insight.sideEffects.some((effect) => effect.target === 'flow' && effect.repeat && effect.value === -1), true);
 });
 
+test('decision memo explains why a response can reach a masterpiece', () => {
+  const insight = responseInsight(gameState({
+    selectedResponse: null,
+  }), 'wait');
+  const memo = decisionMemo(insight);
+
+  assert.equal(/名場面まで伸びる筋/.test(memo), true);
+  assert.equal(/決め手/.test(memo), true);
+  assert.equal(/出来事に強く噛み合う対応|上振れ幅が広がり/.test(memo), true);
+});
+
 test('arrange usually stabilizes to a scene unless the actor strongly supports it', () => {
   const leadArrange = previewResult(gameState({
     act: 2,
@@ -118,6 +130,24 @@ test('arrange usually stabilizes to a scene unless the actor strongly supports i
   assert.equal(leadArrange.resultTier, 'scene');
   assert.equal(leadArrange.scoreBreakdown.some((item) => item.id === 'arrange-cap'), true);
   assert.equal(skilledArrange.resultTier, 'masterpiece');
+});
+
+test('decision memo explains why arrange stops short of a masterpiece', () => {
+  const insight = responseInsight(gameState({
+    act: 2,
+    turnInAct: 1,
+    totalTurn: 3,
+    theme: '2日目',
+    currentActorEvent: event('positionShift', 'lead'),
+    selectedPrep: 'tightenFlow',
+    selectedResponse: null,
+  }), 'arrange');
+  const memo = decisionMemo(insight);
+
+  assert.equal(/名場面には届きにくい/.test(memo), true);
+  assert.equal(/整える判断の上限/.test(memo), true);
+  assert.equal(/技巧派/.test(memo), true);
+  assert.equal(/ほころび回収/.test(memo), true);
 });
 
 test('prepared transition makes cut a strong single-use closure', () => {

@@ -4,7 +4,7 @@ import type { GameState, MainResponse, ResponseInsight } from '../../game/types'
 import type { ResponseReplayDelta } from '../../game/rogueliteProgress';
 import { Icon } from '../ui/Icon';
 import { classNames } from '../ui/classNames';
-import { effectDirection, effectIntensity, effectItems, effectLedSlots, effectSummary, effectTargetLabel, evaluationSign, type EffectTone } from './responseEffectsView';
+import { effectDirection, effectIntensity, effectItems, effectLedSlots, effectTargetLabel, evaluationSign, type EffectTone } from './responseEffectsView';
 import {
   affinityLabels,
   decisionMemo,
@@ -122,7 +122,7 @@ export function ResponseConsole({
       <ReadoutHud insight={insight} />
       <div className="console-log">
         <span>{responsePanelCopy.logTitle}</span>
-        <p>{decisionMemo(insight, effectSummary(insight))}</p>
+        <p>{decisionMemo(insight)}</p>
       </div>
       <aside className="backstage-log-note backstage-log-note--console">
         <span>{backstageLogCopy.label}</span>
