@@ -101,8 +101,21 @@ test('decision memo explains why a response can reach a masterpiece', () => {
   const memo = decisionMemo(insight);
 
   assert.equal(/名場面まで伸びる筋/.test(memo), true);
-  assert.equal(/決め手/.test(memo), true);
-  assert.equal(/出来事に強く噛み合う対応|上振れ幅が広がり/.test(memo), true);
+  assert.equal(/名場面ライン7点/.test(memo), true);
+  assert.equal(/主因/.test(memo), true);
+  assert.equal(/\+\d/.test(memo), true);
+});
+
+test('decision memo explains score shortfall with game terms when no cap blocks masterpiece', () => {
+  const insight = responseInsight(gameState({
+    selectedResponse: null,
+  }), 'arrange');
+  const memo = decisionMemo(insight);
+
+  assert.equal(/加点不足/.test(memo), true);
+  assert.equal(/名場面ライン7点まであと\d点/.test(memo), true);
+  assert.equal(/最大加点/.test(memo), true);
+  assert.equal(/出来事相性◎|役者相性|状態補正|公演の色|ほころび回収/.test(memo), true);
 });
 
 test('arrange usually stabilizes to a scene unless the actor strongly supports it', () => {
@@ -144,7 +157,7 @@ test('decision memo explains why arrange stops short of a masterpiece', () => {
   }), 'arrange');
   const memo = decisionMemo(insight);
 
-  assert.equal(/名場面には届きにくい/.test(memo), true);
+  assert.equal(/名場面不可/.test(memo), true);
   assert.equal(/整える判断の上限/.test(memo), true);
   assert.equal(/技巧派/.test(memo), true);
   assert.equal(/ほころび回収/.test(memo), true);

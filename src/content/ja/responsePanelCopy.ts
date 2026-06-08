@@ -85,7 +85,7 @@ export function decisionMemo(insight: ResponseInsight) {
   const lead = reachesMasterpiece ? '名場面まで伸びる筋がある' : leadForNonMasterpiece(insight);
   const reason = reachesMasterpiece
     ? driverReason(driver)
-    : blockerReason(blocker) ?? riskReason(risk) ?? weakerDriverReason(driver);
+    : blockerReason(blocker) ?? riskReason(risk) ?? missingMasterpieceReason(insight);
   const cost = costReason(insight, risk, blocker?.id);
   const danger = insight.dangerWarning ? ` ${insight.downsideLabel}。` : '';
   return `${lead}。${reason}${cost}${danger}`;
@@ -150,23 +150,39 @@ function prioritizedItem(items: ScoreBreakdownItem[], priority: readonly string[
 }
 
 function driverReason(item?: ScoreBreakdownItem) {
-  if (!item) return '決め手はまだ薄いが、下振れしても見せ場として残る余地がある。';
-  return `${item.label}が決め手。${detailOrFallback(item, 'その積み上げが、予定外を客席まで届く場面に押し上げる。')}`;
+  if (!item) return '名場面ライン7点には届くが、主因は分散している。下振れ要素が増えると場面化まで落ちる。';
+  return `名場面ライン7点に届く。主因: ${item.label}${signedValue(item.value)}。${gameDetail(item)}`;
 }
 
 function blockerReason(item?: ScoreBreakdownItem) {
   if (!item) return undefined;
-  return `${item.label}が名場面化を止めている。${detailOrFallback(item, 'ここを外すと、場面の上振れより処理の遅れが目立つ。')}`;
+  if (item.id === 'arrange-cap') return `名場面不可。${item.label}がかかっている。技巧派、不安/疲労、ほころび回収の条件がないため場面化まで。`;
+  if (item.id === 'prep-cap') return `上限あり。${item.label}がかかっている。準備一致から外れているため、加点しても名場面ラインまで伸びない。`;
+  return `減点が重い。${item.label}${signedValue(item.value)}。${gameDetail(item)}`;
 }
 
 function riskReason(item?: ScoreBreakdownItem) {
   if (!item) return undefined;
-  return `${item.label}が足を引っ張っている。${detailOrFallback(item, 'このままだと、場面の芯より舞台裏の揺れが残る。')}`;
+  return `減点あり。${item.label}${signedValue(item.value)}。名場面を狙うなら、この減点を避けたい。`;
 }
 
-function weakerDriverReason(item?: ScoreBreakdownItem) {
-  if (!item) return '名場面化の決め手が足りない。準備、出来事、役者傾向のどれかをより強く噛み合わせたい。';
-  return `${item.label}は効くが、名場面化の決め手にはまだ弱い。${detailOrFallback(item, '別の強い理由が重なると、上振れを狙いやすくなる。')}`;
+function missingMasterpieceReason(insight: ResponseInsight) {
+  const shortfall = Math.max(1, 7 - insight.score);
+  const currentDriver = strongestDriver(insight.scoreBreakdown);
+  const current = currentDriver ? `最大加点は${currentDriver.label}${signedValue(currentDriver.value)}。` : '';
+  const missing = missingMasterpieceAxes(insight);
+  return `加点不足。名場面ライン7点まであと${shortfall}点。${current}${missing}のどれかを重ねたい。`;
+}
+
+function missingMasterpieceAxes(insight: ResponseInsight) {
+  const missing: string[] = [];
+  if ((valueFor(insight.scoreBreakdown, 'event') ?? 0) < 3) missing.push('出来事相性◎');
+  if (!hasPositive(insight.scoreBreakdown, ['prep-hit', 'prep-response', 'prep-response-guard'])) missing.push('準備一致');
+  if ((valueFor(insight.scoreBreakdown, 'actor') ?? 0) <= 0 && !hasPositive(insight.scoreBreakdown, ['actor-trust'])) missing.push('役者相性');
+  if ((valueFor(insight.scoreBreakdown, 'state') ?? 0) <= 0) missing.push('状態補正');
+  if (!hasPositive(insight.scoreBreakdown, ['performance-style', 'build-level'])) missing.push('公演の色');
+  if (!hasPositive(insight.scoreBreakdown, ['fray-reward'])) missing.push('ほころび回収');
+  return listForMemo(missing);
 }
 
 function costReason(insight: ResponseInsight, risk?: ScoreBreakdownItem, skipId?: string) {
@@ -176,8 +192,32 @@ function costReason(insight: ResponseInsight, risk?: ScoreBreakdownItem, skipId?
   return '';
 }
 
-function detailOrFallback(item: ScoreBreakdownItem, fallback: string) {
-  return item.detail ?? fallback;
+function valueFor(items: ScoreBreakdownItem[], id: string) {
+  return items.find((item) => item.id === id)?.value;
+}
+
+function hasPositive(items: ScoreBreakdownItem[], ids: string[]) {
+  return ids.some((id) => (valueFor(items, id) ?? 0) > 0);
+}
+
+function listForMemo(items: string[]) {
+  const visible = items.slice(0, 3);
+  if (visible.length === 0) return '追加加点';
+  return visible.join('・');
+}
+
+function signedValue(value: number) {
+  if (value === 0) return '';
+  return ` ${value > 0 ? '+' : ''}${value}`;
+}
+
+function gameDetail(item: ScoreBreakdownItem) {
+  if (item.id === 'event' && item.value > 0 && item.value < 3) return '出来事は合っているが、◎相性ではない。';
+  if (item.id === 'prep-hit' || item.id === 'prep-response') return '準備一致の上振れが入っている。';
+  if (item.id === 'prep-response-guard') return '転換準備と切る判断が噛み合っている。';
+  if (item.id === 'fray-reward') return 'ほころび回収の追加点が入っている。';
+  if (item.id === 'actor-trust') return '役者の得意対応と信頼補正が入っている。';
+  return item.detail ?? 'この補正が結果ラインを押し上げている。';
 }
 
 export function resultRangeIndices(label: string) {
