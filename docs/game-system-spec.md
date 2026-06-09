@@ -1074,7 +1074,7 @@ discoveryScore = sceneIds.length * 2 + unlockedAchievements.length * 5
 - キューバーと `このキューを出す` CTA。
 - 準備との関係、成功幅、上振れ、下振れ、相性盤、副作用、ほころび回収、パッシブ効果。
 
-候補カードのトーンは成功幅と危険警告に応じて変わる。`事故` は通常の見込みとしては表示せず、下振れが事故の恐れを含む時だけ `危険: 事故の恐れ` として表示する。
+候補カードのトーンは成功幅と危険警告に応じて変わる。`事故` は通常の見立てとしては表示せず、下振れが事故の恐れを含む時だけ `危険: 事故の恐れ` として表示する。
 
 | 状態 | トーン |
 | --- | --- |
@@ -1129,7 +1129,7 @@ discoveryScore = sceneIds.length * 2 + unlockedAchievements.length * 5
 | 終演レポート型 | `src/game/reportTypes.ts` |
 | 状態遷移、履歴保存 | `src/game/gameReducer.ts` |
 | 焦点役者、兆候、イベント、役者状態更新 | `src/game/actorLogic.ts` |
-| 結果判定、対応見込み、結果プレビュー | `src/game/scoreRules.ts` |
+| 結果判定、対応見立て、結果プレビュー | `src/game/scoreRules.ts` |
 | 互換用の公開口 | `src/game/scoring.ts`, `src/game/resultPreview.ts`, `src/game/responseInsight.ts` |
 | ほころび | `src/game/fray.ts` |
 | 日程 | `src/game/turnCalendar.ts` |

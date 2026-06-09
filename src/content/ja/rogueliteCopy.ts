@@ -77,7 +77,7 @@ export const nextChallengeCopy = {
   dailyCta: '今日の巡り合わせへ',
   suggestionTitle: (totalTurn: number, response: MainResponse) => `${turnLabelByNumber(totalTurn)}で${RESPONSE_LABELS[response]}を試す`,
   suggestionBody: (suggestion: { prep: PrepAction; response: MainResponse; resultTier: TurnLog['resultTier']; totalScoreDelta: number; loadDelta: number }) => (
-    `候補: ${prepLabel(suggestion.prep)} -> ${RESPONSE_LABELS[suggestion.response]}。${RESULT_TIER_LABELS[suggestion.resultTier]}見込みで総合${signedDisplayScore(suggestion.totalScoreDelta)}、負荷${signed(suggestion.loadDelta)}。`
+    `候補: ${prepLabel(suggestion.prep)} -> ${RESPONSE_LABELS[suggestion.response]}。${RESULT_TIER_LABELS[suggestion.resultTier]}見立てで総合${signedDisplayScore(suggestion.totalScoreDelta)}、負荷${signed(suggestion.loadDelta)}。`
   ),
   titleWithTurn: (log: TurnLog) => `${turnLabel(log)}を詰める`,
   fallbackSwingBody: (targetTurn: TurnLog | null) => (

@@ -208,8 +208,8 @@ export const appCopy = {
     marker: 'メモに反映',
   },
   resultPreview: {
-    emptyKicker: '場面の見通し',
-    emptyTitle: '対応を選ぶと、見通しが立つ',
+    emptyKicker: '場面の見立て',
+    emptyTitle: '対応を選ぶと、見立てが立つ',
     emptyBody: '結果は確定前に確認できる。拾うか、整えるか、待つか、切るか。',
     ticket: 'キュー結果票',
     finale: '千秋楽',
