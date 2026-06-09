@@ -1,5 +1,4 @@
 import { EVENT_LABELS, PERFORMANCE_SLOT_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS } from './gameLabels';
-import { displayScore } from '../../game/scoreDisplay';
 import type { GameState, MainResponse, ResponseInsight, ResultTier, ScoreBreakdownItem } from '../../game/types';
 
 export const responsePanelCopy = {
@@ -24,9 +23,6 @@ export const responsePanelCopy = {
   unknownEvent: '未定',
   runSheetAria: '進行表',
   resultRailAria: '場面の見立て',
-  outlookRuleNote: '見立ては確率ではなく、現在の状態と選んだキューから出した評価レンジ。',
-  scoreSummaryTitle: '判定点',
-  outlookBreakdownTitle: '見立て分解',
   readoutAria: '選択中の相性と影響',
   affinityBoardTitle: '相性盤',
   effectBoardTitle: 'キュー後の影響',
@@ -93,70 +89,6 @@ export function decisionMemo(insight: ResponseInsight) {
   const cost = costReason(insight, risk, blocker?.id);
   const danger = insight.dangerWarning ? ` ${insight.downsideLabel}。` : '';
   return `${lead}。${reason}${cost}${danger}`;
-}
-
-export function decisionScoreSummary(insight: ResponseInsight) {
-  const currentTier = RESULT_TIER_LABELS[insight.resultTier];
-  const next = nextTierTarget(insight.score);
-  const nextLabel = next
-    ? `${RESULT_TIER_LABELS[next.tier]}まであと${displayScore(next.minScore - insight.score)}点`
-    : `${currentTier}到達`;
-  return `${displayScore(insight.score)}点 / ${currentTier}見立て / ${nextLabel}`;
-}
-
-export function outlookProfile(insight: ResponseInsight) {
-  return [
-    {
-      key: 'stretch',
-      label: '伸びしろ',
-      value: stretchLabel(insight),
-      tone: insight.rangeTone === 'best' ? 'positive' : insight.rangeTone === 'danger' ? 'negative' : 'neutral',
-    },
-    {
-      key: 'stability',
-      label: '安定',
-      value: stabilityLabel(insight),
-      tone: insight.rangeTone === 'danger' ? 'negative' : insight.rangeTone === 'thin' ? 'neutral' : 'positive',
-    },
-    {
-      key: 'cost',
-      label: '代償',
-      value: costLabel(insight),
-      tone: insight.deltaLoad >= 2 || insight.sideEffects.some((effect) => effect.value < 0) ? 'negative' : insight.deltaLoad < 0 ? 'positive' : 'neutral',
-    },
-  ] as const;
-}
-
-function nextTierTarget(score: number): { tier: ResultTier; minScore: number } | null {
-  return [
-    { tier: 'fray' as const, minScore: 0 },
-    { tier: 'smallSuccess' as const, minScore: 2 },
-    { tier: 'scene' as const, minScore: 4 },
-    { tier: 'masterpiece' as const, minScore: 7 },
-  ].find((step) => score < step.minScore) ?? null;
-}
-
-function stretchLabel(insight: ResponseInsight) {
-  if (insight.successRangeLabel.includes(RESULT_TIER_LABELS.masterpiece)) return '名場面圏内';
-  if (insight.successRangeLabel.includes(RESULT_TIER_LABELS.scene)) return '場面化まで';
-  if (insight.successRangeLabel.includes(RESULT_TIER_LABELS.smallSuccess)) return '小成功まで';
-  return '崩れ抑え';
-}
-
-function stabilityLabel(insight: ResponseInsight) {
-  if (insight.dangerWarning) return '事故注意';
-  if (insight.prepRelationTone === 'primary') return '準備で支える';
-  if (insight.frayRelationTone === 'recover') return 'ほころび回収';
-  if (insight.rangeTone === 'thin') return '揺れが残る';
-  return '大崩れしにくい';
-}
-
-function costLabel(insight: ResponseInsight) {
-  if (insight.deltaLoad >= 2) return '負荷が重い';
-  if (insight.deltaLoad > 0) return '負荷が残る';
-  if (insight.sideEffects.some((effect) => effect.value < 0)) return '差分に注意';
-  if (insight.deltaLoad < 0) return '負荷を下げる';
-  return '代償は軽め';
 }
 
 const driverPriority = [

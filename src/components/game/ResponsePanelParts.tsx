@@ -8,8 +8,6 @@ import { effectDirection, effectIntensity, effectItems, effectLedSlots, effectTa
 import {
   affinityLabels,
   decisionMemo,
-  decisionScoreSummary,
-  outlookProfile,
   prepConnectionLabel,
   prepConnectionShortLabel,
   responsePanelCopy,
@@ -121,22 +119,6 @@ export function ResponseConsole({
       </div>
       <ConsoleRunSheet state={state} styleHud={styleHud} buildCue={buildCue} />
       <ResultRail insight={insight} variant="console" />
-      <div className="console-score-summary" aria-label={responsePanelCopy.scoreSummaryTitle}>
-        <span>{responsePanelCopy.scoreSummaryTitle}</span>
-        <strong>{decisionScoreSummary(insight)}</strong>
-        <p>{responsePanelCopy.outlookRuleNote}</p>
-      </div>
-      <div className="console-outlook-breakdown" aria-label={responsePanelCopy.outlookBreakdownTitle}>
-        <span>{responsePanelCopy.outlookBreakdownTitle}</span>
-        <div>
-          {outlookProfile(insight).map((item) => (
-            <em key={item.key} className={classNames('outlook-profile-chip', profileToneClass[item.tone])}>
-              <small>{item.label}</small>
-              <strong>{item.value}</strong>
-            </em>
-          ))}
-        </div>
-      </div>
       <ReadoutHud insight={insight} />
       <div className="console-log">
         <span>{responsePanelCopy.logTitle}</span>
@@ -431,12 +413,6 @@ const resultRailToneClass: Record<ResponseInsight['rangeTone'], string> = {
   good: 'has-good',
   thin: 'has-risky',
   danger: 'has-danger',
-};
-
-const profileToneClass: Record<ReturnType<typeof outlookProfile>[number]['tone'], string> = {
-  positive: 'profile-positive',
-  neutral: 'profile-neutral',
-  negative: 'profile-negative',
 };
 
 const performanceStyleClass: Record<NonNullable<GameState['performanceStyle']>, string> = {
