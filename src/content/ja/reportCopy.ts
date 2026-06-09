@@ -93,6 +93,25 @@ export function scoreNote(args: {
   return `${args.nextRank}まであと${visiblePoints}点。場面化以上をもう1回増やしたい。`;
 }
 
+export const sPlusConditionCopy = {
+  totalScore: '総合評価点660以上',
+  backstageLoad: '最終負荷1以下',
+  noFray: 'ほころび/事故なし',
+  prepHits: '準備的中4回以上',
+  sceneOrBetter: '場面化以上5回以上',
+  finaleScene: '千秋楽ソワレを場面化以上',
+} as const;
+
+export const rankCapReasonCopy = {
+  doubleAccident: '事故2回以上',
+  accident: '事故あり',
+  maxLoad: '最終負荷5',
+  highLoad: '最終負荷4以上',
+  manyFrays: 'ほころび/事故3回以上',
+  fewPrepHits: '準備的中1回以下',
+  finaleAccident: '千秋楽ソワレが事故',
+} as const;
+
 export function mediaHeadline(args: {
   stars: number;
   sceneScore: number;

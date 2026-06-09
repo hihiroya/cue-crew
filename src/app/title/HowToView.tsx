@@ -21,6 +21,20 @@ export function HowToView({ onStart }: { onStart: () => void }) {
         </div>
         {appCopy.title.howToLines.map((line) => <p key={line}>{line}</p>)}
       </div>
+      <details className="rulebook-panel">
+        <summary>
+          <span>{appCopy.title.rulebookTitle}</span>
+          <strong>{appCopy.title.rulebookLead}</strong>
+        </summary>
+        <div className="rulebook-grid">
+          {appCopy.title.rulebookItems.map((item) => (
+            <article key={item.title}>
+              <strong>{item.title}</strong>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </details>
       <button type="button" className="primary-action" onClick={onStart}>{appCopy.title.start}</button>
     </section>
   );

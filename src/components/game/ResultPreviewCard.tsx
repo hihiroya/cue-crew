@@ -117,6 +117,7 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
               </article>
             ) : null}
           </div>
+          <ScoreBreakdownDetails preview={preview} />
         </div>
         {shouldShowPrepRecovery(preview) ? (
           <div className={classNames('prep-recovery', prepRecoveryToneClass[preview.prepRecoveryTone])}>
@@ -137,6 +138,26 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
       </div>
       <button className="primary-action result-preview-commit" disabled={!canCommit} onClick={onCommit}>{isFinale ? appCopy.resultPreview.commitFinale : appCopy.resultPreview.commitNext}</button>
     </section>
+  );
+}
+
+function ScoreBreakdownDetails({ preview }: { preview: ResultPreview }) {
+  return (
+    <details className="score-breakdown-details">
+      <summary>
+        <span>{appCopy.resultPreview.breakdownSummary}</span>
+        <strong>{appCopy.resultPreview.breakdownTotal} {displayScore(preview.score)}{appCopy.resultPreview.scoreUnit}</strong>
+      </summary>
+      <div className="score-breakdown-list" aria-label={appCopy.resultPreview.breakdownAria}>
+        {preview.scoreBreakdown.length > 0 ? preview.scoreBreakdown.map((item) => (
+          <article key={`${item.id}:${item.label}`} className={classNames('score-breakdown-row', breakdownToneClass[item.tone])}>
+            <span>{item.label}</span>
+            <strong>{signedDisplayScore(item.value)}</strong>
+            {item.detail ? <p>{item.detail}</p> : null}
+          </article>
+        )) : <p>{appCopy.resultPreview.breakdownEmpty}</p>}
+      </div>
+    </details>
   );
 }
 
@@ -194,7 +215,7 @@ function Delta({
   const before = formatStateValue(kind, impact.before);
   const after = formatStateValue(kind, impact.after);
   return (
-    <div className={classNames('delta-line', deltaKindClass[kind], deltaImpactToneClass[tone.tone])} aria-label={`${label}: ${before}から${after}、${tone.label}、${change}`}>
+    <div className={classNames('delta-line', deltaKindClass[kind], deltaImpactToneClass[tone.tone])} aria-label={appCopy.resultPreview.deltaLineAria(label, before, after, tone.label, change)}>
       <span className="delta-line-label"><Icon name={kind} />{label}</span>
       <b className="delta-transition"><span>{before}</span><i aria-hidden="true">-&gt;</i><span>{after}</span></b>
       <em>{tone.label}</em>

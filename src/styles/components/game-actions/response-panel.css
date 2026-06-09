@@ -660,6 +660,79 @@
   line-height: 1.55;
 }
 
+.console-score-summary,
+.console-outlook-breakdown {
+  position: relative;
+  z-index: 1;
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+  padding: 8px 9px;
+  border-radius: 7px;
+  border: 1px solid rgba(139, 201, 213, 0.2);
+  background:
+    linear-gradient(90deg, rgba(139, 201, 213, 0.08), transparent 56%),
+    rgba(0, 0, 0, 0.22);
+}
+
+.console-score-summary > span,
+.console-outlook-breakdown > span {
+  color: var(--gold);
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.console-score-summary strong {
+  color: #f3e6c9;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.console-score-summary p {
+  color: #c8d6d4;
+  font-size: 0.68rem;
+  line-height: 1.42;
+}
+
+.console-outlook-breakdown > div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.outlook-profile-chip {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 7px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+  font-style: normal;
+}
+
+.outlook-profile-chip small {
+  color: rgba(243, 230, 201, 0.68);
+  font-size: 0.58rem;
+  font-weight: 900;
+}
+
+.outlook-profile-chip strong {
+  color: #f3e6c9;
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.outlook-profile-chip.profile-positive {
+  border-color: rgba(139, 211, 148, 0.22);
+  background: rgba(87, 151, 93, 0.09);
+}
+
+.outlook-profile-chip.profile-negative {
+  border-color: rgba(255, 119, 111, 0.23);
+  background: rgba(255, 119, 111, 0.08);
+}
+
 .console-log {
   position: relative;
   z-index: 1;
@@ -868,3 +941,8 @@
     inset 0 -8px 12px rgba(0, 0, 0, 0.14);
 }
 
+@media (max-width: 520px) {
+  .console-outlook-breakdown > div {
+    grid-template-columns: 1fr;
+  }
+}

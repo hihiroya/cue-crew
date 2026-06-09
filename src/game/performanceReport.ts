@@ -82,14 +82,15 @@ function sPlusConditionMisses(args: {
   frayOrAccidentCount: number;
 }): string[] {
   const finale = args.logs.find((log) => log.act === 3 && log.turnInAct === 2);
-  return [
-    args.totalScore < 66 ? '総合評価点660以上' : null,
-    args.backstageLoad > 1 ? '最終負荷1以下' : null,
-    args.frayOrAccidentCount > 0 ? 'ほころび/事故なし' : null,
-    args.prepHits < 4 ? '準備的中4回以上' : null,
-    args.sceneOrBetterCount < 5 ? '場面化以上5回以上' : null,
-    !finale || !['masterpiece', 'scene'].includes(finale.resultTier) ? '千秋楽ソワレを場面化以上' : null,
-  ].filter((item): item is string => Boolean(item));
+  const misses: Array<string | null> = [
+    args.totalScore < 66 ? reportCopy.sPlusConditionCopy.totalScore : null,
+    args.backstageLoad > 1 ? reportCopy.sPlusConditionCopy.backstageLoad : null,
+    args.frayOrAccidentCount > 0 ? reportCopy.sPlusConditionCopy.noFray : null,
+    args.prepHits < 4 ? reportCopy.sPlusConditionCopy.prepHits : null,
+    args.sceneOrBetterCount < 5 ? reportCopy.sPlusConditionCopy.sceneOrBetter : null,
+    !finale || !['masterpiece', 'scene'].includes(finale.resultTier) ? reportCopy.sPlusConditionCopy.finaleScene : null,
+  ];
+  return misses.filter((item): item is string => Boolean(item));
 }
 
 function rankCapForPerformance(args: {
@@ -107,13 +108,13 @@ function rankCapForPerformance(args: {
     reasons.push(reason);
   };
 
-  if (accidentCount >= 2) applyCap('B', '事故2回以上');
-  else if (accidentCount >= 1) applyCap('A', '事故あり');
-  if (args.backstageLoad >= 5) applyCap('C', '最終負荷5');
-  else if (args.backstageLoad >= 4) applyCap('B', '最終負荷4以上');
-  if (args.frayOrAccidentCount >= 3) applyCap('B', 'ほころび/事故3回以上');
-  if (args.prepHits <= 1) applyCap('A', '準備的中1回以下');
-  if (finale?.resultTier === 'accident') applyCap('B', '千秋楽ソワレが事故');
+  if (accidentCount >= 2) applyCap('B', reportCopy.rankCapReasonCopy.doubleAccident);
+  else if (accidentCount >= 1) applyCap('A', reportCopy.rankCapReasonCopy.accident);
+  if (args.backstageLoad >= 5) applyCap('C', reportCopy.rankCapReasonCopy.maxLoad);
+  else if (args.backstageLoad >= 4) applyCap('B', reportCopy.rankCapReasonCopy.highLoad);
+  if (args.frayOrAccidentCount >= 3) applyCap('B', reportCopy.rankCapReasonCopy.manyFrays);
+  if (args.prepHits <= 1) applyCap('A', reportCopy.rankCapReasonCopy.fewPrepHits);
+  if (finale?.resultTier === 'accident') applyCap('B', reportCopy.rankCapReasonCopy.finaleAccident);
 
   return { maxRank, reasons };
 }
