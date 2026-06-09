@@ -83,6 +83,39 @@ test('prep misses add a pivot cost even when event and actor affinity are strong
   assert.equal(preview.scoreBreakdown.some((item) => item.id === 'prep-pivot' && item.value === -2), true);
 });
 
+test('response insight applies prep pivot caps before a response is selected', () => {
+  const responseState = gameState({
+    act: 2,
+    turnInAct: 1,
+    totalTurn: 3,
+    theme: '2日目',
+    currentFocusActorId: 'junior',
+    actors: assignActorRoles(INITIAL_ACTORS, 'junior'),
+    currentActorEvent: event('adlib', 'junior'),
+    selectedPrep: 'tightenFlow',
+    selectedResponse: null,
+    status: 'response',
+  });
+  const insight = responseInsight(responseState, 'catch');
+  const preview = previewResult(gameState({
+    act: 2,
+    turnInAct: 1,
+    totalTurn: 3,
+    theme: '2日目',
+    currentFocusActorId: 'junior',
+    actors: assignActorRoles(INITIAL_ACTORS, 'junior'),
+    currentActorEvent: event('adlib', 'junior'),
+    selectedPrep: 'tightenFlow',
+    selectedResponse: 'catch',
+    status: 'result',
+  }));
+
+  assert.equal(insight.score, preview.score);
+  assert.equal(insight.resultTier, preview.resultTier);
+  assert.equal(insight.resultTier, 'fray');
+  assert.equal(insight.scoreBreakdown.some((item) => item.id === 'prep-cap'), true);
+});
+
 test('responseInsight exposes repeated response penalties before committing', () => {
   const insight = responseInsight(gameState({
     lastResponses: ['catch', 'catch'],

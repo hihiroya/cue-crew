@@ -518,11 +518,12 @@ function prepScoreItem(quality: PrepPredictionQuality): ScoreBreakdownItem {
   return scoreItem(copy.id, copy.label, copy.value, copy.detail);
 }
 
-function capForPrepQuality(quality: PrepPredictionQuality, state?: GameState) {
+function capForPrepQuality(quality: PrepPredictionQuality, state?: GameState, response?: MainResponse) {
+  const selectedResponse = response ?? state?.selectedResponse;
   if (quality === 'hit') return Number.POSITIVE_INFINITY;
-  if (quality === 'miss' && state?.selectedPrep && state.selectedResponse && state.selectedResponse !== PREP_PRIMARY_RESPONSE[state.selectedPrep] && !previousCutSetupActive(state)) return 1;
+  if (quality === 'miss' && state?.selectedPrep && selectedResponse && selectedResponse !== PREP_PRIMARY_RESPONSE[state.selectedPrep] && !previousCutSetupActive(state)) return 1;
   if (quality === 'miss' && state && previousCutSetupActive(state)) return 4;
-  if (quality === 'partial' && state?.selectedPrep && state.selectedResponse && state.selectedResponse !== PREP_PRIMARY_RESPONSE[state.selectedPrep]) return 1;
+  if (quality === 'partial' && state?.selectedPrep && selectedResponse && selectedResponse !== PREP_PRIMARY_RESPONSE[state.selectedPrep]) return 1;
   if (quality === 'partial') return 6;
   return 3;
 }
@@ -597,7 +598,7 @@ export function buildScoreBreakdown(state: GameState, actor: Actor, response: Ma
     frayRewardItem,
   ].filter((item): item is ScoreBreakdownItem => Boolean(item));
   const rawScore = sumBreakdown(items);
-  const prepCap = capForPrepQuality(prepQuality, state);
+  const prepCap = capForPrepQuality(prepQuality, state, response);
   const arrangeCap = arrangeMasterpieceCap(state, actor, response, prepQuality)?.value ?? Number.POSITIVE_INFINITY;
   const cap = Math.min(prepCap, arrangeCap);
   if (rawScore > cap) {
@@ -629,7 +630,7 @@ function rangeForScore(score: number, quality: PrepPredictionQuality, cap = capF
 
 export function guardedRangeForScore(score: number, quality: PrepPredictionQuality, state: GameState, response: MainResponse): { label: string; tone: ResponseInsight['rangeTone']; dangerWarning?: string; highTier: ResultTier; lowTier: ResultTier } {
   const actor = state.actors.find((item) => item.id === state.currentFocusActorId) ?? state.actors[0];
-  const prepCap = capForPrepQuality(quality, state);
+  const prepCap = capForPrepQuality(quality, state, response);
   const arrangeCap = actor ? arrangeMasterpieceCap(state, actor, response, quality)?.value ?? Number.POSITIVE_INFINITY : Number.POSITIVE_INFINITY;
   const range = rangeForScore(score, quality, Math.min(prepCap, arrangeCap));
   const lowTier = guardTierForStrongFrayRecovery(guardTierForActorTrust(guardTierForTransitionCut(range.lowTier, state, response, quality), actor, response), state, response);
