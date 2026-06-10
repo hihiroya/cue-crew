@@ -1,6 +1,7 @@
+import { useId, useState } from 'react';
 import { ACTOR_LABELS, EVENT_LABELS, PREP_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS, RESULT_TIER_STARS } from '../../game/constants';
 import { displayScore, signedDisplayScore } from '../../game/scoreDisplay';
-import type { ResultPreview } from '../../game/types';
+import type { ResultPreview, ScoreBreakdownItem } from '../../game/types';
 import type { CollectionState } from '../../game/rogueliteProgress';
 import { Icon } from '../ui/Icon';
 import { classNames } from '../ui/classNames';
@@ -15,6 +16,9 @@ type Props = {
 };
 
 export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: Props) {
+  const breakdownId = useId();
+  const [isBreakdownOpen, setIsBreakdownOpen] = useState(false);
+  const [highlightedBreakdownKey, setHighlightedBreakdownKey] = useState<string | null>(null);
   if (!preview) {
     return (
       <section className="result-preview empty-preview">
@@ -35,6 +39,10 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
     .filter((item) => item.value !== 0)
     .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))
     .slice(0, 3);
+  const showBreakdownFor = (item: ScoreBreakdownItem) => {
+    setHighlightedBreakdownKey(scoreBreakdownKey(item));
+    setIsBreakdownOpen(true);
+  };
   const backstageNote = backstageResultLog(preview);
   return (
     <section className={classNames('result-preview cue-result-ticket', resultTierClass[preview.resultTier], resultModeClass[preview.resultMode])}>
@@ -61,13 +69,27 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
       {reasonItems.length > 0 ? (
         <div className="cue-reason-chips" aria-label={appCopy.resultPreview.reasonChips}>
           {reasonItems.map((item) => (
-            <span key={item.id} className={classNames('cue-reason-chip', breakdownToneClass[item.tone])}>
+            <button
+              key={scoreBreakdownKey(item)}
+              type="button"
+              className={classNames('cue-reason-chip', breakdownToneClass[item.tone], highlightedBreakdownKey === scoreBreakdownKey(item) && 'is-selected')}
+              aria-controls={breakdownId}
+              aria-expanded={isBreakdownOpen}
+              onClick={() => showBreakdownFor(item)}
+            >
               <strong>{signedDisplayScore(item.value)}</strong>
               <small>{item.label}</small>
-            </span>
+            </button>
           ))}
         </div>
       ) : null}
+      <ScoreBreakdownDetails
+        id={breakdownId}
+        isOpen={isBreakdownOpen}
+        highlightedKey={highlightedBreakdownKey}
+        preview={preview}
+        onToggle={setIsBreakdownOpen}
+      />
       <div className="cue-route">
         <span><Icon name="actor" />{ACTOR_LABELS[preview.focusActorType]}</span>
         <span><Icon name={preview.actorEventType} />{EVENT_LABELS[preview.actorEventType]}</span>
@@ -117,7 +139,6 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
               </article>
             ) : null}
           </div>
-          <ScoreBreakdownDetails preview={preview} />
         </div>
         {shouldShowPrepRecovery(preview) ? (
           <div className={classNames('prep-recovery', prepRecoveryToneClass[preview.prepRecoveryTone])}>
@@ -141,16 +162,28 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
   );
 }
 
-function ScoreBreakdownDetails({ preview }: { preview: ResultPreview }) {
+function ScoreBreakdownDetails({
+  highlightedKey,
+  id,
+  isOpen,
+  onToggle,
+  preview,
+}: {
+  highlightedKey: string | null;
+  id: string;
+  isOpen: boolean;
+  onToggle: (isOpen: boolean) => void;
+  preview: ResultPreview;
+}) {
   return (
-    <details className="score-breakdown-details">
+    <details id={id} className="score-breakdown-details" open={isOpen} onToggle={(event) => onToggle(event.currentTarget.open)}>
       <summary>
         <span>{appCopy.resultPreview.breakdownSummary}</span>
         <strong>{appCopy.resultPreview.breakdownTotal} {displayScore(preview.score)}{appCopy.resultPreview.scoreUnit}</strong>
       </summary>
       <div className="score-breakdown-list" aria-label={appCopy.resultPreview.breakdownAria}>
         {preview.scoreBreakdown.length > 0 ? preview.scoreBreakdown.map((item) => (
-          <article key={`${item.id}:${item.label}`} className={classNames('score-breakdown-row', breakdownToneClass[item.tone])}>
+          <article key={scoreBreakdownKey(item)} className={classNames('score-breakdown-row', breakdownToneClass[item.tone], highlightedKey === scoreBreakdownKey(item) && 'is-highlighted')}>
             <span>{item.label}</span>
             <strong>{signedDisplayScore(item.value)}</strong>
             {item.detail ? <p>{item.detail}</p> : null}
@@ -159,6 +192,10 @@ function ScoreBreakdownDetails({ preview }: { preview: ResultPreview }) {
       </div>
     </details>
   );
+}
+
+function scoreBreakdownKey(item: ScoreBreakdownItem) {
+  return `${item.id}:${item.label}`;
 }
 
 function shouldShowCost(preview: ResultPreview) {
