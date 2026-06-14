@@ -40,7 +40,7 @@
 .console-cue-strip {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: minmax(54px, 0.55fr) minmax(118px, 1.25fr) minmax(70px, 0.8fr);
+  grid-template-columns: minmax(54px, 0.45fr) minmax(104px, 0.9fr) minmax(130px, 1.35fr);
   gap: 6px;
   min-width: 0;
 }

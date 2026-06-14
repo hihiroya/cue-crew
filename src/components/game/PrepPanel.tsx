@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { EVENT_LABELS, PREP_LABELS, RESPONSE_LABELS } from '../../game/constants';
+import { EVENT_LABELS } from '../../game/constants';
 import type { Actor, ActorEventType, GameState, PrepAction } from '../../game/types';
 import { Icon } from '../ui/Icon';
 import { classNames } from '../ui/classNames';
@@ -9,13 +9,12 @@ import {
   appCopy,
   prepActorMemo,
   prepExpectedMemo,
-  prepKindLabel,
-  prepMeaningMemo,
   prepMissedMemo,
   prepPerformanceMemo,
   scoreMoodMemo,
 } from '../../content/ja/appCopy';
 import { backstageLogCopy, backstagePrepLog } from '../../content/ja/backstageLogCopy';
+import { prepChoiceStory } from '../../content/ja/choiceStoryCopy';
 import styles from './PrepPanel.module.css';
 import { buildPrepPanelViewModel, type PrepTone } from './prepPanelViewModel';
 
@@ -45,6 +44,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
     visibleOmens: inspected.coveredOmens.length ? inspected.coveredOmens : visibleOmens,
   });
   const isApproving = approvingPrep === inspected.prep;
+  const inspectedStory = prepChoiceStory(inspected.prep, visibleOmens);
   const approvalRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -62,8 +62,9 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
         <small>{appCopy.prep.lead}</small>
       </div>
       <div className={styles.choiceGrid}>
-        {viewModel.options.map(({ prep, coveredOmens, primaryResponse, tone, isPrevious }) => {
+        {viewModel.options.map(({ prep, coveredOmens, tone, isPrevious }) => {
           const isInspected = inspected.prep === prep;
+          const story = prepChoiceStory(prep, visibleOmens);
           return (
             <button
               key={prep}
@@ -76,18 +77,19 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
               <div className="prep-card-top">
                 <Icon name={prep} />
                 <span className="prep-title">
-                  <strong>{PREP_LABELS[prep]}</strong>
-                  <em>{prepKindLabel(prep)}</em>
+                  <strong>{story.title}</strong>
+                  <em>{story.caution}</em>
                 </span>
+              </div>
+              <p className="choice-story-body">{story.body}</p>
+              <div className="choice-story-tags" aria-label="準備の対象と作業">
+                <em><span>対象</span>{story.target}</em>
+                <em><span>作業</span>{story.work}</em>
               </div>
               <div className="cue-cover">
                 <span>{appCopy.prep.coverage}</span>
                 <PrepCoverageMeter covered={coveredOmens.length} total={visibleOmens.length} tone={tone} />
               </div>
-              <small className="prep-response-hint">
-                <Icon name={primaryResponse} />
-                {appCopy.prep.responseHint(RESPONSE_LABELS[primaryResponse])}
-              </small>
               {isPrevious ? <em className="replay-ghost-mark">{appCopy.replayGhost.previous}</em> : null}
               <PrepSelectionMarker visible={isInspected} />
             </button>
@@ -104,7 +106,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
           <div className="cue-sheet-head">
             <div className="cue-sheet-title">
               <span>{appCopy.prep.memo}</span>
-              <strong>{appCopy.prep.prepTitle(PREP_LABELS[inspected.prep])}</strong>
+              <strong>{inspectedStory.title}</strong>
             </div>
             <div ref={approvalRef} className={`cue-approval-slot ${isApproving ? 'is-approved' : ''}`} aria-label={appCopy.prep.approvalLabel} aria-live="polite">
               <span>{appCopy.prep.approvalLabel}</span>
@@ -141,14 +143,14 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
           <div className="cue-read">
             <div className="prep-intent-line">
               <span>{appCopy.prep.prepMeaning}</span>
-              <strong>{prepKindLabel(inspected.prep)}</strong>
+              <strong>{inspectedStory.target}</strong>
               {inspected.tone === 'danger' ? <em>{appCopy.prep.danger}</em> : null}
-              <p>{prepMeaningMemo(inspected.prep)}</p>
+              <p>{inspectedStory.body}</p>
             </div>
             <div className="cue-note-branches">
               <section>
                 <span>{appCopy.prep.responseFit}</span>
-                <p><strong>{RESPONSE_LABELS[inspected.primaryResponse]}</strong>。{prepExpectedMemo(inspected.prep)}</p>
+                <p>{prepExpectedMemo(inspected.prep)}</p>
               </section>
               <section>
                 <span>{appCopy.prep.onMissed}</span>

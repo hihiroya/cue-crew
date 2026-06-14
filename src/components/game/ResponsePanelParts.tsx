@@ -1,6 +1,5 @@
-import { RESPONSE_LABELS } from '../../game/constants';
 import { signedDisplayScore } from '../../game/scoreDisplay';
-import type { GameState, MainResponse, ResponseInsight } from '../../game/types';
+import type { ActorEventType, GameState, MainResponse, ResponseInsight } from '../../game/types';
 import type { ResponseReplayDelta } from '../../game/rogueliteProgress';
 import { Icon } from '../ui/Icon';
 import { classNames } from '../ui/classNames';
@@ -20,20 +19,24 @@ import {
 import { PERFORMANCE_COLOR_HUD } from '../../content/ja/gameHeaderCopy';
 import { RESULT_TIER_LABELS } from '../../content/ja/gameLabels';
 import { backstageLogCopy, backstageResponseLog } from '../../content/ja/backstageLogCopy';
+import { responseChoiceStory } from '../../content/ja/choiceStoryCopy';
 import styles from './ActionPanel.module.css';
 
 export function ResponseChoiceCard({
   disabled,
+  event,
   insight,
   isInspected,
   onInspect,
 }: {
   disabled: boolean;
+  event?: ActorEventType | null;
   insight: ResponseInsight;
   isInspected: boolean;
   onInspect: (response: MainResponse) => void;
 }) {
   const response = insight.response;
+  const story = responseChoiceStory(event, response);
   return (
     <button
       aria-pressed={isInspected}
@@ -45,9 +48,14 @@ export function ResponseChoiceCard({
       <div className="response-card-top">
         <Icon name={response} />
         <span className="response-title">
-          <strong>{RESPONSE_LABELS[response]}</strong>
-          <em>{insight.tacticalSummary}</em>
+          <strong>{story.title}</strong>
+          <em>{story.aim}</em>
         </span>
+      </div>
+      <p className="choice-story-body">{story.body}</p>
+      <div className="choice-story-tags choice-story-tags--response" aria-label="対応の狙いと注意">
+        <em><span>狙い</span>{story.aim}</em>
+        <em><span>注意</span>{story.caution}</em>
       </div>
       <div className="outlook-summary" aria-label={responsePanelCopy.outlookAria(insight.successRangeLabel)}>
         <div className="outlook-head">
@@ -98,6 +106,7 @@ export function ResponseConsole({
   const buildLevelItem = insight.scoreBreakdown.find((item) => item.id === 'build-level');
   const styleHud = getStyleHud(state.performanceStyle);
   const backstageNote = backstageResponseLog(state, insight.response);
+  const story = responseChoiceStory(state.currentActorEvent?.type, insight.response);
   return (
     <aside className={classNames('decision-note response-console', relationToneClass[insight.prepRelationTone])}>
       <div className="console-head">
@@ -113,7 +122,7 @@ export function ResponseConsole({
           </em>
           <em>
             <small>CALL</small>
-            <strong>{RESPONSE_LABELS[insight.response]}</strong>
+            <strong>{story.title}</strong>
           </em>
         </div>
       </div>

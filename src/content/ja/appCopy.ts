@@ -411,17 +411,17 @@ export function prepMeaningMemo(prep: PrepAction) {
 }
 
 export function prepExpectedMemo(prep: PrepAction) {
-  if (prep === 'watch') return '役者が前へ出たら、その動きを拾って場面にする。予定外の熱を止めず、客席に届く見せ場として扱う。';
-  if (prep === 'makeSpace') return '沈黙や退場の余韻が来たら、待つことで間を保つ。急いで埋めず、役者の呼吸が客席へ届く時間にする。';
-  if (prep === 'tightenFlow') return '立ち位置やテンポが乱れたら、整えることで舞台全体の呼吸に戻す。目立つ熱より、崩れない進行を優先する。';
-  return '転換の崩れが来たら、切ることで場面を閉じる。広がりかけた乱れを小さくして、次の回が始めやすい形にする。';
+  if (prep === 'watch') return '前へ出る、一言を足す、声量が上がる時は、照明を残して音響をかぶせず、袖の呼び込みを半拍止める。';
+  if (prep === 'makeSpace') return '沈黙や退場遅れが来た時は、音響キューを保留し、次の出の役者と通路を詰まらせない。';
+  if (prep === 'tightenFlow') return '立ち位置やテンポ、群像が乱れた時は、照明の中心、音響の入り、袖の出順を基準へ戻す。';
+  return '走った台詞、退場遅れ、待機列の詰まりが来た時は、暗転と小道具回収で早めに次へ渡す。';
 }
 
 export function prepMissedMemo(prep: PrepAction) {
-  if (prep === 'watch') return '熱ではなく進行の乱れが来た時は、整える判断で安全寄りに戻せる。注視していたぶん、崩れの入口は見つけやすい。';
-  if (prep === 'makeSpace') return '間ではなく熱が来た時は、拾う判断に切り替える余地がある。残した余白を、熱が立ち上がる場所として使える。';
-  if (prep === 'tightenFlow') return '進行ではなく熱や間が来た時は、無理に締めすぎない。負荷が高いなら切る、余裕があるなら拾う・待つへ寄せる。';
-  return '崩れが来なければ、低負荷のまま整える・待つで場面化を狙える。閉じる準備は、外れても退路として残る。';
+  if (prep === 'watch') return '立ち位置や出順の乱れが来た時は、照明で追いすぎず、舞監が進行表の位置へ戻す。';
+  if (prep === 'makeSpace') return '声量が上がった時は、音を足さずに照明を残す。走ったテンポには置いていかれやすい。';
+  if (prep === 'tightenFlow') return '前進や沈黙が来た時は、戻しすぎない。負荷が高いなら暗転、余裕があるなら照明や音響の保留に寄せる。';
+  return '大きな崩れが来なければ、暗転を使わず、照明や音響の基準を保ったまま次へ渡せる。';
 }
 
 export function scoreMoodMemo(kind: 'scene' | 'flow' | 'trust', value: number) {

@@ -30,6 +30,7 @@ export function ResponsePanel({ selected, disabled, state, previousTurnLog = nul
           <ResponseChoiceCard
             key={insight.response}
             disabled={disabled}
+            event={state.currentActorEvent?.type}
             insight={insight}
             isInspected={inspected.response === insight.response}
             onInspect={setInspectedResponse}
