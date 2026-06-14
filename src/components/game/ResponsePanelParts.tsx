@@ -49,12 +49,10 @@ export function ResponseChoiceCard({
         <Icon name={response} />
         <span className="response-title">
           <strong>{story.title}</strong>
-          <em>{story.aim}</em>
         </span>
       </div>
       <p className="choice-story-body">{story.body}</p>
-      <div className="choice-story-tags choice-story-tags--response" aria-label="対応の狙いと注意">
-        <em><span>狙い</span>{story.aim}</em>
+      <div className="choice-story-tags choice-story-tags--response" aria-label="対応の注意">
         <em><span>注意</span>{story.caution}</em>
       </div>
       <div className="outlook-summary" aria-label={responsePanelCopy.outlookAria(insight.successRangeLabel)}>

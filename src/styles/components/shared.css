@@ -213,11 +213,15 @@
 
 .choice-story-body {
   grid-column: 1 / -1;
+  display: -webkit-box;
   margin: 0;
   color: #f1e4c9;
   font-size: 0.76rem;
   font-weight: 700;
   line-height: 1.45;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .choice-story-tags {

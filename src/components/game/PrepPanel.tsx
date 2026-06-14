@@ -78,17 +78,15 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
                 <Icon name={prep} />
                 <span className="prep-title">
                   <strong>{story.title}</strong>
-                  <em>{story.caution}</em>
                 </span>
-              </div>
-              <p className="choice-story-body">{story.body}</p>
-              <div className="choice-story-tags" aria-label="準備の対象と作業">
-                <em><span>対象</span>{story.target}</em>
-                <em><span>作業</span>{story.work}</em>
               </div>
               <div className="cue-cover">
                 <span>{appCopy.prep.coverage}</span>
                 <PrepCoverageMeter covered={coveredOmens.length} total={visibleOmens.length} tone={tone} />
+              </div>
+              <p className="choice-story-body">{story.body}</p>
+              <div className="choice-story-tags" aria-label="準備の対象と作業">
+                <em><span>作業</span>{story.work}</em>
               </div>
               {isPrevious ? <em className="replay-ghost-mark">{appCopy.replayGhost.previous}</em> : null}
               <PrepSelectionMarker visible={isInspected} />
