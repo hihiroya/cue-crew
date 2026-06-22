@@ -50,6 +50,45 @@ export type PrepPredictionQuality = 'hit' | 'partial' | 'miss';
 
 export type PrepRecoveryTone = 'matched' | 'partial' | 'thin' | 'missed';
 
+export type CueSurgeLevel = 'none' | 'hint' | 'stacked' | 'surge' | 'peak';
+
+export type SurgeCostLevel = 'none' | 'light' | 'heavy' | 'danger';
+
+export type PrepCueSurgeInsight = {
+  level: CueSurgeLevel;
+  label: string;
+  detail: string;
+  coveredCount: number;
+  topOmenCovered: boolean;
+  reasons: string[];
+};
+
+export type ResponseCueSurgeInsight = {
+  prepLevel: CueSurgeLevel;
+  responseLevel: CueSurgeLevel;
+  costLevel: SurgeCostLevel;
+  label: string;
+  costLabel: string;
+  detail: string;
+  reasons: string[];
+  risks: string[];
+  scoreBonus: number;
+  decisiveScore: number;
+  isDecisiveCandidate: boolean;
+};
+
+export type CommittedCueSurge = {
+  prepLevel: CueSurgeLevel;
+  responseLevel: CueSurgeLevel;
+  costLevel: SurgeCostLevel;
+  label: string;
+  costLabel: string;
+  detail: string;
+  reasons: string[];
+  risks: string[];
+  decisiveScore: number;
+};
+
 export type GameStatus = 'title' | 'prep' | 'response' | 'result' | 'finished';
 
 export type PerformanceSlot = 'matinee' | 'soiree';
@@ -82,6 +121,7 @@ export type TurnLog = {
   deltaTrust: number;
   deltaLoad: number;
   loadBias: LoadBias;
+  cueSurge?: CommittedCueSurge;
 };
 
 export type GameStateBase = {

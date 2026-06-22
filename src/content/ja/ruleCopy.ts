@@ -38,6 +38,11 @@ export const ruleCopy = {
   actFallback: (theme: string) => `${theme}の判断。`,
 } as const;
 
+export const cueSurgeScoreCopy = {
+  label: '跳ね場の一押し',
+  detail: '兆候、準備、出来事、役者の手応えが重なり、名場面ラインを少し押し上げる。',
+} as const;
+
 export function actorTrustPassiveLabel(trust: number) {
   return trust >= 5 ? '以心伝心' : '阿吽の呼吸';
 }

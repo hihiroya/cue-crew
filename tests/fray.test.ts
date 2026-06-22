@@ -82,6 +82,19 @@ function resultPreview(overrides: Partial<ResultPreview> = {}): ResultPreview {
       load: { before: 4, after: 5, delta: 1 },
     },
     ...overrides,
+    cueSurge: overrides.cueSurge ?? {
+      prepLevel: 'none',
+      responseLevel: 'none',
+      costLevel: 'none',
+      label: '通常の見立て',
+      costLabel: '代償小',
+      detail: 'テスト',
+      reasons: [],
+      risks: [],
+      scoreBonus: 0,
+      decisiveScore: 0,
+      isDecisiveCandidate: false,
+    },
   };
 }
 

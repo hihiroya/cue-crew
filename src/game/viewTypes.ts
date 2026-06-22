@@ -1,4 +1,4 @@
-import type { ActorState, ActorType, ActorEventType, LoadBias, MainResponse, PerformanceSlot, PerformanceStyle, PrepAction, PrepPredictionQuality, PrepRecoveryTone, ResultTier, TurnLog } from './domainTypes';
+import type { ActorState, ActorType, ActorEventType, LoadBias, MainResponse, PerformanceSlot, PerformanceStyle, PrepAction, PrepPredictionQuality, PrepRecoveryTone, ResponseCueSurgeInsight, ResultTier, TurnLog } from './domainTypes';
 
 export type ScoreBreakdownTone = 'positive' | 'negative' | 'neutral';
 
@@ -54,11 +54,12 @@ export type ResponseInsight = {
   frayRelationTone?: 'recover' | 'miss';
   actorTrustLabel?: string;
   dangerWarning?: string;
+  cueSurge: ResponseCueSurgeInsight;
   rangeTone: 'best' | 'good' | 'thin' | 'danger';
   scoreBreakdown: ScoreBreakdownItem[];
 };
 
-export type ResultPreview = Omit<TurnLog, 'act' | 'turnInAct' | 'totalTurn'> & {
+export type ResultPreview = Omit<TurnLog, 'act' | 'turnInAct' | 'totalTurn' | 'cueSurge'> & {
   score: number;
   day: number;
   performanceSlot: PerformanceSlot;
@@ -80,6 +81,7 @@ export type ResultPreview = Omit<TurnLog, 'act' | 'turnInAct' | 'totalTurn'> & {
   prepRecoveryTitle: string;
   prepRecoveryText: string;
   cueSummary: CueResultSummary;
+  cueSurge: ResponseCueSurgeInsight;
   stateImpact: ResultStateImpact;
   scoreBreakdown: ScoreBreakdownItem[];
   focusActorType: ActorType;

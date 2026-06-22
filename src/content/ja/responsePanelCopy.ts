@@ -26,6 +26,8 @@ export const responsePanelCopy = {
   readoutAria: '選択中の相性と影響',
   affinityBoardTitle: '相性盤',
   effectBoardTitle: 'キュー後の影響',
+  surgeTitle: '跳ね場',
+  surgeCost: '代償圧',
 } as const;
 
 export function responseSendAria(response: MainResponse) {
@@ -82,7 +84,12 @@ export function decisionMemo(insight: ResponseInsight) {
   const blocker = strongestBlocker(insight.scoreBreakdown);
   const risk = strongestRisk(insight.scoreBreakdown, blocker?.id);
   const reachesMasterpiece = insight.rangeTone === 'best' || insight.successRangeLabel.includes(RESULT_TIER_LABELS.masterpiece);
-  const lead = reachesMasterpiece ? '名場面まで伸びる筋がある' : leadForNonMasterpiece(insight);
+  const surgeLead = insight.cueSurge.responseLevel === 'peak'
+    ? 'ここが跳ね場'
+    : insight.cueSurge.responseLevel === 'surge'
+      ? '大入りの気配がある'
+      : '';
+  const lead = surgeLead || (reachesMasterpiece ? '名場面まで伸びる筋がある' : leadForNonMasterpiece(insight));
   const reason = reachesMasterpiece
     ? driverReason(driver)
     : blockerReason(blocker) ?? riskReason(risk) ?? missingMasterpieceReason(insight);

@@ -1,4 +1,5 @@
 import { MAX_LOAD, TURNS_PER_ACT } from './gameSettings';
+import { committedCueSurge } from './cueSurge';
 import type { GameState, PerformanceStyle, ResultPreview, ResultTier, TurnLog } from './types';
 
 export type StyleSource = Pick<TurnLog, 'mainResponse' | 'deltaScene' | 'deltaFlow' | 'deltaTrust' | 'deltaLoad'>;
@@ -55,6 +56,7 @@ export function toTurnLog(state: GameState, preview: ResultPreview): TurnLog {
     deltaTrust: preview.deltaTrust,
     deltaLoad: preview.deltaLoad,
     loadBias: preview.loadBias,
+    cueSurge: committedCueSurge(preview.cueSurge),
   };
 }
 

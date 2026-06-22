@@ -143,7 +143,10 @@ export function createPerformanceInsight(logs: TurnLog[], sceneScore = 0, flowSc
   const dominantResponse = [...decisionDistribution].sort((a, b) => b.count - a.count)[0]?.response ?? 'catch';
   const tierRank: Record<ResultTier, number> = { masterpiece: 4, scene: 3, smallSuccess: 2, fray: 1, accident: 0 };
   const bestCue = [...logs].sort((a, b) => (
-    tierRank[b.resultTier] - tierRank[a.resultTier]
+    (b.cueSurge?.decisiveScore ?? 0) - (a.cueSurge?.decisiveScore ?? 0)
+    || Number(Boolean(b.cueSurge?.label)) - Number(Boolean(a.cueSurge?.label))
+    || Number(Boolean(b.cueSurge?.responseLevel === 'peak')) - Number(Boolean(a.cueSurge?.responseLevel === 'peak'))
+    || tierRank[b.resultTier] - tierRank[a.resultTier]
     || b.deltaScene - a.deltaScene
     || b.score - a.score
   ))[0] ?? null;

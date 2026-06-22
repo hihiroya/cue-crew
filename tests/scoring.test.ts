@@ -55,7 +55,7 @@ test('previewResult scores a prepared silence and wait as a masterpiece with tru
 
   assert.equal(preview.prepQuality, 'hit');
   assert.equal(preview.resultTier, 'masterpiece');
-  assert.equal(preview.score, 8);
+  assert.equal(preview.score, 9);
   assert.equal(preview.deltaScene, 4);
   assert.equal(preview.deltaFlow, 2);
   assert.equal(preview.deltaTrust, 3);
@@ -133,7 +133,7 @@ test('decision memo explains why a response can reach a masterpiece', () => {
   }), 'wait');
   const memo = decisionMemo(insight);
 
-  assert.equal(/名場面まで伸びる筋/.test(memo), true);
+  assert.equal(/ここが跳ね場|名場面まで伸びる筋/.test(memo), true);
   assert.equal(/名場面ライン7点/.test(memo), true);
   assert.equal(/主因/.test(memo), true);
   assert.equal(/\+\d/.test(memo), true);
@@ -256,4 +256,40 @@ test('individual actor trust supports matching responses', () => {
     selectedResponse: null,
   }), 'wait');
   assert.equal(strongInsight.actorTrustLabel?.includes('以心伝心'), true);
+});
+
+test('cue surge marks a strongly prepared response and records the peak bonus', () => {
+  const actors = assignActorRoles(INITIAL_ACTORS.map((actor) => (
+    actor.id === 'junior' ? { ...actor, trust: 3 } : actor
+  )), 'junior');
+  const preview = previewResult(gameState({
+    currentFocusActorId: 'junior',
+    actors,
+    currentActorEvent: event('adlib', 'junior'),
+    selectedPrep: 'watch',
+    selectedResponse: 'catch',
+  }));
+
+  assert.equal(preview.cueSurge.responseLevel, 'peak');
+  assert.equal(preview.cueSurge.scoreBonus, 1);
+  assert.equal(preview.scoreBreakdown.some((item) => item.id === 'cue-surge' && item.value === 1), true);
+});
+
+test('cue surge cost pressure rises when an attack is taken under high backstage load', () => {
+  const preview = previewResult(gameState({
+    act: 2,
+    turnInAct: 2,
+    totalTurn: 4,
+    theme: '2日目',
+    currentFocusActorId: 'junior',
+    actors: assignActorRoles(INITIAL_ACTORS, 'junior'),
+    currentActorEvent: event('heatUp', 'junior'),
+    selectedPrep: 'watch',
+    selectedResponse: 'catch',
+    backstageLoad: 4,
+  }));
+
+  assert.equal(preview.cueSurge.responseLevel === 'surge' || preview.cueSurge.responseLevel === 'peak', true);
+  assert.equal(preview.cueSurge.costLevel, 'danger');
+  assert.equal(preview.cueSurge.risks.some((risk) => /負荷|危険/.test(risk)), true);
 });

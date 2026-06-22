@@ -6,6 +6,7 @@ import {
   STATE_LABELS,
 } from './constants';
 import * as ruleText from '../content/ja/ruleCopy';
+import { responseCueSurgeInsight } from './cueSurge';
 import { guardTierForFrayRecovery } from './fray';
 import { tierFromScore } from './scoreEngine';
 import {
@@ -47,6 +48,15 @@ export function responseInsight(state: GameState, response: MainResponse): Respo
   );
   const deltas = deltasFor(resultTier, response, state, prepQuality);
   const deltaLoad = deltas.deltaLoad;
+  const cueSurge = responseCueSurgeInsight({
+    state,
+    actor,
+    response,
+    prepQuality,
+    resultTier,
+    deltaLoad,
+    scoreBreakdown,
+  });
   const eventValue = EVENT_COMPATIBILITY[state.currentActorEvent.type][response];
   const actorValue = actorResponseBonus(actor, response) + stateResponseBonus(actor, response);
   const range = guardedRangeForScore(score, prepQuality, state, response);
@@ -71,6 +81,7 @@ export function responseInsight(state: GameState, response: MainResponse): Respo
     ...frayRelation,
     ...actorTrustLabel(actor, response),
     dangerWarning: range.dangerWarning,
+    cueSurge,
     rangeTone: range.tone,
     scoreBreakdown,
   };

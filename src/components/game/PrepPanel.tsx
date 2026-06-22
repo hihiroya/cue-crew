@@ -15,6 +15,7 @@ import {
 } from '../../content/ja/appCopy';
 import { backstageLogCopy, backstagePrepLog } from '../../content/ja/backstageLogCopy';
 import { prepChoiceStory } from '../../content/ja/choiceStoryCopy';
+import { cueSurgeCopy } from '../../content/ja/cueSurgeCopy';
 import styles from './PrepPanel.module.css';
 import { buildPrepPanelViewModel, type PrepTone } from './prepPanelViewModel';
 
@@ -32,8 +33,8 @@ type PrepProps = {
 export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor, visibleOmens, previousPrep = null, onSelect }: PrepProps) {
   const [inspectedPrep, setInspectedPrep] = useState<PrepAction>(selected ?? 'watch');
   const viewModel = useMemo(
-    () => buildPrepPanelViewModel({ inspectedPrep, previousPrep, visibleOmens }),
-    [inspectedPrep, previousPrep, visibleOmens],
+    () => buildPrepPanelViewModel({ inspectedPrep, previousPrep, state, focusActor, visibleOmens }),
+    [inspectedPrep, previousPrep, state, focusActor, visibleOmens],
   );
   const { inspected } = viewModel;
   const backstageNote = backstagePrepLog({
@@ -62,7 +63,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
         <small>{appCopy.prep.lead}</small>
       </div>
       <div className={styles.choiceGrid}>
-        {viewModel.options.map(({ prep, coveredOmens, tone, isPrevious }) => {
+        {viewModel.options.map(({ prep, coveredOmens, tone, cueSurge, isPrevious }) => {
           const isInspected = inspected.prep === prep;
           const story = prepChoiceStory(prep, visibleOmens);
           return (
@@ -84,9 +85,13 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
                 <span>{appCopy.prep.coverage}</span>
                 <PrepCoverageMeter covered={coveredOmens.length} total={visibleOmens.length} tone={tone} />
               </div>
+              <div className={classNames('surge-badge', `surge-${cueSurge.level}`)} aria-label={`${appCopy.prep.surgeRead}: ${cueSurge.label}`}>
+                <span>{appCopy.prep.surgeRead}</span>
+                <strong>{cueSurge.label}</strong>
+              </div>
               <p className="choice-story-body">{story.body}</p>
-              <div className="choice-story-tags" aria-label="準備の対象と作業">
-                <em><span>作業</span>{story.work}</em>
+              <div className="choice-story-tags" aria-label={cueSurgeCopy.prepTargetWorkAria}>
+                <em><span>{cueSurgeCopy.prepWorkLabel}</span>{story.work}</em>
               </div>
               {isPrevious ? <em className="replay-ghost-mark">{appCopy.replayGhost.previous}</em> : null}
               <PrepSelectionMarker visible={isInspected} />
@@ -144,6 +149,16 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
               <strong>{inspectedStory.target}</strong>
               {inspected.tone === 'danger' ? <em>{appCopy.prep.danger}</em> : null}
               <p>{inspectedStory.body}</p>
+            </div>
+            <div className={classNames('prep-surge-line', `surge-${inspected.cueSurge.level}`)}>
+              <span>{appCopy.prep.surgeRead}</span>
+              <strong>{inspected.cueSurge.label}</strong>
+              <p>{inspected.cueSurge.detail}</p>
+              {inspected.cueSurge.reasons.length ? (
+                <div className="cue-tags">
+                  {inspected.cueSurge.reasons.map((reason) => <em key={reason}>{reason}</em>)}
+                </div>
+              ) : null}
             </div>
             <div className="cue-note-branches">
               <section>

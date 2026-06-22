@@ -20,6 +20,7 @@ import { PERFORMANCE_COLOR_HUD } from '../../content/ja/gameHeaderCopy';
 import { RESULT_TIER_LABELS } from '../../content/ja/gameLabels';
 import { backstageLogCopy, backstageResponseLog } from '../../content/ja/backstageLogCopy';
 import { responseChoiceStory } from '../../content/ja/choiceStoryCopy';
+import { cueSurgeCopy } from '../../content/ja/cueSurgeCopy';
 import styles from './ActionPanel.module.css';
 
 export function ResponseChoiceCard({
@@ -52,8 +53,13 @@ export function ResponseChoiceCard({
         </span>
       </div>
       <p className="choice-story-body">{story.body}</p>
-      <div className="choice-story-tags choice-story-tags--response" aria-label="対応の注意">
-        <em><span>注意</span>{story.caution}</em>
+      <div className="choice-story-tags choice-story-tags--response" aria-label={cueSurgeCopy.responseCautionAria}>
+        <em><span>{cueSurgeCopy.responseCautionLabel}</span>{story.caution}</em>
+      </div>
+      <div className={classNames('surge-badge response-surge-badge', `surge-${insight.cueSurge.responseLevel}`, `cost-${insight.cueSurge.costLevel}`)} aria-label={`${responsePanelCopy.surgeTitle}: ${insight.cueSurge.label} / ${insight.cueSurge.costLabel}`}>
+        <span>{responsePanelCopy.surgeTitle}</span>
+        <strong>{insight.cueSurge.label}</strong>
+        <em>{insight.cueSurge.costLabel}</em>
       </div>
       <div className="outlook-summary" aria-label={responsePanelCopy.outlookAria(insight.successRangeLabel)}>
         <div className="outlook-head">
@@ -130,6 +136,21 @@ export function ResponseConsole({
       <div className="console-log">
         <span>{responsePanelCopy.logTitle}</span>
         <p>{decisionMemo(insight)}</p>
+      </div>
+      <div className={classNames('console-fray console-surge', `surge-${insight.cueSurge.responseLevel}`, `cost-${insight.cueSurge.costLevel}`)}>
+        <span>{responsePanelCopy.surgeTitle}</span>
+        <strong>{insight.cueSurge.label} / {insight.cueSurge.costLabel}</strong>
+        <p>{insight.cueSurge.detail}</p>
+        {insight.cueSurge.reasons.length ? (
+          <div className="console-surge-tags">
+            {insight.cueSurge.reasons.map((reason) => <em key={reason}>{reason}</em>)}
+          </div>
+        ) : null}
+        {insight.cueSurge.risks.length ? (
+          <div className="console-surge-tags is-risk">
+            {insight.cueSurge.risks.map((risk) => <em key={risk}>{risk}</em>)}
+          </div>
+        ) : null}
       </div>
       <aside className="backstage-log-note backstage-log-note--console">
         <span>{backstageLogCopy.label}</span>

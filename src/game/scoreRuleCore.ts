@@ -9,6 +9,7 @@ import {
 import * as ruleText from '../content/ja/ruleCopy';
 import { scoreRuleExtraCopy } from '../content/ja/rogueliteCopy';
 import { topOmenEvents } from './actorLogic';
+import { cueSurgeScoreBonus } from './cueSurge';
 import { frayFitFor } from './fray';
 import { tierFromScore } from './scoreEngine';
 import { slotForTurnInAct } from './turnCalendar';
@@ -571,6 +572,7 @@ export function buildScoreBreakdown(state: GameState, actor: Actor, response: Ma
   const finaleItem = finaleScoreItem(state, response);
   const frayRewardItem = frayRecoveryReward(state, response);
   const diffuseRhythmItem = diffuseRhythmPenaltyScoreItem(state, response);
+  const cueSurgeBonus = cueSurgeScoreBonus({ state, actor, response, prepQuality });
   const eventCopy = ruleText.eventScoreCopy(state.currentActorEvent.type, response, eventValue);
   const items = [
     scoreItem(
@@ -596,6 +598,7 @@ export function buildScoreBreakdown(state: GameState, actor: Actor, response: Ma
     diffuseRhythmItem,
     frayItem,
     frayRewardItem,
+    cueSurgeBonus > 0 ? scoreItem('cue-surge', ruleText.cueSurgeScoreCopy.label, cueSurgeBonus, ruleText.cueSurgeScoreCopy.detail) : undefined,
   ].filter((item): item is ScoreBreakdownItem => Boolean(item));
   const rawScore = sumBreakdown(items);
   const prepCap = capForPrepQuality(prepQuality, state, response);

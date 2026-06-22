@@ -64,6 +64,7 @@ export const appCopy = {
       { title: '準備品質', body: '備えどおりなら上限なし。一部だけなら場面化まで、外すと小さな成功までが基本上限。' },
       { title: '連続使用', body: '同じキューを続けるほど読まれやすく、負荷や段取り、一体感に副作用が出る。' },
       { title: '裏方負荷', body: '負荷3以上から判定に響き、4以上ではほころびの発生候補になる。' },
+      { title: '跳ね場', body: '兆候、準備、出来事、役者の呼吸が重なると強い一手が見える。強さとは別に代償圧も見る。' },
       { title: 'ほころび回収', body: '残ったほころびに合うキューを出すと加点やランク軽減が入り、強く拾うと一段伸びる。' },
       { title: '公演の色', body: '1日目ソワレ後に公演の色が固まり、同じ方針のキューを重ねると補正が深まる。' },
     ],
@@ -159,7 +160,7 @@ export const appCopy = {
     },
     record: '進行記録',
     recordDetails: '公演記録を見る',
-    bestCue: '代表的な一手',
+    bestCue: '公演を決めた一手',
     bestCueBody: (result: PerformanceResult) => {
       const cue = result.insight.bestCue;
       if (!cue) return '';
@@ -188,6 +189,7 @@ export const appCopy = {
     affinity: '兆候との相性',
     coverage: '兆候備え',
     coverageAria: (covered: number, total: number) => `兆候備え ${covered}/${total}`,
+    surgeRead: '跳ね場',
     memo: '本番前メモ',
     prepTitle: (label: string) => `${label}の準備`,
     visibleOmens: '見えている兆候',
@@ -241,6 +243,7 @@ export const appCopy = {
     frayRecoveryBody: '失敗の余白が場面の材料になった',
     newScene: '新場面候補',
     newSceneBody: '終演まで通すと場面図鑑に記録される',
+    surge: '踏んだ跳ね場',
     lesson: '次の判断メモ',
     key: '決め手',
     cost: '代償',
@@ -348,6 +351,11 @@ export function bestCueMeta(cue: NonNullable<PerformanceResult['insight']['bestC
 }
 
 export function bestCueBody(cue: NonNullable<PerformanceResult['insight']['bestCue']>) {
+  if (cue.cueSurge) {
+    const reasons = cue.cueSurge.reasons.length ? ` 理由: ${cue.cueSurge.reasons.slice(0, 2).join(' / ')}。` : '';
+    const risks = cue.cueSurge.risks.length ? ` 代償: ${cue.cueSurge.risks[0]}。` : '';
+    return `${ACTOR_LABELS[cue.focusActorType]}の${EVENT_LABELS[cue.actorEventType]}を${RESPONSE_LABELS[cue.mainResponse]}で受けた。${cue.cueSurge.label}、${cue.cueSurge.costLabel}。${reasons}${risks}`;
+  }
   return `${ACTOR_LABELS[cue.focusActorType]}の${EVENT_LABELS[cue.actorEventType]}を${RESPONSE_LABELS[cue.mainResponse]}で受けた。`;
 }
 

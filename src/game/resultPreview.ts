@@ -106,6 +106,7 @@ export function previewResult(state: GameState): ResultPreview {
       audienceReaction: '',
       lesson: '',
     },
+    cueSurge: insight.cueSurge,
     stateImpact: {
       scene: { before: state.sceneScore, after: state.sceneScore + deltas.deltaScene, delta: deltas.deltaScene },
       flow: { before: state.flowScore, after: state.flowScore + deltas.deltaFlow, delta: deltas.deltaFlow },

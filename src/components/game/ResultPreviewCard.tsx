@@ -119,6 +119,13 @@ export function ResultPreviewCard({ preview, collection, onCommit, canCommit }: 
           <strong>{appCopy.resultPreview.newSceneBody}</strong>
         </div>
       ) : null}
+      {shouldShowCueSurge(preview) ? (
+        <div className={classNames('cue-surge-stamp', `surge-${preview.cueSurge.responseLevel}`, `cost-${preview.cueSurge.costLevel}`)}>
+          <span>{appCopy.resultPreview.surge}</span>
+          <strong>{preview.cueSurge.label} / {preview.cueSurge.costLabel}</strong>
+          <p>{preview.cueSurge.detail}</p>
+        </div>
+      ) : null}
       <div className="result-preview-detail-stack">
         <div className="next-note result-lesson-note">
           <span>{appCopy.resultPreview.lesson}</span>
@@ -204,6 +211,10 @@ function shouldShowCost(preview: ResultPreview) {
 
 function shouldShowPrepRecovery(preview: ResultPreview) {
   return preview.prepQuality !== 'hit' || preview.resultTier === 'fray' || preview.resultTier === 'accident';
+}
+
+function shouldShowCueSurge(preview: ResultPreview) {
+  return ['stacked', 'surge', 'peak'].includes(preview.cueSurge.responseLevel);
 }
 
 function TierRail({ preview }: { preview: ResultPreview }) {
