@@ -90,7 +90,6 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
                 <span>{appCopy.prep.surgeRead}</span>
                 <strong>{cueSurge.label}</strong>
               </div>
-              <p className="choice-story-body">{story.body}</p>
               <div className="choice-story-tags" aria-label={cueSurgeCopy.prepTargetWorkAria}>
                 <em><span>{cueSurgeCopy.prepSceneLabel}</span>{story.title}</em>
                 <em><span>{cueSurgeCopy.prepWorkLabel}</span>{story.work}</em>

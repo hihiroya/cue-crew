@@ -53,7 +53,6 @@ export function ResponseChoiceCard({
           <em>{RESPONSE_EFFECT_SUMMARIES[response]}</em>
         </span>
       </div>
-      <p className="choice-story-body">{story.body}</p>
       <div className="choice-story-tags choice-story-tags--response" aria-label={cueSurgeCopy.responseCautionAria}>
         <em><span>{cueSurgeCopy.responseSceneLabel}</span>{story.title}</em>
         <em><span>{cueSurgeCopy.responseCautionLabel}</span>{story.caution}</em>
