@@ -97,10 +97,10 @@ export const EVENT_DESCRIPTIONS = {
 } as const satisfies Record<ActorEventType, string>;
 
 export const PREP_LABELS = {
-  watch: '注視',
-  makeSpace: '余白',
-  tightenFlow: '締め',
-  prepareTransition: '転換',
+  watch: '見せ場の仕込み',
+  makeSpace: '余韻の仕込み',
+  tightenFlow: '安定の仕込み',
+  prepareTransition: '収束の仕込み',
 } as const satisfies Record<PrepAction, string>;
 
 export const PREP_DESCRIPTIONS = {
@@ -110,37 +110,51 @@ export const PREP_DESCRIPTIONS = {
   prepareTransition: '走り・退場・群像・立ち位置に備える',
 } as const satisfies Record<PrepAction, string>;
 
+export const PREP_EFFECT_SUMMARIES = {
+  watch: '評判・名場面',
+  makeSpace: '一体感・終盤',
+  tightenFlow: '段取り・負荷',
+  prepareTransition: 'ほころび・事故',
+} as const satisfies Record<PrepAction, string>;
+
 export const PREP_RESPONSE_HINTS = {
   watch: {
-    aim: '予定外を見せ場に変える',
-    alternate: '整えるで安全寄りに処理できる',
+    aim: '評判と名場面を伸ばす',
+    alternate: '安定で安全寄りに処理できる',
   },
   makeSpace: {
-    aim: '間や余韻を急かさず残す',
-    alternate: '熱が来たら拾うと伸びる',
+    aim: '一体感と終盤の伸びを作る',
+    alternate: '熱が来たら見せ場で伸びる',
   },
   tightenFlow: {
-    aim: '乱れを舞台の呼吸に戻す',
-    alternate: '高負荷なら切って守る手もある',
+    aim: '段取りを戻し、負荷を抑える',
+    alternate: '高負荷なら収束で守る手もある',
   },
   prepareTransition: {
-    aim: '場面を伸ばすより、崩れを小さく閉じる',
-    alternate: '低負荷なら整える・待つで場面化を狙える',
+    aim: 'ほころびと事故を小さく閉じる',
+    alternate: '低負荷なら安定・余韻で場面化を狙える',
   },
 } as const satisfies Record<PrepAction, { aim: string; alternate: string }>;
 
 export const RESPONSE_LABELS = {
-  catch: '拾う',
-  arrange: '整える',
-  wait: '待つ',
-  cut: '切る',
+  catch: '見せ場',
+  arrange: '安定',
+  wait: '余韻',
+  cut: '収束',
 } as const satisfies Record<MainResponse, string>;
 
 export const RESPONSE_DESCRIPTIONS = {
-  catch: '予定外の行動を見せ場に変える',
-  arrange: '乱れを舞台全体の呼吸に戻す',
-  wait: '間や余韻を信じて急かさない',
-  cut: '場面を閉じ、転換と道具を次へ送る',
+  catch: '評判と名場面を伸ばす。負荷も背負いやすい',
+  arrange: '段取りを戻し、裏方負荷を抑える',
+  wait: '一体感と余韻を残し、終盤の伸びを作る',
+  cut: 'ほころびや事故を小さく閉じて次へ渡す',
+} as const satisfies Record<MainResponse, string>;
+
+export const RESPONSE_EFFECT_SUMMARIES = {
+  catch: '評判↑ 名場面↑',
+  arrange: '段取り↑ 負荷↓',
+  wait: '一体感↑ 終盤↑',
+  cut: 'ほころび↓ 事故↓',
 } as const satisfies Record<MainResponse, string>;
 
 export const RESULT_TIER_LABELS = {
@@ -160,9 +174,9 @@ export const RESULT_TIER_STARS = {
 } as const satisfies Record<ResultTier, string>;
 
 export const ACTOR_TRAITS = {
-  junior: '勢い型。前へ出る・アドリブ・熱が乗るが多い。拾うと伸びやすい。',
-  lead: '間の型。沈黙・退場の余韻が多い。待つと伸びやすい。',
-  skilled: '制御型。立ち位置・群像の乱れが多い。整えると伸びやすい。',
+  junior: '勢い型。前へ出る・アドリブ・熱が乗るが多い。見せ場で伸びやすい。',
+  lead: '間の型。沈黙・退場の余韻が多い。余韻で伸びやすい。',
+  skilled: '制御型。立ち位置・群像の乱れが多い。安定で伸びやすい。',
 } as const satisfies Record<ActorType, string>;
 
 export const ACT_RESPONSE_GUIDES = {

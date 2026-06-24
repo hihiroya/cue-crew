@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { EVENT_LABELS } from '../../game/constants';
+import { EVENT_LABELS, PREP_EFFECT_SUMMARIES, PREP_LABELS } from '../../game/constants';
 import type { Actor, ActorEventType, GameState, PrepAction } from '../../game/types';
 import { Icon } from '../ui/Icon';
 import { classNames } from '../ui/classNames';
@@ -78,7 +78,8 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
               <div className="prep-card-top">
                 <Icon name={prep} />
                 <span className="prep-title">
-                  <strong>{story.title}</strong>
+                  <strong>{PREP_LABELS[prep]}</strong>
+                  <em>{PREP_EFFECT_SUMMARIES[prep]}</em>
                 </span>
               </div>
               <div className="cue-cover">
@@ -91,6 +92,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
               </div>
               <p className="choice-story-body">{story.body}</p>
               <div className="choice-story-tags" aria-label={cueSurgeCopy.prepTargetWorkAria}>
+                <em><span>{cueSurgeCopy.prepSceneLabel}</span>{story.title}</em>
                 <em><span>{cueSurgeCopy.prepWorkLabel}</span>{story.work}</em>
               </div>
               {isPrevious ? <em className="replay-ghost-mark">{appCopy.replayGhost.previous}</em> : null}
@@ -109,7 +111,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
           <div className="cue-sheet-head">
             <div className="cue-sheet-title">
               <span>{appCopy.prep.memo}</span>
-              <strong>{inspectedStory.title}</strong>
+              <strong>{PREP_LABELS[inspected.prep]}</strong>
             </div>
             <div ref={approvalRef} className={`cue-approval-slot ${isApproving ? 'is-approved' : ''}`} aria-label={appCopy.prep.approvalLabel} aria-live="polite">
               <span>{appCopy.prep.approvalLabel}</span>
@@ -148,6 +150,7 @@ export function PrepPanel({ selected, disabled, approvingPrep, state, focusActor
               <span>{appCopy.prep.prepMeaning}</span>
               <strong>{inspectedStory.target}</strong>
               {inspected.tone === 'danger' ? <em>{appCopy.prep.danger}</em> : null}
+              <p>{inspectedStory.title}</p>
               <p>{inspectedStory.body}</p>
             </div>
             <div className={classNames('prep-surge-line', `surge-${inspected.cueSurge.level}`)}>

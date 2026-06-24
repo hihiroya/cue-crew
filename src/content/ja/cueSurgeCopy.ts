@@ -3,8 +3,10 @@ import type { Actor, ActorEventType, CueSurgeLevel, MainResponse, PerformanceSty
 
 export const cueSurgeCopy = {
   prepTargetWorkAria: '準備の対象と作業',
+  prepSceneLabel: '現場',
   prepWorkLabel: '作業',
   responseCautionAria: '対応の注意',
+  responseSceneLabel: '現場',
   responseCautionLabel: '注意',
   prepReasonCovered: (count: number) => `兆候${count}件を受けられる`,
   prepReasonTopOmen: (event: ActorEventType) => `最上位の${EVENT_LABELS[event]}に備える`,

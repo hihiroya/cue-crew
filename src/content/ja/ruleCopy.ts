@@ -398,9 +398,9 @@ export function cueLesson(preview: Pick<ResultPreview, 'prepQuality' | 'deltaLoa
   const byId = (id: string) => preview.scoreBreakdown.find((item: ScoreBreakdownItem) => item.id === id);
   if (byId('fray-reward')) return 'ほころびは失敗の残骸ではなく、合う対応で拾うと場面の材料になる。';
   if (byId('actor-trust')) return '阿吽の呼吸や以心伝心が出ている役者は、得意対応を選ぶと下振れを支えられる。';
-  if (byId('arrange-cap')) return '整えるは安定手。名場面を狙うなら、技巧派・不安/疲労・ほころび回収などの理由がほしい。';
-  if (byId('cut-containment')) return '転換の備えから切ると、崩れを閉じて次の場面へ渡しやすい。';
-  if (preview.deltaLoad >= 2) return '攻めた代償が重い。次の回は待つ・整える・切るで負荷を戻したい。';
+  if (byId('arrange-cap')) return '安定は守りの手。名場面を狙うなら、技巧派・不安/疲労・ほころび回収などの理由がほしい。';
+  if (byId('cut-containment')) return '収束の仕込みから収束すると、崩れを閉じて次の場面へ渡しやすい。';
+  if (preview.deltaLoad >= 2) return '攻めた代償が重い。次の回は余韻・安定・収束で負荷を戻したい。';
   if (preview.prepQuality === 'miss') return '準備が外れると上限が下がる。注目役者の兆候と準備範囲をもう一度合わせたい。';
   if (preview.deltaFlow < 0) return '場面の揺れが段取りに残った。次は進行か負荷を整える判断を挟みたい。';
   if (preview.deltaTrust < 0) return '閉じる判断は効くが、続けると一体感が削れる。次は一体感を戻す手を置きたい。';

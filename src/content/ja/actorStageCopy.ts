@@ -23,11 +23,11 @@ export const omenIntensityCopy = {
 } as const;
 
 export const STATE_HINTS: Record<ActorState, string> = {
-  elated: '拾うと伸びやすい',
-  contemplative: '待つと活きやすい',
-  anxious: '整えると崩れにくい',
-  immersed: '拾う・待つが効きやすい',
-  fatigued: '整える・切るで守りやすい',
+  elated: '見せ場で伸びやすい',
+  contemplative: '余韻で活きやすい',
+  anxious: '安定で崩れにくい',
+  immersed: '見せ場・余韻が効きやすい',
+  fatigued: '安定・収束で守りやすい',
 };
 
 export function nextPressure(actor: Actor, isNext: boolean, backstageLoad: number) {
@@ -38,16 +38,16 @@ export function nextPressure(actor: Actor, isNext: boolean, backstageLoad: numbe
   }
   if (actor.state === 'fatigued') return '疲労。次ターンの下振れリスク';
   if (actor.state === 'anxious') return '不安。負荷を残すと乱れやすい';
-  if (actor.type === 'junior') return '拾うが活きやすいかも';
-  if (actor.type === 'lead') return '待つが活きやすいかも';
-  return '整えるが活きやすいかも';
+  if (actor.type === 'junior') return '見せ場が活きやすいかも';
+  if (actor.type === 'lead') return '余韻が活きやすいかも';
+  return '安定が活きやすいかも';
 }
 
 export function supportActorSummary(actor: Actor, isNext: boolean, backstageLoad: number, passive: string | null) {
   if (!isNext) return passive ? `${STATE_LABELS[actor.state]} / ${passive}` : STATE_LABELS[actor.state];
   if (backstageLoad >= 3) return `${STATE_LABELS[actor.state]} / 次は負荷注意`;
   if (actor.state === 'fatigued') return `${STATE_LABELS[actor.state]} / 守りたい`;
-  if (actor.state === 'anxious') return `${STATE_LABELS[actor.state]} / 整えたい`;
+  if (actor.state === 'anxious') return `${STATE_LABELS[actor.state]} / 安定させたい`;
   if (passive) return `${STATE_LABELS[actor.state]} / ${passive}`;
   return `${STATE_LABELS[actor.state]} / ${nextPressure(actor, true, backstageLoad).replace('かも', '')}`;
 }

@@ -17,7 +17,7 @@ import {
   rankForValue,
 } from '../../content/ja/responsePanelCopy';
 import { PERFORMANCE_COLOR_HUD } from '../../content/ja/gameHeaderCopy';
-import { RESULT_TIER_LABELS } from '../../content/ja/gameLabels';
+import { RESPONSE_EFFECT_SUMMARIES, RESPONSE_LABELS, RESULT_TIER_LABELS } from '../../content/ja/gameLabels';
 import { backstageLogCopy, backstageResponseLog } from '../../content/ja/backstageLogCopy';
 import { responseChoiceStory } from '../../content/ja/choiceStoryCopy';
 import { cueSurgeCopy } from '../../content/ja/cueSurgeCopy';
@@ -49,11 +49,13 @@ export function ResponseChoiceCard({
       <div className="response-card-top">
         <Icon name={response} />
         <span className="response-title">
-          <strong>{story.title}</strong>
+          <strong>{RESPONSE_LABELS[response]}</strong>
+          <em>{RESPONSE_EFFECT_SUMMARIES[response]}</em>
         </span>
       </div>
       <p className="choice-story-body">{story.body}</p>
       <div className="choice-story-tags choice-story-tags--response" aria-label={cueSurgeCopy.responseCautionAria}>
+        <em><span>{cueSurgeCopy.responseSceneLabel}</span>{story.title}</em>
         <em><span>{cueSurgeCopy.responseCautionLabel}</span>{story.caution}</em>
       </div>
       <div className={classNames('surge-badge response-surge-badge', `surge-${insight.cueSurge.responseLevel}`, `cost-${insight.cueSurge.costLevel}`)} aria-label={`${responsePanelCopy.surgeTitle}: ${insight.cueSurge.label} / ${insight.cueSurge.costLabel}`}>
@@ -110,7 +112,6 @@ export function ResponseConsole({
   const buildLevelItem = insight.scoreBreakdown.find((item) => item.id === 'build-level');
   const styleHud = getStyleHud(state.performanceStyle);
   const backstageNote = backstageResponseLog(state, insight.response);
-  const story = responseChoiceStory(state.currentActorEvent?.type, insight.response);
   return (
     <aside className={classNames('decision-note response-console', relationToneClass[insight.prepRelationTone])}>
       <div className="console-head">
@@ -126,7 +127,7 @@ export function ResponseConsole({
           </em>
           <em>
             <small>CALL</small>
-            <strong>{story.title}</strong>
+            <strong>{RESPONSE_LABELS[insight.response]}</strong>
           </em>
         </div>
       </div>
