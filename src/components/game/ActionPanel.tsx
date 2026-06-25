@@ -1,8 +1,16 @@
 import { useMemo, useState } from 'react';
 import type { GameState, MainResponse, TurnLog } from '../../game/types';
-import { responsePanelCopy } from '../../content/ja/responsePanelCopy';
+import {
+  eventListForReadMatch,
+  prepLabelForReadMatch,
+  readAlignmentBody,
+  readAlignmentLabel,
+  responsePanelCopy,
+} from '../../content/ja/responsePanelCopy';
+import { EVENT_LABELS } from '../../game/constants';
+import { classNames } from '../ui/classNames';
 import styles from './ActionPanel.module.css';
-import { buildResponsePanelViewModel } from './responsePanelViewModel';
+import { buildResponsePanelViewModel, type ReadAlignment } from './responsePanelViewModel';
 import { ResponseChoiceCard, ResponseConsole, ResponseSendBar } from './ResponsePanelParts';
 
 export { PrepPanel } from './PrepPanel';
@@ -20,11 +28,13 @@ export function ResponsePanel({ selected, disabled, state, previousTurnLog = nul
   const [inspectedResponse, setInspectedResponse] = useState<MainResponse>(selected ?? 'catch');
   const inspected = viewModel.insights.find((insight) => insight.response === inspectedResponse) ?? viewModel.insights[0];
   const inspectedDetails = viewModel.detailsByResponse[inspected.response];
+  const readAlignment = viewModel.readAlignment;
   return (
-    <section className={styles.responseRoot}>
+    <section className={classNames(styles.responseRoot, readAlignment && readToneClass[readAlignment.tone])}>
       <div className="section-heading">
         <h2>{responsePanelCopy.heading}</h2>
       </div>
+      {readAlignment ? <ReadAlignmentPanel alignment={readAlignment} /> : null}
       <div className={styles.responseGrid}>
         {viewModel.insights.map((insight) => (
           <ResponseChoiceCard
@@ -33,6 +43,7 @@ export function ResponsePanel({ selected, disabled, state, previousTurnLog = nul
             event={state.currentActorEvent?.type}
             insight={insight}
             isInspected={inspected.response === insight.response}
+            readTone={readAlignment?.tone ?? null}
             onInspect={setInspectedResponse}
           />
         ))}
@@ -47,3 +58,37 @@ export function ResponsePanel({ selected, disabled, state, previousTurnLog = nul
     </section>
   );
 }
+
+function ReadAlignmentPanel({ alignment }: { alignment: ReadAlignment }) {
+  const label = readAlignmentLabel(alignment.tone);
+  return (
+    <section className="read-match-panel" aria-label={`${responsePanelCopy.readMatchTitle}: ${label}`}>
+      <div className="read-match-head">
+        <span>{responsePanelCopy.readMatchTitle}</span>
+        <strong>{label}</strong>
+      </div>
+      <div className="read-match-flow">
+        <em>
+          <span>{responsePanelCopy.readMatchPrep}</span>
+          <strong>{prepLabelForReadMatch(alignment.prep)}</strong>
+        </em>
+        <b aria-hidden="true">→</b>
+        <em>
+          <span>{responsePanelCopy.readMatchActual}</span>
+          <strong>{EVENT_LABELS[alignment.actualEvent]}</strong>
+        </em>
+      </div>
+      <div className="read-match-tags">
+        <em><span>{responsePanelCopy.readMatchVisible}</span>{eventListForReadMatch(alignment.visibleOmens)}</em>
+        <em><span>{responsePanelCopy.readMatchPrepared}</span>{eventListForReadMatch(alignment.preparedEvents)}</em>
+      </div>
+      <p>{readAlignmentBody(alignment.reason)}</p>
+    </section>
+  );
+}
+
+const readToneClass: Record<ReadAlignment['tone'], string> = {
+  hit: 'read-hit',
+  partial: 'read-partial',
+  miss: 'read-miss',
+};

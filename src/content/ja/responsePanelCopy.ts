@@ -1,9 +1,14 @@
-import { EVENT_LABELS, PERFORMANCE_SLOT_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS } from './gameLabels';
-import type { GameState, MainResponse, ResponseInsight, ResultTier, ScoreBreakdownItem } from '../../game/types';
+import { EVENT_LABELS, PERFORMANCE_SLOT_LABELS, PREP_LABELS, RESPONSE_LABELS, RESULT_TIER_LABELS } from './gameLabels';
+import type { ActorEventType, GameState, MainResponse, PrepAction, ResponseInsight, ResultTier, ScoreBreakdownItem } from '../../game/types';
 
 export const responsePanelCopy = {
   heading: '対応を決める',
   marker: '卓に反映',
+  readMatchTitle: '読み合わせ',
+  readMatchPrep: '準備',
+  readMatchActual: '本番',
+  readMatchVisible: '見えていた兆候',
+  readMatchPrepared: '仕込み範囲',
   outlookAria: (label: string) => `場面の見立て: ${label}`,
   prepRelationAria: (label: string) => `準備との関係: ${label}`,
   effectSummaryAria: '影響の要約',
@@ -29,6 +34,30 @@ export const responsePanelCopy = {
   surgeTitle: '跳ね場',
   surgeCost: '代償圧',
 } as const;
+
+type ReadAlignmentTone = 'hit' | 'partial' | 'miss';
+type ReadAlignmentReason = 'prepared' | 'visible' | 'preparedElsewhere' | 'unexpected';
+
+export function readAlignmentLabel(tone: ReadAlignmentTone) {
+  if (tone === 'hit') return '読み通り';
+  if (tone === 'partial') return '少し拾える';
+  return '不意の揺れ';
+}
+
+export function readAlignmentBody(reason: ReadAlignmentReason) {
+  if (reason === 'prepared') return '備えていた兆候がそのまま来た。ここは跳ね場を狙いやすい。';
+  if (reason === 'visible') return '見えていた兆候だが、仕込みとは別方向に動いた。ここは対応で拾い直せる。';
+  if (reason === 'preparedElsewhere') return '本命とは違う出来事だが、準備していた揺れは場に残っている。備えの一部は活きる。';
+  return '備えていた兆候とは別方向に動いた。ここは立て直しの判断が大事。';
+}
+
+export function prepLabelForReadMatch(prep: PrepAction) {
+  return PREP_LABELS[prep];
+}
+
+export function eventListForReadMatch(events: ActorEventType[]) {
+  return events.map((event) => EVENT_LABELS[event]).join(' / ');
+}
 
 export function responseSendAria(response: MainResponse) {
   return `${RESPONSE_LABELS[response]}のキューを出す`;

@@ -28,12 +28,14 @@ export function ResponseChoiceCard({
   event,
   insight,
   isInspected,
+  readTone,
   onInspect,
 }: {
   disabled: boolean;
   event?: ActorEventType | null;
   insight: ResponseInsight;
   isInspected: boolean;
+  readTone: 'hit' | 'partial' | 'miss' | null;
   onInspect: (response: MainResponse) => void;
 }) {
   const response = insight.response;
@@ -41,7 +43,13 @@ export function ResponseChoiceCard({
   return (
     <button
       aria-pressed={isInspected}
-      className={classNames(styles.responseChoice, responseRangeToneClass[insight.rangeTone], isInspected && styles.selected)}
+      className={classNames(
+        styles.responseChoice,
+        responseRangeToneClass[insight.rangeTone],
+        responseKindClass[response],
+        readTone && responseReadToneClass[readTone],
+        isInspected && styles.selected,
+      )}
       disabled={disabled}
       onClick={() => onInspect(response)}
       onFocus={() => onInspect(response)}
@@ -383,6 +391,19 @@ const responseRangeToneClass: Record<ResponseInsight['rangeTone'], string> = {
   good: 'fit-good',
   thin: 'fit-risky',
   danger: 'fit-danger',
+};
+
+const responseKindClass: Record<MainResponse, string> = {
+  catch: 'response-catch',
+  arrange: 'response-arrange',
+  wait: 'response-wait',
+  cut: 'response-cut',
+};
+
+const responseReadToneClass: Record<'hit' | 'partial' | 'miss', string> = {
+  hit: 'read-card-hit',
+  partial: 'read-card-partial',
+  miss: 'read-card-miss',
 };
 
 const relationToneClass: Record<ResponseInsight['prepRelationTone'] | NonNullable<ResponseInsight['frayRelationTone']>, string> = {
