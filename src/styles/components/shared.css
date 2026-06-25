@@ -398,9 +398,16 @@
 }
 
 .prep-surge-line > span {
-  color: var(--muted);
+  width: fit-content;
+  padding: 3px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(229, 189, 104, 0.52);
+  color: #fff0c2;
+  background: linear-gradient(180deg, rgba(82, 37, 46, 0.98), rgba(39, 18, 28, 0.98));
   font-size: 0.66rem;
   font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.16) inset, 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
 .prep-surge-line > strong {
